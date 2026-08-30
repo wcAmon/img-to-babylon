@@ -53,7 +53,9 @@ def check(runtime):
             continue
         for col in cols:
             mesh = mesh_by_comp.get(col["component"])
-            if mesh and not aabb_contains(col["aabb"], mesh):
+            if mesh is None:
+                errors.append(f"{col['component']}: collider 存在但 runtime 沒有對應 mesh")
+            elif not aabb_contains(col["aabb"], mesh):
                 errors.append(f"{col['component']}: collider AABB 未包住 mesh AABB（±10%）")
         for i in range(len(cols)):
             for j in range(i + 1, len(cols)):

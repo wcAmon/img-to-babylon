@@ -69,11 +69,11 @@ viewer/                   # in-repo Vite + TypeScript + Babylon.js + Havok
   package.json
   src/main.ts             # 場景 host；載入 registry 選定模型
   src/capture.ts          # window.__IMG2BABYLON_CAPTURE__：setCamera/screenshot/
-                          #   togglePhysicsViewer/exportRuntime（供 gate 用 JSON）
+                          #   togglePhysicsViewer；runtime_export.ts（headless 匯出）供 gate 用 JSON
   src/harness.ts          # 物理沙盒：地面、落下、丟球、堆疊、滑鼠抓取
   src/registry.ts         # 模型註冊表
   models/<name>/create<Name>Model.ts   # 生成產物
-  scripts/physics_test.mjs # headless：NullEngine + Havok WASM 模擬 5 秒，輸出判定 JSON
+  scripts/physics_test.ts # headless（tsx 執行）：NullEngine + Havok WASM 模擬 5 秒，輸出判定 JSON
 docs/superpowers/specs/   # 設計文件（本檔）
 .img2babylon/             # 執行期狀態（state.json、截圖、比對表；gitignored）
 ```
@@ -156,11 +156,11 @@ export function createPillBottleModel(scene: Scene, opts?: { physics?: boolean }
 - 尺寸烘進幾何參數，不用 `scaling` 承載尺寸（避免 collider 與 mesh 不同步）；
 - 程序化材質（`DynamicTexture` 畫標籤等），禁止外部貼圖資產；
 - 決定性：所有雜訊帶 seed；
-- metadata：`root.metadata.sculptRuntime = { nodes, meshes, aggregates, constraints }`。
+- metadata：`root.metadata.sculptRuntime = { nodes, meshes, bodies, constraints }`。
 
 ## 6. 物理驗證三層 gate
 
-1. **靜態（check_colliders.py）**：viewer 的 `exportRuntime()` 把每 mesh 的世界 AABB、
+1. **靜態（check_colliders.py）**：headless 腳本 `runtime_export.ts` 把每 mesh 的世界 AABB、
    每 collider 的世界 AABB、質量與 body 對應輸出成 JSON；Python 驗證
    (a) collider AABB ⊇ mesh AABB（容差 ±10%）、(b) 兄弟 collider 重疊體積
    ≤ embed 容差、(c) 密度落在 50–3000 kg/m³ 合理帶、(d) 每 body 質心在其 collider 聯集內。

@@ -18,7 +18,7 @@ Agent-agnostic：可在 Claude Code 或 Codex 下執行。文中「agent vision�
    行內預覽不是證據。
 3. 一次只看一張並排對照表（`forge/compare.py` 產生）。
 4. 物理是一等公民：spec 的 `physics` 區塊不可省略；三層物理 gate 全綠才算完成。
-5. 修正上限：每 pass 3 次、全程 6 次（`forge/next_pass.py correction` 會擋，exit 3 = 停）。
+5. 修正上限：每 pass 第 4 次、全程第 6 次修正會被擋（`forge/next_pass.py correction` 會擋，exit 3 = 停）。
 6. 尺寸烘進幾何建構參數，不用 `scaling` 承載尺寸。
 7. 決定性：所有程序化雜訊帶 seed；單位一律公尺。
 8. 物理權威是 `physics.constraints`；`attachment` 只描述視覺對位。

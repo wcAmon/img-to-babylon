@@ -43,6 +43,11 @@ export default function createCodexCrateModel(
   };
 
   const meshes: Record<string, Mesh> = {};
+  // 這具板條組裝沒有單一「crate」mesh；追蹤所有 board 在 pivot 局部座標下的聯集
+  // 包絡盒，之後註冊成 meshes.crate，讓靜態 gate 能對 spec 的 crate collider 做
+  // containment 檢查（否則 runtime 匯出裡找不到 component=crate 的 mesh）。
+  const hullMin = new Vector3(Infinity, Infinity, Infinity);
+  const hullMax = new Vector3(-Infinity, -Infinity, -Infinity);
   const addBoard = (
     name: string, width: number, height: number, depth: number,
     x: number, y: number, z: number,
@@ -52,6 +57,8 @@ export default function createCodexCrateModel(
     board.position.set(x, y, z);
     board.material = woodMaterial(name);
     meshes[name] = board;
+    hullMin.minimizeInPlace(new Vector3(x - width / 2, y - height / 2, z - depth / 2));
+    hullMax.maximizeInPlace(new Vector3(x + width / 2, y + height / 2, z + depth / 2));
   };
 
   // Bottom deck and four feet keep the full assembly inside the spec envelope.
@@ -77,6 +84,17 @@ export default function createCodexCrateModel(
     addBoard(`left-slat-${i}`, 0.035, 0.13, 0.46, -0.3825, y, 0);
     addBoard(`right-slat-${i}`, 0.035, 0.13, 0.46, 0.3825, y, 0);
   });
+
+  const hullSize = hullMax.subtract(hullMin);
+  const hullCenter = hullMin.add(hullMax).scale(0.5);
+  const hull = MeshBuilder.CreateBox(
+    "crate-hull", { width: hullSize.x, height: hullSize.y, depth: hullSize.z }, scene,
+  );
+  hull.parent = pivot;
+  hull.position.copyFrom(hullCenter);
+  hull.isVisible = false;
+  hull.isPickable = false;
+  meshes.crate = hull;
 
   const bodies: Record<string, PhysicsBody> = {};
   if (opts.physics !== false && scene.getPhysicsEngine()) {

@@ -45,7 +45,7 @@ export default function createSampleCrateModel(
     bodies.crate = body;
   }
 
-  return {
+  const built: BuiltModel = {
     root,
     nodes: { crate: pivot },
     meshes: { crate: mesh },
@@ -56,4 +56,13 @@ export default function createSampleCrateModel(
       root.dispose(false, true);
     },
   };
+  root.metadata = {
+    sculptRuntime: {
+      nodes: built.nodes,
+      meshes: built.meshes,
+      bodies: built.bodies,
+      constraints: built.constraints,
+    },
+  };
+  return built;
 }

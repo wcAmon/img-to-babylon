@@ -1,4 +1,4 @@
-import copy, unittest
+import unittest
 from forge import check_colliders
 
 
@@ -49,6 +49,12 @@ class CheckCollidersTest(unittest.TestCase):
         bad["bodies"][0]["centerOfMassWorld"] = [0.5, 0.5, 0.5]
         errors = check_colliders.check(bad)
         self.assertTrue(any("質心" in e for e in errors))
+
+    def test_missing_mesh_for_collider_fails(self):
+        bad = rt()
+        bad["meshes"] = []  # collider 的 component 在 runtime 沒有對應 mesh
+        errors = check_colliders.check(bad)
+        self.assertTrue(any("沒有對應 mesh" in e for e in errors))
 
 
 if __name__ == "__main__":

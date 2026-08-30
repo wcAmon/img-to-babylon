@@ -44,9 +44,11 @@ function worldAabbOfLocalBox(
 async function main(): Promise<number> {
   const argv = process.argv.slice(2);
   const name = argv[0];
-  const specPath = argv[argv.indexOf("--spec") + 1];
-  const outPath = argv[argv.indexOf("--out") + 1];
-  if (!name || !(name in registry) || !specPath || !outPath) {
+  const specIdx = argv.indexOf("--spec");
+  const outIdx = argv.indexOf("--out");
+  const specPath = specIdx === -1 ? undefined : argv[specIdx + 1];
+  const outPath = outIdx === -1 ? undefined : argv[outIdx + 1];
+  if (!name || !(name in registry) || specIdx === -1 || outIdx === -1 || !specPath || !outPath) {
     console.error("用法: runtime_export.ts <model-name> --spec <spec.json> --out <runtime.json>");
     return 2;
   }
@@ -69,11 +71,18 @@ async function main(): Promise<number> {
     };
   });
 
+  const missingNodeErrors: string[] = [];
   const bodies = spec.physics.bodies.map((b) => {
     const colliders = b.components.flatMap((cid) => {
       const c = comps.get(cid);
       const node = model.nodes[cid];
-      if (!c?.collider || !node) return [];
+      // 沒有 spec collider：合法（meso/micro 裝飾件），靜默跳過。
+      if (!c?.collider) return [];
+      // 有 spec collider 但 factory 沒對應 node：spec↔factory id 不一致，靜態 gate 必須攔截，不可靜默漏收 collider。
+      if (!node) {
+        missingNodeErrors.push(`元件 ${cid} 在 spec 有 collider 但 factory 沒有對應 node`);
+        return [];
+      }
       node.computeWorldMatrix(true);
       return [{
         component: cid,
@@ -83,12 +92,22 @@ async function main(): Promise<number> {
       }];
     });
     const first = model.nodes[b.components[0]];
+    if (!first) {
+      // 第一個元件本身就對不上 factory node；已記進 missingNodeErrors，稍後統一報錯並 exit 3。
+      return { id: b.id, mass: b.mass, centerOfMassWorld: [NaN, NaN, NaN], colliders };
+    }
     first.computeWorldMatrix(true);
     const com = Vector3.TransformCoordinates(
       Vector3.FromArray(b.centerOfMass ?? [0, 0, 0]), first.getWorldMatrix(),
     );
     return { id: b.id, mass: b.mass, centerOfMassWorld: com.asArray(), colliders };
   });
+
+  if (missingNodeErrors.length) {
+    for (const e of missingNodeErrors) console.error(e);
+    ctx.dispose();
+    return 3;
+  }
 
   const out = { model: name, meshes, bodies };
   writeFileSync(outPath, JSON.stringify(out, null, 2));

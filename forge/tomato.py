@@ -50,6 +50,7 @@ def _fetch_asset(job_id, out_path, opener=None):
     opener = opener or urllib.request.build_opener()
     with opener.open(f"{BASE}/assets/{job_id}", timeout=120) as resp:
         data = resp.read()
+    os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     with open(out_path, "wb") as f:
         f.write(data)
     return len(data)

@@ -80,6 +80,8 @@ def cmd_correction(root):
         return 2
     per = state["corrections"]["perPass"].get(cur, 0) + 1
     total = state["corrections"]["total"] + 1
+    # 刻意不對稱：per-pass 用 >（3 次以內都放行，第 4 次擋）；
+    # total 用 >=（累計到 5 次都放行，第 6 次擋）。兩式皆已由 gate 測試鎖定，勿「修齊」成同一種比較。
     if per > PER_PASS_LIMIT or total >= TOTAL_LIMIT:
         print(f"修正上限已到（pass {cur}: {per}/{PER_PASS_LIMIT}, 總計: {total}/{TOTAL_LIMIT}）"
               "——停止並 request-input", file=sys.stderr)

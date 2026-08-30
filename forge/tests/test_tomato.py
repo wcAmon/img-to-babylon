@@ -1,4 +1,4 @@
-import io, json, unittest
+import io, json, os, tempfile, unittest
 from unittest import mock
 from forge import tomato
 
@@ -56,6 +56,20 @@ class TomatoTest(unittest.TestCase):
     def test_view_prompts_cover_side_and_rear(self):
         self.assertIn("side", tomato.VIEW_PROMPTS)
         self.assertIn("rear", tomato.VIEW_PROMPTS)
+
+    def test_gen_creates_missing_output_directory(self):
+        opener = FakeOpener([
+            json.dumps({"job_id": "j3", "mode": "generate"}).encode(),
+            b"\x89PNG fake bytes",
+        ])
+        with tempfile.TemporaryDirectory() as tmp:
+            out = os.path.join(tmp, "nested", "sub", "hero.png")
+            args = mock.Mock(prompt="p", aspect="16:9", seed=None, out=out)
+            rc = tomato.cmd_gen(args, opener)
+            self.assertEqual(rc, 0)
+            self.assertTrue(os.path.isfile(out))
+            with open(out, "rb") as f:
+                self.assertEqual(f.read(), b"\x89PNG fake bytes")
 
 
 if __name__ == "__main__":

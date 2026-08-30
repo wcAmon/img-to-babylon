@@ -23,6 +23,9 @@ body.setMassProperties({ mass, centerOfMass: Vector3.FromArray(spec.centerOfMass
 | capsule | `PhysicsShapeCapsule(pointA, pointB, radius, scene)` | 同上，radius = sx/2 |
 | convex | `PhysicsShapeConvexHull(mesh, scene)` | 直接包 visual mesh |
 
+無 collider 的 meso/micro 元件不受靜態 gate 檢查，突出的裝飾件要靠視覺 review 把關——
+若裝飾件明顯超出主體，考慮升為 macro 並給 collider。
+
 ## Hinge（揀蓋）：6DoF 鎖五軸 + 單角軸 limit
 
 ```ts
