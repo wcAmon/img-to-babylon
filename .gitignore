@@ -2,3 +2,4 @@ reference/
 node_modules/
 .img2babylon/
 viewer/dist/
+__pycache__/
