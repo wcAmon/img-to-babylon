@@ -38,7 +38,7 @@ GLB 軌、BM25 spec 檢索、材質參考管線。只做 `object` 類主體。
                 ▼
         viewer（Vite + Babylon + Havok）渲染
         ├─ forge/check_colliders.py     靜態物理 gate（純數學）
-        ├─ viewer/scripts/physics_test.mjs  headless 動態模擬（NullEngine）
+        ├─ viewer/scripts/physics_test.ts  headless 動態模擬（NullEngine）
         └─ agent browser tool 截圖 ──► forge/compare.py 對照表 ──► 目視 review
                 ▼
         自我修正迴圈（每 pass ≤3 次、全程 ≤6 次）──► 完成
@@ -164,7 +164,7 @@ export function createPillBottleModel(scene: Scene, opts?: { physics?: boolean }
    每 collider 的世界 AABB、質量與 body 對應輸出成 JSON；Python 驗證
    (a) collider AABB ⊇ mesh AABB（容差 ±10%）、(b) 兄弟 collider 重疊體積
    ≤ embed 容差、(c) 密度落在 50–3000 kg/m³ 合理帶、(d) 每 body 質心在其 collider 聯集內。
-2. **動態（physics_test.mjs）**：NullEngine + Havok，無渲染。情境：模型從 0.3 m
+2. **動態（physics_test.ts）**：NullEngine + Havok，無渲染。情境：模型從 0.3 m
    落到地面，模擬 5 秒。判定：最終線速度 < 0.01 m/s（會靜止）、y > 0（沒穿地）、
    位置有限（沒爆炸）；hinge 案例額外做「開蓋後放手」檢查蓋子停在 limit 範圍內。
    輸出 JSON 判定，可進 CI。
@@ -186,7 +186,7 @@ export function createPillBottleModel(scene: Scene, opts?: { physics?: boolean }
 
 - tomato 503 → 讀 `Retry-After` 退避重試（≤3 次）；仍失敗或不可達 → 明確告知並降級
   為使用者提供圖片。
-- Havok WASM 載入失敗 → viewer 顯性報錯 banner，`physics_test.mjs` 以非零碼結束。
+- Havok WASM 載入失敗 → viewer 顯性報錯 banner，`physics_test.ts` 以非零碼結束。
 - 修正迴圈：動作限 `continue|refine-spec|refine-code|request-input|stop`；
   每 pass ≤3 次、全程 ≤6 次；狀態記在 `.img2babylon/state.json`。
 - 截圖必須落地成檔並用 agent vision 讀回，行內預覽不算證據（沿用 reference 鐵律）。
@@ -195,7 +195,7 @@ export function createPillBottleModel(scene: Scene, opts?: { physics?: boolean }
 
 - forge：`python3 -m unittest discover -s forge/tests`（validate/check_colliders/tomato
   的離線邏輯，樣本 JSON 驅動）。
-- viewer：`tsc --noEmit` typecheck；`physics_test.mjs` 兼作煙霧測試。
+- viewer：`tsc --noEmit` typecheck；`physics_test.ts` 兼作煙霧測試。
 - **驗收一（Claude Code）**：揀蓋式藥罐——tomato 生參考圖 → 建模 → 三層物理 gate 全綠
   → 瓶身可丟擲落地靜止、蓋子可沿 hinge 開合且受 limit 約束。
 - **驗收二（Codex CLI）**：`codex exec` 以同一 SKILL.md 完成一個簡單物件（如木箱）
