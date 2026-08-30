@@ -1,0 +1,53 @@
+{
+  "targetName": "codex-crate",
+  "schemaVersion": "1",
+  "sourceImages": [{
+    "role": "hero",
+    "path": ".img2babylon/codex-crate/hero.png",
+    "origin": "tomato",
+    "tomatoJobId": "7fb8156b4f1d4651a3ea5fb9f6847263",
+    "prompt": "a simple sturdy wooden shipping crate, cubic rectangular box made from warm brown wooden planks with reinforcing slats on all visible faces, centered single object, plain light gray background, soft even studio lighting, three-quarter view, minimal perspective, no text, no metal hardware"
+  }],
+  "coordinateFrame": { "up": "y", "forward": "z", "units": "m" },
+  "silhouette": {
+    "outline": "open-top rectangular wooden slat crate with four stout corner posts and small feet",
+    "complexity": "simple"
+  },
+  "componentTree": [{
+    "id": "crate",
+    "name": "rigid wooden crate assembly",
+    "level": "macro",
+    "primitive": "box",
+    "dimensions": { "w": 0.8, "h": 0.62, "d": 0.6, "units": "m", "confidence": 0.8 },
+    "transform": { "position": [0, 0.31, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+    "parent": null,
+    "attachment": { "type": "none" },
+    "material": "warm-wood",
+    "collider": { "type": "box", "size": [0.8, 0.62, 0.6], "offset": [0, 0, 0], "confidence": 0.82 }
+  }],
+  "materials": [{
+    "id": "warm-wood",
+    "kind": "procedural",
+    "baseColor": [0.48, 0.25, 0.1],
+    "roughness": 0.82
+  }],
+  "physics": {
+    "bodies": [{
+      "id": "crate",
+      "components": ["crate"],
+      "mass": 18.0,
+      "friction": 0.72,
+      "restitution": 0.08,
+      "centerOfMass": [0, -0.04, 0]
+    }],
+    "constraints": []
+  },
+  "buildPasses": ["blockout", "structure", "material", "physics", "polish"],
+  "reviewHistory": [
+    { "pass": "blockout", "likeness": 7, "colliderFit": 9, "action": "continue", "notes": "0.80 x 0.62 x 0.60 m envelope matches the reference proportions. Browser screenshot review was explicitly skipped by user instruction." },
+    { "pass": "structure", "likeness": 8, "colliderFit": 9, "action": "continue", "notes": "Open top, four posts, four feet, bottom deck, and three separated slats per wall reproduce the reference construction without scaling. Browser screenshot review was explicitly skipped." },
+    { "pass": "material", "likeness": 8, "colliderFit": 9, "action": "continue", "notes": "Warm matte wood uses deterministic per-board color variation with seed 314159 and no external textures. Browser screenshot review was explicitly skipped." },
+    { "pass": "physics", "likeness": 8, "colliderFit": 9, "action": "continue", "notes": "Single 18 kg body with 0.8 x 0.62 x 0.6 m box collider; runtime export, static collider check, and five-second drop test all pass." },
+    { "pass": "polish", "likeness": 8, "colliderFit": 9, "action": "continue", "notes": "Runtime metadata and deterministic material details completed. Final three physics gates pass; browser screenshot review remains skipped per user instruction." }
+  ]
+}
