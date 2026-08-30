@@ -142,8 +142,9 @@ export function createPillBottleModel(scene: Scene, opts?: { physics?: boolean }
   root: TransformNode;                      // 視覺根節點
   nodes: Record<string, TransformNode>;     // 每元件一個 pivot node
   meshes: Record<string, Mesh>;
-  aggregates: Record<string, PhysicsAggregate>;  // physics: true 時，每 body 一個
-  constraints: HingeConstraint[];
+  bodies: Record<string, PhysicsBody>;      // physics: true 時，每 body 一個
+                                            // （V2 API：PhysicsBody + PhysicsShapeContainer 複合形狀）
+  constraints: Physics6DoFConstraint[];     // hinge 以 6DoF 鎖五軸 + 單角軸 limit 實作
   dispose(): void;
 };
 ```
@@ -151,6 +152,7 @@ export function createPillBottleModel(scene: Scene, opts?: { physics?: boolean }
 規則（grimoire/build.md + physics.md 契約）：
 - 每個 macro/meso 元件一個 pivot `TransformNode`（`<id>__pivot`），visual mesh 是其子節點；
 - collider 形狀由 spec 的 `collider` 生成 `PhysicsShape`，同 body 多元件 → `PhysicsShapeContainer` 複合；
+- runtime JSON（供靜態 gate）由 headless 腳本以 NullEngine 匯出，瀏覽器僅負責視覺截圖；
 - 尺寸烘進幾何參數，不用 `scaling` 承載尺寸（避免 collider 與 mesh 不同步）；
 - 程序化材質（`DynamicTexture` 畫標籤等），禁止外部貼圖資產；
 - 決定性：所有雜訊帶 seed；
