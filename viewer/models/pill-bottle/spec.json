@@ -1,0 +1,192 @@
+{
+  "targetName": "pill-bottle",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/pill-bottle/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "cd90e63e5c1b426897c706839448aaf3",
+      "prompt": "a translucent amber plastic pill bottle with a white hinged flip-top cap, the lid flipped open upward about 100 degrees connected by a visible plastic living hinge at the back, side three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "squat translucent amber cylinder with a rounded shoulder stepping into a short neck, capped by a white ribbed collar and a hinged white flip lid; a few cream tablets rest on the bottle floor. Rest state = lid closed (hinge limit 0). Hinge knuckle sits on the +z rim and the thumb tab on the -z rim, so a positive rotation about axis [1,0,0] (Babylon left-handed) lifts the lid open up to 110 degrees.",
+    "complexity": "complex"
+  },
+  "componentTree": [
+    {
+      "id": "body",
+      "name": "bottle body",
+      "level": "macro",
+      "primitive": "lathe",
+      "dimensions": { "w": 0.052, "h": 0.054, "d": 0.052, "units": "m", "confidence": 0.8 },
+      "transform": { "position": [0, 0.027, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null,
+      "attachment": { "type": "none" },
+      "material": "amber-plastic",
+      "collider": { "type": "cylinder", "size": [0.052, 0.054, 0.052], "offset": [0, 0, 0], "confidence": 0.85 }
+    },
+    {
+      "id": "neck",
+      "name": "bottle neck with bead",
+      "level": "meso",
+      "primitive": "cylinder",
+      "dimensions": { "w": 0.044, "h": 0.008, "d": 0.044, "units": "m", "confidence": 0.7 },
+      "transform": { "position": [0, 0.058, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body",
+      "attachment": { "type": "fixed", "socket": "body:shoulder" },
+      "material": "amber-plastic"
+    },
+    {
+      "id": "collar",
+      "name": "white cap collar",
+      "level": "macro",
+      "primitive": "cylinder",
+      "dimensions": { "w": 0.047, "h": 0.022, "d": 0.047, "units": "m", "confidence": 0.8 },
+      "transform": { "position": [0, 0.073, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body",
+      "attachment": { "type": "fixed", "socket": "neck:thread" },
+      "material": "cap-plastic",
+      "collider": { "type": "cylinder", "size": [0.048, 0.028, 0.048], "offset": [0, -0.005, 0], "confidence": 0.75 }
+    },
+    {
+      "id": "collar-ribs",
+      "name": "collar knurling ribs",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": { "w": 0.049, "h": 0.016, "d": 0.049, "units": "m", "confidence": 0.55 },
+      "transform": { "position": [0, 0.072, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "collar",
+      "attachment": { "type": "fixed", "socket": "collar:side" },
+      "material": "cap-plastic"
+    },
+    {
+      "id": "pills",
+      "name": "cream tablets on bottle floor",
+      "level": "micro",
+      "primitive": "capsule",
+      "dimensions": { "w": 0.032, "h": 0.009, "d": 0.032, "units": "m", "confidence": 0.5 },
+      "transform": { "position": [0, 0.008, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body",
+      "attachment": { "type": "fixed", "socket": "body:floor" },
+      "material": "pill-cream"
+    },
+    {
+      "id": "cap",
+      "name": "flip-top lid",
+      "level": "macro",
+      "primitive": "cylinder",
+      "dimensions": { "w": 0.045, "h": 0.01, "d": 0.045, "units": "m", "confidence": 0.75 },
+      "transform": { "position": [0, 0.089, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "collar",
+      "attachment": {
+        "type": "hinge",
+        "socket": "collar:rim-hinge-side",
+        "hinge": { "pivot": [0, -0.005, 0.023], "axis": [1, 0, 0], "limits": [0, 1.92] }
+      },
+      "material": "cap-plastic",
+      "collider": { "type": "cylinder", "size": [0.045, 0.01, 0.045], "offset": [0, 0, 0], "confidence": 0.8 }
+    },
+    {
+      "id": "cap-tab",
+      "name": "thumb tab on the opening rim",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": { "w": 0.016, "h": 0.005, "d": 0.004, "units": "m", "confidence": 0.5 },
+      "transform": { "position": [0, 0.0885, -0.0215], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "cap",
+      "attachment": { "type": "fixed", "socket": "cap:thumb-side" },
+      "material": "cap-plastic"
+    },
+    {
+      "id": "hinge-tab",
+      "name": "living-hinge knuckle on the +z rim",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": { "w": 0.014, "h": 0.006, "d": 0.005, "units": "m", "confidence": 0.5 },
+      "transform": { "position": [0, 0.084, 0.0235], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "cap",
+      "attachment": { "type": "fixed", "socket": "cap:hinge-side" },
+      "material": "cap-plastic"
+    }
+  ],
+  "materials": [
+    { "id": "amber-plastic", "kind": "procedural", "baseColor": [0.74, 0.42, 0.11], "roughness": 0.3, "alpha": 0.62 },
+    { "id": "cap-plastic", "kind": "procedural", "baseColor": [0.93, 0.93, 0.91], "roughness": 0.45 },
+    { "id": "pill-cream", "kind": "procedural", "baseColor": [0.95, 0.9, 0.66], "roughness": 0.65 }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "body",
+        "components": ["body", "neck", "collar", "collar-ribs", "pills"],
+        "mass": 0.04,
+        "friction": 0.5,
+        "restitution": 0.25,
+        "centerOfMass": [0, -0.01, 0]
+      },
+      {
+        "id": "cap",
+        "components": ["cap", "cap-tab", "hinge-tab"],
+        "mass": 0.008,
+        "friction": 0.5,
+        "restitution": 0.25
+      }
+    ],
+    "constraints": [
+      {
+        "type": "hinge",
+        "bodyA": "body",
+        "bodyB": "cap",
+        "pivotA": [0, 0.057, 0.023],
+        "pivotB": [0, -0.005, 0.023],
+        "axis": [1, 0, 0],
+        "limits": [0, 1.92]
+      }
+    ]
+  },
+  "buildPasses": ["blockout", "structure", "material", "physics", "polish"],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "action": "continue",
+      "notes": "灰模輪廓與參考圖比例吻合（琥珀段高/寬 1.27 vs 參考 1.24）；collider 線框緊貼幾何，僅頸部 2mm 徑向餘裕。缺肩線倒角、螺紋、藥錠等細節，留給後續 pass。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "action": "continue",
+      "notes": "lathe 瓶身（底部倒角 + 肩線 + 瓶口）、頸環、蓋環滾花、拇指扣片、鉸鏈節、seed 決定的 4 顆藥錠全部到位；滾花帶寬/瓶身寬 0.93 vs 參考 0.90。修正 1 次：collar 上緣唇口高出蓋環頂面導致 collider 未包住 mesh，改為與頂面齊平。"
+    },
+    {
+      "pass": "material",
+      "likeness": 7,
+      "colliderFit": 9,
+      "action": "continue",
+      "notes": "琥珀半透明（alpha 0.62、關背面剔除）讓藥錠透出來，與參考圖的色溫與通透感相符；白蓋在單一 HemisphericLight 下偏淺灰，屬打光差異而非材質差異。無修正。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 7,
+      "colliderFit": 9,
+      "action": "continue",
+      "notes": "兩個剛體（body 0.04kg 複合 cylinder×2、cap 0.008kg）+ Physics6DoFConstraint 鉸鏈（axis [1,0,0]、limits [0,1.92]）。三層 gate 全綠：check_colliders OK、physics_test pass、--nudge cap pass。修正 1 次：Babylon 為左手系，鉸鏈原本放 -z 側時 ANGULAR_X 正向等於「把蓋子壓進瓶身」，落地衝擊直接把約束扯開（cap 掉到地面 y=0.006）；改放 +z 側後 0→1.92 才是掀開。靜置時鉸鏈角 -3.5 度（Havok 軟性限位的靜態誤差，蓋子仍貼合蓋環）；受衝擊後停在 112.2 度（限位 110 度、超調 2.2 度）。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 7,
+      "colliderFit": 9,
+      "action": "continue",
+      "notes": "頸部由 12mm 收到 8mm，琥珀段高/寬 = 0.062/0.052 = 1.19，與參考圖一致；鉸鏈與扣片位置改由 HINGE_Y 常數推導，metadata 改為 { sculptRuntime: { nodes, meshes, bodies, constraints } }，dispose 依序釋放 constraint→body→material→node。同一 seed 連跑兩次幾何逐位元相同。三層物理 gate 全綠。剩餘落差：靜置為闔蓋（參考圖為掀開）、白蓋在單光源下偏淺灰。"
+    }
+  ]
+}
