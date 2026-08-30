@@ -203,3 +203,12 @@ export function createPillBottleModel(scene: Scene, opts?: { physics?: boolean }
 
 viewer 骨架（含 capture/harness/physics_test）→ forge 工具 → grimoire 契約 →
 SKILL.md 路由器 → symlink → 驗收一（藥罐）→ 驗收二（codex exec）。
+
+## 11. Roadmap（日後，不在本次範圍）
+
+- **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
+  （gemma-4-26b-a4b 已具 vision + tool calling），`codex --profile local` 即可跑同一份
+  SKILL.md；零新程式碼，僅 `~/.codex/config.toml` 設定。
+- **Headless 截圖備援**：`viewer/scripts/capture_playwright.mjs`（opt-in），讓沒有
+  browser tool 的 harness 也能產生落地截圖，仿 reference 的
+  `capture_threejs_playwright.py`。
