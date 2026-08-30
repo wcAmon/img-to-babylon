@@ -1,0 +1,35 @@
+{
+  "targetName": "sample-crate",
+  "schemaVersion": "1",
+  "sourceImages": [
+    { "role": "hero", "path": "(hand-authored example, no image)", "origin": "user" }
+  ],
+  "coordinateFrame": { "up": "y", "forward": "z", "units": "m" },
+  "silhouette": { "outline": "single cube", "complexity": "simple" },
+  "componentTree": [
+    {
+      "id": "crate",
+      "name": "wooden crate",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": { "w": 0.3, "h": 0.3, "d": 0.3, "units": "m", "confidence": 1.0 },
+      "transform": { "position": [0, 0.151, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null,
+      "attachment": { "type": "none" },
+      "material": "pine-wood",
+      "collider": { "type": "box", "size": [0.3, 0.3, 0.3], "offset": [0, 0, 0], "confidence": 1.0 }
+    }
+  ],
+  "materials": [
+    { "id": "pine-wood", "kind": "procedural", "baseColor": [0.55, 0.36, 0.17], "roughness": 0.85 }
+  ],
+  "physics": {
+    "bodies": [
+      { "id": "crate", "components": ["crate"], "mass": 2.0, "friction": 0.6,
+        "restitution": 0.2, "centerOfMass": [0, 0, 0] }
+    ],
+    "constraints": []
+  },
+  "buildPasses": ["blockout", "structure", "material", "physics", "polish"],
+  "reviewHistory": []
+}
