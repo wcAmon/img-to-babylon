@@ -213,4 +213,9 @@ SKILL.md 路由器 → symlink → 驗收一（藥罐）→ 驗收二（codex ex
   SKILL.md；零新程式碼，僅 `~/.codex/config.toml` 設定。
 - **Headless 截圖備援**：`viewer/scripts/capture_playwright.mjs`（opt-in），讓沒有
   browser tool 的 harness 也能產生落地截圖，仿 reference 的
-  `capture_threejs_playwright.py`。
+  `capture_threejs_playwright.py`。（本機另有環境限制：Chrome 擴充未連線、Firefox
+  headless 無 WebGL——此備援落地後即可補齊視覺 gate。）
+- **spec↔factory 交叉檢查**：目前 factory 的物理常數手動鏡像 spec；可加一支工具
+  直接從 spec 常數比對 factory 匯出的實際幾何。附帶邊角：runtime_export 對
+  「body 的 components[0] 無 collider 且無 node」會產生 NaN 質心（現有 spec 皆
+  不可達，pre-existing）。
