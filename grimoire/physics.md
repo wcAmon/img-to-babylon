@@ -51,6 +51,16 @@ bodies[con.bodyA].addConstraint(bodies[con.bodyB], hinge);
 constraints.push(hinge);
 ```
 
+### 左手系鉸鏈方向
+
+Babylon.js 是左手座標系；`Matrix.RotationX(θ)` 正向旋轉把 +Y 帶向 +Z，因此 ANGULAR_X
+正向 limits（如 `[0, 1.92]`）會把「位於鉸軸 +Y 側的蓋子」往 +Z 方向掀開。揀蓋要向外開：
+鉸鏈 pivot 必須放在瓶口 **+z 側**邊緣（不是 −z），否則正向旋轉會把蓋子壓進瓶身、落地
+衝擊會扯裂 constraint。
+
+藥罐例子：pivot 世界座標 `(0, 0.084, +0.023)`、蓋子中心 `(0, 0.089, 0)`——鉸軸放在
++z 側邊緣，蓋子中心在鉸軸的 −z 側，`limits [0, 1.92]` 才會是「0 = 闔上、1.92 = 掀開」。
+
 ## 質量與密度速查（gate 檢查 50–3000 kg/m³）
 
 | 材質 | 密度 kg/m³ | 例 |

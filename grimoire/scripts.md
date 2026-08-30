@@ -17,6 +17,6 @@
 | `python3 forge/compare.py ref.png render.png --out sheet.png` | 並排對照表 |
 | `npx tsc --noEmit` | typecheck |
 | `npx tsx scripts/runtime_export.ts <name> --spec models/<name>/spec.json --out out.json` | 匯出 AABB |
-| `npx tsx scripts/physics_test.ts <name> [--nudge <bodyId>]` | 動態物理 gate |
+| `npx tsx scripts/physics_test.ts <name> --spec models/<name>/spec.json [--nudge <bodyId>]` | 動態物理 gate（有 hinge 時 `--spec` 才會查約束是否被扯開） |
 | `npm run dev` | 開 viewer（http://localhost:5173/#model=<name>&physics=1） |
 | `python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'` | forge 全測試 |

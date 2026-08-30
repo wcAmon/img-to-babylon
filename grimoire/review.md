@@ -6,13 +6,17 @@
 2. `python3 forge/validate_spec.py viewer/models/<name>/spec.json --strict`（spec 改過才需要）
 3. `npx tsx scripts/runtime_export.ts <name> --spec models/<name>/spec.json --out ../.img2babylon/<name>/runtime.json`
    → `python3 forge/check_colliders.py .img2babylon/<name>/runtime.json`
-4. `npx tsx scripts/physics_test.ts <name>`；有 hinge 時再跑一次加 `--nudge <capBodyId>`
+4. `npx tsx scripts/physics_test.ts <name> --spec models/<name>/spec.json`；有 hinge 時再跑一次加 `--nudge <capBodyId>`
 5. 視覺截圖（agent browser tool；先 `cd viewer && npm run dev`）：
    - hero：`http://localhost:5173/#model=<name>`，存 `.img2babylon/shots/<name>-hero.png`
    - 碰撞線框：按「碰撞線框」鈕後再截，存 `<name>-collider.png`
    - 每張都要存檔後用 agent vision 讀回。
 6. `python3 forge/compare.py .img2babylon/<name>/hero.png .img2babylon/shots/<name>-hero.png --out .img2babylon/<name>/sheet.png`
    → agent vision 只看這張表評分。
+
+PhysicsBody 要到 physics pass 才會建立（見 `build.md` 的 pass 契約），所以第 3、4 步
+（runtime_export + check_colliders、physics_test）只在 physics pass 及其後（physics、
+polish）執行；blockout/structure/material pass 只跑第 1、2、5、6 步。
 
 ## 評分（記入 spec 的 reviewHistory）
 

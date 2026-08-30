@@ -41,7 +41,7 @@ Agent-agnostic：可在 Claude Code 或 Codex 下執行。文中「agent vision�
    a. `cd viewer && npx tsc --noEmit`
    b. `npx tsx scripts/runtime_export.ts <name> --spec models/<name>/spec.json --out ../.img2babylon/<name>/runtime.json`
       → `python3 forge/check_colliders.py .img2babylon/<name>/runtime.json`
-   c. `npx tsx scripts/physics_test.ts <name>`（有 hinge 時加 `--nudge <bodyId>`）
+   c. `npx tsx scripts/physics_test.ts <name> --spec models/<name>/spec.json`（有 hinge 時加 `--nudge <bodyId>`）
    d. agent browser tool 開 `http://localhost:5173/#model=<name>` 截圖（hero、
       碰撞線框各一）→ `forge/compare.py` 產對照表 → agent vision 目視評分。
    e. 未過 → `python3 forge/next_pass.py correction`（exit 3 = 停下來問使用者），
