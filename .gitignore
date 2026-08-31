@@ -3,3 +3,16 @@ node_modules/
 .img2babylon/
 viewer/dist/
 __pycache__/
+
+# Local secrets and machine-specific files
+.env
+.env.*
+!.env.example
+.venv/
+.DS_Store
+
+# Test, coverage, and runtime output
+coverage/
+test-results/
+playwright-report/
+*.log
