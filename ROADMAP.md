@@ -16,19 +16,19 @@
 | 驗收一：pill-bottle | 揀蓋藥罐——2 body + 1 個**有限角度 hinge**（ANGULAR_X 限制 [0, 1.92]） | `8fb23b1` |
 | 驗收二：codex-crate | Codex CLI 端到端冒煙，證明 agent-agnostic | `7f8aa9d` |
 
-## M1（進行中）：玩具跑車 `toy-racer` — 自由旋轉 hinge
+## M1（2026-09-01 完成）：玩具跑車 `toy-racer` — 自由旋轉 hinge
 
 第一台輪胎可**物理自由滾動**的車：5 body（車身 ×1 + 輪 ×4）+ 4 個無限制
 旋轉 hinge。推一把會滾動前進，輪子因摩擦力自轉。
 
 契約擴充（車子需要什麼就擴什麼，不多做）：
 
-- [ ] `grimoire/spec.md` / `grimoire/physics.md`：hinge `limits` 支援 `"free"`
+- [x] `grimoire/spec.md` / `grimoire/physics.md`：hinge `limits` 支援 `"free"`
       （角軸完全放開）；車輪質量/摩擦/軸向契約
-- [ ] `forge/validate_spec.py`：接受 `limits: "free"` 與多 body（≥3）情境
-- [ ] `viewer/scripts/physics_test.ts`：滾動驗證——施水平推力後斷言位移方向、
-      輪角速度 ≈ 線速度 ÷ 半徑（滾動不打滑）、constraint 不裂
-- [ ] `toy-racer` 走 SKILL.md 六步完成，三層 gate 全綠
+- [x] `forge/validate_spec.py`：接受 `limits: "free"`（格式驗證＋attachment 漂移檢查）
+- [x] `viewer/scripts/physics_test.ts --roll`：滾動驗證——推力後前進 3.08m、
+      側偏 0.5cm、四輪 slip ≈ 2%（ω·r ≈ v，滾動不打滑）、constraint 不裂
+- [x] `toy-racer` 走 SKILL.md 六步完成，三層 gate 全綠（stylized 玩具方盒風）
 
 玩具風格是刻意選擇：圓潤誇張的比例繞過擬真曲面建模，正如 M2 用公仔風格
 繞過蒙皮。

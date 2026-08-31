@@ -7,4 +7,6 @@ export const registry: Record<string, () => Promise<{ default: ModelFactory }>> 
   "pill-bottle": () => import("../models/pill-bottle/createPillBottleModel"),
   // Task 14 註冊
   "codex-crate": () => import("../models/codex-crate/createCodexCrateModel"),
+  // M1 玩具跑車（自由旋轉 hinge）
+  "toy-racer": () => import("../models/toy-racer/createToyRacerModel"),
 };

@@ -1,0 +1,948 @@
+{
+  "targetName": "toy-racer",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/toy-racer/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "fe28ae62e8a44ad49eb87624d4e6839f",
+      "prompt": "a chunky toy sports car, glossy red plastic body with white racing stripe, black wheels with gray hubs, rounded exaggerated proportions, cartoonish style, side three-quarter view, centered, plain light gray background, soft studio lighting"
+    },
+    {
+      "role": "side",
+      "path": ".img2babylon/toy-racer/side.png",
+      "origin": "tomato",
+      "tomatoJobId": "a3d7208bb5fe40b0a29b50066ab2182e",
+      "prompt": "(views edit of hero)"
+    },
+    {
+      "role": "rear",
+      "path": ".img2babylon/toy-racer/rear.png",
+      "origin": "tomato",
+      "tomatoJobId": "ec68ae72d8d747b88ed15b43d129e2bc",
+      "prompt": "(views edit of hero)"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "low chunky toy sports car: rounded one-piece red body with white racing stripes, bubble cabin, rear wing, four fat black wheels with gray five-spoke hubs protruding from the fenders",
+    "complexity": "complex"
+  },
+  "componentTree": [
+    {
+      "id": "chassis",
+      "name": "lower body shell",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.052,
+        "h": 0.024,
+        "d": 0.118,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          0.024,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "body-red-striped",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.052,
+          0.024,
+          0.118
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "cabin",
+      "name": "bubble cabin / greenhouse",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.038,
+        "h": 0.014,
+        "d": 0.05,
+        "units": "m",
+        "confidence": 0.75
+      },
+      "transform": {
+        "position": [
+          0,
+          0.041,
+          -0.006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "chassis",
+      "attachment": {
+        "type": "fixed",
+        "socket": "chassis:top"
+      },
+      "material": "body-red-striped",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.038,
+          0.014,
+          0.05
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.75
+      }
+    },
+    {
+      "id": "windshield",
+      "name": "front windshield",
+      "level": "meso",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.034,
+        "h": 0.012,
+        "d": 0.002,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.039,
+          0.02
+        ],
+        "rotation": [
+          -0.45,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "cabin",
+      "attachment": {
+        "type": "fixed",
+        "socket": "cabin:front"
+      },
+      "material": "glass-tint"
+    },
+    {
+      "id": "spoiler",
+      "name": "rear wing",
+      "level": "meso",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.04,
+        "h": 0.003,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          0,
+          0.047,
+          -0.053
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "chassis",
+      "attachment": {
+        "type": "fixed",
+        "socket": "chassis:tail-top"
+      },
+      "material": "body-red",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.04,
+          0.003,
+          0.012
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.7
+      }
+    },
+    {
+      "id": "headlight-l",
+      "name": "left headlight",
+      "level": "micro",
+      "primitive": "sphere",
+      "dimensions": {
+        "w": 0.009,
+        "h": 0.006,
+        "d": 0.004,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          -0.015,
+          0.028,
+          0.058
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "chassis",
+      "attachment": {
+        "type": "fixed",
+        "socket": "chassis:nose"
+      },
+      "material": "headlight-silver"
+    },
+    {
+      "id": "headlight-r",
+      "name": "right headlight",
+      "level": "micro",
+      "primitive": "sphere",
+      "dimensions": {
+        "w": 0.009,
+        "h": 0.006,
+        "d": 0.004,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0.015,
+          0.028,
+          0.058
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "chassis",
+      "attachment": {
+        "type": "fixed",
+        "socket": "chassis:nose"
+      },
+      "material": "headlight-silver"
+    },
+    {
+      "id": "tire-fl",
+      "name": "front-left tire",
+      "level": "macro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.028,
+        "h": 0.012,
+        "d": 0.028,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          -0.027,
+          0.014,
+          0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "hinge",
+        "socket": "chassis:axle-fl",
+        "hinge": {
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": "free"
+        }
+      },
+      "material": "tire-rubber",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.028,
+          0.012,
+          0.028
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "tire-fr",
+      "name": "front-right tire",
+      "level": "macro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.028,
+        "h": 0.012,
+        "d": 0.028,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0.027,
+          0.014,
+          0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "hinge",
+        "socket": "chassis:axle-fr",
+        "hinge": {
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": "free"
+        }
+      },
+      "material": "tire-rubber",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.028,
+          0.012,
+          0.028
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "tire-rl",
+      "name": "rear-left tire",
+      "level": "macro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.028,
+        "h": 0.012,
+        "d": 0.028,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          -0.027,
+          0.014,
+          -0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "hinge",
+        "socket": "chassis:axle-rl",
+        "hinge": {
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": "free"
+        }
+      },
+      "material": "tire-rubber",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.028,
+          0.012,
+          0.028
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "tire-rr",
+      "name": "rear-right tire",
+      "level": "macro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.028,
+        "h": 0.012,
+        "d": 0.028,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0.027,
+          0.014,
+          -0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "hinge",
+        "socket": "chassis:axle-rr",
+        "hinge": {
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": "free"
+        }
+      },
+      "material": "tire-rubber",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.028,
+          0.012,
+          0.028
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "hub-fl",
+      "name": "front-left hub",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.016,
+        "h": 0.003,
+        "d": 0.016,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          -0.0335,
+          0.014,
+          0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "tire-fl",
+      "attachment": {
+        "type": "fixed",
+        "socket": "tire-fl:outer-face"
+      },
+      "material": "hub-gray"
+    },
+    {
+      "id": "hub-fr",
+      "name": "front-right hub",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.016,
+        "h": 0.003,
+        "d": 0.016,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          0.0335,
+          0.014,
+          0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "tire-fr",
+      "attachment": {
+        "type": "fixed",
+        "socket": "tire-fr:outer-face"
+      },
+      "material": "hub-gray"
+    },
+    {
+      "id": "hub-rl",
+      "name": "rear-left hub",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.016,
+        "h": 0.003,
+        "d": 0.016,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          -0.0335,
+          0.014,
+          -0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "tire-rl",
+      "attachment": {
+        "type": "fixed",
+        "socket": "tire-rl:outer-face"
+      },
+      "material": "hub-gray"
+    },
+    {
+      "id": "hub-rr",
+      "name": "rear-right hub",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.016,
+        "h": 0.003,
+        "d": 0.016,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          0.0335,
+          0.014,
+          -0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "tire-rr",
+      "attachment": {
+        "type": "fixed",
+        "socket": "tire-rr:outer-face"
+      },
+      "material": "hub-gray"
+    },
+    {
+      "id": "spoiler-struts",
+      "name": "rear wing struts",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.004,
+        "h": 0.011,
+        "d": 0.006,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0405,
+          -0.053
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "spoiler",
+      "attachment": {
+        "type": "fixed",
+        "socket": "chassis:tail-top"
+      },
+      "material": "body-red"
+    }
+  ],
+  "materials": [
+    {
+      "id": "body-red-striped",
+      "kind": "dynamicTexture",
+      "baseColor": [
+        0.85,
+        0.08,
+        0.06
+      ],
+      "roughness": 0.15
+    },
+    {
+      "id": "body-red",
+      "kind": "procedural",
+      "baseColor": [
+        0.85,
+        0.08,
+        0.06
+      ],
+      "roughness": 0.15
+    },
+    {
+      "id": "tire-rubber",
+      "kind": "procedural",
+      "baseColor": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "roughness": 0.9
+    },
+    {
+      "id": "hub-gray",
+      "kind": "procedural",
+      "baseColor": [
+        0.55,
+        0.57,
+        0.6
+      ],
+      "roughness": 0.5
+    },
+    {
+      "id": "glass-tint",
+      "kind": "procedural",
+      "baseColor": [
+        0.15,
+        0.17,
+        0.2
+      ],
+      "roughness": 0.1,
+      "alpha": 0.7
+    },
+    {
+      "id": "headlight-silver",
+      "kind": "procedural",
+      "baseColor": [
+        0.9,
+        0.92,
+        0.95
+      ],
+      "roughness": 0.2
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "chassis",
+        "components": [
+          "chassis",
+          "cabin",
+          "windshield",
+          "spoiler",
+          "headlight-l",
+          "headlight-r",
+          "spoiler-struts"
+        ],
+        "mass": 0.2,
+        "friction": 0.3,
+        "restitution": 0.3,
+        "centerOfMass": [
+          0,
+          -0.008,
+          0
+        ]
+      },
+      {
+        "id": "wheel-fl",
+        "components": [
+          "tire-fl",
+          "hub-fl"
+        ],
+        "mass": 0.018,
+        "friction": 0.9,
+        "restitution": 0.2
+      },
+      {
+        "id": "wheel-fr",
+        "components": [
+          "tire-fr",
+          "hub-fr"
+        ],
+        "mass": 0.018,
+        "friction": 0.9,
+        "restitution": 0.2
+      },
+      {
+        "id": "wheel-rl",
+        "components": [
+          "tire-rl",
+          "hub-rl"
+        ],
+        "mass": 0.018,
+        "friction": 0.9,
+        "restitution": 0.2
+      },
+      {
+        "id": "wheel-rr",
+        "components": [
+          "tire-rr",
+          "hub-rr"
+        ],
+        "mass": 0.018,
+        "friction": 0.9,
+        "restitution": 0.2
+      }
+    ],
+    "constraints": [
+      {
+        "type": "hinge",
+        "bodyA": "chassis",
+        "bodyB": "wheel-fl",
+        "pivotA": [
+          -0.027,
+          -0.01,
+          0.032
+        ],
+        "pivotB": [
+          0,
+          0,
+          0
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": "free"
+      },
+      {
+        "type": "hinge",
+        "bodyA": "chassis",
+        "bodyB": "wheel-fr",
+        "pivotA": [
+          0.027,
+          -0.01,
+          0.032
+        ],
+        "pivotB": [
+          0,
+          0,
+          0
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": "free"
+      },
+      {
+        "type": "hinge",
+        "bodyA": "chassis",
+        "bodyB": "wheel-rl",
+        "pivotA": [
+          -0.027,
+          -0.01,
+          -0.032
+        ],
+        "pivotB": [
+          0,
+          0,
+          0
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": "free"
+      },
+      {
+        "type": "hinge",
+        "bodyA": "chassis",
+        "bodyB": "wheel-rr",
+        "pivotA": [
+          0.027,
+          -0.01,
+          -0.032
+        ],
+        "pivotB": [
+          0,
+          0,
+          0
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": "free"
+      }
+    ]
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": []
+}

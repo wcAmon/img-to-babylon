@@ -14,7 +14,11 @@ Host 入口 symlink（單一 checkout，嚴禁複製兩份導致漂移）：
 - `reference/` 是外部參考 checkout（img2threejs），唯讀、不納版控。
 - 全套驗證：`python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'`
   ＋ `cd viewer && npx tsc --noEmit && npx tsx scripts/physics_test.ts <model> --spec models/<model>/spec.json`。
-- 本機瀏覽器 gate 受限：Chrome 擴充未連線、Firefox headless 無 WebGL——視覺驗證用
-  headless 匯出替代，實機目視請使用者開 `npm run dev`。
+- 本機瀏覽器 gate：Chrome 擴充未連線、Firefox headless 無 WebGL，但 **playwright MCP
+  的 chromium 可渲染 WebGL**——`browser_navigate` 開 `http://localhost:5173/#model=<name>`
+  後用 `browser_evaluate` 呼叫 `window.__IMG2BABYLON_CAPTURE__`（setCamera + screenshot
+  回傳 base64，存進 `.img2babylon/shots/`）。注意：頁面載入後第一次 setCamera 常不生效，
+  同一次 evaluate 內先 setCamera、等 400ms、再 setCamera 一次後截圖。PhysicsViewer
+  線框走 utility layer，render-target 截圖照不到——改用 playwright 視口截圖。
 - `.img2babylon/`（gitignored）是執行期狀態；state.json 一次只屬於一個模型，
   換模型用 `next_pass.py init --model <name> --force`。
