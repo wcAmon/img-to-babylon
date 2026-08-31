@@ -208,6 +208,9 @@ SKILL.md 路由器 → symlink → 驗收一（藥罐）→ 驗收二（codex ex
 
 ## 11. Roadmap（日後，不在本次範圍）
 
+> 2026-09-01 起 roadmap 正典移至根目錄 `ROADMAP.md`（難度階梯：M1 玩具跑車 →
+> M2 公仔 ragdoll → M3 蒙皮角色/Divine Eye）。本節保留當時快照，不再更新。
+
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
   （gemma-4-26b-a4b 已具 vision + tool calling），`codex --profile local` 即可跑同一份
   SKILL.md；零新程式碼，僅 `~/.codex/config.toml` 設定。
