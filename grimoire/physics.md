@@ -64,6 +64,46 @@ Babylon.js 是左手座標系；`Matrix.RotationX(θ)` 正向旋轉把 +Y 帶向
 藥罐例子：pivot 世界座標 `(0, 0.084, +0.023)`、蓋子中心 `(0, 0.089, 0)`——鉸軸放在
 +z 側邊緣，蓋子中心在鉸軸的 −z 側，`limits [0, 1.92]` 才會是「0 = 闔上、1.92 = 掀開」。
 
+## 自由旋轉 hinge（車輪）：鎖五軸、旋轉軸完全放開
+
+spec 寫法：constraint 的 `limits` 用字串 `"free"`（不是省略、不是 `[null, null]`）。
+程式碼與揀蓋 hinge 唯一的差別：**ANGULAR_X 那條 limit 整個不列**——6DoF 不給某軸
+limit 就是放開該軸：
+
+```ts
+const wheelHinge = new Physics6DoFConstraint(
+  {
+    pivotA: Vector3.FromArray(con.pivotA),   // 車身局部：輪軸心位置
+    pivotB: Vector3.FromArray(con.pivotB),   // 輪局部：通常 [0, 0, 0]（輪心）
+    axisA: Vector3.FromArray(con.axis),      // 車輪轉軸，如 [1, 0, 0]（X 軸橫貫車身）
+    axisB: Vector3.FromArray(con.axis),
+    perpAxisA: 任一與 axis 垂直的單位向量,
+    perpAxisB: 同 perpAxisA,
+  },
+  [
+    { axis: PhysicsConstraintAxis.LINEAR_X, minLimit: 0, maxLimit: 0 },
+    { axis: PhysicsConstraintAxis.LINEAR_Y, minLimit: 0, maxLimit: 0 },
+    { axis: PhysicsConstraintAxis.LINEAR_Z, minLimit: 0, maxLimit: 0 },
+    { axis: PhysicsConstraintAxis.ANGULAR_Y, minLimit: 0, maxLimit: 0 },
+    { axis: PhysicsConstraintAxis.ANGULAR_Z, minLimit: 0, maxLimit: 0 },
+    // ANGULAR_X 不列 → 自由旋轉
+  ],
+  scene,
+);
+```
+
+### 車輪契約
+
+- **collider**：cylinder（軸向沿輪的旋轉軸）。注意 PhysicsShapeCylinder 的 A/B 點
+  沿 **Y** 軸——輪面朝 X 時，visual mesh 與 collider 都要繞 Z 轉 90°，或用
+  相對旋轉四元數把子形狀轉正。
+- **摩擦**：輪胎要高摩擦（0.8–1.0）才咬得住地滾動而不打滑；車身低摩擦（~0.3）。
+- **質量分配**：車身重、輪輕（玩具車參考：車身 ~0.2 kg、每輪 ~0.02 kg），
+  `centerOfMass` 壓低（負 Y），推一把才不會翻。
+- **對稱**：四輪 pivotA 必須左右/前後對稱，否則直線推力會跑偏。
+- **驗證**：`physics_test.ts --roll <bodyId>` 施水平推力，斷言車體位移、
+  輪角速度 ≈ 線速度 ÷ 輪半徑（滾動不打滑）、constraint 不裂。
+
 ## 質量與密度速查（gate 檢查 50–3000 kg/m³）
 
 | 材質 | 密度 kg/m³ | 例 |

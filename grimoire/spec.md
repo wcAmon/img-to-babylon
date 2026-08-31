@@ -79,6 +79,8 @@
 - `body.mass` 必須是正數。
 - `constraints[]` 的 `bodyA` / `bodyB` 必須是已定義的 body id。
 - `type: "hinge"` 的 constraint 必須同時有 `axis` 與 `limits`。
+- `limits` 必須是 `[lo, hi]` 數字對（弧度，`lo < hi`，如揀蓋 `[0, 1.92]`），或字串
+  `"free"` 表示角軸完全放開（自由旋轉，如車輪——推一把因摩擦力自轉，無角度上限）。
 
 ## 權威規則：`physics.constraints` 才是物理事實
 
@@ -95,6 +97,8 @@ constraint pivot 卻忘記同步 attachment），所以驗證器強制比對：
   （`math.dist(pivot, pivotB) <= 0.005`）。注意比對的永遠是 `pivotB`，不看
   元件掛在 `bodyA` 還是 `bodyB`——因此建 spec 時把「會動的那一側」（例如蓋子）
   放在 `bodyB`，`attachment.hinge.pivot` 就直接抄 `pivotB` 的值。
+- `attachment.hinge.limits`（若有寫）必須與該 constraint 的 `limits`**完全相同**
+  （`[0, 1.92]` 對 `[0, 1.92]`、`"free"` 對 `"free"`），抓兩邊漂移。
 
 ## `silhouette.complexity` 與元件數量
 

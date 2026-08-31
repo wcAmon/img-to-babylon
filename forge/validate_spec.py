@@ -16,6 +16,15 @@ COLLIDER_TYPES = {"box", "sphere", "capsule", "cylinder", "convex"}
 HINGE_PIVOT_TOL = 0.005  # 5mm：attachment.hinge.pivot 與 constraint.pivotB 容差
 
 
+def _valid_limits(limits):
+    """hinge limits：[lo, hi] 數字對（lo < hi）或 "free"（角軸完全放開，如車輪）。"""
+    if limits == "free":
+        return True
+    return (isinstance(limits, list) and len(limits) == 2
+            and all(isinstance(x, (int, float)) for x in limits)
+            and limits[0] < limits[1])
+
+
 def validate(spec, strict=False):
     errors, warnings = [], []
     for key in REQUIRED_TOP:
@@ -72,8 +81,13 @@ def validate(spec, strict=False):
         for side in ("bodyA", "bodyB"):
             if con.get(side) not in body_ids:
                 errors.append(f"constraint 引用不存在 body: {con.get(side)}")
-        if con.get("type") == "hinge" and ("axis" not in con or "limits" not in con):
-            errors.append("hinge constraint 必須有 axis 與 limits")
+        if con.get("type") == "hinge":
+            if "axis" not in con or "limits" not in con:
+                errors.append("hinge constraint 必須有 axis 與 limits")
+            elif not _valid_limits(con["limits"]):
+                errors.append(
+                    f"hinge constraint limits 不合法（須為 [lo, hi] 數字對且 lo < hi，"
+                    f"或 \"free\"）: {con['limits']!r}")
 
     for cid, c in comps.items():
         att = c.get("attachment") or {}
@@ -92,6 +106,8 @@ def validate(spec, strict=False):
         pa, pb = h.get("pivot"), match.get("pivotB")
         if pa and pb and math.dist(pa, pb) > HINGE_PIVOT_TOL:
             errors.append(f"元件 {cid} hinge pivot 與 constraint pivotB 差距 > 5mm")
+        if "limits" in h and h["limits"] != match.get("limits"):
+            errors.append(f"元件 {cid} hinge limits 與 constraint 不一致")
 
     if strict:
         if spec["silhouette"].get("complexity") == "complex" and len(comps) < 3:
