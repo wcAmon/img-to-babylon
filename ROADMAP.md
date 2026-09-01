@@ -60,8 +60,10 @@
 - **有機蒙皮角色**：Babylon 無內建 marching cubes——SDF 平滑融合軀體與
   geodesic skinning（參考 `reference/img2threejs/forge/stage5_rig/`）都是
   大工程，等 M1/M2 暴露真實需求再排。
-- **Divine Eye 確定性審查移植**：IoU/比例/對稱/pHash/SSIM 等腳本化訊號
-  （參考原作 v1.3），把 agent vision 只花在腳本判斷不了的地方。
+- **Divine Eye 確定性審查移植**（2026-09-01 完成）：`forge/divine_eye.py`——
+  bbox 對齊 silhouette IoU 硬 gate＋六軟訊號集成（aspect/對稱 parity/pHash/SSIM/
+  edge/tonal），陰影剔除＋遮罩閉合，門檻以 M1/M2 語料校準（好壞完美分離）。
+  review gate 第 6 步接線：REJECT 直接修正、不花 agent vision。
 - **可駕駛車（馬達 hinge）**：在 M1 自由滾動之上加 constraint motor 與
   viewer 鍵盤輸入。
 

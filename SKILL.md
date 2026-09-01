@@ -43,7 +43,7 @@ Agent-agnostic：可在 Claude Code 或 Codex 下執行。文中「agent vision�
       → `python3 forge/check_colliders.py .img2babylon/<name>/runtime.json`
    c. `npx tsx scripts/physics_test.ts <name> --spec models/<name>/spec.json`（有 hinge 時加 `--nudge <bodyId>`）
    d. agent browser tool 開 `http://localhost:5173/#model=<name>` 截圖（hero、
-      碰撞線框各一）→ `forge/compare.py` 產對照表 → agent vision 目視評分。
+      碰撞線框各一）→ `forge/compare.py` 產對照表 → `forge/divine_eye.py` 確定性預審（REJECT 直接修正，不花 vision）→ agent vision 目視評分。
    e. 未過 → `python3 forge/next_pass.py correction`（exit 3 = 停下來問使用者），
       依 review.md 選動作：continue | refine-spec | refine-code | request-input | stop。
 6. polish pass 完成且三層物理 gate 全綠 → 收尾（commit、告知使用者）。
@@ -58,5 +58,5 @@ Agent-agnostic：可在 Claude Code 或 Codex 下執行。文中「agent vision�
 | `grimoire/physics.md` | Havok collider / 質量 / hinge 契約 |
 | `grimoire/review.md` | review gate、評分、修正動作 |
 | `grimoire/scripts.md` | 全部工具命令速查 |
-| `forge/*.py` | 確定性工具（tomato / new_spec / validate_spec / next_pass / check_colliders / compare） |
+| `forge/*.py` | 確定性工具（tomato / new_spec / validate_spec / next_pass / check_colliders / compare / divine_eye） |
 | `viewer/` | Vite + Babylon + Havok viewer 與 headless 腳本 |

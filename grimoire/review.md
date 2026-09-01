@@ -12,7 +12,13 @@
    - 碰撞線框：按「碰撞線框」鈕後再截，存 `<name>-collider.png`
    - 每張都要存檔後用 agent vision 讀回。
 6. `python3 forge/compare.py .img2babylon/<name>/hero.png .img2babylon/shots/<name>-hero.png --out .img2babylon/<name>/sheet.png`
-   → agent vision 只看這張表評分。
+   → 先跑 Divine Eye（確定性、零 token）：
+   `python3 forge/divine_eye.py --reference .img2babylon/<name>/hero.png --render .img2babylon/shots/<name>-hero.png --json`
+   - **REJECT（硬失敗或 fidelity 未達標）→ 直接進修正流程，不花 agent vision**；
+     依 hardGateFailures / 最低分訊號判斷 refine-code 還是 refine-spec。
+   - PASS / LOW-CONFIDENCE → agent vision 看對照表評分（likeness 質感仍是 vision 的事）。
+   - 把 `verdict`、`fidelity`、`signals.silhouetteIoU` 記進該 pass reviewHistory 的
+     `eye` 欄位（如 `"eye": {"verdict": "pass", "fidelity": 0.45, "iou": 0.68}`）。
 
 PhysicsBody 要到 physics pass 才會建立（見 `build.md` 的 pass 契約），所以第 3、4 步
 （runtime_export + check_colliders、physics_test）只在 physics pass 及其後（physics、
@@ -20,7 +26,7 @@ polish）執行；blockout/structure/material pass 只跑第 1、2、5、6 步�
 
 ## 評分（記入 spec 的 reviewHistory）
 
-`{"pass": "<pass>", "likeness": 0-10, "colliderFit": 0-10, "action": "<動作>", "notes": "..."}`
+`{"pass": "<pass>", "likeness": 0-10, "colliderFit": 0-10, "eye": {...}, "action": "<動作>", "notes": "..."}`
 - likeness ≥ 7 且 colliderFit ≥ 8 → 該 pass 通過（`next_pass.py done`）。
 - colliderFit 看碰撞線框截圖：線框是否貼合視覺外形、有無明顯突出/縮水。
 - **角色模型加 chirality 檢查**：左右成對零件（臂、腿、耳）必須互為**鏡像**而非
