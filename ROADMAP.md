@@ -67,20 +67,22 @@
 - ~~可駕駛車（馬達 hinge）~~：拆解後併入 M4/M5——img2babylon 只交付
   「附馬達接口的模型」，可玩的駕駛體驗留給未來的遊戲製作 skill 消費。
 
-## M4：可動物件契約 + Actuator Playground（2026-09-01 使用者核准設計，進行中）
+## M4：可動物件契約 + Actuator Playground（2026-09-01 完成）
 
 「遊戲可用」的標準不是模型看起來像，而是可動件真的可動、可審查、可修改。
 
-- [ ] spec 契約新增 `actuation` 宣告（constraint 上：drive / steer / servo；
+- [x] spec 契約新增 `actuation` 宣告（constraint 上：drive / steer / servo；
       component 上：light=材質 emissive 兩態）；validate_spec 檢查格式與對應
-- [ ] factory 契約：模型出廠掛標準 `actuators` 介面
+- [x] factory 契約：模型出廠掛標準 `actuators` 介面
       （`drive(speed)`、`steer(angle)`、`servo(joint, angle)`、`light(on)`）
-- [ ] 新 gate `viewer/scripts/actuation_test.ts`（可動物件審查）：逐一驅動宣告的
+- [x] 新 gate `viewer/scripts/actuation_test.ts`（可動物件審查）：逐一驅動宣告的
       可動件並斷言可量測回應——drive 令車前進、steer 令航向偏、servo 令關節到
       目標角、light 令 emissive 變；宣告了但動不了 = FAIL
-- [ ] Actuator Playground：viewer 側欄面板讀 `actuators` 自動生成 UI（滑桿/開關/
+- [x] Actuator Playground：viewer 側欄面板讀 `actuators` 自動生成 UI（滑桿/開關/
       預設姿勢鈕），動作怪異可即時看出是哪個關節限位/軸向不對，回頭改 spec 重載
-- [ ] 示範：toy-racer 加 drive+steer（轉向節 body）；action-figure 九關節掛伺服馬達
+- [x] 示範：toy-racer 加 drive+steer（轉向節 body）＋車燈；action-figure 九關節 19 軸伺服。
+      陷阱記錄：Havok 靜摩擦=硬約束馬達推不動（steer 行進中測、servo 吊空測）、
+      間接相連零件穿插要碰撞過濾群組（physics.md）
 
 ## M5：kimodo.cpp 動作燒錄（2026-09-01 調查完成，待 M4 地基）
 
