@@ -67,6 +67,20 @@ assert.equal(player.tick(2 / 24, (frame) => applied.push(frame)), true);
 assert.deepEqual(applied, [0, 1, 2]);
 assert.equal(player.playing, false);
 
+const loopedFrames: number[] = [];
+const loopingPlayer = new MotionTimelinePlayer(valid);
+loopingPlayer.loop = true;
+assert.equal(loopingPlayer.start((frame) => loopedFrames.push(frame)), true);
+assert.equal(loopingPlayer.tick(4.5 / 24, (frame) => loopedFrames.push(frame)), false);
+assert.equal(loopingPlayer.playing, true);
+assert.deepEqual(loopedFrames, [0, 1, 2, 0, 1]);
+
+const nonLoopingPlayer = new MotionTimelinePlayer(valid);
+nonLoopingPlayer.loop = false;
+nonLoopingPlayer.start(() => undefined);
+assert.equal(nonLoopingPlayer.tick(3 / 24, () => undefined), true);
+assert.equal(nonLoopingPlayer.playing, false);
+
 player.start((frame) => applied.push(frame));
 player.stop();
 assert.equal(player.playing, false);

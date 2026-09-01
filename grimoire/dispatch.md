@@ -27,6 +27,9 @@ notes: 各輪派工的結果摘要（誰、何時、改了什麼、gate 輸出�
    **陷阱：codex exec 是單向的**——Codex 若停下來問「可以開始嗎」就浪費一輪
    （task 0001 第一輪實證）。prompt 要明說「設計已核准，直接實作，不要停下來問；
    這是單向模式，問了沒人答」。若它仍回了個計畫，把計畫原文核准後重派即可。
+   **陷阱：派工中 playground 不可靠**——Codex 直接改 viewer/ 工作樹時，vite HMR
+   會把改到一半的模組即時推進使用者開著的頁面（按鈕失靈、面板重複、檔案選擇器
+   堆疊）。派 viewer 相關任務前提醒使用者，完工驗收後請使用者 reload。
 3. **獨立驗收**：不信 Codex 的自我回報，自己重跑驗收命令＋全套迴歸
    （forge tests、tsc、physics_test 各模型、actuation_test、check_colliders）。
 4. **收尾**：綠 → 卡標 done、記 notes、commit（訊息註明 dispatched-to-codex）；

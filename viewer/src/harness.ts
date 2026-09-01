@@ -136,6 +136,7 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
   const sliderById = new Map(acts.map((act, index) => [act.id, sliders[index]]));
   let timeline: MotionTimeline | null = null;
   let player: MotionTimelinePlayer | null = null;
+  let loopPlayback = true;
   const suspension = new MotionSuspension(scene, model.root, model.bodies, 0.3);
 
   const motionRow = document.createElement("div");
@@ -199,6 +200,7 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
       const parsed = JSON.parse(await file.text()) as unknown;
       timeline = validateMotionTimeline(parsed, modelName, new Set(servoById.keys()));
       player = new MotionTimelinePlayer(timeline);
+      player.loop = loopPlayback;
       motionStatus.textContent = `${timeline.frames} 幀 @ ${timeline.fps}fps`;
     } catch (error) {
       motionStatus.textContent = `錯誤：${error instanceof Error ? error.message : String(error)}`;
@@ -223,6 +225,24 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
     if (completed) stopPlayback();
   });
   panel.appendChild(playbackButton);
+
+  const loopRow = document.createElement("div");
+  loopRow.className = "actuator-row";
+  const loopLabel = document.createElement("label");
+  loopLabel.textContent = "循環";
+  const loopButton = document.createElement("button");
+  loopButton.className = "reset";
+  loopButton.textContent = "循環：開";
+  loopButton.setAttribute("aria-pressed", "true");
+  loopButton.onclick = () => {
+    loopPlayback = !loopPlayback;
+    if (player) player.loop = loopPlayback;
+    loopButton.textContent = `循環：${loopPlayback ? "開" : "關"}`;
+    loopButton.setAttribute("aria-pressed", String(loopPlayback));
+  };
+  loopRow.appendChild(loopLabel);
+  loopRow.appendChild(loopButton);
+  panel.appendChild(loopRow);
 
   const suspensionButton = document.createElement("button");
   suspensionButton.className = "reset";

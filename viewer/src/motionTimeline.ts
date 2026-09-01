@@ -58,6 +58,7 @@ export class MotionTimelinePlayer {
   private frame = 0;
   private elapsed = 0;
   playing = false;
+  loop = false;
 
   constructor(private readonly timeline: MotionTimeline) {}
 
@@ -77,6 +78,11 @@ export class MotionTimelinePlayer {
       this.elapsed -= frameDuration;
       this.frame++;
       if (this.frame >= this.timeline.frames) {
+        if (this.loop) {
+          this.frame = 0;
+          applyFrame(this.frame);
+          continue;
+        }
         this.stop();
         return true;
       }
