@@ -1,0 +1,298 @@
+// 可動物件審查 gate（M4）：spec 宣告的每個 actuation 都必須 (a) 有對應 actuator、
+// (b) 驅動後有可量測回應——drive 令車前進 ≥ 0.15m、steer 令轉向角到目標 ±0.15、
+// servo 令關節角到目標 ±0.35（重力垂墜與 solver 柔性餘裕）、light 令 emissive 切換。
+// 宣告了但動不了 = FAIL。關節角量測沿用 physics_test 的 XZY 分解（grimoire/physics.md）。
+// 用法: npx tsx scripts/actuation_test.ts <model-name> --spec <spec.json> [--out result.json]
+import {
+  Color3,
+  Matrix,
+  MeshBuilder,
+  PhysicsBody,
+  PhysicsMotionType,
+  PhysicsShapeBox,
+  Quaternion,
+  StandardMaterial,
+  Vector3,
+} from "@babylonjs/core";
+import { readFileSync, writeFileSync } from "node:fs";
+import { createHeadlessScene } from "../src/headless";
+import { registry } from "../src/registry";
+import type { Actuator } from "../src/types";
+
+const SETTLE_STEPS = 120;
+const DRIVE_STEPS = 240; // 4 秒滿油門
+const DRIVE_MIN_DIST = 0.15; // m
+const STEER_STEPS = 150; // 行進中轉向觀察窗（2.5 秒）
+const STEER_MIN_RATIO = 0.25; // 行進中實測轉向角至少要到目標的這個比例
+const STEER_MIN_YAW = 0.03; // rad：觀察窗內車身 yaw 至少要偏這麼多（真的在畫弧）
+const SERVO_STEPS = 90;
+const SERVO_TOL = 0.35; // rad：重力垂墜 + solver 柔性
+const LIGHT_COLOR_TOL = 0.02;
+// 靜止時輪胎接地是硬黏著（Havok 靜摩擦=硬約束，馬達=軟彈簧，力再大推不動；
+// 見 grimoire/physics.md 陷阱），所以 steer 必須行進中測、servo 必須吊空測。
+
+type AxisKey = "x" | "y" | "z";
+
+interface SpecActuation {
+  type: string;
+  targetSpeed?: number;
+  maxForce?: number;
+  range?: [number, number];
+  emissive?: { on: string; off: string };
+}
+interface SpecConstraint {
+  type?: string;
+  bodyA: string;
+  bodyB: string;
+  axis?: number[];
+  limits?: number[] | "free";
+  angular?: Partial<Record<AxisKey, number[] | "free" | "locked">>;
+  actuation?: SpecActuation;
+}
+interface SpecComponent { id: string; actuation?: SpecActuation }
+interface Spec {
+  componentTree?: SpecComponent[];
+  physics?: { constraints?: SpecConstraint[] };
+}
+
+interface CheckResult { id: string; ok: boolean; detail: string }
+
+// ---- 關節角量測（與 physics_test.ts 同一套，見 grimoire/physics.md 陷阱）----
+function jointFrame(axis: Vector3): Matrix {
+  const x = axis.normalizeToNew();
+  const up = Math.abs(Vector3.Dot(x, Vector3.Up())) > 0.99
+    ? new Vector3(1, 0, 0) : Vector3.Up();
+  const y = Vector3.Cross(x, up).normalize();
+  const z = Vector3.Cross(x, y).normalize();
+  const m = Matrix.Identity();
+  Matrix.FromValuesToRef(
+    x.x, x.y, x.z, 0, y.x, y.y, y.z, 0, z.x, z.y, z.z, 0, 0, 0, 0, 1, m,
+  );
+  return m;
+}
+
+function eulerXZY(m: Matrix): Vector3 {
+  const v = m.getRotationMatrix().m;
+  const g = (r: number, c: number): number => v[r * 4 + c];
+  const clamp = (x: number): number => Math.max(-1, Math.min(1, x));
+  return new Vector3(
+    Math.atan2(g(1, 2), g(1, 1)),
+    Math.atan2(g(2, 0), g(0, 0)),
+    Math.asin(clamp(-g(1, 0))),
+  );
+}
+
+function worldRotation(b: PhysicsBody): Matrix {
+  b.transformNode.computeWorldMatrix(true);
+  return b.transformNode.getWorldMatrix().getRotationMatrix();
+}
+
+function relativeRotation(a: PhysicsBody, b: PhysicsBody): Matrix {
+  return worldRotation(b).multiply(Matrix.Invert(worldRotation(a)));
+}
+
+function measureAngles(
+  a: PhysicsBody, b: PhysicsBody, axis: Vector3, bind: Matrix,
+): Vector3 {
+  const frame = jointFrame(axis);
+  const delta = Matrix.Invert(bind).multiply(relativeRotation(a, b));
+  const inFrame = frame.multiply(delta).multiply(Matrix.Invert(frame));
+  return eulerXZY(inFrame);
+}
+
+function horizontal(p: Vector3): Vector3 {
+  return new Vector3(p.x, 0, p.z);
+}
+
+/** 世界前向量在水平面的方位角。 */
+function worldYaw(b: PhysicsBody): number {
+  const m = worldRotation(b).m;
+  return Math.atan2(m[2], m[0]);
+}
+
+/** 錨 body：spec constraints 裡從未當過 bodyB 的 body（torso / chassis）。 */
+function anchorBodyId(cons: SpecConstraint[]): string | null {
+  const asB = new Set(cons.map((c) => c.bodyB));
+  const asA = cons.map((c) => c.bodyA).filter((a) => !asB.has(a));
+  return asA[0] ?? null;
+}
+
+async function main(): Promise<number> {
+  const argv = process.argv.slice(2);
+  const name = argv[0];
+  const specIdx = argv.indexOf("--spec");
+  const specPath = specIdx >= 0 ? argv[specIdx + 1] : null;
+  const outIdx = argv.indexOf("--out");
+  const outPath = outIdx >= 0 ? argv[outIdx + 1] : null;
+  if (!name || !(name in registry) || !specPath) {
+    console.error(`用法: actuation_test.ts <model-name> --spec <spec.json> [--out result.json]；`
+      + `已知: ${Object.keys(registry).join(", ")}`);
+    return 2;
+  }
+  const spec = JSON.parse(readFileSync(specPath, "utf8")) as Spec;
+  const cons = spec.physics?.constraints ?? [];
+  const driveDecls = cons.filter((c) => c.actuation?.type === "drive");
+  const steerDecls = cons.filter((c) => c.actuation?.type === "steer");
+  const servoDecls = cons.filter((c) => c.actuation?.type === "servo");
+  const lightDecls = (spec.componentTree ?? []).filter((c) => c.actuation?.type === "light");
+  if (!driveDecls.length && !steerDecls.length && !servoDecls.length && !lightDecls.length) {
+    console.log(JSON.stringify({ model: name, checks: [], pass: true,
+      note: "spec 無 actuation 宣告" }));
+    return 0;
+  }
+
+  const ctx = await createHeadlessScene();
+  const { scene, step } = ctx;
+  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
+  const gBody = new PhysicsBody(ground, PhysicsMotionType.STATIC, false, scene);
+  const gShape = new PhysicsShapeBox(
+    new Vector3(0, -0.05, 0), Quaternion.Identity(), new Vector3(10, 0.1, 10), scene,
+  );
+  gShape.material = { friction: 0.7, restitution: 0.2 };
+  gBody.shape = gShape;
+
+  const factory = (await registry[name]()).default;
+  const model = factory(scene, { physics: true });
+  const acts: Actuator[] = model.actuators ?? [];
+  const byId = new Map(acts.map((a) => [a.id, a]));
+  const checks: CheckResult[] = [];
+  const push = (id: string, ok: boolean, detail: string): void => {
+    checks.push({ id, ok, detail });
+  };
+
+  // ---- 覆蓋：每個宣告都要有 actuator ----
+  const drive = acts.find((a) => a.kind === "drive") ?? null;
+  const steer = acts.find((a) => a.kind === "steer") ?? null;
+  if (driveDecls.length) push("coverage:drive", !!drive, drive ? "有 drive actuator" : "spec 宣告 drive 但無 actuator");
+  if (steerDecls.length) push("coverage:steer", !!steer, steer ? "有 steer actuator" : "spec 宣告 steer 但無 actuator");
+  for (const d of servoDecls) {
+    const mine = acts.filter((a) => a.id.startsWith(`servo:${d.bodyB}.`));
+    push(`coverage:servo:${d.bodyB}`, mine.length > 0,
+      mine.length ? `${mine.length} 軸` : "spec 宣告 servo 但無對應 actuator");
+  }
+  for (const c of lightDecls) {
+    push(`coverage:light:${c.id}`, byId.has(`light:${c.id}`),
+      byId.has(`light:${c.id}`) ? "有 light actuator" : "spec 宣告 light 但無 actuator");
+  }
+
+  // ---- light：headless 直接驗 emissive ----
+  for (const c of lightDecls) {
+    const act = byId.get(`light:${c.id}`);
+    const mesh = model.meshes[c.id];
+    const em = c.actuation?.emissive;
+    if (!act || !mesh || !em) continue;
+    const readEm = (): Color3 => (mesh.material as StandardMaterial).emissiveColor;
+    act.set(1);
+    const onOk = Color3.FromHexString(em.on).subtract(readEm()).asArray()
+      .every((v) => Math.abs(v) < LIGHT_COLOR_TOL);
+    act.set(0);
+    const offOk = Color3.FromHexString(em.off).subtract(readEm()).asArray()
+      .every((v) => Math.abs(v) < LIGHT_COLOR_TOL);
+    push(`light:${c.id}`, onOk && offOk,
+      `on=${onOk} off=${offOk}`);
+  }
+
+  // ---- servo：吊空測（錨 body 定住、四肢自由——M5 動作燒錄的使用姿態）----
+  if (servoDecls.length) {
+    const anchorId = anchorBodyId(cons);
+    const anchor = anchorId ? model.bodies[anchorId] : null;
+    if (!anchor) {
+      push("servo:anchor", false, "找不到錨 body（無從吊空）");
+    } else {
+      Object.values(model.bodies).forEach((b) => { b.disablePreStep = false; });
+      model.root.position.y += 0.3;
+      step(2);
+      Object.values(model.bodies).forEach((b) => { b.disablePreStep = true; });
+      anchor.setMotionType(PhysicsMotionType.STATIC);
+      step(60);
+      const binds = new Map<SpecConstraint, Matrix>();
+      for (const c of servoDecls) {
+        const a = model.bodies[c.bodyA];
+        const b = model.bodies[c.bodyB];
+        if (a && b && c.axis) binds.set(c, relativeRotation(a, b));
+      }
+      for (const d of servoDecls) {
+        const a = model.bodies[d.bodyA];
+        const b = model.bodies[d.bodyB];
+        const bind = binds.get(d);
+        if (!a || !b || !bind || !d.axis) continue;
+        const mine = acts.filter((x) => x.id.startsWith(`servo:${d.bodyB}.`));
+        for (const act of mine) {
+          const axisKey = act.id.slice(-1) as AxisKey;
+          const target = 0.6 * (Math.abs(act.min) > Math.abs(act.max) ? act.min : act.max);
+          act.set(target);
+          step(SERVO_STEPS);
+          const angle = measureAngles(a, b, Vector3.FromArray(d.axis), bind)[axisKey];
+          push(`servo:${d.bodyB}.${axisKey}`, Math.abs(angle - target) <= SERVO_TOL,
+            `量測 ${angle.toFixed(3)} vs 目標 ${target.toFixed(3)}`);
+          act.set(0);
+          step(30);
+        }
+      }
+      anchor.setMotionType(PhysicsMotionType.DYNAMIC);
+    }
+  }
+
+  if (driveDecls.length || steerDecls.length) step(SETTLE_STEPS); // 就地落定
+
+  // ---- steer：行進中測（靜止輪胎硬黏著轉不動）——斷言轉向角展開且車身真的畫弧 ----
+  if (steer && steerDecls.length && drive) {
+    const chassis = model.bodies[steerDecls[0].bodyA];
+    const binds = new Map<SpecConstraint, Matrix>();
+    for (const c of steerDecls) {
+      const a = model.bodies[c.bodyA];
+      const b = model.bodies[c.bodyB];
+      if (a && b && c.axis) binds.set(c, relativeRotation(a, b));
+    }
+    drive.set(0.5);
+    step(30);
+    for (const target of [steer.max, steer.min]) {
+      steer.set(target);
+      const yaw0 = worldYaw(chassis);
+      step(STEER_STEPS);
+      const yawDelta = worldYaw(chassis) - yaw0;
+      for (const d of steerDecls) {
+        const a = model.bodies[d.bodyA];
+        const b = model.bodies[d.bodyB];
+        const bind = binds.get(d);
+        if (!a || !b || !bind || !d.axis) continue;
+        const angle = measureAngles(a, b, Vector3.FromArray(d.axis), bind).x;
+        const angleOk = angle * target > 0 && Math.abs(angle) >= STEER_MIN_RATIO * Math.abs(target);
+        push(`steer:${d.bodyB}@${target.toFixed(2)}`, angleOk,
+          `量測 ${angle.toFixed(3)} vs 目標 ${target.toFixed(3)}（門檻 ${STEER_MIN_RATIO}×）`);
+      }
+      const yawOk = yawDelta * target > 0 && Math.abs(yawDelta) >= STEER_MIN_YAW;
+      push(`steer:yaw@${target.toFixed(2)}`, yawOk,
+        `車身 yaw 偏 ${yawDelta.toFixed(3)}（需同號且 ≥ ${STEER_MIN_YAW}）`);
+    }
+    steer.set(0);
+    drive.set(0);
+    step(30);
+  }
+
+  // ---- drive：滿油門 4 秒，量水平位移（放最後——車會開走）----
+  if (drive && driveDecls.length) {
+    const chassis = model.bodies[driveDecls[0].bodyA];
+    const start = horizontal(chassis.transformNode.absolutePosition.clone());
+    drive.set(1);
+    step(DRIVE_STEPS);
+    drive.set(0);
+    const dist = Vector3.Distance(
+      start, horizontal(chassis.transformNode.absolutePosition),
+    );
+    push("drive", dist >= DRIVE_MIN_DIST, `位移 ${dist.toFixed(3)}m（門檻 ${DRIVE_MIN_DIST}）`);
+  }
+
+  const pass = checks.length > 0 && checks.every((c) => c.ok);
+  const result = { model: name, checks, pass };
+  const json = JSON.stringify(result, null, 2);
+  console.log(json);
+  if (outPath) writeFileSync(outPath, json);
+  ctx.dispose();
+  return pass ? 0 : 1;
+}
+
+main().then((code) => process.exit(code)).catch((err) => {
+  console.error(err);
+  process.exit(2);
+});

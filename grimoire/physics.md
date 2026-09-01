@@ -172,3 +172,27 @@ frame 的 `axisA/axisB` 對應 angular.x 的軸、`perpAxisA/perpAxisB` 對應 a
 - `PhysicsShapeContainer` 的子形狀位置是相對 body 的 transform node，不是世界座標。
 - constraint 加在兩個 body 之間（`bodyA.addConstraint(bodyB, c)`），不是 mesh。
 - 蓋子質量遠小於瓶身時，把 hinge 兩端 pivot 算準（差 1cm 就會震盪）。
+
+
+## 馬達（M4 actuation）
+
+6DoF constraint 逐軸馬達：`setAxisMotorType(ANGULAR_X, VELOCITY|POSITION)` →
+`setAxisMotorMaxForce` → `setAxisMotorTarget`。drive 用 VELOCITY（目標 rad/s）、
+steer/servo 用 POSITION（目標 rad）。惰性啟動鐵律：drive/servo 在第一次命令前
+不得設 motor type（VELOCITY 目標 0 會鎖死自由滾動、POSITION 會撐住 ragdoll）；
+steer 例外——出廠即置中（回正彈簧），自由甩動的前軸會犁地毀掉滾動。
+
+### 陷阱：靜止接觸是硬黏著，馬達推不動
+
+Havok 靜摩擦以硬約束求解、馬達是軟彈簧——靜止輪胎接地時 steer 馬達力開到 1e6
+角度也只到 ~0.06 rad（力無關、子步無關，經探針實證）。滾動中接觸點有速度、
+進入動摩擦才轉得動（賽車遊戲用 raycast vehicle 就是繞開這個）。因此
+actuation gate 的 steer 必須「行進中測」（斷言轉向角展開＋車身 yaw 同號偏轉）、
+servo 必須「吊空測」（錨 body 設 STATIC、四肢自由）。
+
+### 陷阱：零件穿插的碰撞過濾
+
+多 body 模型中沒有直接 constraint 的零件對（如經轉向節間接相連的前輪與車身）
+`isCollisionsEnabled=false` 管不到；collider 若穿插會互撞自煞。整車零件設同一
+`filterMembershipMask` 群組、`filterCollideMask` 排除自群組（toy-racer 加了之後
+滾動距離 0.36m → 3.0m——M1 時輪/車身穿插摩擦一直在偷偷耗能）。

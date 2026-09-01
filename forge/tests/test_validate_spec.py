@@ -261,3 +261,83 @@ class ProportionsGateTest(unittest.TestCase):
     def test_spec_without_proportions_unaffected(self):
         errors, _ = validate_spec.validate(minimal_spec(), strict=True)
         self.assertEqual(errors, [])
+
+
+class ActuationTest(unittest.TestCase):
+    """M4 契約：constraint 上的 actuation（drive/steer/servo）與 component 上的 light。"""
+
+    def _spec(self, con_extra=None, comp_extra=None):
+        spec = minimal_spec()
+        spec["physics"]["bodies"].append({"id": "cap", "components": [], "mass": 0.01})
+        con = {"type": "hinge", "bodyA": "crate", "bodyB": "cap",
+               "pivotA": [0, 0, 0], "pivotB": [0, 0, 0],
+               "axis": [1, 0, 0], "limits": "free"}
+        con.update(con_extra or {})
+        spec["physics"]["constraints"] = [con]
+        if comp_extra:
+            spec["componentTree"][0].update(comp_extra)
+        return spec
+
+    def test_valid_drive_passes(self):
+        spec = self._spec({"actuation": {"type": "drive", "targetSpeed": 20, "maxForce": 0.5}})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertEqual([e for e in errors if "actuation" in e], [])
+
+    def test_drive_requires_free_limits(self):
+        spec = self._spec({"limits": [0, 1.5],
+                           "actuation": {"type": "drive", "targetSpeed": 20, "maxForce": 0.5}})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("drive" in e and "free" in e for e in errors))
+
+    def test_steer_range_within_limits(self):
+        spec = self._spec({"limits": [-0.5, 0.5],
+                           "actuation": {"type": "steer", "range": [-0.6, 0.6], "maxForce": 1.0}})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("steer" in e and "range" in e for e in errors))
+
+    def test_valid_steer_passes(self):
+        spec = self._spec({"limits": [-0.5, 0.5],
+                           "actuation": {"type": "steer", "range": [-0.4, 0.4], "maxForce": 1.0}})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertEqual([e for e in errors if "actuation" in e], [])
+
+    def test_servo_requires_limits_or_joint(self):
+        spec = self._spec({"actuation": {"type": "servo", "maxForce": 0.3}})  # limits "free"
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("servo" in e for e in errors))
+
+    def test_valid_servo_on_joint_passes(self):
+        spec = self._spec({"type": "joint", "angular": {"x": [-0.6, 0.6]},
+                           "actuation": {"type": "servo", "maxForce": 0.3}})
+        del spec["physics"]["constraints"][0]["limits"]
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertEqual([e for e in errors if "actuation" in e or "servo" in e], [])
+
+    def test_unknown_type_fails(self):
+        spec = self._spec({"actuation": {"type": "rocket", "maxForce": 1.0}})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("actuation" in e and "rocket" in e for e in errors))
+
+    def test_missing_max_force_fails(self):
+        spec = self._spec({"actuation": {"type": "drive", "targetSpeed": 20}})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("maxForce" in e for e in errors))
+
+    def test_light_requires_material(self):
+        spec = self._spec()
+        spec["componentTree"][0].pop("material", None)
+        spec["componentTree"][0]["actuation"] = {
+            "type": "light", "emissive": {"on": "#ffffcc", "off": "#000000"}}
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("light" in e and "material" in e for e in errors))
+
+    def test_valid_light_passes(self):
+        spec = self._spec(comp_extra={"actuation": {
+            "type": "light", "emissive": {"on": "#ffffcc", "off": "#000000"}}})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertEqual([e for e in errors if "actuation" in e], [])
+
+    def test_light_bad_emissive_fails(self):
+        spec = self._spec(comp_extra={"actuation": {"type": "light", "emissive": {"on": "#ffffcc"}}})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("emissive" in e for e in errors))

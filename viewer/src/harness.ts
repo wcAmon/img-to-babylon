@@ -85,4 +85,56 @@ export function installHarness(scene: Scene, model: BuiltModel): void {
     wireOn = !wireOn;
     window.__IMG2BABYLON_CAPTURE__?.togglePhysicsViewer(wireOn);
   });
+
+  installActuatorPanel(model);
+}
+
+/** M4 Actuator Playground：讀 model.actuators 自動生成側欄——滑桿即 set()，
+ * 動作怪異可即時看出是哪個關節限位/軸向不對，回頭改 spec 重載。 */
+function installActuatorPanel(model: BuiltModel): void {
+  const acts = model.actuators ?? [];
+  if (!acts.length) return;
+  const panel = document.createElement("div");
+  panel.className = "actuator-panel";
+  const h = document.createElement("h3");
+  h.textContent = "可動物件";
+  panel.appendChild(h);
+  const sliders: { input: HTMLInputElement; val: HTMLSpanElement }[] = [];
+  for (const act of acts) {
+    const row = document.createElement("div");
+    row.className = "actuator-row";
+    const label = document.createElement("label");
+    label.textContent = act.label;
+    const input = document.createElement("input");
+    input.type = "range";
+    input.min = String(act.min);
+    input.max = String(act.max);
+    input.step = String((act.max - act.min) / 100 || 1);
+    input.value = "0";
+    const val = document.createElement("span");
+    val.className = "val";
+    val.textContent = "0.00";
+    input.oninput = () => {
+      const v = Number(input.value);
+      act.set(v);
+      val.textContent = v.toFixed(2);
+    };
+    row.appendChild(label);
+    row.appendChild(input);
+    row.appendChild(val);
+    panel.appendChild(row);
+    sliders.push({ input, val });
+  }
+  const reset = document.createElement("button");
+  reset.className = "reset";
+  reset.textContent = "全部歸零";
+  reset.onclick = () => {
+    acts.forEach((a, i) => {
+      a.set(0);
+      sliders[i].input.value = "0";
+      sliders[i].val.textContent = "0.00";
+    });
+  };
+  panel.appendChild(reset);
+  document.body.appendChild(panel);
 }

@@ -7,6 +7,8 @@
 3. `npx tsx scripts/runtime_export.ts <name> --spec models/<name>/spec.json --out ../.img2babylon/<name>/runtime.json`
    → `python3 forge/check_colliders.py .img2babylon/<name>/runtime.json`
 4. `npx tsx scripts/physics_test.ts <name> --spec models/<name>/spec.json`；有 hinge 時再跑一次加 `--nudge <capBodyId>`
+   → spec 有 actuation 宣告時再跑 `npx tsx scripts/actuation_test.ts <name> --spec models/<name>/spec.json`
+   （可動物件審查：宣告了但動不了 = FAIL；動作怪異先開 viewer 的可動物件面板目視）
 5. 視覺截圖（agent browser tool；先 `cd viewer && npm run dev`）：
    - hero：`http://localhost:5173/#model=<name>`，存 `.img2babylon/shots/<name>-hero.png`
    - 碰撞線框：按「碰撞線框」鈕後再截，存 `<name>-collider.png`

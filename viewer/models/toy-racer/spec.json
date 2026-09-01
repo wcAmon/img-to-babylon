@@ -253,7 +253,14 @@
         "type": "fixed",
         "socket": "chassis:nose"
       },
-      "material": "headlight-silver"
+      "material": "headlight-silver",
+      "actuation": {
+        "type": "light",
+        "emissive": {
+          "on": "#ffefa8",
+          "off": "#141410"
+        }
+      }
     },
     {
       "id": "headlight-r",
@@ -289,7 +296,14 @@
         "type": "fixed",
         "socket": "chassis:nose"
       },
-      "material": "headlight-silver"
+      "material": "headlight-silver",
+      "actuation": {
+        "type": "light",
+        "emissive": {
+          "on": "#ffefa8",
+          "off": "#141410"
+        }
+      }
     },
     {
       "id": "tire-fl",
@@ -722,6 +736,138 @@
         "socket": "chassis:tail-top"
       },
       "material": "body-red"
+    },
+    {
+      "id": "knuckle-fl",
+      "name": "steering knuckle fl",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.012,
+        "h": 0.014,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.9
+      },
+      "transform": {
+        "position": [
+          -0.027,
+          -0.01,
+          0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "chassis",
+      "attachment": {
+        "type": "hinge",
+        "socket": "chassis:steer",
+        "hinge": {
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "limits": [
+            -0.45,
+            0.45
+          ]
+        }
+      },
+      "material": "hub-gray",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.012,
+          0.014,
+          0.012
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "knuckle-fr",
+      "name": "steering knuckle fr",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.012,
+        "h": 0.014,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.9
+      },
+      "transform": {
+        "position": [
+          0.027,
+          -0.01,
+          0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "chassis",
+      "attachment": {
+        "type": "hinge",
+        "socket": "chassis:steer",
+        "hinge": {
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "limits": [
+            -0.45,
+            0.45
+          ]
+        }
+      },
+      "material": "hub-gray",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.012,
+          0.014,
+          0.012
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
     }
   ],
   "materials": [
@@ -848,17 +994,99 @@
         "mass": 0.018,
         "friction": 0.9,
         "restitution": 0.2
+      },
+      {
+        "id": "knuckle-fl",
+        "components": [
+          "knuckle-fl"
+        ],
+        "mass": 0.004,
+        "friction": 0.3,
+        "restitution": 0.2
+      },
+      {
+        "id": "knuckle-fr",
+        "components": [
+          "knuckle-fr"
+        ],
+        "mass": 0.004,
+        "friction": 0.3,
+        "restitution": 0.2
       }
     ],
     "constraints": [
       {
         "type": "hinge",
         "bodyA": "chassis",
-        "bodyB": "wheel-fl",
+        "bodyB": "knuckle-fl",
         "pivotA": [
           -0.027,
           -0.01,
           0.032
+        ],
+        "pivotB": [
+          0,
+          0,
+          0
+        ],
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "limits": [
+          -0.45,
+          0.45
+        ],
+        "actuation": {
+          "type": "steer",
+          "range": [
+            -0.4,
+            0.4
+          ],
+          "maxForce": 0.5
+        }
+      },
+      {
+        "type": "hinge",
+        "bodyA": "chassis",
+        "bodyB": "knuckle-fr",
+        "pivotA": [
+          0.027,
+          -0.01,
+          0.032
+        ],
+        "pivotB": [
+          0,
+          0,
+          0
+        ],
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "limits": [
+          -0.45,
+          0.45
+        ],
+        "actuation": {
+          "type": "steer",
+          "range": [
+            -0.4,
+            0.4
+          ],
+          "maxForce": 0.5
+        }
+      },
+      {
+        "type": "hinge",
+        "bodyA": "knuckle-fl",
+        "bodyB": "wheel-fl",
+        "pivotA": [
+          0,
+          0,
+          0
         ],
         "pivotB": [
           0,
@@ -874,12 +1102,12 @@
       },
       {
         "type": "hinge",
-        "bodyA": "chassis",
+        "bodyA": "knuckle-fr",
         "bodyB": "wheel-fr",
         "pivotA": [
-          0.027,
-          -0.01,
-          0.032
+          0,
+          0,
+          0
         ],
         "pivotB": [
           0,
@@ -912,7 +1140,12 @@
           0,
           0
         ],
-        "limits": "free"
+        "limits": "free",
+        "actuation": {
+          "type": "drive",
+          "targetSpeed": 25,
+          "maxForce": 0.02
+        }
       },
       {
         "type": "hinge",
@@ -933,7 +1166,12 @@
           0,
           0
         ],
-        "limits": "free"
+        "limits": "free",
+        "actuation": {
+          "type": "drive",
+          "targetSpeed": 25,
+          "maxForce": 0.02
+        }
       }
     ]
   },

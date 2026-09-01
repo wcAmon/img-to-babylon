@@ -9,6 +9,7 @@ import {
   Physics6DoFConstraint,
   PhysicsBody,
   PhysicsConstraintAxis,
+  PhysicsConstraintMotorType,
   PhysicsMotionType,
   PhysicsShapeBox,
   PhysicsShapeContainer,
@@ -20,7 +21,7 @@ import {
   Vector3,
   Vector4,
 } from "@babylonjs/core";
-import type { BuiltModel, ModelOptions } from "../../src/types";
+import type { Actuator, BuiltModel, ModelOptions } from "../../src/types";
 
 // ---- spec 尺寸（單位：公尺）----
 const CHASSIS_W = 0.052;
@@ -66,6 +67,15 @@ const WHEEL_DEFS: WheelDef[] = [
   { id: "wheel-rl", tire: "tire-rl", hub: "hub-rl", x: -AXLE_X, z: -AXLE_Z },
   { id: "wheel-rr", tire: "tire-rr", hub: "hub-rr", x: AXLE_X, z: -AXLE_Z },
 ];
+
+// ---- M4 actuation（鏡射 spec 的 actuation 宣告）----
+const KNUCKLE_W = 0.012;
+const KNUCKLE_H = 0.014;
+const STEER_LIMIT = 0.45; // rad：steer hinge 限位
+const STEER_RANGE = 0.4; // rad：steer actuator 可命令範圍
+const STEER_FORCE = 0.5; // N·m：要扛得住輪胎接地扭轉摩擦，0.05 只轉得到 0.06 rad
+const DRIVE_SPEED = 25; // rad/s：drive 馬達滿速
+const DRIVE_FORCE = 0.02; // N·m
 
 const TESS = 32;
 const SPOKE_COUNT = 5;
@@ -228,11 +238,15 @@ export default function createToyRacerModel(
   attach("spoiler-struts", struts, strutsPivot, bodyRed);
 
   // ---- headlights（micro）：壓扁球嵌在鼻端 ----
+  const lightMats: Record<string, StandardMaterial> = {};
   for (const [id, sx] of [["headlight-l", -1], ["headlight-r", 1]] as [string, number][]) {
     const p = pivot(id, chassisPivot, new Vector3(sx * 0.015, 0.028 - CHASSIS_Y, 0.058));
+    const mat = lightMat.clone(`headlight-silver-${id}`);
+    lightMats[id] = mat;
+    disposables.push(mat);
     attach(id, MeshBuilder.CreateSphere(id, {
       diameterX: 0.009, diameterY: 0.006, diameterZ: 0.004, segments: 12,
-    }, scene), p, lightMat);
+    }, scene), p, mat);
   }
 
   // ---- 輪：胎（macro cylinder）＋轂（micro，五輻，朝外側）----
@@ -266,9 +280,22 @@ export default function createToyRacerModel(
     attach(w.hub, hub, hubPivot, hubMat);
   }
 
-  // ---- 物理：5 個 PhysicsBody + 4 個自由旋轉 hinge ----
+  // ---- 轉向節（micro，藏在前輪胎圓柱內）----
+  for (const [id, x] of [["knuckle-fl", -AXLE_X], ["knuckle-fr", AXLE_X]] as [string, number][]) {
+    const p = pivot(id, root, new Vector3(x, AXLE_Y, AXLE_Z));
+    attach(id, MeshBuilder.CreateBox(id, {
+      width: KNUCKLE_W, height: KNUCKLE_H, depth: KNUCKLE_W,
+    }, scene), p, hubMat);
+  }
+
+  // ---- 物理：7 個 PhysicsBody + 2 個轉向 hinge + 4 個自由旋轉 hinge ----
+  // 車零件同一碰撞過濾群組、群組內不互撞：前輪與 chassis 已無直接 constraint
+  // 可停用碰撞，但輪柱與車身箱 collider 本來就互相穿插，靠 filter 才不會自煞。
+  const CAR_GROUP = 1 << 3;
+  const CAR_COLLIDE_MASK = 0xffffffff & ~CAR_GROUP;
   const bodies: Record<string, PhysicsBody> = {};
   const constraints: Physics6DoFConstraint[] = [];
+  const actuators: Actuator[] = [];
   if (opts.physics !== false && scene.getPhysicsEngine()) {
     // chassis 剛體：chassis / cabin / spoiler 三個 box collider
     const chassisRoot = nodes["chassis"];
@@ -287,6 +314,8 @@ export default function createToyRacerModel(
         Vector3.Zero(), Quaternion.Identity(), Vector3.FromArray(col.size), scene,
       );
       shape.material = { friction: CHASSIS_FRICTION, restitution: CHASSIS_RESTITUTION };
+      shape.filterMembershipMask = CAR_GROUP;
+      shape.filterCollideMask = CAR_COLLIDE_MASK;
       const rel = node.absolutePosition.subtract(chassisRoot.absolutePosition);
       container.addChild(shape, rel, Quaternion.Identity());
     }
@@ -306,17 +335,72 @@ export default function createToyRacerModel(
         new Vector3(0, -WHEEL_W / 2, 0), new Vector3(0, WHEEL_W / 2, 0), WHEEL_R, scene,
       );
       shape.material = { friction: WHEEL_FRICTION, restitution: WHEEL_RESTITUTION };
+      shape.filterMembershipMask = CAR_GROUP;
+      shape.filterCollideMask = CAR_COLLIDE_MASK;
       body.shape = shape;
       body.setMassProperties({ mass: WHEEL_MASS, centerOfMass: Vector3.Zero() });
       bodies[w.id] = body;
     }
 
-    // 自由旋轉 hinge：鎖三線軸＋ANGULAR_Y/Z，ANGULAR_X 不列 → 放開（grimoire/physics.md）
-    // 輪的局部座標系繞 Z 轉了 90°：世界 X 軸 = 輪局部 -Y、世界 Y = 輪局部 +X。
-    for (const w of WHEEL_DEFS) {
+    // 轉向節剛體：前輪與車身之間的中介（垂直 steer hinge 掛車身、輪軸掛轉向節）
+    for (const [kid, x] of [["knuckle-fl", -AXLE_X], ["knuckle-fr", AXLE_X]] as [string, number][]) {
+      const kp = nodes[kid];
+      kp.computeWorldMatrix(true);
+      const body = new PhysicsBody(kp, PhysicsMotionType.DYNAMIC, false, scene);
+      const shape = new PhysicsShapeBox(
+        Vector3.Zero(), Quaternion.Identity(), new Vector3(KNUCKLE_W, KNUCKLE_H, KNUCKLE_W), scene,
+      );
+      shape.material = { friction: CHASSIS_FRICTION, restitution: 0.2 };
+      shape.filterMembershipMask = CAR_GROUP;
+      shape.filterCollideMask = CAR_COLLIDE_MASK;
+      body.shape = shape;
+      body.setMassProperties({ mass: 0.004, centerOfMass: Vector3.Zero() });
+      bodies[kid] = body;
+      void x;
+    }
+
+    // steer hinge：chassis→轉向節，垂直軸，限位 ±STEER_LIMIT，POSITION 馬達（惰性啟動）
+    const steerHinges: Physics6DoFConstraint[] = [];
+    for (const [kid, x] of [["knuckle-fl", -AXLE_X], ["knuckle-fr", AXLE_X]] as [string, number][]) {
       const hinge = new Physics6DoFConstraint(
         {
-          pivotA: new Vector3(w.x, AXLE_Y - CHASSIS_Y, w.z), // chassis 局部軸心
+          pivotA: new Vector3(x, AXLE_Y - CHASSIS_Y, AXLE_Z),
+          pivotB: Vector3.Zero(),
+          axisA: new Vector3(0, 1, 0),
+          axisB: new Vector3(0, 1, 0),
+          perpAxisA: new Vector3(1, 0, 0),
+          perpAxisB: new Vector3(1, 0, 0),
+        },
+        [
+          { axis: PhysicsConstraintAxis.LINEAR_X, minLimit: 0, maxLimit: 0 },
+          { axis: PhysicsConstraintAxis.LINEAR_Y, minLimit: 0, maxLimit: 0 },
+          { axis: PhysicsConstraintAxis.LINEAR_Z, minLimit: 0, maxLimit: 0 },
+          { axis: PhysicsConstraintAxis.ANGULAR_X, minLimit: -STEER_LIMIT, maxLimit: STEER_LIMIT },
+          { axis: PhysicsConstraintAxis.ANGULAR_Y, minLimit: 0, maxLimit: 0 },
+          { axis: PhysicsConstraintAxis.ANGULAR_Z, minLimit: 0, maxLimit: 0 },
+        ],
+        scene,
+      );
+      bodies["chassis"].addConstraint(bodies[kid], hinge);
+      hinge.isCollisionsEnabled = false;
+      // steer 出廠即置中（回正彈簧）：自由甩動的前軸會犁地、毀掉自由滾動
+      hinge.setAxisMotorType(PhysicsConstraintAxis.ANGULAR_X, PhysicsConstraintMotorType.POSITION);
+      hinge.setAxisMotorMaxForce(PhysicsConstraintAxis.ANGULAR_X, STEER_FORCE);
+      hinge.setAxisMotorTarget(PhysicsConstraintAxis.ANGULAR_X, 0);
+      constraints.push(hinge);
+      steerHinges.push(hinge);
+    }
+
+    // 自由旋轉 hinge：鎖三線軸＋ANGULAR_Y/Z，ANGULAR_X 不列 → 放開（grimoire/physics.md）
+    // 輪的局部座標系繞 Z 轉了 90°：世界 X 軸 = 輪局部 -Y、世界 Y = 輪局部 +X。
+    // 前輪掛轉向節（pivotA 即節心）、後輪掛車身。
+    const driveHinges: Physics6DoFConstraint[] = [];
+    for (const w of WHEEL_DEFS) {
+      const front = w.z > 0;
+      const parentBody = front ? bodies[`knuckle-${w.id.slice(-2)}`] : bodies["chassis"];
+      const hinge = new Physics6DoFConstraint(
+        {
+          pivotA: front ? Vector3.Zero() : new Vector3(w.x, AXLE_Y - CHASSIS_Y, w.z),
           pivotB: Vector3.Zero(), // 輪心
           axisA: new Vector3(1, 0, 0),
           axisB: new Vector3(0, -1, 0),
@@ -333,10 +417,51 @@ export default function createToyRacerModel(
         ],
         scene,
       );
-      bodies["chassis"].addConstraint(bodies[w.id], hinge);
+      parentBody.addConstraint(bodies[w.id], hinge);
       hinge.isCollisionsEnabled = false; // 輪與車身靠約束對位，不互相碰撞
       constraints.push(hinge);
+      if (!front) driveHinges.push(hinge);
     }
+
+    // ---- actuators（惰性啟動：第一次 set 前不影響物理）----
+    let driveArmed = false;
+    actuators.push({
+      id: "drive", kind: "drive", label: "油門", min: -1, max: 1,
+      set(value: number): void {
+        const v = Math.max(-1, Math.min(1, value));
+        for (const h of driveHinges) {
+          if (!driveArmed) {
+            h.setAxisMotorType(PhysicsConstraintAxis.ANGULAR_X, PhysicsConstraintMotorType.VELOCITY);
+            h.setAxisMotorMaxForce(PhysicsConstraintAxis.ANGULAR_X, DRIVE_FORCE);
+          }
+          h.setAxisMotorTarget(PhysicsConstraintAxis.ANGULAR_X, v * DRIVE_SPEED);
+        }
+        driveArmed = true;
+      },
+    });
+    actuators.push({
+      id: "steer", kind: "steer", label: "轉向", min: -STEER_RANGE, max: STEER_RANGE,
+      set(value: number): void {
+        const v = Math.max(-STEER_RANGE, Math.min(STEER_RANGE, value));
+        for (const h of steerHinges) {
+          h.setAxisMotorTarget(PhysicsConstraintAxis.ANGULAR_X, v);
+        }
+      },
+    });
+  }
+
+  // 車燈 actuator（無關物理，headless 也可用）
+  for (const id of ["headlight-l", "headlight-r"]) {
+    const mat = lightMats[id];
+    actuators.push({
+      id: `light:${id}`, kind: "light", label: id === "headlight-l" ? "左車燈" : "右車燈",
+      min: 0, max: 1,
+      set(value: number): void {
+        mat.emissiveColor = value > 0.5
+          ? Color3.FromHexString("#ffefa8")
+          : Color3.FromHexString("#141410");
+      },
+    });
   }
 
   const built: BuiltModel = {
@@ -345,6 +470,7 @@ export default function createToyRacerModel(
     meshes,
     bodies,
     constraints,
+    actuators,
     dispose(): void {
       constraints.forEach((c) => c.dispose());
       Object.values(bodies).forEach((b) => b.dispose());

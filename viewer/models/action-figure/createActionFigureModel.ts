@@ -7,6 +7,7 @@ import {
   Mesh,
   MeshBuilder,
   Physics6DoFConstraint,
+  PhysicsConstraintMotorType,
   PhysicsConstraintAxis,
   PhysicsBody,
   PhysicsMotionType,
@@ -20,7 +21,7 @@ import {
   TransformNode,
   Vector3,
 } from "@babylonjs/core";
-import type { BuiltModel, ModelOptions } from "../../src/types";
+import type { Actuator, BuiltModel, ModelOptions } from "../../src/types";
 
 // ---- spec 尺寸（單位：公尺；transform.position = 視覺中心）----
 const TORSO_W = 0.036;
@@ -90,6 +91,7 @@ interface ConstraintDef {
 }
 
 const FRICTION = 0.6;
+const SERVO_FORCE = 0.02; // N·m：關節伺服馬達力上限（M4/M5 動作燒錄的地基）
 const RESTITUTION = 0.2;
 
 function bodyDef(id: string, shape: ShapeDef, mass: number): BodyDef {
@@ -359,6 +361,7 @@ export default function createActionFigureModel(
   // ---- 物理：每個 spec body 一個 PhysicsBody；關節 6DoF 逐軸限位 ----
   const bodies: Record<string, PhysicsBody> = {};
   const constraints: Physics6DoFConstraint[] = [];
+  const actuators: Actuator[] = [];
   if (opts.physics !== false && scene.getPhysicsEngine()) {
     for (const def of BODY_DEFS) {
       const p = nodes[def.id];
@@ -429,6 +432,33 @@ export default function createActionFigureModel(
       bodies[def.bodyA].addConstraint(bodies[def.bodyB], joint);
       joint.isCollisionsEnabled = false; // 相鄰肢段靠限位對位，不互相碰撞
       constraints.push(joint);
+
+      // servo actuator：每個非鎖定角軸一支，惰性啟動（否則 POSITION 馬達會撐住 ragdoll）
+      const servoAxes: [key: "x" | "y" | "z", lo: number, hi: number][] = [];
+      if (def.type === "hinge") {
+        servoAxes.push(["x", def.limits![0], def.limits![1]]);
+      } else {
+        for (const k of ["x", "y", "z"] as const) {
+          const v = def.angular?.[k];
+          if (Array.isArray(v)) servoAxes.push([k, v[0], v[1]]);
+        }
+      }
+      for (const [k, lo, hi] of servoAxes) {
+        let armed = false;
+        actuators.push({
+          id: `servo:${def.bodyB}.${k}`, kind: "servo",
+          label: `${def.bodyB}.${k}`, min: lo, max: hi,
+          set(value: number): void {
+            const v = Math.max(lo, Math.min(hi, value));
+            if (!armed) {
+              joint.setAxisMotorType(ANG[k], PhysicsConstraintMotorType.POSITION);
+              joint.setAxisMotorMaxForce(ANG[k], SERVO_FORCE);
+              armed = true;
+            }
+            joint.setAxisMotorTarget(ANG[k], v);
+          },
+        });
+      }
     }
   }
 
@@ -438,6 +468,7 @@ export default function createActionFigureModel(
     meshes,
     bodies,
     constraints,
+    actuators,
     dispose(): void {
       constraints.forEach((c) => c.dispose());
       Object.values(bodies).forEach((b) => b.dispose());

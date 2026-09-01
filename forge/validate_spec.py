@@ -42,6 +42,62 @@ def _valid_angular(angular):
     return True
 
 
+_ACTUATION_CON_TYPES = {"drive", "steer", "servo"}
+
+
+def _hex_color(v):
+    return (isinstance(v, str) and len(v) == 7 and v[0] == "#"
+            and all(c in "0123456789abcdefABCDEF" for c in v[1:]))
+
+
+def _check_constraint_actuation(con, errors):
+    act = con.get("actuation")
+    if act is None:
+        return
+    kind = act.get("type")
+    if kind not in _ACTUATION_CON_TYPES:
+        errors.append(f"constraint actuation type 不合法: {kind!r}（合法: drive/steer/servo）")
+        return
+    if not isinstance(act.get("maxForce"), (int, float)) or act["maxForce"] <= 0:
+        errors.append(f"actuation {kind} 的 maxForce 必須為正數")
+    if kind == "drive":
+        if con.get("type") != "hinge" or con.get("limits") != "free":
+            errors.append("actuation drive 只准掛在 limits 為 \"free\" 的 hinge 上")
+        if not isinstance(act.get("targetSpeed"), (int, float)) or act["targetSpeed"] <= 0:
+            errors.append("actuation drive 的 targetSpeed 必須為正數")
+    elif kind == "steer":
+        limits = con.get("limits")
+        rng = act.get("range")
+        if con.get("type") != "hinge" or not isinstance(limits, list):
+            errors.append("actuation steer 只准掛在有數字 limits 的 hinge 上")
+        elif (not isinstance(rng, list) or len(rng) != 2
+              or not all(isinstance(x, (int, float)) for x in rng)
+              or rng[0] >= rng[1]):
+            errors.append("actuation steer 必須有 range [lo, hi] 數字對")
+        elif rng[0] < limits[0] or rng[1] > limits[1]:
+            errors.append(f"actuation steer range {rng} 超出 hinge limits {limits}")
+    elif kind == "servo":
+        ok = ((con.get("type") == "hinge" and isinstance(con.get("limits"), list))
+              or (con.get("type") == "joint" and isinstance(con.get("angular"), dict)))
+        if not ok:
+            errors.append("actuation servo 只准掛在有數字 limits 的 hinge 或 joint 上")
+
+
+def _check_component_actuation(cid, c, errors):
+    act = c.get("actuation")
+    if act is None:
+        return
+    if act.get("type") != "light":
+        errors.append(f"元件 {cid} actuation type 不合法: {act.get('type')!r}（元件僅支援 light）")
+        return
+    if not c.get("material"):
+        errors.append(f"元件 {cid} actuation light 需要 material")
+    em = act.get("emissive")
+    if (not isinstance(em, dict) or not _hex_color(em.get("on"))
+            or not _hex_color(em.get("off"))):
+        errors.append(f"元件 {cid} actuation light 的 emissive 必須有 on/off 十六進位色")
+
+
 def _stack_height(comps):
     """componentTree 的世界 Y 範圍（沿 parent 鏈累加 position.y，±h/2）。"""
     tops, bottoms = [], []
@@ -148,6 +204,7 @@ def validate(spec, strict=False):
                 errors.append(
                     f"hinge constraint limits 不合法（須為 [lo, hi] 數字對且 lo < hi，"
                     f"或 \"free\"）: {con['limits']!r}")
+        _check_constraint_actuation(con, errors)
         if con.get("type") == "joint":
             if "axis" not in con or "angular" not in con:
                 errors.append("joint constraint 必須有 axis 與 angular")
@@ -157,6 +214,7 @@ def validate(spec, strict=False):
                     f"\"free\" 或 \"locked\"）: {con['angular']!r}")
 
     for cid, c in comps.items():
+        _check_component_actuation(cid, c, errors)
         att = c.get("attachment") or {}
         kind = att.get("type")
         if kind not in ("hinge", "joint"):

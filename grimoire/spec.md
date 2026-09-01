@@ -245,3 +245,36 @@ body）。hinge 軸為 X 軸（`[1, 0, 0]`），開合角度 0–1.92 弧度（�
 $ python3 forge/validate_spec.py /tmp/pill-example.json --strict
 OK
 ```
+
+
+## actuation（M4 可動物件契約）
+
+模型「遊戲可用」的標準是可動件可驅動、可審查。宣告了 actuation 的 spec 必須通過
+`viewer/scripts/actuation_test.ts` gate（宣告了但動不了 = FAIL）。
+
+constraint 上（drive / steer / servo）：
+
+```json
+{ "type": "hinge", "bodyA": "chassis", "bodyB": "wheel-rl", "limits": "free",
+  "actuation": { "type": "drive", "targetSpeed": 25, "maxForce": 0.02 } }
+{ "type": "hinge", "bodyA": "chassis", "bodyB": "knuckle-fl", "limits": [-0.45, 0.45],
+  "actuation": { "type": "steer", "range": [-0.4, 0.4], "maxForce": 0.5 } }
+{ "type": "joint", "bodyA": "torso", "bodyB": "head", "angular": { "x": [-0.6, 0.6] },
+  "actuation": { "type": "servo", "maxForce": 0.02 } }
+```
+
+- `drive` 只准掛在 `limits:"free"` 的 hinge；`targetSpeed`（rad/s）與 `maxForce` 必填正數。
+- `steer` 只准掛在有數字 limits 的 hinge；`range` 必須在 limits 內。
+- `servo` 掛在有數字 limits 的 hinge 或 joint；每個非鎖定角軸各生一支 actuator。
+
+component 上（light，非物理）：
+
+```json
+{ "id": "headlight-l", "material": "headlight-silver",
+  "actuation": { "type": "light", "emissive": { "on": "#ffefa8", "off": "#141410" } } }
+```
+
+factory 契約：模型出廠掛 `actuators`（見 `viewer/src/types.ts` 的 Actuator）——
+`drive` 一支（set 為 targetSpeed 比例 -1..1）、`steer` 一支（set 為目標角，出廠即置中）、
+`servo:<bodyB>.<axis>` 逐軸（set 為目標角，夾限位）、`light:<componentId>` 逐件。
+drive/servo 馬達惰性啟動（第一次 set 前不影響物理——否則毀掉自由滾動/ragdoll）。
