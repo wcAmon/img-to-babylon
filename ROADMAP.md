@@ -92,6 +92,20 @@ NVIDIA Kimodo 文字轉動作（C++/GGML，CPU 可跑，核心 Apache-2.0；用 
 夾 angular 限位）→ 關節角度時間線 JSON → viewer 伺服馬達播放（物理驅動）。
 M4 的 servo 馬達與 playground 正是此項的前置工程。
 
+執行計畫（2026-09-01 核准，harness-first：0002/0003 派 Codex、0004 監工自做）：
+
+- [ ] 0002 `forge/retarget.py`（stdlib，TDD）：GLB animation 解析（JSON chunk＋
+      binary accessors，旋轉四元數時間線）→ SOMA 30→公仔 9 關節映射表 →
+      每幀相對旋轉 XZY 分解投影到 spec 關節軸、夾 angular 限位 → timeline JSON
+      `{model, fps, frames, tracks: {"servo:<body>.<axis>": [rad,…]}}`。
+      測試用合成迷你 GLB fixtures，不依賴 kimodo。
+- [ ] 0003 `viewer/scripts/motion_test.ts` motion gate（吊空逐幀餵 timeline 給
+      servo actuators，斷言追蹤容差/無 NaN/constraint 不裂）＋ playground
+      「載入動作/播放/停止」面板。
+- [ ] 0004 kimodo.cpp 端到端：本機 clone/build＋SOMA 權重，生成真動作 →
+      retarget → motion gate → playground 目視。輸出格式若非 GLB，只在
+      retarget.py 加輸入 parser，核心不動。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
