@@ -1,5 +1,5 @@
 # 0001 前輪靜態轉向不可見
-model: toy-racer        status: blocked
+model: toy-racer        status: done
 症狀: playground 靜止時拉轉向滑桿，前輪視覺上幾乎不轉（實測 0.06 rad，目標 0.4）。
      技術背景：Havok 靜摩擦是硬約束、馬達是軟彈簧，力開到 1e6 也推不動
      （grimoire/physics.md「靜止接觸是硬黏著」陷阱；行進中轉向正常）。
@@ -61,3 +61,31 @@ notes:
   （physics.md 陷阱）。現實對照：真車靜止打方向盤也極重（動力方向盤因此存在）。
   待使用者裁決驗收標準：(a) 刪 steer-static 斷言、以既綠的行進轉向為契約，
   或 (b) 降門檻為「機構有反應」弱斷言（如 ≥0.05 rad），或 (c) 另闢引擎級方案。
+
+- 使用者裁決（2026-09-01 22:20）：選 (c) 動力方向盤——steer actuator 在近靜止＋
+  收到轉向命令時暫降前胎摩擦、到位即恢復，模擬真車動力輔助。gate 門檻不動，
+  重開第四輪派工。
+
+- 第四輪（2026-09-01，動力方向盤）完成。一次性探針先確認：
+  `scene.onBeforePhysicsObservable` 在 headless `step()` 的 150 個 render/physics steps 中
+  觸發 150 次；前輪既有接觸直接重設 `shape.material` 為摩擦 0.05 後，60 steps 實角
+  0.382 rad，不需喚醒 body（另做自身線速度喚醒為 0.392 rad，故正式實作未加擾動）。
+  探針腳本已刪除。
+- 正式 assist 常數：車體速度門檻 0.05 m/s、前輪暫態摩擦 0.295、到位容差 ±0.05 rad、
+  timeout 120 physics steps。0.05 雖能快速到 0.37 rad，但留下的大靜態偏角會改變後續
+  行進 gate 初始狀態；掃回 0.295 後，靜態角仍過門檻且正負行進轉向維持原契約。
+- 恢復機制：每個新 steer `set()` 先恢復；`set(0)`、到位、timeout、車速跨過門檻、
+  model dispose 均把前輪兩個 shape 精確重設為基線摩擦 0.9／restitution 0.2。油門命令
+  非零時不啟動 assist，避免起步但速度尚未跨門檻的單步誤介入；observer 掛在
+  `onAfterPhysicsObservable`，逐 physics step 量兩個 knuckle 的真實 body 相對角。
+- fresh 驗收全綠：actuation `pass=true`；steer-static 左/右 0.219/0.227 rad；行進
+  +0.4 左/右 0.153/0.108 rad、yaw +0.127 rad；行進 -0.4 左/右 -0.135/-0.107 rad、
+  yaw -0.139 rad；drive 1.389 m。strict spec `OK`、TypeScript exit 0、physics roll
+  `pass=true`（forward 3.0269 m，四輪 slip 0.0121/0.0195/0.0167/0.0233）、runtime
+  export 17 meshes/7 bodies 且 collider check `OK`。status 欄保持 dispatched。
+
+- 監工獨立驗收（2026-09-01 22:45）：五項驗收全綠（actuation 15 項含 steer-static
+  0.219/0.227 全 OK、strict spec、tsc、roll pass、collider OK）＋全迴歸綠
+  （forge 76、action-figure actuation 28 項、ragdoll）＋playground 目視對比
+  （.img2babylon/shots/toy-racer-steer-0.png vs toy-racer-steer-max.png，俯視前輪
+  偏轉肉眼可辨）。卡標 done。

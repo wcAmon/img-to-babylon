@@ -19,6 +19,11 @@ notes: 各輪派工的結果摘要（誰、何時、改了什麼、gate 輸出�
 2. **派工**：`codex exec --cd <repo> --sandbox workspace-write "<prompt>"`。
    prompt 必含：任務卡全文、驗收命令、約束（不准改 gate 斷言與門檻、不准視覺
    作弊——gate 量的是 physics body、既有 gate 全綠、不准 commit、臨時探針用完刪）。
+   **陷阱：背景執行必須 `< /dev/null` 關 stdin**——codex exec 會印
+   `Reading additional input from stdin...` 並嘗試讀 stdin；背景 shell 的 stdin
+   是不會關閉的 pipe 時它就永遠卡住（task 0001 第三、四輪各卡一次，輸出停在
+   該行、CPU 0%）。看門狗判活不能只看「輸出檔非空」，banner 本身就有 39 bytes，
+   要看它有沒有超過 banner 繼續長。
    **陷阱：codex exec 是單向的**——Codex 若停下來問「可以開始嗎」就浪費一輪
    （task 0001 第一輪實證）。prompt 要明說「設計已核准，直接實作，不要停下來問；
    這是單向模式，問了沒人答」。若它仍回了個計畫，把計畫原文核准後重派即可。

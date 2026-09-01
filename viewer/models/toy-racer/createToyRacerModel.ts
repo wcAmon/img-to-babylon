@@ -4,6 +4,7 @@
 import {
   Color3,
   DynamicTexture,
+  Matrix,
   Mesh,
   MeshBuilder,
   Physics6DoFConstraint,
@@ -76,9 +77,37 @@ const STEER_RANGE = 0.4; // rad：steer actuator 可命令範圍
 const STEER_FORCE = 0.5; // N·m：要扛得住輪胎接地扭轉摩擦，0.05 只轉得到 0.06 rad
 const DRIVE_SPEED = 25; // rad/s：drive 馬達滿速
 const DRIVE_FORCE = 0.02; // N·m
+const ASSIST_SPEED_THRESHOLD = 0.05; // m/s：只在車體近靜止時介入
+const ASSIST_FRICTION = 0.295;
+const ASSIST_TARGET_TOLERANCE = 0.05; // rad
+const ASSIST_TIMEOUT_STEPS = 120;
+const ASSIST_COMMAND_EPSILON = 1e-6;
 
 const TESS = 32;
 const SPOKE_COUNT = 5;
+
+function relativeBodyRotation(a: PhysicsBody, b: PhysicsBody): Matrix {
+  a.transformNode.computeWorldMatrix(true);
+  b.transformNode.computeWorldMatrix(true);
+  const aw = a.transformNode.getWorldMatrix().getRotationMatrix();
+  const bw = b.transformNode.getWorldMatrix().getRotationMatrix();
+  return bw.multiply(Matrix.Invert(aw));
+}
+
+/** steer 軸是世界 Y；轉進 joint frame 後以 gate 同款 XZY 的 X 角量測。 */
+function measureSteerAngle(a: PhysicsBody, b: PhysicsBody, bind: Matrix): number {
+  const frame = Matrix.Identity();
+  Matrix.FromValuesToRef(
+    0, 1, 0, 0,
+    0, 0, -1, 0,
+    -1, 0, 0, 0,
+    0, 0, 0, 1,
+    frame,
+  );
+  const delta = Matrix.Invert(bind).multiply(relativeBodyRotation(a, b));
+  const m = frame.multiply(delta).multiply(Matrix.Invert(frame)).m;
+  return Math.atan2(m[6], m[5]);
+}
 
 /** 車身塗裝：左半純紅（側面/底面）、右半紅底雙白條（頂/前/後——條紋沿車長延伸）。 */
 function makeBodyTexture(scene: Scene): DynamicTexture {
@@ -296,6 +325,7 @@ export default function createToyRacerModel(
   const bodies: Record<string, PhysicsBody> = {};
   const constraints: Physics6DoFConstraint[] = [];
   const actuators: Actuator[] = [];
+  let assistCleanup: (() => void) | null = null;
   if (opts.physics !== false && scene.getPhysicsEngine()) {
     // chassis 剛體：chassis / cabin / spoiler 三個 box collider
     const chassisRoot = nodes["chassis"];
@@ -327,6 +357,7 @@ export default function createToyRacerModel(
     bodies["chassis"] = chassisBody;
 
     // 輪剛體：pivot 已繞 Z 轉 90°，局部 Y 即世界 X → cylinder 沿局部 Y
+    const wheelShapes: Partial<Record<string, PhysicsShapeCylinder>> = {};
     for (const w of WHEEL_DEFS) {
       const tirePivot = nodes[w.tire];
       tirePivot.computeWorldMatrix(true);
@@ -340,6 +371,7 @@ export default function createToyRacerModel(
       body.shape = shape;
       body.setMassProperties({ mass: WHEEL_MASS, centerOfMass: Vector3.Zero() });
       bodies[w.id] = body;
+      wheelShapes[w.id] = shape;
     }
 
     // 轉向節剛體：前輪與車身之間的中介（垂直 steer hinge 掛車身、輪軸掛轉向節）
@@ -361,6 +393,8 @@ export default function createToyRacerModel(
 
     // steer hinge：chassis→轉向節，垂直軸，限位 ±STEER_LIMIT，POSITION 馬達（惰性啟動）
     const steerHinges: Physics6DoFConstraint[] = [];
+    const steerBindRotations: Matrix[] = [];
+    const steerKnuckles: PhysicsBody[] = [];
     for (const [kid, x] of [["knuckle-fl", -AXLE_X], ["knuckle-fr", AXLE_X]] as [string, number][]) {
       const hinge = new Physics6DoFConstraint(
         {
@@ -389,6 +423,8 @@ export default function createToyRacerModel(
       hinge.setAxisMotorTarget(PhysicsConstraintAxis.ANGULAR_X, 0);
       constraints.push(hinge);
       steerHinges.push(hinge);
+      steerBindRotations.push(relativeBodyRotation(bodies["chassis"], bodies[kid]));
+      steerKnuckles.push(bodies[kid]);
     }
 
     // 自由旋轉 hinge：鎖三線軸＋ANGULAR_Y/Z，ANGULAR_X 不列 → 放開（grimoire/physics.md）
@@ -425,6 +461,7 @@ export default function createToyRacerModel(
 
     // ---- actuators（惰性啟動：第一次 set 前不影響物理）----
     let driveArmed = false;
+    let driveCommand = 0;
     actuators.push({
       id: "drive", kind: "drive", label: "油門", min: -1, max: 1,
       set(value: number): void {
@@ -437,17 +474,67 @@ export default function createToyRacerModel(
           h.setAxisMotorTarget(PhysicsConstraintAxis.ANGULAR_X, v * DRIVE_SPEED);
         }
         driveArmed = true;
+        driveCommand = v;
       },
     });
+    // 動力方向盤 doctrine：Havok 靜摩擦是硬約束、POSITION 馬達是軟彈簧，承載輪在
+    // 靜止接觸會硬黏著（見 grimoire/physics.md）。只在近靜止的非零轉向命令期間暫降
+    // 前胎摩擦；到位、超時、移動或任何新命令都先精確恢復輪胎基線。
+    const frontWheelShapes = [wheelShapes["wheel-fl"], wheelShapes["wheel-fr"]]
+      .filter((shape): shape is PhysicsShapeCylinder => !!shape);
+    let assistTarget: number | null = null;
+    let assistSteps = 0;
+    const restoreSteerAssist = (): void => {
+      if (assistTarget === null) return;
+      for (const shape of frontWheelShapes) {
+        shape.material = { friction: WHEEL_FRICTION, restitution: WHEEL_RESTITUTION };
+      }
+      assistTarget = null;
+      assistSteps = 0;
+    };
+    const engageSteerAssist = (target: number): void => {
+      for (const shape of frontWheelShapes) {
+        shape.material = { friction: ASSIST_FRICTION, restitution: WHEEL_RESTITUTION };
+      }
+      assistTarget = target;
+      assistSteps = 0;
+    };
+    const assistObserver = scene.onAfterPhysicsObservable.add(() => {
+      if (assistTarget === null) return;
+      assistSteps += 1;
+      if (bodies["chassis"].getLinearVelocity().length() >= ASSIST_SPEED_THRESHOLD) {
+        restoreSteerAssist();
+        return;
+      }
+      const arrived = steerKnuckles.every((knuckle, index) => (
+        Math.abs(measureSteerAngle(
+          bodies["chassis"], knuckle, steerBindRotations[index],
+        ) - assistTarget!) <= ASSIST_TARGET_TOLERANCE
+      ));
+      if (arrived || assistSteps >= ASSIST_TIMEOUT_STEPS) restoreSteerAssist();
+    });
+
     actuators.push({
       id: "steer", kind: "steer", label: "轉向", min: -STEER_RANGE, max: STEER_RANGE,
       set(value: number): void {
         const v = Math.max(-STEER_RANGE, Math.min(STEER_RANGE, value));
+        restoreSteerAssist();
         for (const h of steerHinges) {
           h.setAxisMotorTarget(PhysicsConstraintAxis.ANGULAR_X, v);
         }
+        if (
+          Math.abs(v) > ASSIST_COMMAND_EPSILON
+          && Math.abs(driveCommand) <= ASSIST_COMMAND_EPSILON
+          && bodies["chassis"].getLinearVelocity().length() < ASSIST_SPEED_THRESHOLD
+        ) {
+          engageSteerAssist(v);
+        }
       },
     });
+    assistCleanup = (): void => {
+      restoreSteerAssist();
+      scene.onAfterPhysicsObservable.remove(assistObserver);
+    };
   }
 
   // 車燈 actuator（無關物理，headless 也可用）
@@ -472,6 +559,7 @@ export default function createToyRacerModel(
     constraints,
     actuators,
     dispose(): void {
+      assistCleanup?.();
       constraints.forEach((c) => c.dispose());
       Object.values(bodies).forEach((b) => b.dispose());
       disposables.forEach((d) => d.dispose());
