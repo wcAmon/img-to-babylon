@@ -163,6 +163,12 @@ frame 的 `axisA/axisB` 對應 angular.x 的軸、`perpAxisA/perpAxisB` 對應 a
 ## 陷阱
 
 - 建 body 後再搬 transform：先 `body.disablePreStep = false` → 下一幀後設回 true。
+- **關節角量測必須用 XZY 順序分解**：Havok 逐軸角限位的執行語意沒有公開文件，
+  倒立擺探針（重力持續壓限位）實測：XZY Tait-Bryan 萃取與其最接近（鎖死軸殘餘
+  ≤0.05 rad），而 Babylon `toEulerAngles()`（YXZ）在兩軸同時大角度時串擾可達
+  0.19 rad，會誤報限位違規。`physics_test.ts` 的 `eulerXZY` 是準則實作。
+- 持續受載下限位有 ~0.05 rad 的 solver 柔性（瞬時衝擊可暫態超越 ~0.16），
+  斷言一律帶 ε（`RAGDOLL_ANGLE_EPS = 0.15`）。
 - `PhysicsShapeContainer` 的子形狀位置是相對 body 的 transform node，不是世界座標。
 - constraint 加在兩個 body 之間（`bodyA.addConstraint(bodyB, c)`），不是 mesh。
 - 蓋子質量遠小於瓶身時，把 hinge 兩端 pivot 算準（差 1cm 就會震盪）。

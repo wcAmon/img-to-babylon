@@ -33,7 +33,7 @@
 玩具風格是刻意選擇：圓潤誇張的比例繞過擬真曲面建模，正如 M2 用公仔風格
 繞過蒙皮。
 
-## M2（下一步）：玩具公仔 `action-figure` — ragdoll
+## M2（2026-09-01 完成）：玩具公仔 `action-figure` — ragdoll
 
 人形的物理對應物不是蒙皮動畫，而是 ragdoll。約 10 剛體（頭/軀幹/上臂×2/
 前臂×2/大腿×2/小腿×2）+ 約 9 個**帶人體關節限位的多軸 constraint**：
@@ -42,10 +42,15 @@
 
 需要的契約擴充：
 
-- 多軸限位 constraint（M1 只需單軸自由；此處要逐軸 limits）
-- character spec 分支：頭身比（head-unit）契約 + 比例 gate 進 validate_spec
-- physics_test 加 ragdoll 斷言：落地後各關節角度在限位內、無 NaN、身體不散
-- 目視 review 清單加 chirality（左右手性）檢查
+- [x] 多軸限位 constraint：`type:"joint"` + `angular` 逐軸 `[lo,hi]`/`"free"`/`"locked"`
+      （validate_spec TDD 13 測試；grimoire spec/physics 契約；canonical perp frame）
+- [x] character spec 分支：頂層 `proportions`（head_unit × total_heads ± tolerance）
+      比例 gate 進 validate_spec
+- [x] `physics_test.ts --ragdoll`：傾斜落下後關節角全部在限位 ±0.15 內（XZY 分解，
+      經倒立擺探針校準——見 physics.md 陷阱）、最終身高 < 站高 60%（真癱倒）、
+      constraint 不裂、無 NaN
+- [x] review 清單加 chirality 檢查；`action-figure` 走 SKILL.md 六步五 pass 全過，
+      三層 gate 全綠、0 修正（10 剛體、9 關節：脖/肩×2/肘×2/髖×2/膝×2）
 
 公仔風格 = 宣告「所有零件都不跨關節」（img2threejs 九層本體論的 L3
 單骨硬件）：硬殼頭髮、貼片五官，一刀砍掉蒙皮/SDF 工程，保留完整關節物理。

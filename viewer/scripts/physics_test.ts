@@ -249,6 +249,19 @@ function jointFrame(axis: Vector3): Matrix {
   return m; // 列＝frame 基底（Babylon row-vector 慣例：v_frame × M = v_bodyA）
 }
 
+/** XZY 順序的 Tait-Bryan 萃取——經倒立擺探針實測，與 Havok 6DoF 逐軸限位的
+ * 執行語意最接近（鎖死軸殘餘 ≤0.05 rad；Babylon toEulerAngles 串擾達 0.19）。 */
+function eulerXZY(m: Matrix): Vector3 {
+  const v = m.getRotationMatrix().m;
+  const g = (r: number, c: number): number => v[r * 4 + c];
+  const clamp = (x: number): number => Math.max(-1, Math.min(1, x));
+  return new Vector3(
+    Math.atan2(g(1, 2), g(1, 1)),
+    Math.atan2(g(2, 0), g(0, 0)),
+    Math.asin(clamp(-g(1, 0))),
+  );
+}
+
 function worldRotation(b: PhysicsBody): Matrix {
   b.transformNode.computeWorldMatrix(true);
   return b.transformNode.getWorldMatrix().getRotationMatrix();
@@ -288,7 +301,7 @@ function measureJoints(
     const frame = jointFrame(Vector3.FromArray(con.axis!));
     const delta = Matrix.Invert(bind).multiply(relativeRotation(a, b));
     const inFrame = frame.multiply(delta).multiply(Matrix.Invert(frame));
-    const e = Quaternion.FromRotationMatrix(inFrame).toEulerAngles();
+    const e = eulerXZY(inFrame);
     if (con.type === "hinge") {
       const ok = con.limits === "free" || angleWithin(con.limits, e.x);
       results.push({

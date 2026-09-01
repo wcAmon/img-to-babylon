@@ -1,0 +1,1469 @@
+{
+ "targetName": "action-figure",
+ "schemaVersion": "1",
+ "sourceImages": [
+  {
+   "role": "hero",
+   "path": ".img2babylon/action-figure/hero.png",
+   "origin": "tomato",
+   "tomatoJobId": "3ae8829ed1ee4c448f3482cde862b0ed",
+   "prompt": "a toy action figure standing upright, chunky cartoon proportions with oversized head, visible ball joints at shoulders and hips, hard plastic body, blue torso and red limbs, simple painted face, molded plastic hair, centered, full body front view, plain light gray background, soft studio lighting"
+  }
+ ],
+ "coordinateFrame": {
+  "up": "y",
+  "forward": "z",
+  "units": "m"
+ },
+ "silhouette": {
+  "outline": "chunky toy action figure standing upright: oversized flesh head with molded brown hair and painted face, barrel-shaped blue torso, stubby red arms with mitt hands, short red legs with rounded boots",
+  "complexity": "complex"
+ },
+ "proportions": {
+  "head_component": "head",
+  "head_unit": 0.03,
+  "total_heads": 3.5,
+  "tolerance": 0.15
+ },
+ "componentTree": [
+  {
+   "id": "torso",
+   "name": "torso shell",
+   "level": "macro",
+   "primitive": "box",
+   "dimensions": {
+    "w": 0.036,
+    "h": 0.03,
+    "d": 0.022,
+    "units": "m",
+    "confidence": 0.85
+   },
+   "transform": {
+    "position": [
+     0,
+     0.057,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "plastic-blue",
+   "collider": {
+    "type": "box",
+    "size": [
+     0.036,
+     0.03,
+     0.022
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.85
+   }
+  },
+  {
+   "id": "head",
+   "name": "head",
+   "level": "macro",
+   "primitive": "sphere",
+   "dimensions": {
+    "w": 0.03,
+    "h": 0.03,
+    "d": 0.03,
+    "units": "m",
+    "confidence": 0.85
+   },
+   "transform": {
+    "position": [
+     0,
+     0.088,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "joint",
+    "socket": "torso:neck",
+    "joint": {
+     "pivot": [
+      0,
+      -0.016,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "angular": {
+      "x": [
+       -0.6,
+       0.6
+      ],
+      "y": [
+       -0.6,
+       0.6
+      ],
+      "z": [
+       -0.6,
+       0.6
+      ]
+     }
+    }
+   },
+   "material": "flesh",
+   "collider": {
+    "type": "sphere",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.85
+   }
+  },
+  {
+   "id": "hair",
+   "name": "molded hair cap",
+   "level": "meso",
+   "primitive": "sphere",
+   "dimensions": {
+    "w": 0.032,
+    "h": 0.014,
+    "d": 0.032,
+    "units": "m",
+    "confidence": 0.7
+   },
+   "transform": {
+    "position": [
+     0,
+     0.097,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "hair-brown"
+  },
+  {
+   "id": "face",
+   "name": "painted face plate",
+   "level": "meso",
+   "primitive": "box",
+   "dimensions": {
+    "w": 0.02,
+    "h": 0.012,
+    "d": 0.002,
+    "units": "m",
+    "confidence": 0.7
+   },
+   "transform": {
+    "position": [
+     0,
+     0.088,
+     0.0145
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "face-print"
+  },
+  {
+   "id": "ear-l",
+   "name": "left ear",
+   "level": "micro",
+   "primitive": "sphere",
+   "dimensions": {
+    "w": 0.006,
+    "h": 0.006,
+    "d": 0.006,
+    "units": "m",
+    "confidence": 0.6
+   },
+   "transform": {
+    "position": [
+     0.0145,
+     0.088,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "flesh"
+  },
+  {
+   "id": "ear-r",
+   "name": "right ear",
+   "level": "micro",
+   "primitive": "sphere",
+   "dimensions": {
+    "w": 0.006,
+    "h": 0.006,
+    "d": 0.006,
+    "units": "m",
+    "confidence": 0.6
+   },
+   "transform": {
+    "position": [
+     -0.0145,
+     0.088,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "flesh"
+  },
+  {
+   "id": "upper-arm-l",
+   "name": "l upper arm",
+   "level": "macro",
+   "primitive": "capsule",
+   "dimensions": {
+    "w": 0.013,
+    "h": 0.02,
+    "d": 0.013,
+    "units": "m",
+    "confidence": 0.8
+   },
+   "transform": {
+    "position": [
+     0.0255,
+     0.058,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "joint",
+    "socket": "torso:shoulder-l",
+    "joint": {
+     "pivot": [
+      0,
+      0.01,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "angular": {
+      "x": [
+       -1.6,
+       1.6
+      ],
+      "y": [
+       -0.3,
+       1.6
+      ],
+      "z": [
+       -0.8,
+       0.8
+      ]
+     }
+    }
+   },
+   "material": "plastic-red",
+   "collider": {
+    "type": "capsule",
+    "size": [
+     0.013,
+     0.02,
+     0.013
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.8
+   }
+  },
+  {
+   "id": "forearm-l",
+   "name": "l forearm",
+   "level": "macro",
+   "primitive": "capsule",
+   "dimensions": {
+    "w": 0.013,
+    "h": 0.018,
+    "d": 0.013,
+    "units": "m",
+    "confidence": 0.8
+   },
+   "transform": {
+    "position": [
+     0.0255,
+     0.038,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "hinge",
+    "socket": "upper-arm-l:elbow",
+    "hinge": {
+     "pivot": [
+      0,
+      0.0095,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "limits": [
+      -2.44,
+      0
+     ]
+    }
+   },
+   "material": "plastic-red",
+   "collider": {
+    "type": "capsule",
+    "size": [
+     0.013,
+     0.018,
+     0.013
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.8
+   }
+  },
+  {
+   "id": "hand-l",
+   "name": "l hand",
+   "level": "micro",
+   "primitive": "sphere",
+   "dimensions": {
+    "w": 0.014,
+    "h": 0.014,
+    "d": 0.014,
+    "units": "m",
+    "confidence": 0.6
+   },
+   "transform": {
+    "position": [
+     0.0255,
+     0.027,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "plastic-red"
+  },
+  {
+   "id": "thigh-l",
+   "name": "l thigh",
+   "level": "macro",
+   "primitive": "capsule",
+   "dimensions": {
+    "w": 0.014,
+    "h": 0.016,
+    "d": 0.014,
+    "units": "m",
+    "confidence": 0.8
+   },
+   "transform": {
+    "position": [
+     0.009,
+     0.033,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "joint",
+    "socket": "torso:hip-l",
+    "joint": {
+     "pivot": [
+      0,
+      0.009,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "angular": {
+      "x": [
+       -2.0,
+       0.5
+      ],
+      "y": [
+       -0.2,
+       0.8
+      ],
+      "z": [
+       -0.5,
+       0.5
+      ]
+     }
+    }
+   },
+   "material": "plastic-red",
+   "collider": {
+    "type": "capsule",
+    "size": [
+     0.014,
+     0.016,
+     0.014
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.8
+   }
+  },
+  {
+   "id": "calf-l",
+   "name": "l calf and boot",
+   "level": "macro",
+   "primitive": "capsule",
+   "dimensions": {
+    "w": 0.015,
+    "h": 0.024,
+    "d": 0.015,
+    "units": "m",
+    "confidence": 0.8
+   },
+   "transform": {
+    "position": [
+     0.009,
+     0.012,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "hinge",
+    "socket": "thigh-l:knee",
+    "hinge": {
+     "pivot": [
+      0,
+      0.0125,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "limits": [
+      0,
+      2.44
+     ]
+    }
+   },
+   "material": "plastic-red",
+   "collider": {
+    "type": "capsule",
+    "size": [
+     0.015,
+     0.024,
+     0.015
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.8
+   }
+  },
+  {
+   "id": "boot-l",
+   "name": "l boot toe",
+   "level": "micro",
+   "primitive": "box",
+   "dimensions": {
+    "w": 0.016,
+    "h": 0.01,
+    "d": 0.024,
+    "units": "m",
+    "confidence": 0.6
+   },
+   "transform": {
+    "position": [
+     0.009,
+     0.005,
+     0.004
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "plastic-red"
+  },
+  {
+   "id": "upper-arm-r",
+   "name": "r upper arm",
+   "level": "macro",
+   "primitive": "capsule",
+   "dimensions": {
+    "w": 0.013,
+    "h": 0.02,
+    "d": 0.013,
+    "units": "m",
+    "confidence": 0.8
+   },
+   "transform": {
+    "position": [
+     -0.0255,
+     0.058,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "joint",
+    "socket": "torso:shoulder-r",
+    "joint": {
+     "pivot": [
+      0,
+      0.01,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "angular": {
+      "x": [
+       -1.6,
+       1.6
+      ],
+      "y": [
+       -1.6,
+       0.3
+      ],
+      "z": [
+       -0.8,
+       0.8
+      ]
+     }
+    }
+   },
+   "material": "plastic-red",
+   "collider": {
+    "type": "capsule",
+    "size": [
+     0.013,
+     0.02,
+     0.013
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.8
+   }
+  },
+  {
+   "id": "forearm-r",
+   "name": "r forearm",
+   "level": "macro",
+   "primitive": "capsule",
+   "dimensions": {
+    "w": 0.013,
+    "h": 0.018,
+    "d": 0.013,
+    "units": "m",
+    "confidence": 0.8
+   },
+   "transform": {
+    "position": [
+     -0.0255,
+     0.038,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "hinge",
+    "socket": "upper-arm-r:elbow",
+    "hinge": {
+     "pivot": [
+      0,
+      0.0095,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "limits": [
+      -2.44,
+      0
+     ]
+    }
+   },
+   "material": "plastic-red",
+   "collider": {
+    "type": "capsule",
+    "size": [
+     0.013,
+     0.018,
+     0.013
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.8
+   }
+  },
+  {
+   "id": "hand-r",
+   "name": "r hand",
+   "level": "micro",
+   "primitive": "sphere",
+   "dimensions": {
+    "w": 0.014,
+    "h": 0.014,
+    "d": 0.014,
+    "units": "m",
+    "confidence": 0.6
+   },
+   "transform": {
+    "position": [
+     -0.0255,
+     0.027,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "plastic-red"
+  },
+  {
+   "id": "thigh-r",
+   "name": "r thigh",
+   "level": "macro",
+   "primitive": "capsule",
+   "dimensions": {
+    "w": 0.014,
+    "h": 0.016,
+    "d": 0.014,
+    "units": "m",
+    "confidence": 0.8
+   },
+   "transform": {
+    "position": [
+     -0.009,
+     0.033,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "joint",
+    "socket": "torso:hip-r",
+    "joint": {
+     "pivot": [
+      0,
+      0.009,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "angular": {
+      "x": [
+       -2.0,
+       0.5
+      ],
+      "y": [
+       -0.8,
+       0.2
+      ],
+      "z": [
+       -0.5,
+       0.5
+      ]
+     }
+    }
+   },
+   "material": "plastic-red",
+   "collider": {
+    "type": "capsule",
+    "size": [
+     0.014,
+     0.016,
+     0.014
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.8
+   }
+  },
+  {
+   "id": "calf-r",
+   "name": "r calf and boot",
+   "level": "macro",
+   "primitive": "capsule",
+   "dimensions": {
+    "w": 0.015,
+    "h": 0.024,
+    "d": 0.015,
+    "units": "m",
+    "confidence": 0.8
+   },
+   "transform": {
+    "position": [
+     -0.009,
+     0.012,
+     0
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "hinge",
+    "socket": "thigh-r:knee",
+    "hinge": {
+     "pivot": [
+      0,
+      0.0125,
+      0
+     ],
+     "axis": [
+      1,
+      0,
+      0
+     ],
+     "limits": [
+      0,
+      2.44
+     ]
+    }
+   },
+   "material": "plastic-red",
+   "collider": {
+    "type": "capsule",
+    "size": [
+     0.015,
+     0.024,
+     0.015
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ],
+    "confidence": 0.8
+   }
+  },
+  {
+   "id": "boot-r",
+   "name": "r boot toe",
+   "level": "micro",
+   "primitive": "box",
+   "dimensions": {
+    "w": 0.016,
+    "h": 0.01,
+    "d": 0.024,
+    "units": "m",
+    "confidence": 0.6
+   },
+   "transform": {
+    "position": [
+     -0.009,
+     0.005,
+     0.004
+    ],
+    "rotation": [
+     0,
+     0,
+     0
+    ],
+    "scale": [
+     1,
+     1,
+     1
+    ]
+   },
+   "parent": null,
+   "attachment": {
+    "type": "fixed"
+   },
+   "material": "plastic-red"
+  }
+ ],
+ "materials": [
+  {
+   "id": "plastic-blue",
+   "kind": "procedural",
+   "baseColor": [
+    0.1,
+    0.35,
+    0.8
+   ],
+   "roughness": 0.25
+  },
+  {
+   "id": "plastic-red",
+   "kind": "procedural",
+   "baseColor": [
+    0.8,
+    0.1,
+    0.08
+   ],
+   "roughness": 0.25
+  },
+  {
+   "id": "flesh",
+   "kind": "procedural",
+   "baseColor": [
+    0.95,
+    0.76,
+    0.62
+   ],
+   "roughness": 0.5
+  },
+  {
+   "id": "hair-brown",
+   "kind": "procedural",
+   "baseColor": [
+    0.35,
+    0.2,
+    0.1
+   ],
+   "roughness": 0.4
+  },
+  {
+   "id": "face-print",
+   "kind": "dynamicTexture",
+   "baseColor": [
+    0.95,
+    0.76,
+    0.62
+   ],
+   "roughness": 0.5
+  }
+ ],
+ "physics": {
+  "bodies": [
+   {
+    "id": "torso",
+    "components": [
+     "torso"
+    ],
+    "mass": 0.04,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "head",
+    "components": [
+     "head",
+     "hair",
+     "face",
+     "ear-l",
+     "ear-r"
+    ],
+    "mass": 0.018,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "upper-arm-l",
+    "components": [
+     "upper-arm-l"
+    ],
+    "mass": 0.003,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "forearm-l",
+    "components": [
+     "forearm-l",
+     "hand-l"
+    ],
+    "mass": 0.003,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "thigh-l",
+    "components": [
+     "thigh-l"
+    ],
+    "mass": 0.0025,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "calf-l",
+    "components": [
+     "calf-l",
+     "boot-l"
+    ],
+    "mass": 0.005,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "upper-arm-r",
+    "components": [
+     "upper-arm-r"
+    ],
+    "mass": 0.003,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "forearm-r",
+    "components": [
+     "forearm-r",
+     "hand-r"
+    ],
+    "mass": 0.003,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "thigh-r",
+    "components": [
+     "thigh-r"
+    ],
+    "mass": 0.0025,
+    "friction": 0.6,
+    "restitution": 0.2
+   },
+   {
+    "id": "calf-r",
+    "components": [
+     "calf-r",
+     "boot-r"
+    ],
+    "mass": 0.005,
+    "friction": 0.6,
+    "restitution": 0.2
+   }
+  ],
+  "constraints": [
+   {
+    "type": "joint",
+    "bodyA": "torso",
+    "bodyB": "head",
+    "pivotA": [
+     0,
+     0.015,
+     0
+    ],
+    "pivotB": [
+     0,
+     -0.016,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "angular": {
+     "x": [
+      -0.6,
+      0.6
+     ],
+     "y": [
+      -0.6,
+      0.6
+     ],
+     "z": [
+      -0.6,
+      0.6
+     ]
+    }
+   },
+   {
+    "type": "joint",
+    "bodyA": "torso",
+    "bodyB": "upper-arm-l",
+    "pivotA": [
+     0.0255,
+     0.011,
+     0
+    ],
+    "pivotB": [
+     0,
+     0.01,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "angular": {
+     "x": [
+      -1.6,
+      1.6
+     ],
+     "y": [
+      -0.3,
+      1.6
+     ],
+     "z": [
+      -0.8,
+      0.8
+     ]
+    }
+   },
+   {
+    "type": "hinge",
+    "bodyA": "upper-arm-l",
+    "bodyB": "forearm-l",
+    "pivotA": [
+     0,
+     -0.0105,
+     0
+    ],
+    "pivotB": [
+     0,
+     0.0095,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "limits": [
+     -2.44,
+     0
+    ]
+   },
+   {
+    "type": "joint",
+    "bodyA": "torso",
+    "bodyB": "thigh-l",
+    "pivotA": [
+     0.009,
+     -0.015,
+     0
+    ],
+    "pivotB": [
+     0,
+     0.009,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "angular": {
+     "x": [
+      -2.0,
+      0.5
+     ],
+     "y": [
+      -0.2,
+      0.8
+     ],
+     "z": [
+      -0.5,
+      0.5
+     ]
+    }
+   },
+   {
+    "type": "hinge",
+    "bodyA": "thigh-l",
+    "bodyB": "calf-l",
+    "pivotA": [
+     0,
+     -0.0085,
+     0
+    ],
+    "pivotB": [
+     0,
+     0.0125,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "limits": [
+     0,
+     2.44
+    ]
+   },
+   {
+    "type": "joint",
+    "bodyA": "torso",
+    "bodyB": "upper-arm-r",
+    "pivotA": [
+     -0.0255,
+     0.011,
+     0
+    ],
+    "pivotB": [
+     0,
+     0.01,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "angular": {
+     "x": [
+      -1.6,
+      1.6
+     ],
+     "y": [
+      -1.6,
+      0.3
+     ],
+     "z": [
+      -0.8,
+      0.8
+     ]
+    }
+   },
+   {
+    "type": "hinge",
+    "bodyA": "upper-arm-r",
+    "bodyB": "forearm-r",
+    "pivotA": [
+     0,
+     -0.0105,
+     0
+    ],
+    "pivotB": [
+     0,
+     0.0095,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "limits": [
+     -2.44,
+     0
+    ]
+   },
+   {
+    "type": "joint",
+    "bodyA": "torso",
+    "bodyB": "thigh-r",
+    "pivotA": [
+     -0.009,
+     -0.015,
+     0
+    ],
+    "pivotB": [
+     0,
+     0.009,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "angular": {
+     "x": [
+      -2.0,
+      0.5
+     ],
+     "y": [
+      -0.8,
+      0.2
+     ],
+     "z": [
+      -0.5,
+      0.5
+     ]
+    }
+   },
+   {
+    "type": "hinge",
+    "bodyA": "thigh-r",
+    "bodyB": "calf-r",
+    "pivotA": [
+     0,
+     -0.0085,
+     0
+    ],
+    "pivotB": [
+     0,
+     0.0125,
+     0
+    ],
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "limits": [
+     0,
+     2.44
+    ]
+   }
+  ]
+ },
+ "buildPasses": [
+  "blockout",
+  "structure",
+  "material",
+  "physics",
+  "polish"
+ ],
+ "reviewHistory": [
+  {
+   "pass": "blockout",
+   "likeness": 7,
+   "colliderFit": 9,
+   "action": "continue",
+   "notes": "輪廓/頭身比/配色識別特徵齊全（髮/臉/耳/藍軀幹/紅四肢/靴）；capsule 線框貼合。structure 待改：軀幹過方正、四肢節段感重、五官偏小。"
+  },
+  {
+   "pass": "structure",
+   "likeness": 7.5,
+   "colliderFit": 9,
+   "action": "continue",
+   "notes": "腰身/瀏海/C型手/放大五官到位；元件邊界清楚、關節縫隙符合玩具風格、無穿插。"
+  },
+  {
+   "pass": "material",
+   "likeness": 7.5,
+   "colliderFit": 9,
+   "action": "continue",
+   "notes": "亮面射出塑膠質感；藍/紅/膚/棕四色與參考圖一致；臉部 DynamicTexture 生效。"
+  },
+  {
+   "pass": "physics",
+   "likeness": 7.5,
+   "colliderFit": 9,
+   "action": "continue",
+   "notes": "三層 gate 全綠：靜態 OK；--ragdoll pass（癱倒 0.104→0.047、9 關節角全部在限位±0.15 內、constraint 最大分離 1.4mm）；PhysicsViewer 線框貼合。關節角量測用 XZY 分解（見 physics.md 陷阱）。"
+  },
+  {
+   "pass": "polish",
+   "likeness": 7.5,
+   "colliderFit": 9,
+   "action": "stop",
+   "notes": "全套最終驗證綠（forge 47 測試 + strict + 靜態 + ragdoll + 兩個舊模型迴歸）。chirality：左右肩/髖 y 限位鏡像（±0.3/1.6、±0.2/0.8）、四肢位置 sx=±1 鏡像，非平移複製。決定性：無隨機元素，無需 seed。0 次修正。"
+  }
+ ]
+}

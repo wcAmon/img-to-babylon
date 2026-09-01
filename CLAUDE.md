@@ -20,5 +20,8 @@ Host 入口 symlink（單一 checkout，嚴禁複製兩份導致漂移）：
   回傳 base64，存進 `.img2babylon/shots/`）。注意：頁面載入後第一次 setCamera 常不生效，
   同一次 evaluate 內先 setCamera、等 400ms、再 setCamera 一次後截圖。PhysicsViewer
   線框走 utility layer，render-target 截圖照不到——改用 playwright 視口截圖。
+  另：`togglePhysicsViewer()` 從 `browser_evaluate` 呼叫常不生效，改用 snapshot 找
+  「碰撞線框」按鈕 `browser_click`；改 hash 參數（如 `physics=0`）不會觸發 reload，
+  要 `location.reload()` 後等 ~900ms。
 - `.img2babylon/`（gitignored）是執行期狀態；state.json 一次只屬於一個模型，
   換模型用 `next_pass.py init --model <name> --force`。
