@@ -25,6 +25,66 @@ def _valid_limits(limits):
             and limits[0] < limits[1])
 
 
+_ANGULAR_KEYS = {"x", "y", "z"}
+
+
+def _valid_angular(angular):
+    """joint angular：{x|y|z: [lo,hi] 或 "free" 或 "locked"}，至少一軸。"""
+    if not isinstance(angular, dict) or not angular:
+        return False
+    for k, v in angular.items():
+        if k not in _ANGULAR_KEYS:
+            return False
+        if v in ("free", "locked"):
+            continue
+        if not isinstance(v, list) or not _valid_limits(v):
+            return False
+    return True
+
+
+def _stack_height(comps):
+    """componentTree 的世界 Y 範圍（沿 parent 鏈累加 position.y，±h/2）。"""
+    tops, bottoms = [], []
+    for c in comps.values():
+        h = c.get("dimensions", {}).get("h")
+        if not isinstance(h, (int, float)):
+            continue
+        y, p, seen = c["transform"]["position"][1], c.get("parent"), set()
+        while p and p in comps and p not in seen:
+            seen.add(p)
+            y += comps[p]["transform"]["position"][1]
+            p = comps[p].get("parent")
+        tops.append(y + h / 2)
+        bottoms.append(y - h / 2)
+    return (max(tops) - min(bottoms)) if tops else 0.0
+
+
+def _check_proportions(spec, comps, errors):
+    prop = spec.get("proportions")
+    if not prop:
+        return
+    head_id = prop.get("head_component")
+    unit = prop.get("head_unit")
+    heads = prop.get("total_heads")
+    tol = prop.get("tolerance", 0.15)
+    if head_id not in comps:
+        errors.append(f"proportions.head_component 不存在: {head_id}")
+        return
+    if not all(isinstance(x, (int, float)) and x > 0 for x in (unit, heads, tol)):
+        errors.append("proportions 的 head_unit/total_heads/tolerance 必須為正數")
+        return
+    head_h = comps[head_id].get("dimensions", {}).get("h")
+    if isinstance(head_h, (int, float)) and abs(head_h - unit) > unit * tol:
+        errors.append(
+            f"proportions head_unit 不符：head 元件高 {head_h} vs 宣告 {unit}（±{tol:.0%}）")
+    height = _stack_height(comps)
+    expect = unit * heads
+    if abs(height - expect) > expect * tol:
+        errors.append(
+            f"proportions total_heads 不符：模型全高 {height:.4f} vs "
+            f"{unit}×{heads} = {expect:.4f}（±{tol:.0%}）")
+
+
 def validate(spec, strict=False):
     errors, warnings = [], []
     for key in REQUIRED_TOP:
@@ -88,26 +148,38 @@ def validate(spec, strict=False):
                 errors.append(
                     f"hinge constraint limits 不合法（須為 [lo, hi] 數字對且 lo < hi，"
                     f"或 \"free\"）: {con['limits']!r}")
+        if con.get("type") == "joint":
+            if "axis" not in con or "angular" not in con:
+                errors.append("joint constraint 必須有 axis 與 angular")
+            elif not _valid_angular(con["angular"]):
+                errors.append(
+                    f"joint constraint angular 不合法（逐軸 x/y/z 各為 [lo, hi] 數字對、"
+                    f"\"free\" 或 \"locked\"）: {con['angular']!r}")
 
     for cid, c in comps.items():
         att = c.get("attachment") or {}
-        if att.get("type") != "hinge":
+        kind = att.get("type")
+        if kind not in ("hinge", "joint"):
             continue
-        h = att.get("hinge") or {}
+        h = att.get(kind) or {}
         my_body = assigned.get(cid)
         match = next((con for con in constraints
-                      if con.get("type") == "hinge"
+                      if con.get("type") == kind
                       and my_body in (con.get("bodyA"), con.get("bodyB"))), None)
         if not match:
-            errors.append(f"元件 {cid} attachment 為 hinge 但 physics.constraints 無對應")
+            errors.append(f"元件 {cid} attachment 為 {kind} 但 physics.constraints 無對應")
             continue
         if h.get("axis") != match.get("axis"):
-            errors.append(f"元件 {cid} hinge axis 與 constraint 不一致")
+            errors.append(f"元件 {cid} {kind} axis 與 constraint 不一致")
         pa, pb = h.get("pivot"), match.get("pivotB")
         if pa and pb and math.dist(pa, pb) > HINGE_PIVOT_TOL:
-            errors.append(f"元件 {cid} hinge pivot 與 constraint pivotB 差距 > 5mm")
-        if "limits" in h and h["limits"] != match.get("limits"):
+            errors.append(f"元件 {cid} {kind} pivot 與 constraint pivotB 差距 > 5mm")
+        if kind == "hinge" and "limits" in h and h["limits"] != match.get("limits"):
             errors.append(f"元件 {cid} hinge limits 與 constraint 不一致")
+        if kind == "joint" and "angular" in h and h["angular"] != match.get("angular"):
+            errors.append(f"元件 {cid} joint angular 與 constraint 不一致")
+
+    _check_proportions(spec, comps, errors)
 
     if strict:
         if spec["silhouette"].get("complexity") == "complex" and len(comps) < 3:

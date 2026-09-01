@@ -104,6 +104,51 @@ const wheelHinge = new Physics6DoFConstraint(
 - **驗證**：`physics_test.ts --roll <bodyId>` 施水平推力，斷言車體位移、
   輪角速度 ≈ 線速度 ÷ 輪半徑（滾動不打滑）、constraint 不裂。
 
+## 多軸限位 joint（ragdoll 關節）：逐軸 limits
+
+spec 寫法見 `spec.md` 的 `type: "joint"`。程式碼與 hinge 同一套 6DoF，差別是
+**三條角軸逐一對應 `angular` 的 x/y/z**：`[lo, hi]` → 列出該軸 limit；`"locked"`
+（或省略）→ `minLimit: 0, maxLimit: 0`；`"free"` → 該軸整條不列：
+
+```ts
+const axes = [
+  { axis: PhysicsConstraintAxis.LINEAR_X, minLimit: 0, maxLimit: 0 },
+  { axis: PhysicsConstraintAxis.LINEAR_Y, minLimit: 0, maxLimit: 0 },
+  { axis: PhysicsConstraintAxis.LINEAR_Z, minLimit: 0, maxLimit: 0 },
+];
+const ANG = { x: PhysicsConstraintAxis.ANGULAR_X,
+              y: PhysicsConstraintAxis.ANGULAR_Y,
+              z: PhysicsConstraintAxis.ANGULAR_Z };
+for (const k of ["x", "y", "z"] as const) {
+  const v = con.angular?.[k] ?? "locked";
+  if (v === "free") continue;                       // 不列 = 放開
+  if (v === "locked") axes.push({ axis: ANG[k], minLimit: 0, maxLimit: 0 });
+  else axes.push({ axis: ANG[k], minLimit: v[0], maxLimit: v[1] });
+}
+```
+
+frame 的 `axisA/axisB` 對應 angular.x 的軸、`perpAxisA/perpAxisB` 對應 angular.y。
+兩個 body 在**綁定姿勢**（spec transform 擺好的樣子）下角度視為 0——limits 是
+相對綁定姿勢的偏轉量。
+
+### ragdoll 契約（玩具公仔）
+
+- 人體關節參考值（弧度，綁定姿勢 = T-pose 或立正）：
+
+  | 關節 | type | 限位 |
+  |---|---|---|
+  | 肘 / 膝 | hinge | `[0, 2.44]`（0–140°，單向彎） |
+  | 肩 / 髖 | joint | 主擺 x `[-0.5, 3.0]` / 側擺 z `[-0.3, 1.6]` / 扭轉 y `[-0.8, 0.8]` |
+  | 脖子 | joint | 三軸各約 `[-0.6, 0.6]` |
+
+- **質量分配**：軀幹最重，四肢遞減（玩具公仔參考：軀幹 ~0.05 kg、頭 ~0.02 kg、
+  大腿/上臂 ~0.01 kg、小腿/前臂 ~0.008 kg）。全身質量別差超過一個數量級太多，
+  否則 solver 抖動。
+- **collider 間隙**：相鄰肢段的 collider 在關節處**不要重疊**（留 1–2mm 縫），
+  或把 constraint 的 `isCollisionsEnabled` 設 false，否則自碰撞會把關節撐爆。
+- **驗證**：`physics_test.ts --ragdoll` 從高處丟下，斷言無 NaN、constraint 不裂、
+  各限位軸實測角度在 `[lo−ε, hi+ε]` 內、最終姿態高度 < 站高 60%（真的癱倒）。
+
 ## 質量與密度速查（gate 檢查 50–3000 kg/m³）
 
 | 材質 | 密度 kg/m³ | 例 |

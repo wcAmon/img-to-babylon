@@ -4,13 +4,18 @@
 // --roll <bodyId>（需 --spec、spec 需有 limits:"free" 的 hinge）：落地靜止後對該
 // body 施水平推力，斷言 (1) 沿推力方向位移 ≥ 0.1m 且側偏 < 前進的一半、
 // (2) 每個自由 hinge 的輪角速度 × 輪半徑 ≈ 車速（滾動不打滑）、(3) constraint 不裂。
-// 用法: npx tsx scripts/physics_test.ts <model-name> [--spec <spec.json>] [--nudge <bodyId>] [--roll <bodyId>] [--out result.json]
+// --ragdoll（需 --spec）：出生時傾斜 0.3 rad 再落下，斷言 (1) 落地後每個 hinge/joint
+// 的實測關節角在限位內（±ε）、(2) 最終身高 < 站高 60%（真的癱倒，不是立正卡死）、
+// (3) constraint 不裂（含在 settle 檢查）。
+// 用法: npx tsx scripts/physics_test.ts <model-name> [--spec <spec.json>] [--nudge <bodyId>] [--roll <bodyId>] [--ragdoll] [--out result.json]
 import {
+  Matrix,
   MeshBuilder,
   PhysicsBody,
   PhysicsMotionType,
   PhysicsShapeBox,
   Quaternion,
+  TransformNode,
   Vector3,
 } from "@babylonjs/core";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -28,6 +33,13 @@ const MIN_ROLL_DISTANCE = 0.1; // m：沿推力方向最小位移
 const ROLL_SLIP_TOLERANCE = 0.25; // |ω·r − v| / v：滾動不打滑的容差
 const MIN_MEASURE_SPEED = 0.05; // m/s：量測時車體至少要在動
 
+const RAGDOLL_TILT = 0.3; // rad：出生傾斜——膝/肘是單向 hinge，直挺挺落地可能站住
+const RAGDOLL_EXTRA_STEPS = 180; // ragdoll 癱倒比剛體落地慢，多給 3 秒
+const RAGDOLL_ANGLE_EPS = 0.15; // rad：關節角限位的 solver 餘裕
+const RAGDOLL_COLLAPSE_RATIO = 0.6; // 最終身高 / 站高 必須低於此值
+
+type AngularLimit = number[] | "free" | "locked";
+
 interface SpecConstraint {
   type?: string;
   bodyA: string;
@@ -36,6 +48,7 @@ interface SpecConstraint {
   pivotB: number[];
   axis?: number[];
   limits?: number[] | "free";
+  angular?: Partial<Record<"x" | "y" | "z", AngularLimit>>;
 }
 interface SpecCollider { type: string; size: number[] }
 interface SpecComponent { id: string; collider?: SpecCollider }
@@ -206,6 +219,106 @@ function runRollPhase(
   };
 }
 
+interface JointAngleResult {
+  bodyA: string;
+  bodyB: string;
+  type: string;
+  angles: Partial<Record<"x" | "y" | "z", number>>;
+  ok: boolean;
+}
+
+interface RagdollResult {
+  standHeight: number;
+  finalHeight: number;
+  collapsed: boolean;
+  joints: JointAngleResult[];
+  pass: boolean;
+}
+
+/** grimoire/physics.md 的 canonical perp 規則：factory 與 gate 用同一條，frame 才一致。 */
+function jointFrame(axis: Vector3): Matrix {
+  const x = axis.normalizeToNew();
+  const up = Math.abs(Vector3.Dot(x, Vector3.Up())) > 0.99
+    ? new Vector3(1, 0, 0) : Vector3.Up();
+  const y = Vector3.Cross(x, up).normalize();
+  const z = Vector3.Cross(x, y).normalize();
+  const m = Matrix.Identity();
+  Matrix.FromValuesToRef(
+    x.x, x.y, x.z, 0, y.x, y.y, y.z, 0, z.x, z.y, z.z, 0, 0, 0, 0, 1, m,
+  );
+  return m; // 列＝frame 基底（Babylon row-vector 慣例：v_frame × M = v_bodyA）
+}
+
+function worldRotation(b: PhysicsBody): Matrix {
+  b.transformNode.computeWorldMatrix(true);
+  return b.transformNode.getWorldMatrix().getRotationMatrix();
+}
+
+/** bodyB 相對 bodyA 的旋轉（A 局部座標，row-vector：Rb × Ra⁻¹）。 */
+function relativeRotation(a: PhysicsBody, b: PhysicsBody): Matrix {
+  return worldRotation(b).multiply(Matrix.Invert(worldRotation(a)));
+}
+
+function bindPoses(
+  constraints: SpecConstraint[], bodies: Record<string, PhysicsBody>,
+): Map<SpecConstraint, Matrix> {
+  const map = new Map<SpecConstraint, Matrix>();
+  for (const con of constraints) {
+    const a = bodies[con.bodyA];
+    const b = bodies[con.bodyB];
+    if (a && b && con.axis) map.set(con, relativeRotation(a, b));
+  }
+  return map;
+}
+
+function angleWithin(v: AngularLimit | undefined, angle: number): boolean {
+  if (v === "free") return true;
+  if (v === undefined || v === "locked") return Math.abs(angle) <= RAGDOLL_ANGLE_EPS;
+  return angle >= v[0] - RAGDOLL_ANGLE_EPS && angle <= v[1] + RAGDOLL_ANGLE_EPS;
+}
+
+/** 落地後逐 constraint 量關節角（相對綁定姿勢，constraint frame 的 Euler 近似）。 */
+function measureJoints(
+  binds: Map<SpecConstraint, Matrix>, bodies: Record<string, PhysicsBody>,
+): JointAngleResult[] {
+  const results: JointAngleResult[] = [];
+  for (const [con, bind] of binds) {
+    const a = bodies[con.bodyA];
+    const b = bodies[con.bodyB];
+    const frame = jointFrame(Vector3.FromArray(con.axis!));
+    const delta = Matrix.Invert(bind).multiply(relativeRotation(a, b));
+    const inFrame = frame.multiply(delta).multiply(Matrix.Invert(frame));
+    const e = Quaternion.FromRotationMatrix(inFrame).toEulerAngles();
+    if (con.type === "hinge") {
+      const ok = con.limits === "free" || angleWithin(con.limits, e.x);
+      results.push({
+        bodyA: con.bodyA, bodyB: con.bodyB, type: "hinge",
+        angles: { x: Number(e.x.toFixed(4)) }, ok,
+      });
+    } else {
+      const ang = con.angular ?? {};
+      const ok = angleWithin(ang.x, e.x) && angleWithin(ang.y, e.y)
+        && angleWithin(ang.z, e.z);
+      results.push({
+        bodyA: con.bodyA, bodyB: con.bodyB, type: "joint",
+        angles: {
+          x: Number(e.x.toFixed(4)),
+          y: Number(e.y.toFixed(4)),
+          z: Number(e.z.toFixed(4)),
+        },
+        ok,
+      });
+    }
+  }
+  return results;
+}
+
+function hierarchyHeight(root: TransformNode): number {
+  root.computeWorldMatrix(true);
+  const { min, max } = root.getHierarchyBoundingVectors(true);
+  return max.y - min.y;
+}
+
 async function main(): Promise<number> {
   const argv = process.argv.slice(2);
   const name = argv[0];
@@ -217,6 +330,7 @@ async function main(): Promise<number> {
   const specPath = specIdx >= 0 ? argv[specIdx + 1] : null;
   const rollIdx = argv.indexOf("--roll");
   const rollBody = rollIdx >= 0 ? argv[rollIdx + 1] : null;
+  const ragdoll = argv.includes("--ragdoll");
   if (!name || !(name in registry)) {
     console.error(
       `用法: physics_test.ts <model-name> [--spec <spec.json>] [--nudge <bodyId>] [--roll <bodyId>] [--out result.json]；`
@@ -226,6 +340,10 @@ async function main(): Promise<number> {
   }
   if (rollBody && !specPath) {
     console.error("--roll 需要 --spec（輪半徑與自由 hinge 從 spec 讀）");
+    return 2;
+  }
+  if (ragdoll && !specPath) {
+    console.error("--ragdoll 需要 --spec（關節限位從 spec 讀）");
     return 2;
   }
   const spec: Spec = specPath
@@ -247,13 +365,20 @@ async function main(): Promise<number> {
   const factory = (await registry[name]()).default;
   const model = factory(scene, { physics: true });
 
-  // 抬高 0.3m 再讓物理接管
+  const standHeight = ragdoll ? hierarchyHeight(model.root) : 0;
+  const binds = ragdoll
+    ? bindPoses(specConstraints, model.bodies)
+    : new Map<SpecConstraint, Matrix>();
+
+  // 抬高 0.3m 再讓物理接管；ragdoll 另加出生傾斜（直挺挺落地可能站住）
   Object.values(model.bodies).forEach((b) => { b.disablePreStep = false; });
   model.root.position.y += 0.3;
+  if (ragdoll) model.root.rotation.z += RAGDOLL_TILT;
   step(2);
   Object.values(model.bodies).forEach((b) => { b.disablePreStep = true; });
 
   step(60); // 1 秒：自由落體 + 落地
+  if (ragdoll) step(RAGDOLL_EXTRA_STEPS); // 癱倒需要時間
   if (nudgeBody && model.bodies[nudgeBody]) {
     const b = model.bodies[nudgeBody];
     const mass = b.getMassProperties().mass ?? 0.1;
@@ -280,8 +405,26 @@ async function main(): Promise<number> {
     ? runRollPhase(spec, model.bodies, step, rollBody)
     : null;
 
-  const pass = settlePass && (roll === null || roll.pass);
-  const result = { model: name, nudged: nudgeBody, pass, bodies, constraints, roll };
+  let ragdollResult: RagdollResult | null = null;
+  if (ragdoll) {
+    const joints = measureJoints(binds, model.bodies);
+    const finalHeight = hierarchyHeight(model.root);
+    const collapsed = finalHeight < standHeight * RAGDOLL_COLLAPSE_RATIO;
+    ragdollResult = {
+      standHeight: Number(standHeight.toFixed(4)),
+      finalHeight: Number(finalHeight.toFixed(4)),
+      collapsed,
+      joints,
+      pass: collapsed && joints.length > 0 && joints.every((j) => j.ok),
+    };
+  }
+
+  const pass = settlePass && (roll === null || roll.pass)
+    && (ragdollResult === null || ragdollResult.pass);
+  const result = {
+    model: name, nudged: nudgeBody, pass, bodies, constraints, roll,
+    ragdoll: ragdollResult,
+  };
   console.log(JSON.stringify(result, null, 2));
   if (outPath) writeFileSync(outPath, JSON.stringify(result, null, 2));
   ctx.dispose();

@@ -23,6 +23,9 @@ polish）執行；blockout/structure/material pass 只跑第 1、2、5、6 步�
 `{"pass": "<pass>", "likeness": 0-10, "colliderFit": 0-10, "action": "<動作>", "notes": "..."}`
 - likeness ≥ 7 且 colliderFit ≥ 8 → 該 pass 通過（`next_pass.py done`）。
 - colliderFit 看碰撞線框截圖：線框是否貼合視覺外形、有無明顯突出/縮水。
+- **角色模型加 chirality 檢查**：左右成對零件（臂、腿、耳）必須互為**鏡像**而非
+  平移複製——看 hero 圖確認不對稱特徵（髮旋、標誌、扣件）方向正確、左右手拇指
+  朝身體內側。鏡像錯誤記 refine-code。
 
 ## 動作（唯一合法集合）
 

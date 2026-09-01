@@ -81,6 +81,19 @@
 - `type: "hinge"` 的 constraint 必須同時有 `axis` 與 `limits`。
 - `limits` 必須是 `[lo, hi]` 數字對（弧度，`lo < hi`，如揀蓋 `[0, 1.92]`），或字串
   `"free"` 表示角軸完全放開（自由旋轉，如車輪——推一把因摩擦力自轉，無角度上限）。
+- `type: "joint"` 的 constraint（多軸限位，如 ragdoll 的肩/髖/脖子）必須同時有
+  `axis` 與 `angular`。`angular` 是 `{x|y|z: 值}` 的物件（至少一軸），每軸的值為
+  `[lo, hi]` 數字對、`"free"` 或 `"locked"`；**省略的軸視同 `"locked"`**。
+  軸名以 constraint 的 `axis` 為 X 建立局部座標（對應 6DoF 的 ANGULAR_X/Y/Z）：
+
+  ```jsonc
+  { "type": "joint", "bodyA": "torso", "bodyB": "upper-arm-l",
+    "pivotA": [0.02, 0.04, 0], "pivotB": [0, 0.018, 0],
+    "axis": [1, 0, 0],
+    "angular": { "x": [-0.5, 3.0], "y": [-0.8, 0.8], "z": [-0.3, 1.6] } }
+  ```
+
+  單軸關節（肘、膝）**不要用 joint**，用既有的 `hinge`。
 
 ## 權威規則：`physics.constraints` 才是物理事實
 
@@ -99,6 +112,27 @@ constraint pivot 卻忘記同步 attachment），所以驗證器強制比對：
   放在 `bodyB`，`attachment.hinge.pivot` 就直接抄 `pivotB` 的值。
 - `attachment.hinge.limits`（若有寫）必須與該 constraint 的 `limits`**完全相同**
   （`[0, 1.92]` 對 `[0, 1.92]`、`"free"` 對 `"free"`），抓兩邊漂移。
+- `attachment.type == "joint"` 的元件走同一套比對，鏡像欄位放在 `attachment.joint`
+  （`pivot` / `axis` / `angular`）：axis 完全相同、pivot 對 `pivotB` ≤ 5mm、
+  `angular`（若有寫）與 constraint 的 `angular` 完全相同。
+
+## `proportions`：角色頭身比 gate（選填）
+
+人形/角色 spec 加頂層 `proportions` 區塊，validate_spec 會多跑比例 gate；
+非角色 spec（車、罐子）不寫這塊，完全不受影響：
+
+```jsonc
+"proportions": {
+  "head_component": "head",   // componentTree 中頭部元件的 id（必須存在）
+  "head_unit": 0.032,         // 一顆頭的高度（米）
+  "total_heads": 4.0,         // 全身幾頭身（玩具公仔 3–4.5；寫實 7–8）
+  "tolerance": 0.15           // 相對容差（選填，預設 0.15 = ±15%）
+}
+```
+
+檢查兩條：head 元件的 `dimensions.h` ≈ `head_unit`；模型全高（沿 parent 鏈累加
+`position.y`、取所有元件 `±h/2` 的世界 Y 範圍）≈ `head_unit × total_heads`。
+兩條都以 `tolerance` 為相對容差。
 
 ## `silhouette.complexity` 與元件數量
 
