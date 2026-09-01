@@ -49,7 +49,7 @@ async function boot(): Promise<void> {
   const { installHarness } = await import("./harness");
   const { installCapture } = await import("./capture");
   installCapture(scene, camera, model);
-  installHarness(scene, model);
+  installHarness(scene, model, name);
 
   engine.runRenderLoop(() => scene.render());
   window.addEventListener("resize", () => engine.resize());

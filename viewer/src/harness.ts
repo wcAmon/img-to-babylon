@@ -12,8 +12,14 @@ import {
   Vector3,
 } from "@babylonjs/core";
 import type { BuiltModel } from "./types";
+import {
+  MotionTimelinePlayer,
+  validateMotionTimeline,
+} from "./motionTimeline";
+import type { MotionTimeline } from "./motionTimeline";
+import { MotionSuspension } from "./motionSuspension";
 
-export function installHarness(scene: Scene, model: BuiltModel): void {
+export function installHarness(scene: Scene, model: BuiltModel, modelName: string): void {
   const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
   const gMat = new StandardMaterial("ground-mat", scene);
   gMat.diffuseColor = new Color3(0.82, 0.83, 0.86);
@@ -86,12 +92,12 @@ export function installHarness(scene: Scene, model: BuiltModel): void {
     window.__IMG2BABYLON_CAPTURE__?.togglePhysicsViewer(wireOn);
   });
 
-  installActuatorPanel(model);
+  installActuatorPanel(scene, model, modelName);
 }
 
 /** M4 Actuator Playground：讀 model.actuators 自動生成側欄——滑桿即 set()，
  * 動作怪異可即時看出是哪個關節限位/軸向不對，回頭改 spec 重載。 */
-function installActuatorPanel(model: BuiltModel): void {
+function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string): void {
   const acts = model.actuators ?? [];
   if (!acts.length) return;
   const panel = document.createElement("div");
@@ -125,10 +131,117 @@ function installActuatorPanel(model: BuiltModel): void {
     panel.appendChild(row);
     sliders.push({ input, val });
   }
+  const servoActs = acts.filter((act) => act.kind === "servo");
+  const servoById = new Map(servoActs.map((act) => [act.id, act]));
+  const sliderById = new Map(acts.map((act, index) => [act.id, sliders[index]]));
+  let timeline: MotionTimeline | null = null;
+  let player: MotionTimelinePlayer | null = null;
+  const suspension = new MotionSuspension(scene, model.root, model.bodies, 0.3);
+
+  const motionRow = document.createElement("div");
+  motionRow.className = "actuator-row";
+  const motionLabel = document.createElement("label");
+  motionLabel.textContent = "載入動作";
+  const motionInput = document.createElement("input");
+  motionInput.type = "file";
+  motionInput.accept = "application/json,.json";
+  const motionStatus = document.createElement("span");
+  motionStatus.className = "val";
+  motionStatus.textContent = "未載入";
+  motionRow.appendChild(motionLabel);
+  motionRow.appendChild(motionInput);
+  motionRow.appendChild(motionStatus);
+  panel.appendChild(motionRow);
+
+  const playbackButton = document.createElement("button");
+  playbackButton.className = "reset";
+  playbackButton.textContent = "播放";
+
+  const zeroServos = (): void => {
+    servoActs.forEach((act) => {
+      act.set(0);
+      const slider = sliderById.get(act.id);
+      if (slider) {
+        slider.input.value = "0";
+        slider.val.textContent = "0.00";
+      }
+    });
+  };
+  const stopPlayback = (): void => {
+    player?.stop();
+    zeroServos();
+    playbackButton.textContent = "播放";
+  };
+  const applyFrame = (frame: number): void => {
+    if (!timeline) return;
+    for (const [id, track] of Object.entries(timeline.tracks)) {
+      const act = servoById.get(id);
+      const value = track[frame];
+      act?.set(value);
+      const slider = sliderById.get(id);
+      if (slider) {
+        slider.input.value = String(value);
+        slider.val.textContent = value.toFixed(2);
+      }
+    }
+  };
+
+  motionInput.onchange = async () => {
+    stopPlayback();
+    timeline = null;
+    player = null;
+    const file = motionInput.files?.[0];
+    if (!file) {
+      motionStatus.textContent = "未選檔";
+      return;
+    }
+    try {
+      const parsed = JSON.parse(await file.text()) as unknown;
+      timeline = validateMotionTimeline(parsed, modelName, new Set(servoById.keys()));
+      player = new MotionTimelinePlayer(timeline);
+      motionStatus.textContent = `${timeline.frames} 幀 @ ${timeline.fps}fps`;
+    } catch (error) {
+      motionStatus.textContent = `錯誤：${error instanceof Error ? error.message : String(error)}`;
+    }
+  };
+
+  playbackButton.onclick = () => {
+    if (player?.playing) {
+      stopPlayback();
+      return;
+    }
+    if (!player || !timeline) {
+      motionStatus.textContent = "請先載入有效動作";
+      return;
+    }
+    if (player.start(applyFrame)) playbackButton.textContent = "停止";
+    else stopPlayback();
+  };
+  scene.onBeforeRenderObservable.add(() => {
+    if (!player?.playing) return;
+    const completed = player.tick(scene.getEngine().getDeltaTime() / 1000, applyFrame);
+    if (completed) stopPlayback();
+  });
+  panel.appendChild(playbackButton);
+
+  const suspensionButton = document.createElement("button");
+  suspensionButton.className = "reset";
+  suspensionButton.textContent = "吊空：關";
+  suspensionButton.setAttribute("aria-pressed", "false");
+  suspensionButton.onclick = () => {
+    stopPlayback();
+    if (suspension.active) suspension.disable();
+    else suspension.enable();
+    suspensionButton.textContent = `吊空：${suspension.active ? "開" : "關"}`;
+    suspensionButton.setAttribute("aria-pressed", String(suspension.active));
+  };
+  panel.appendChild(suspensionButton);
+
   const reset = document.createElement("button");
   reset.className = "reset";
   reset.textContent = "全部歸零";
   reset.onclick = () => {
+    stopPlayback();
     acts.forEach((a, i) => {
       a.set(0);
       sliders[i].input.value = "0";
@@ -137,4 +250,8 @@ function installActuatorPanel(model: BuiltModel): void {
   };
   panel.appendChild(reset);
   document.body.appendChild(panel);
+  scene.onDisposeObservable.addOnce(() => {
+    stopPlayback();
+    suspension.dispose();
+  });
 }

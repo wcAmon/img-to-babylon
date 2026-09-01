@@ -84,7 +84,7 @@
       陷阱記錄：Havok 靜摩擦=硬約束馬達推不動（steer 行進中測、servo 吊空測）、
       間接相連零件穿插要碰撞過濾群組（physics.md）
 
-## M5：kimodo.cpp 動作燒錄（2026-09-01 調查完成，待 M4 地基）
+## M5：kimodo.cpp 動作燒錄（2026-09-01 完成）
 
 NVIDIA Kimodo 文字轉動作（C++/GGML，CPU 可跑，核心 Apache-2.0；用 SOMA 30 關節
 模型可商用，避開僅限研究的 SMPL-X）。路徑：kimodo 離線生成骨骼 GLB →
@@ -99,10 +99,10 @@ M4 的 servo 馬達與 playground 正是此項的前置工程。
       每幀相對旋轉 XZY 分解投影到 spec 關節軸、夾 angular 限位 → timeline JSON
       `{model, fps, frames, tracks: {"servo:<body>.<axis>": [rad,…]}}`。
       測試用合成迷你 GLB fixtures，不依賴 kimodo。
-- [ ] 0003 `viewer/scripts/motion_test.ts` motion gate（吊空逐幀餵 timeline 給
+- [x] 0003 `viewer/scripts/motion_test.ts` motion gate（吊空逐幀餵 timeline 給
       servo actuators，斷言追蹤容差/無 NaN/constraint 不裂）＋ playground
       「載入動作/播放/停止」面板。
-- [ ] 0004 kimodo.cpp 端到端：本機 clone/build＋SOMA 權重，生成真動作 →
+- [x] 0004 kimodo.cpp 端到端：本機 clone/build＋SOMA 權重，生成真動作 →
       retarget → motion gate → playground 目視。輸出格式若非 GLB，只在
       retarget.py 加輸入 parser，核心不動。
 

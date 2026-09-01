@@ -31,6 +31,8 @@ export function installCapture(
   scene: Scene, camera: ArcRotateCamera, model: BuiltModel,
 ): void {
   let viewer: PhysicsViewer | null = null;
+  // 監工除錯出口：playground 活體診斷用（截圖 gate 不依賴它）
+  (window as unknown as Record<string, unknown>).__IMG2BABYLON_DEBUG__ = { scene, model };
   window.__IMG2BABYLON_CAPTURE__ = {
     setCamera(spec: CameraSpec): void {
       camera.alpha = spec.alpha;

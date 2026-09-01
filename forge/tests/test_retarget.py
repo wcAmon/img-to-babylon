@@ -128,3 +128,59 @@ class CliTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class KimodoAliasTest(unittest.TestCase):
+    """kimodo.cpp soma30 命名（Mixamo 式）：Arm=肩、ForeArm=肘、Leg=髖、Shin=膝；
+    Shoulder=鎖骨不得映射（會與 Arm 重複寫同軌）。"""
+
+    def test_kimodo_names_mapped(self):
+        expected = {
+            "LeftArm": "upper-arm-l", "RightArm": "upper-arm-r",
+            "LeftForeArm": "forearm-l", "RightForeArm": "forearm-r",
+            "LeftLeg": "thigh-l", "RightLeg": "thigh-r",
+            "LeftShin": "calf-l", "RightShin": "calf-r",
+        }
+        for name, body in expected.items():
+            self.assertIn(name, retarget.JOINT_MAP, name)
+            self.assertEqual(retarget.JOINT_MAP[name]["body"], body, name)
+
+    def test_clavicle_not_mapped(self):
+        self.assertNotIn("LeftShoulder", retarget.JOINT_MAP)
+        self.assertNotIn("RightShoulder", retarget.JOINT_MAP)
+
+
+class RebaseTest(unittest.TestCase):
+    """--rebase first-frame：各軌減去首幀值（相對起始站姿），且發生在夾限之前——
+    kimodo T-pose rest 與公仔 rest 的恆定偏移會把軌釘死在限位、拖累同關節其他軸追蹤。"""
+
+    def test_rebase_helper_subtracts_first_frame(self):
+        self.assertEqual(
+            retarget.rebase_first_frame({"a": [0.5, 0.9, 0.5], "b": [0.0, 0.1, 0.0]}),
+            {"a": [0.0, 0.4, 0.0], "b": [0.0, 0.1, 0.0]},
+        )
+
+    def test_rebase_happens_before_clamp(self):
+        with open(SPEC) as handle:
+            spec = json.load(handle)
+        timeline = retarget.retarget_glb(
+            retarget.parse_glb(build_fixture_glb()), spec, 2, rebase="first-frame")
+        track = timeline["tracks"]["servo:upper-arm-l.x"]
+        self.assertAlmostEqual(track[0], 0.0)
+        for value in track:
+            self.assertLessEqual(abs(value), 1.6 + 1e-9)
+
+    def test_cli_accepts_rebase_flag(self):
+        import subprocess, tempfile, os, sys
+        with tempfile.TemporaryDirectory() as tmp:
+            glb = os.path.join(tmp, "f.glb")
+            out = os.path.join(tmp, "t.json")
+            with open(glb, "wb") as handle:
+                handle.write(build_fixture_glb())
+            result = subprocess.run(
+                [sys.executable, "forge/retarget.py", glb, "--spec", str(SPEC),
+                 "--out", out, "--rebase", "first-frame"], capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            with open(out) as handle:
+                data = json.load(handle)
+            self.assertEqual(len(data["tracks"]), 19)

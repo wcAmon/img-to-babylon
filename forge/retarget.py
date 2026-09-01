@@ -18,28 +18,34 @@ JOINT_MAP = {
     "Neck": {"body": "head", "axis_map": {"x": ("x", 1), "y": ("y", 1), "z": ("z", 1)}},
     "L_Shoulder": {"body": "upper-arm-l", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "left_shoulder": {"body": "upper-arm-l", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
-    "LeftShoulder": {"body": "upper-arm-l", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
+    "LeftArm": {"body": "upper-arm-l", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "R_Shoulder": {"body": "upper-arm-r", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "right_shoulder": {"body": "upper-arm-r", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
-    "RightShoulder": {"body": "upper-arm-r", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
+    "RightArm": {"body": "upper-arm-r", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "L_Elbow": {"body": "forearm-l", "axis_map": {"x": ("x", 1)}},
     "left_elbow": {"body": "forearm-l", "axis_map": {"x": ("x", 1)}},
     "LeftElbow": {"body": "forearm-l", "axis_map": {"x": ("x", 1)}},
+    "LeftForeArm": {"body": "forearm-l", "axis_map": {"x": ("x", 1)}},
     "R_Elbow": {"body": "forearm-r", "axis_map": {"x": ("x", -1)}},
     "right_elbow": {"body": "forearm-r", "axis_map": {"x": ("x", -1)}},
     "RightElbow": {"body": "forearm-r", "axis_map": {"x": ("x", -1)}},
+    "RightForeArm": {"body": "forearm-r", "axis_map": {"x": ("x", -1)}},
     "L_Hip": {"body": "thigh-l", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "left_hip": {"body": "thigh-l", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "LeftHip": {"body": "thigh-l", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
+    "LeftLeg": {"body": "thigh-l", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "R_Hip": {"body": "thigh-r", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "right_hip": {"body": "thigh-r", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "RightHip": {"body": "thigh-r", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
+    "RightLeg": {"body": "thigh-r", "axis_map": {"x": ("x", -1), "y": ("y", 1), "z": ("z", 1)}},
     "L_Knee": {"body": "calf-l", "axis_map": {"x": ("x", -1)}},
     "left_knee": {"body": "calf-l", "axis_map": {"x": ("x", -1)}},
     "LeftKnee": {"body": "calf-l", "axis_map": {"x": ("x", -1)}},
+    "LeftShin": {"body": "calf-l", "axis_map": {"x": ("x", -1)}},
     "R_Knee": {"body": "calf-r", "axis_map": {"x": ("x", -1)}},
     "right_knee": {"body": "calf-r", "axis_map": {"x": ("x", -1)}},
     "RightKnee": {"body": "calf-r", "axis_map": {"x": ("x", -1)}},
+    "RightShin": {"body": "calf-r", "axis_map": {"x": ("x", -1)}},
 }
 
 
@@ -222,9 +228,18 @@ def servo_tracks_from_spec(spec):
     return tracks, limits
 
 
-def retarget_glb(glb, spec, fps):
+def rebase_first_frame(tracks):
+    """各軌減去首幀值：時間線變成「相對起始站姿」的運動。用於來源骨架 rest pose
+    與目標公仔 rest 有恆定偏移（如 kimodo T-pose）——偏移會把軌釘死在限位。"""
+    return {name: [value - values[0] for value in values]
+            for name, values in tracks.items()}
+
+
+def retarget_glb(glb, spec, fps, rebase=None):
     if not isinstance(fps, int) or fps <= 0:
         raise ValueError("fps must be a positive integer")
+    if rebase not in (None, "first-frame"):
+        raise ValueError("rebase must be None or 'first-frame'")
     track_names, limits = servo_tracks_from_spec(spec)
     duration = max((timeline.times[-1] for timeline in glb.rotations.values()), default=0.0)
     frames = int(math.floor(duration * fps + 1e-9)) + 1
@@ -246,8 +261,12 @@ def retarget_glb(glb, spec, fps):
                 track = f"servo:{mapping['body']}.{target_axis}"
                 if track not in tracks:
                     continue
-                low, high = limits[track]
-                tracks[track][frame_index] = max(low, min(high, components[source_axis] * sign))
+                tracks[track][frame_index] = components[source_axis] * sign
+    if rebase == "first-frame":
+        tracks = rebase_first_frame(tracks)
+    for name, values in tracks.items():
+        low, high = limits[name]
+        tracks[name] = [max(low, min(high, value)) for value in values]
     return {"model": spec.get("targetName"), "fps": fps, "frames": frames, "tracks": tracks}
 
 
@@ -257,13 +276,14 @@ def main(argv=None):
     parser.add_argument("--spec", required=True)
     parser.add_argument("--out", required=True)
     parser.add_argument("--fps", type=int, default=20)
+    parser.add_argument("--rebase", choices=["first-frame"], default=None)
     args = parser.parse_args(argv)
     try:
         with open(args.input, "rb") as handle:
             glb = parse_glb(handle.read())
         with open(args.spec, encoding="utf-8") as handle:
             spec = json.load(handle)
-        timeline = retarget_glb(glb, spec, args.fps)
+        timeline = retarget_glb(glb, spec, args.fps, rebase=args.rebase)
         with open(args.out, "w", encoding="utf-8") as handle:
             json.dump(timeline, handle, ensure_ascii=False, indent=2)
             handle.write("\n")
