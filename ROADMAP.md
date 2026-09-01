@@ -64,8 +64,31 @@
   bbox 對齊 silhouette IoU 硬 gate＋六軟訊號集成（aspect/對稱 parity/pHash/SSIM/
   edge/tonal），陰影剔除＋遮罩閉合，門檻以 M1/M2 語料校準（好壞完美分離）。
   review gate 第 6 步接線：REJECT 直接修正、不花 agent vision。
-- **可駕駛車（馬達 hinge）**：在 M1 自由滾動之上加 constraint motor 與
-  viewer 鍵盤輸入。
+- ~~可駕駛車（馬達 hinge）~~：拆解後併入 M4/M5——img2babylon 只交付
+  「附馬達接口的模型」，可玩的駕駛體驗留給未來的遊戲製作 skill 消費。
+
+## M4：可動物件契約 + Actuator Playground（2026-09-01 使用者核准設計，進行中）
+
+「遊戲可用」的標準不是模型看起來像，而是可動件真的可動、可審查、可修改。
+
+- [ ] spec 契約新增 `actuation` 宣告（constraint 上：drive / steer / servo；
+      component 上：light=材質 emissive 兩態）；validate_spec 檢查格式與對應
+- [ ] factory 契約：模型出廠掛標準 `actuators` 介面
+      （`drive(speed)`、`steer(angle)`、`servo(joint, angle)`、`light(on)`）
+- [ ] 新 gate `viewer/scripts/actuation_test.ts`（可動物件審查）：逐一驅動宣告的
+      可動件並斷言可量測回應——drive 令車前進、steer 令航向偏、servo 令關節到
+      目標角、light 令 emissive 變；宣告了但動不了 = FAIL
+- [ ] Actuator Playground：viewer 側欄面板讀 `actuators` 自動生成 UI（滑桿/開關/
+      預設姿勢鈕），動作怪異可即時看出是哪個關節限位/軸向不對，回頭改 spec 重載
+- [ ] 示範：toy-racer 加 drive+steer（轉向節 body）；action-figure 九關節掛伺服馬達
+
+## M5：kimodo.cpp 動作燒錄（2026-09-01 調查完成，待 M4 地基）
+
+NVIDIA Kimodo 文字轉動作（C++/GGML，CPU 可跑，核心 Apache-2.0；用 SOMA 30 關節
+模型可商用，避開僅限研究的 SMPL-X）。路徑：kimodo 離線生成骨骼 GLB →
+`forge/retarget.py`（stdlib 解析 GLB，30 關節映射到公仔 9 關節、投影 joint axis、
+夾 angular 限位）→ 關節角度時間線 JSON → viewer 伺服馬達播放（物理驅動）。
+M4 的 servo 馬達與 playground 正是此項的前置工程。
 
 ## Parked（自設計文件 §11 移入，不分先後）
 
