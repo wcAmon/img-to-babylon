@@ -22,6 +22,8 @@ import type { Actuator } from "../src/types";
 const SETTLE_STEPS = 120;
 const DRIVE_STEPS = 240; // 4 秒滿油門
 const DRIVE_MIN_DIST = 0.15; // m
+const STATIC_STEER_STEPS = 60; // 靜態轉向觀察窗（1 秒）
+const STATIC_STEER_RATIO = 0.5; // 靜止時實測轉向角至少要到目標的這個比例（task 0001）
 const STEER_STEPS = 150; // 行進中轉向觀察窗（2.5 秒）
 const STEER_MIN_RATIO = 0.25; // 行進中實測轉向角至少要到目標的這個比例
 const STEER_MIN_YAW = 0.03; // rad：觀察窗內車身 yaw 至少要偏這麼多（真的在畫弧）
@@ -244,6 +246,21 @@ async function main(): Promise<number> {
       const b = model.bodies[c.bodyB];
       if (a && b && c.axis) binds.set(c, relativeRotation(a, b));
     }
+    // 靜態轉向（task 0001）：玩家靜止時拉滿方向，前輪必須看得見地轉
+    steer.set(steer.max);
+    step(STATIC_STEER_STEPS);
+    for (const d of steerDecls) {
+      const a = model.bodies[d.bodyA];
+      const b = model.bodies[d.bodyB];
+      const bind = binds.get(d);
+      if (!a || !b || !bind || !d.axis) continue;
+      const angle = measureAngles(a, b, Vector3.FromArray(d.axis), bind).x;
+      push(`steer-static:${d.bodyB}`,
+        angle * steer.max > 0 && Math.abs(angle) >= STATIC_STEER_RATIO * Math.abs(steer.max),
+        `量測 ${angle.toFixed(3)} vs 目標 ${steer.max.toFixed(3)}（門檻 ${STATIC_STEER_RATIO}×）`);
+    }
+    steer.set(0);
+    step(30);
     drive.set(0.5);
     step(30);
     for (const target of [steer.max, steer.min]) {
