@@ -94,7 +94,7 @@ M4 的 servo 馬達與 playground 正是此項的前置工程。
 
 執行計畫（2026-09-01 核准，harness-first：0002/0003 派 Codex、0004 監工自做）：
 
-- [ ] 0002 `forge/retarget.py`（stdlib，TDD）：GLB animation 解析（JSON chunk＋
+- [x] 0002 `forge/retarget.py`（stdlib，TDD）：GLB animation 解析（JSON chunk＋
       binary accessors，旋轉四元數時間線）→ SOMA 30→公仔 9 關節映射表 →
       每幀相對旋轉 XZY 分解投影到 spec 關節軸、夾 angular 限位 → timeline JSON
       `{model, fps, frames, tracks: {"servo:<body>.<axis>": [rad,…]}}`。

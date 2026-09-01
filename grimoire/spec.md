@@ -278,3 +278,33 @@ factory 契約：模型出廠掛 `actuators`（見 `viewer/src/types.ts` 的 Act
 `drive` 一支（set 為 targetSpeed 比例 -1..1）、`steer` 一支（set 為目標角，出廠即置中）、
 `servo:<bodyB>.<axis>` 逐軸（set 為目標角，夾限位）、`light:<componentId>` 逐件。
 drive/servo 馬達惰性啟動（第一次 set 前不影響物理——否則毀掉自由滾動/ragdoll）。
+
+## 動作時間線
+
+`forge/retarget.py` 把 GLB 骨骼的局部 rotation 動畫轉成公仔 servo 角度時間線：
+
+```console
+python3 forge/retarget.py motion.glb \
+  --spec viewer/models/action-figure/spec.json \
+  --out timeline.json --fps 20
+```
+
+輸出 JSON 契約：
+
+```json
+{
+  "model": "action-figure",
+  "fps": 20,
+  "frames": 21,
+  "tracks": {
+    "servo:head.x": [0.0, 0.025, 0.05],
+    "servo:head.y": [0.0, 0.0, 0.0],
+    "servo:forearm-l.x": [0.0, -0.1, -0.2]
+  }
+}
+```
+
+例中陣列為節錄；實際輸出的每個陣列都必須恰有 `frames` 個弧度值。`tracks` 的鍵只能
+是 spec 中 `actuation.type == "servo"` 所宣告的軸：hinge 僅有 `x`，joint 則包含
+`angular` 中所有非 `"locked"` 軸。每一軌等長；每個值已夾進該 constraint 在 spec
+宣告的數字 angular 限位。GLB 沒有映射到的 servo 軸仍須存在，並輸出全零軌。
