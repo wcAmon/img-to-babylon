@@ -546,7 +546,7 @@
     },
     {
       "id": "calf-l",
-      "name": "l calf and boot",
+      "name": "l calf",
       "level": "macro",
       "primitive": "capsule",
       "dimensions": {
@@ -612,8 +612,8 @@
     },
     {
       "id": "boot-l",
-      "name": "l boot toe",
-      "level": "micro",
+      "name": "l boot",
+      "level": "macro",
       "primitive": "box",
       "dimensions": {
         "w": 0.016,
@@ -626,7 +626,7 @@
         "position": [
           0.009,
           0.005,
-          0.000
+          0.0
         ],
         "rotation": [
           0,
@@ -641,9 +641,47 @@
       },
       "parent": null,
       "attachment": {
-        "type": "fixed"
+        "type": "joint",
+        "socket": "calf-l:ankle",
+        "joint": {
+          "pivot": [
+            0,
+            0.001,
+            0
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "angular": {
+            "x": [
+              -0.5,
+              0.5
+            ],
+            "y": "locked",
+            "z": [
+              -0.3,
+              0.3
+            ]
+          }
+        }
       },
-      "material": "plastic-red"
+      "material": "plastic-red",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.016,
+          0.01,
+          0.028
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.6
+      }
     },
     {
       "id": "upper-arm-r",
@@ -900,7 +938,7 @@
     },
     {
       "id": "calf-r",
-      "name": "r calf and boot",
+      "name": "r calf",
       "level": "macro",
       "primitive": "capsule",
       "dimensions": {
@@ -966,8 +1004,8 @@
     },
     {
       "id": "boot-r",
-      "name": "r boot toe",
-      "level": "micro",
+      "name": "r boot",
+      "level": "macro",
       "primitive": "box",
       "dimensions": {
         "w": 0.016,
@@ -980,7 +1018,7 @@
         "position": [
           -0.009,
           0.005,
-          0.000
+          0.0
         ],
         "rotation": [
           0,
@@ -995,9 +1033,47 @@
       },
       "parent": null,
       "attachment": {
-        "type": "fixed"
+        "type": "joint",
+        "socket": "calf-r:ankle",
+        "joint": {
+          "pivot": [
+            0,
+            0.001,
+            0
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "angular": {
+            "x": [
+              -0.5,
+              0.5
+            ],
+            "y": "locked",
+            "z": [
+              -0.3,
+              0.3
+            ]
+          }
+        }
       },
-      "material": "plastic-red"
+      "material": "plastic-red",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.016,
+          0.01,
+          0.028
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.6
+      }
     }
   ],
   "materials": [
@@ -1107,10 +1183,18 @@
       {
         "id": "calf-l",
         "components": [
-          "calf-l",
+          "calf-l"
+        ],
+        "mass": 0.003,
+        "friction": 0.6,
+        "restitution": 0.2
+      },
+      {
+        "id": "boot-l",
+        "components": [
           "boot-l"
         ],
-        "mass": 0.005,
+        "mass": 0.002,
         "friction": 0.6,
         "restitution": 0.2
       },
@@ -1145,10 +1229,18 @@
       {
         "id": "calf-r",
         "components": [
-          "calf-r",
+          "calf-r"
+        ],
+        "mass": 0.003,
+        "friction": 0.6,
+        "restitution": 0.2
+      },
+      {
+        "id": "boot-r",
+        "components": [
           "boot-r"
         ],
-        "mass": 0.005,
+        "mass": 0.002,
         "friction": 0.6,
         "restitution": 0.2
       }
@@ -1326,6 +1418,41 @@
       },
       {
         "type": "joint",
+        "bodyA": "calf-l",
+        "bodyB": "boot-l",
+        "pivotA": [
+          0,
+          -0.006,
+          0
+        ],
+        "pivotB": [
+          0,
+          0.001,
+          0
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "angular": {
+          "x": [
+            -0.5,
+            0.5
+          ],
+          "y": "locked",
+          "z": [
+            -0.3,
+            0.3
+          ]
+        },
+        "actuation": {
+          "type": "servo",
+          "maxForce": 0.02
+        }
+      },
+      {
+        "type": "joint",
         "bodyA": "torso",
         "bodyB": "upper-arm-r",
         "pivotA": [
@@ -1451,6 +1578,41 @@
           0,
           2.44
         ],
+        "actuation": {
+          "type": "servo",
+          "maxForce": 0.02
+        }
+      },
+      {
+        "type": "joint",
+        "bodyA": "calf-r",
+        "bodyB": "boot-r",
+        "pivotA": [
+          0,
+          -0.006,
+          0
+        ],
+        "pivotB": [
+          0,
+          0.001,
+          0
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "angular": {
+          "x": [
+            -0.5,
+            0.5
+          ],
+          "y": "locked",
+          "z": [
+            -0.3,
+            0.3
+          ]
+        },
         "actuation": {
           "type": "servo",
           "maxForce": 0.02
