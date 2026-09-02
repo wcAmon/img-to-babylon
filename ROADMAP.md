@@ -106,6 +106,25 @@ M4 的 servo 馬達與 playground 正是此項的前置工程。
       retarget → motion gate → playground 目視。輸出格式若非 GLB，只在
       retarget.py 加輸入 parser，核心不動。
 
+## M6：人臉優化（2026-09-02 核准開工）
+
+hero.png 的臉（粗黑眉、亮黑圓眼＋眼神光、微笑）目前是畫在 0.002 薄盒上的
+DynamicTexture——側面看是平的。M6 把五官換成真 3D 幾何，並給 Divine Eye 加
+顯微鏡（區域裁切審查），讓臉部有確定性驗收訊號。
+
+執行計畫（harness-first：0006/0007 派 Codex 可並行、0008 監工自做）：
+
+- [ ] 0006 五官立體化：平面貼圖臉換成 headPivot 下的 3D 視覺子件
+      （眼=亮黑半球＋眼神光、眉=深棕扁盒微傾、嘴=torus 弧、鼻=小膚色凸起）。
+      純視覺零物理變動：不加 body、不動 spec constraints、質量不變。
+      gate：`viewer/scripts/face_test.ts`（監工先寫紅）＋既有 gate 全綠。
+- [ ] 0007 Divine Eye 顯微鏡：`forge/divine_eye.py` 加 `--region x,y,w,h`
+      （相對前景 bbox 的分數矩形），ref/render 同矩形裁切後跑同一套訊號，
+      JSON 輸出加 region 欄位。stdlib TDD、合成 PNG fixtures；
+      `grimoire/review.md` 接線顯微鏡 pass。
+- [ ] 0008 監工驗收：playwright 近拍正/側面截圖，hero.png 臉區 vs render
+      臉區跑顯微鏡，目視＋數據雙確認，證據落 `.img2babylon/shots/`。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
