@@ -327,6 +327,7 @@ export default function createPillBottleModel(
   }
 
   const built: BuiltModel = {
+    physicsScale: 1,
     root,
     nodes,
     meshes,

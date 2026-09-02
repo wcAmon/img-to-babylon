@@ -48,6 +48,7 @@ export interface StandBalanceAxis {
 }
 
 export interface BuiltModel {
+  physicsScale: number;
   root: TransformNode;
   nodes: Record<string, TransformNode>;
   meshes: Record<string, Mesh>;
@@ -67,6 +68,7 @@ export interface BuiltModel {
 
 export interface ModelOptions {
   physics?: boolean;
+  physicsScale?: number;
 }
 
 export type ModelFactory = (scene: Scene, opts?: ModelOptions) => BuiltModel;

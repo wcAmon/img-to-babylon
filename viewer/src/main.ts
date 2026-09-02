@@ -47,8 +47,15 @@ async function boot(): Promise<void> {
     banner(`未知模型：${name}（registry 無此項）`);
     return;
   }
+  const requestedScale = Number(params.get("scale") ?? "1");
+  const physicsScale = Number.isFinite(requestedScale) && requestedScale > 0 ? requestedScale : 1;
   const factory = (await load()).default;
-  const model = factory(scene, { physics: params.get("physics") !== "0" });
+  const model = factory(scene, {
+    physics: params.get("physics") !== "0",
+    physicsScale,
+  });
+  camera.radius *= model.physicsScale;
+  camera.setTarget(camera.getTarget().scale(model.physicsScale));
 
   const { installHarness } = await import("./harness");
   const { installCapture } = await import("./capture");

@@ -23,6 +23,7 @@ export class StandController {
   private readonly poseTargets = new Map<string, number>();
   private readonly leanGain: number;
   private readonly driftGain: number;
+  private readonly useV2: boolean;
   private readonly initialTransforms = new Map<PhysicsBody, InitialTransform>();
   private syncObserver: Observer<Scene> | null = null;
   private balanceObserver: Observer<Scene> | null = null;
@@ -42,11 +43,17 @@ export class StandController {
       const servo = this.servoById.get(id);
       return servo ? [{ servo, sign }] : [];
     });
-    this.controlledServoIds = new Set([
-      ...this.balanceServos.map(({ servo }) => servo.id),
-      ...(model.balance?.pitch?.servos ?? []).map(({ id }) => id),
-      ...(model.balance?.roll?.servos ?? []).map(({ id }) => id),
-    ]);
+    const usesV2 = Boolean(
+      model.physicsScale === 1
+        && model.balance?.supportBodyIds?.length && model.balance.pitch && model.balance.roll,
+    );
+    this.useV2 = usesV2;
+    this.controlledServoIds = new Set(usesV2
+      ? [
+          ...(model.balance?.pitch?.servos ?? []).map(({ id }) => id),
+          ...(model.balance?.roll?.servos ?? []).map(({ id }) => id),
+        ]
+      : this.balanceServos.map(({ servo }) => servo.id));
     this.leanGain = model.balance?.leanGain ?? 0;
     this.driftGain = model.balance?.driftGain ?? 0;
     Object.entries(model.bodies).forEach(([id, body]) => {
@@ -91,8 +98,7 @@ export class StandController {
       this.cancelSync();
       this.servos.forEach((servo) => servo.set(0));
     });
-    const v2 = this.balance?.supportBodyIds?.length && this.balance.pitch && this.balance.roll
-      ? this.balance : null;
+    const v2 = this.useV2 ? this.balance : null;
     if (this.torso && (this.balanceServos.length > 0 || v2)) {
       let steps = 0;
       let previousError: { x: number; z: number } | null = null;
@@ -124,7 +130,7 @@ export class StandController {
           const support = supports.reduce((sum, p) => sum.addInPlace(p), Vector3.Zero())
             .scaleInPlace(1 / supports.length);
           const error = { x: com.x - support.x, z: com.z - support.z };
-          const dt = Math.max(1 / 240, this.scene.getEngine().getDeltaTime() / 1000);
+          const dt = 1 / 60;
           const velocity = previousError
             ? { x: (error.x - previousError.x) / dt, z: (error.z - previousError.z) / dt }
             : { x: 0, z: 0 };

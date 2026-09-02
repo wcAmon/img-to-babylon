@@ -46,6 +46,7 @@ export default function createSampleCrateModel(
   }
 
   const built: BuiltModel = {
+    physicsScale: 1,
     root,
     nodes: { crate: pivot },
     meshes: { crate: mesh },

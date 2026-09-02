@@ -552,6 +552,7 @@ export default function createToyRacerModel(
   }
 
   const built: BuiltModel = {
+    physicsScale: 1,
     root,
     nodes,
     meshes,

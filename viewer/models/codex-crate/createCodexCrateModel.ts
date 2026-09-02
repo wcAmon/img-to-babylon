@@ -115,6 +115,7 @@ export default function createCodexCrateModel(
   }
 
   const built: BuiltModel = {
+    physicsScale: 1,
     root,
     nodes: { crate: pivot },
     meshes,

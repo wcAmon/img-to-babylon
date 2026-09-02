@@ -30,6 +30,7 @@ declare global {
 export function installCapture(
   scene: Scene, camera: ArcRotateCamera, model: BuiltModel,
 ): void {
+  const scale = model.physicsScale;
   let viewer: PhysicsViewer | null = null;
   // 監工除錯出口：playground 活體診斷用（截圖 gate 不依賴它）
   (window as unknown as Record<string, unknown>).__IMG2BABYLON_DEBUG__ = { scene, model };
@@ -37,8 +38,8 @@ export function installCapture(
     setCamera(spec: CameraSpec): void {
       camera.alpha = spec.alpha;
       camera.beta = spec.beta;
-      camera.radius = spec.radius;
-      if (spec.target) camera.setTarget(Vector3.FromArray(spec.target));
+      camera.radius = spec.radius * scale;
+      if (spec.target) camera.setTarget(Vector3.FromArray(spec.target).scale(scale));
     },
     async screenshot(): Promise<string> {
       return Tools.CreateScreenshotUsingRenderTargetAsync(

@@ -21,7 +21,10 @@ import { MotionSuspension } from "./motionSuspension";
 import { StandController } from "./standController";
 
 export function installHarness(scene: Scene, model: BuiltModel, modelName: string): void {
-  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
+  const scale = model.physicsScale;
+  const massScale = scale ** 3;
+  const impulseScale = scale ** 3.5;
+  const ground = MeshBuilder.CreateGround("ground", { width: 10 * scale, height: 10 * scale }, scene);
   const gMat = new StandardMaterial("ground-mat", scene);
   gMat.diffuseColor = new Color3(0.82, 0.83, 0.86);
   gMat.specularColor = Color3.Black();
@@ -31,7 +34,8 @@ export function installHarness(scene: Scene, model: BuiltModel, modelName: strin
   if (physics) {
     const gBody = new PhysicsBody(ground, PhysicsMotionType.STATIC, false, scene);
     const gShape = new PhysicsShapeBox(
-      new Vector3(0, -0.05, 0), Quaternion.Identity(), new Vector3(10, 0.1, 10), scene,
+      new Vector3(0, -0.05 * scale, 0), Quaternion.Identity(),
+      new Vector3(10 * scale, 0.1 * scale, 10 * scale), scene,
     );
     gShape.material = { friction: 0.7, restitution: 0.2 };
     gBody.shape = gShape;
@@ -51,7 +55,11 @@ export function installHarness(scene: Scene, model: BuiltModel, modelName: strin
     Object.values(model.bodies).forEach((b) => {
       const mass = b.getMassProperties().mass ?? 1;
       b.applyImpulse(
-        new Vector3((Math.random() - 0.5) * mass, mass * 3.2, (Math.random() - 0.5) * mass),
+        new Vector3(
+          (Math.random() - 0.5) * mass * Math.sqrt(scale),
+          mass * 3.2 * Math.sqrt(scale),
+          (Math.random() - 0.5) * mass * Math.sqrt(scale),
+        ),
         b.transformNode.absolutePosition,
       );
     });
@@ -60,30 +68,37 @@ export function installHarness(scene: Scene, model: BuiltModel, modelName: strin
   btn("丟球", () => {
     const cam = scene.activeCamera as ArcRotateCamera;
     const dir = cam.getTarget().subtract(cam.position).normalize();
-    const ball = MeshBuilder.CreateSphere(`ball-${performance.now()}`, { diameter: 0.06 }, scene);
-    ball.position = cam.position.add(dir.scale(0.2));
+    const ball = MeshBuilder.CreateSphere(
+      `ball-${performance.now()}`, { diameter: 0.06 * scale }, scene,
+    );
+    ball.position = cam.position.add(dir.scale(0.2 * scale));
     const mat = new StandardMaterial("ball-mat", scene);
     mat.diffuseColor = new Color3(0.85, 0.3, 0.25);
     ball.material = mat;
     const body = new PhysicsBody(ball, PhysicsMotionType.DYNAMIC, false, scene);
-    const shape = new PhysicsShapeSphere(Vector3.Zero(), 0.03, scene);
+    const shape = new PhysicsShapeSphere(Vector3.Zero(), 0.03 * scale, scene);
     shape.material = { friction: 0.4, restitution: 0.6 };
     body.shape = shape;
-    body.setMassProperties({ mass: 0.2 });
-    body.applyImpulse(dir.scale(1.2), ball.position);
+    body.setMassProperties({ mass: 0.2 * massScale });
+    body.applyImpulse(dir.scale(1.2 * impulseScale), ball.position);
   });
 
   btn("堆疊", () => {
     for (let i = 0; i < 3; i++) {
-      const box = MeshBuilder.CreateBox(`stack-${performance.now()}-${i}`, { size: 0.1 }, scene);
-      box.position = new Vector3(0.02 * i, 0.8 + 0.15 * i, 0.02 * i);
+      const box = MeshBuilder.CreateBox(
+        `stack-${performance.now()}-${i}`, { size: 0.1 * scale }, scene,
+      );
+      box.position = new Vector3(
+        0.02 * i * scale, (0.8 + 0.15 * i) * scale, 0.02 * i * scale,
+      );
       const body = new PhysicsBody(box, PhysicsMotionType.DYNAMIC, false, scene);
       const shape = new PhysicsShapeBox(
-        Vector3.Zero(), Quaternion.Identity(), new Vector3(0.1, 0.1, 0.1), scene,
+        Vector3.Zero(), Quaternion.Identity(),
+        new Vector3(0.1 * scale, 0.1 * scale, 0.1 * scale), scene,
       );
       shape.material = { friction: 0.6, restitution: 0.3 };
       body.shape = shape;
-      body.setMassProperties({ mass: 0.5 });
+      body.setMassProperties({ mass: 0.5 * massScale });
     }
   });
 
@@ -138,7 +153,9 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
   let timeline: MotionTimeline | null = null;
   let player: MotionTimelinePlayer | null = null;
   let loopPlayback = true;
-  const suspension = new MotionSuspension(scene, model.root, model.bodies, 0.3);
+  const suspension = new MotionSuspension(
+    scene, model.root, model.bodies, 0.3 * model.physicsScale,
+  );
   const stand = new StandController(model);
 
   const motionRow = document.createElement("div");

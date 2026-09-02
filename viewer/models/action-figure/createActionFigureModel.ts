@@ -150,7 +150,7 @@ for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
     {
       type: "joint", bodyA: `calf-${side}`, bodyB: `boot-${side}`,
       pivotA: [0, -0.006, 0], pivotB: [0, 0.001, 0], axis: [1, 0, 0],
-      angular: { x: [-0.5, 0.5], y: "locked", z: [-0.3, 0.3] },
+      angular: { x: [-0.5, 0.5], y: [-0.3, 0.3], z: "locked" },
     },
   );
 }
@@ -166,6 +166,13 @@ export default function createActionFigureModel(
   scene: Scene,
   opts: ModelOptions = {},
 ): BuiltModel {
+  const physicsScale = opts.physicsScale ?? 1;
+  const L = (value: number): number => value * physicsScale;
+  const V = (value: Vec): Vector3 => new Vector3(
+    value[0] * physicsScale, value[1] * physicsScale, value[2] * physicsScale,
+  );
+  const massScale = physicsScale ** 3;
+  const servoForce = SERVO_FORCE * physicsScale ** 4;
   const root = new TransformNode("action-figure", scene);
 
   // ---- 材質（對應 spec.materials）----
@@ -242,37 +249,37 @@ export default function createActionFigureModel(
   };
 
   // ---- 軀幹（剛體 root）：胸段略窄 + 腹段全寬，收出玩具式腰身 ----
-  const torsoPivot = pivot("torso", root, new Vector3(0, TORSO_Y, 0));
+  const torsoPivot = pivot("torso", root, new Vector3(0, L(TORSO_Y), 0));
   const chest = MeshBuilder.CreateBox(
-    "torso-chest", { width: TORSO_W - 0.004, height: 0.012, depth: TORSO_D - 0.002 }, scene,
+    "torso-chest", { width: L(TORSO_W - 0.004), height: L(0.012), depth: L(TORSO_D - 0.002) }, scene,
   );
-  chest.position.y = TORSO_H / 2 - 0.006;
+  chest.position.y = L(TORSO_H / 2 - 0.006);
   const belly = MeshBuilder.CreateBox(
-    "torso-belly", { width: TORSO_W, height: 0.02, depth: TORSO_D }, scene,
+    "torso-belly", { width: L(TORSO_W), height: L(0.02), depth: L(TORSO_D) }, scene,
   );
-  belly.position.y = -TORSO_H / 2 + 0.01;
+  belly.position.y = L(-TORSO_H / 2 + 0.01);
   const torsoMesh = Mesh.MergeMeshes([chest, belly], true, true) ?? belly;
   torsoMesh.name = "torso";
   attach("torso", torsoMesh, torsoPivot);
 
   // ---- 頭（剛體 root）＋髮/臉/耳（視覺子件）----
-  const headPivot = pivot("head", root, new Vector3(0, HEAD_Y, 0));
+  const headPivot = pivot("head", root, new Vector3(0, L(HEAD_Y), 0));
   attach("head", MeshBuilder.CreateSphere(
-    "head", { diameter: HEAD_DIA, segments: TESS }, scene,
+    "head", { diameter: L(HEAD_DIA), segments: TESS }, scene,
   ), headPivot);
 
-  const hairPivot = pivot("hair", headPivot, new Vector3(0, HAIR_Y - HEAD_Y, 0));
+  const hairPivot = pivot("hair", headPivot, new Vector3(0, L(HAIR_Y - HEAD_Y), 0));
   const hairCap = MeshBuilder.CreateSphere(
     "hair-cap",
-    { diameterX: HAIR_DX, diameterY: HAIR_DY, diameterZ: HAIR_DX, segments: TESS },
+    { diameterX: L(HAIR_DX), diameterY: L(HAIR_DY), diameterZ: L(HAIR_DX), segments: TESS },
     scene,
   );
   const hairFringe = MeshBuilder.CreateSphere(
     "hair-fringe",
-    { diameterX: 0.026, diameterY: 0.0054, diameterZ: 0.012, segments: TESS },
+    { diameterX: L(0.026), diameterY: L(0.0054), diameterZ: L(0.012), segments: TESS },
     scene,
   );
-  hairFringe.position.set(0, -0.0005, 0.0105); // 上收瀏海下緣，完整露出眉毛區
+  hairFringe.position.set(0, L(-0.0005), L(0.0105)); // 上收瀏海下緣，完整露出眉毛區
   const hairMesh = Mesh.MergeMeshes([hairCap, hairFringe], true, true) ?? hairCap;
   hairMesh.name = "hair";
   attach("hair", hairMesh, hairPivot);
@@ -280,105 +287,105 @@ export default function createActionFigureModel(
   // 五官都是 head 下的真實幾何；中心貼近球面，前端略凸出成玩具浮雕。
   for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
     const eyeId = `eye-${side}`;
-    const eyePivot = pivot(eyeId, headPivot, new Vector3(sx * 0.0045, 0.001, 0.0143));
+    const eyePivot = pivot(eyeId, headPivot, new Vector3(L(sx * 0.0045), L(0.001), L(0.0143)));
     attach(eyeId, MeshBuilder.CreateSphere(
-      eyeId, { diameter: 0.0048, segments: 16 }, scene,
+      eyeId, { diameter: L(0.0048), segments: 16 }, scene,
     ), eyePivot);
 
     const highlight = MeshBuilder.CreateSphere(
-      `${eyeId}-highlight`, { diameter: 0.00125, segments: 10 }, scene,
+      `${eyeId}-highlight`, { diameter: L(0.00125), segments: 10 }, scene,
     );
     highlight.parent = eyePivot;
-    highlight.position.set(sx * 0.00065, 0.00065, 0.00215);
+    highlight.position.set(L(sx * 0.00065), L(0.00065), L(0.00215));
     highlight.material = highlightMat;
 
     const browId = `brow-${side}`;
-    const browPivot = pivot(browId, headPivot, new Vector3(sx * 0.0045, 0.0052, 0.0139));
+    const browPivot = pivot(browId, headPivot, new Vector3(L(sx * 0.0045), L(0.0052), L(0.0139)));
     const brow = MeshBuilder.CreateBox(
-      browId, { width: 0.006, height: 0.00125, depth: 0.0018 }, scene,
+      browId, { width: L(0.006), height: L(0.00125), depth: L(0.0018) }, scene,
     );
     brow.rotation.z = sx * -0.12;
     attach(browId, brow, browPivot);
   }
 
-  const nosePivot = pivot("nose", headPivot, new Vector3(0, -0.0009, 0.015));
+  const nosePivot = pivot("nose", headPivot, new Vector3(0, L(-0.0009), L(0.015)));
   attach("nose", MeshBuilder.CreateSphere(
-    "nose", { diameter: 0.0026, segments: 12 }, scene,
+    "nose", { diameter: L(0.0026), segments: 12 }, scene,
   ), nosePivot);
 
-  const mouthPivot = pivot("mouth", headPivot, new Vector3(0, -0.0047, 0.0142));
+  const mouthPivot = pivot("mouth", headPivot, new Vector3(0, L(-0.0047), L(0.0142)));
   const smilePath = Array.from({ length: 13 }, (_, i) => {
     const angle = Math.PI * (0.2 + 0.6 * i / 12);
-    return new Vector3(0.0034 * Math.cos(angle), -0.0034 * Math.sin(angle), 0);
+    return new Vector3(L(0.0034 * Math.cos(angle)), L(-0.0034 * Math.sin(angle)), 0);
   });
   const mouth = MeshBuilder.CreateTube(
     "mouth",
-    { path: smilePath, radius: 0.000375, tessellation: 12, cap: Mesh.CAP_ALL },
+    { path: smilePath, radius: L(0.000375), tessellation: 12, cap: Mesh.CAP_ALL },
     scene,
   );
   attach("mouth", mouth, mouthPivot);
 
   for (const [id, sx] of [["ear-l", 1], ["ear-r", -1]] as const) {
-    const earPivot = pivot(id, headPivot, new Vector3(sx * EAR_X, 0, 0));
+    const earPivot = pivot(id, headPivot, new Vector3(L(sx * EAR_X), 0, 0));
     attach(id, MeshBuilder.CreateSphere(
-      id, { diameter: EAR_DIA, segments: 12 }, scene,
+      id, { diameter: L(EAR_DIA), segments: 12 }, scene,
     ), earPivot);
   }
 
   // ---- 四肢（各自為剛體 root；手是 forearm 視覺子件）----
   for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
     const upperArmPivot = pivot(
-      `upper-arm-${side}`, root, new Vector3(sx * ARM_X, UPPER_ARM_Y, 0),
+      `upper-arm-${side}`, root, new Vector3(L(sx * ARM_X), L(UPPER_ARM_Y), 0),
     );
     attach(`upper-arm-${side}`, MeshBuilder.CreateCapsule(
       `upper-arm-${side}`,
-      { radius: ARM_DIA / 2, height: UPPER_ARM_H, tessellation: TESS, subdivisions: 2 },
+      { radius: L(ARM_DIA / 2), height: L(UPPER_ARM_H), tessellation: TESS, subdivisions: 2 },
       scene,
     ), upperArmPivot);
 
     const forearmPivot = pivot(
-      `forearm-${side}`, root, new Vector3(sx * ARM_X, FOREARM_Y, 0),
+      `forearm-${side}`, root, new Vector3(L(sx * ARM_X), L(FOREARM_Y), 0),
     );
     attach(`forearm-${side}`, MeshBuilder.CreateCapsule(
       `forearm-${side}`,
-      { radius: ARM_DIA / 2, height: FOREARM_H, tessellation: TESS, subdivisions: 2 },
+      { radius: L(ARM_DIA / 2), height: L(FOREARM_H), tessellation: TESS, subdivisions: 2 },
       scene,
     ), forearmPivot);
 
     const handPivot = pivot(
-      `hand-${side}`, forearmPivot, new Vector3(0, HAND_Y - FOREARM_Y, 0),
+      `hand-${side}`, forearmPivot, new Vector3(0, L(HAND_Y - FOREARM_Y), 0),
     );
     const handMesh = MeshBuilder.CreateTorus(
       `hand-${side}`,
-      { diameter: HAND_DIA - 0.004, thickness: 0.005, tessellation: 20 },
+      { diameter: L(HAND_DIA - 0.004), thickness: L(0.005), tessellation: 20 },
       scene,
     );
     handMesh.rotation.x = Math.PI / 2; // 洞朝前（+Z）——玩具 C 型抓握手
     attach(`hand-${side}`, handMesh, handPivot);
 
     const thighPivot = pivot(
-      `thigh-${side}`, root, new Vector3(sx * LEG_X, THIGH_Y, 0),
+      `thigh-${side}`, root, new Vector3(L(sx * LEG_X), L(THIGH_Y), 0),
     );
     attach(`thigh-${side}`, MeshBuilder.CreateCapsule(
       `thigh-${side}`,
-      { radius: THIGH_DIA / 2, height: THIGH_H, tessellation: TESS, subdivisions: 2 },
+      { radius: L(THIGH_DIA / 2), height: L(THIGH_H), tessellation: TESS, subdivisions: 2 },
       scene,
     ), thighPivot);
 
     const calfPivot = pivot(
-      `calf-${side}`, root, new Vector3(sx * LEG_X, CALF_Y, 0),
+      `calf-${side}`, root, new Vector3(L(sx * LEG_X), L(CALF_Y), 0),
     );
     attach(`calf-${side}`, MeshBuilder.CreateCapsule(
       `calf-${side}`,
-      { radius: CALF_DIA / 2, height: CALF_H, tessellation: TESS, subdivisions: 2 },
+      { radius: L(CALF_DIA / 2), height: L(CALF_H), tessellation: TESS, subdivisions: 2 },
       scene,
     ), calfPivot);
 
     const bootPivot = pivot(
-      `boot-${side}`, root, new Vector3(sx * LEG_X, BOOT_Y, BOOT_Z),
+      `boot-${side}`, root, new Vector3(L(sx * LEG_X), L(BOOT_Y), L(BOOT_Z)),
     );
     attach(`boot-${side}`, MeshBuilder.CreateBox(
-      `boot-${side}`, { width: BOOT_W, height: BOOT_H, depth: BOOT_D }, scene,
+      `boot-${side}`, { width: L(BOOT_W), height: L(BOOT_H), depth: L(BOOT_D) }, scene,
     ), bootPivot);
   }
 
@@ -392,12 +399,14 @@ export default function createActionFigureModel(
       p.computeWorldMatrix(true);
       const body = new PhysicsBody(p, PhysicsMotionType.DYNAMIC, false, scene);
       const container = new PhysicsShapeContainer(scene);
-      const [w, h] = def.shape.size;
+      const [baseW, baseH] = def.shape.size;
+      const w = L(baseW);
+      const h = L(baseH);
       let shape;
       if (def.shape.kind === "box") {
         shape = new PhysicsShapeBox(
           Vector3.Zero(), Quaternion.Identity(),
-          Vector3.FromArray(def.shape.size), scene,
+          V(def.shape.size), scene,
         );
       } else if (def.shape.kind === "sphere") {
         shape = new PhysicsShapeSphere(Vector3.Zero(), w / 2, scene);
@@ -410,7 +419,7 @@ export default function createActionFigureModel(
       shape.material = { friction: def.friction, restitution: def.restitution };
       container.addChild(shape, Vector3.Zero(), Quaternion.Identity());
       body.shape = container;
-      body.setMassProperties({ mass: def.mass });
+      body.setMassProperties({ mass: def.mass * massScale });
       bodies[def.id] = body;
     }
 
@@ -443,8 +452,8 @@ export default function createActionFigureModel(
       }
       const joint = new Physics6DoFConstraint(
         {
-          pivotA: Vector3.FromArray(def.pivotA),
-          pivotB: Vector3.FromArray(def.pivotB),
+          pivotA: V(def.pivotA),
+          pivotB: V(def.pivotB),
           axisA: axis,
           axisB: axis,
           perpAxisA: perp,
@@ -476,7 +485,7 @@ export default function createActionFigureModel(
             const v = Math.max(lo, Math.min(hi, value));
             if (!armed) {
               joint.setAxisMotorType(ANG[k], PhysicsConstraintMotorType.POSITION);
-              joint.setAxisMotorMaxForce(ANG[k], SERVO_FORCE);
+              joint.setAxisMotorMaxForce(ANG[k], servoForce);
               armed = true;
             }
             joint.setAxisMotorTarget(ANG[k], v);
@@ -492,6 +501,7 @@ export default function createActionFigureModel(
   }
 
   const built: BuiltModel = {
+    physicsScale,
     root,
     nodes,
     meshes,
@@ -500,7 +510,7 @@ export default function createActionFigureModel(
     actuators,
     balance: {
       leanGain: 0.8,
-      driftGain: 30,
+      driftGain: (physicsScale === 1 ? 30 : 60) / physicsScale,
       pitchServos: [
         { id: "servo:thigh-l.x", sign: 1 },
         { id: "servo:thigh-r.x", sign: 1 },
@@ -511,8 +521,8 @@ export default function createActionFigureModel(
       ],
       supportBodyIds: ["boot-l", "boot-r"],
       pitch: {
-        proportionalGain: 20,
-        derivativeGain: 1.5,
+        proportionalGain: 20 / physicsScale,
+        derivativeGain: 1.5 / physicsScale,
         leanGain: 0.4,
         servos: [
           { id: "servo:boot-l.x", sign: 1 },
@@ -524,14 +534,14 @@ export default function createActionFigureModel(
         ],
       },
       roll: {
-        proportionalGain: 20,
-        derivativeGain: 1.5,
+        proportionalGain: 20 / physicsScale,
+        derivativeGain: 1.5 / physicsScale,
         leanGain: -0.4,
         servos: [
-          { id: "servo:boot-l.z", sign: 1 },
-          { id: "servo:boot-r.z", sign: 1 },
-          { id: "servo:thigh-l.z", sign: 0.35 },
-          { id: "servo:thigh-r.z", sign: 0.35 },
+          { id: "servo:boot-l.y", sign: 1 },
+          { id: "servo:boot-r.y", sign: 1 },
+          { id: "servo:thigh-l.y", sign: 0.35 },
+          { id: "servo:thigh-r.y", sign: 0.35 },
         ],
       },
     },

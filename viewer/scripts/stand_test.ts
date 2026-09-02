@@ -19,11 +19,14 @@ import createActionFigureModel from "../models/action-figure/createActionFigureM
 
 type Ctx = Awaited<ReturnType<typeof createHeadlessScene>>;
 
-const addGround = (ctx: Ctx): void => {
-  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, ctx.scene);
+// 0015a：物理尺度 ×S 時，長度 ×S、時間 ×√S（Froude 相似律）；S=1 時與原版逐位相同。
+const S = Number(process.argv[2] ?? "") || undefined; // 未給則用 factory 預設
+const addGround = (ctx: Ctx, scale: number): void => {
+  const size = 10 * scale;
+  const ground = MeshBuilder.CreateGround("ground", { width: size, height: size }, ctx.scene);
   const groundBody = new PhysicsBody(ground, PhysicsMotionType.STATIC, false, ctx.scene);
   const shape = new PhysicsShapeBox(
-    new Vector3(0, -0.05, 0), Quaternion.Identity(), new Vector3(10, 0.1, 10), ctx.scene,
+    new Vector3(0, -0.05 * scale, 0), Quaternion.Identity(), new Vector3(size, 0.1 * scale, size), ctx.scene,
   );
   // 鏡射 harness.ts 的 playground 地面材質（0011 r2 教訓：gate 地面沒設材質
   // ＝Havok 預設值，站立收斂行為與 playground 不同，gate 環境失真）。
@@ -39,12 +42,16 @@ const headY = (m: ReturnType<typeof createActionFigureModel>): number => {
 {
   const ctx = await createHeadlessScene();
   try {
-    addGround(ctx);
-    const model = createActionFigureModel(ctx.scene, { physics: true });
+    const probe = createActionFigureModel(ctx.scene, { physics: false, physicsScale: S });
+    const scale = probe.physicsScale;
+    probe.dispose();
+    addGround(ctx, scale);
+    const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
+    const model = createActionFigureModel(ctx.scene, { physics: true, physicsScale: S });
     const factoryHeadY = headY(model);
     const constraintCount = model.constraints.length;
     // 先讓 ragdoll 出生即癱（鏡射 playground：使用者按站立時人偶早已癱在地上）
-    ctx.step(200);
+    ctx.step(T(200));
     assert.ok(
       headY(model) < factoryHeadY * 0.5,
       "前置：站立前必須已癱（鏡射 playground 真實路徑）",
@@ -61,7 +68,7 @@ const headY = (m: ReturnType<typeof createActionFigureModel>): number => {
     for (let cycle = 1; cycle <= 6; cycle++) {
       stand.enable(); // 必須從癱姿恢復站立：重置出廠姿勢＋貼地＋清速度＋鎖 servo
       assert.ok(stand.active, `cycle${cycle}: enable 後 active 必須為 true`);
-      ctx.step(360);
+      ctx.step(T(360));
 
       const standingY = headY(model);
       assert.ok(
@@ -80,7 +87,7 @@ const headY = (m: ReturnType<typeof createActionFigureModel>): number => {
 
       stand.disable();
       assert.ok(!stand.active, `cycle${cycle}: disable 後 active 必須為 false`);
-      ctx.step(300);
+      ctx.step(T(300));
       const releasedY = headY(model);
       assert.ok(
         releasedY < factoryHeadY * 0.6,
@@ -96,10 +103,13 @@ const headY = (m: ReturnType<typeof createActionFigureModel>): number => {
 {
   const ctx = await createHeadlessScene();
   try {
-    addGround(ctx);
-    const control = createActionFigureModel(ctx.scene, { physics: true });
+    const probe = createActionFigureModel(ctx.scene, { physics: false, physicsScale: S });
+    const scale = probe.physicsScale;
+    probe.dispose();
+    addGround(ctx, scale);
+    const control = createActionFigureModel(ctx.scene, { physics: true, physicsScale: S });
     const factoryHeadY = headY(control);
-    ctx.step(300);
+    ctx.step(Math.round(300 * Math.sqrt(scale)));
     const collapsedY = headY(control);
     assert.ok(
       collapsedY < factoryHeadY * 0.5,
