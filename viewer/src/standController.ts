@@ -1,12 +1,51 @@
+import type { Observer, PhysicsBody, Scene, TransformNode } from "@babylonjs/core";
+import { Quaternion, Vector3 } from "@babylonjs/core";
 import type { Actuator, BuiltModel } from "./types";
+
+interface InitialTransform {
+  position: Vector3;
+  rotationQuaternion: Quaternion | null;
+}
 
 /** Opt-in muscle tone for servo-driven ragdolls. */
 export class StandController {
   private readonly servos: Actuator[];
+  private readonly scene: Scene;
+  private readonly root: TransformNode;
+  private readonly rootPosition: Vector3;
+  private readonly bodies: PhysicsBody[];
+  private readonly torso: PhysicsBody | undefined;
+  private readonly balanceServos: Array<{ servo: Actuator; sign: number }>;
+  private readonly leanGain: number;
+  private readonly driftGain: number;
+  private readonly initialTransforms = new Map<PhysicsBody, InitialTransform>();
+  private syncObserver: Observer<Scene> | null = null;
+  private balanceObserver: Observer<Scene> | null = null;
   private enabled = false;
 
   constructor(model: BuiltModel) {
     this.servos = (model.actuators ?? []).filter((actuator) => actuator.kind === "servo");
+    this.scene = model.root.getScene();
+    this.root = model.root;
+    this.rootPosition = model.factoryPose?.rootPosition.clone() ?? model.root.position.clone();
+    this.bodies = Object.values(model.bodies);
+    this.torso = model.bodies.torso;
+    const servoById = new Map(this.servos.map((servo) => [servo.id, servo]));
+    this.balanceServos = (model.balance?.pitchServos ?? []).flatMap(({ id, sign }) => {
+      const servo = servoById.get(id);
+      return servo ? [{ servo, sign }] : [];
+    });
+    this.leanGain = model.balance?.leanGain ?? 0;
+    this.driftGain = model.balance?.driftGain ?? 0;
+    Object.entries(model.bodies).forEach(([id, body]) => {
+      const factoryTransform = model.factoryPose?.bodies[id];
+      this.initialTransforms.set(body, {
+        position: factoryTransform?.position.clone() ?? body.transformNode.position.clone(),
+        rotationQuaternion: factoryTransform
+          ? factoryTransform.rotationQuaternion?.clone() ?? null
+          : body.transformNode.rotationQuaternion?.clone() ?? null,
+      });
+    });
   }
 
   get active(): boolean {
@@ -14,12 +53,68 @@ export class StandController {
   }
 
   enable(): void {
-    this.servos.forEach((servo) => servo.set(0));
+    this.cancelSync();
+    this.cancelBalance();
+    this.bodies.forEach((body) => { body.disablePreStep = false; });
+    this.root.position.copyFrom(this.rootPosition);
+    this.bodies.forEach((body) => {
+      const initial = this.initialTransforms.get(body);
+      if (!initial) return;
+      body.transformNode.position.copyFrom(initial.position);
+      if (initial.rotationQuaternion) {
+        body.transformNode.rotationQuaternion ??= Quaternion.Identity();
+        body.transformNode.rotationQuaternion.copyFrom(initial.rotationQuaternion);
+      } else {
+        body.transformNode.rotationQuaternion = null;
+      }
+      body.setLinearVelocity(Vector3.Zero());
+      body.setAngularVelocity(Vector3.Zero());
+    });
+    let steps = 0;
+    this.syncObserver = this.scene.onAfterPhysicsObservable.add(() => {
+      steps++;
+      if (steps < 2) return;
+      this.bodies.forEach((body) => { body.disablePreStep = true; });
+      this.cancelSync();
+      this.servos.forEach((servo) => servo.set(0));
+    });
+    if (this.torso && this.balanceServos.length > 0) {
+      let steps = 0;
+      this.balanceObserver = this.scene.onAfterPhysicsObservable.add(() => {
+        steps++;
+        if (steps <= 5) return;
+        this.torso!.transformNode.computeWorldMatrix(true);
+        const up = Vector3.TransformNormal(
+          Vector3.Up(), this.torso!.transformNode.getWorldMatrix(),
+        ).normalize();
+        const lean = up.z;
+        const drift = this.torso!.transformNode.absolutePosition.z;
+        const u = this.leanGain * lean + this.driftGain * drift;
+        this.balanceServos.forEach(({ servo, sign }) => {
+          servo.set(Math.max(servo.min, Math.min(servo.max, sign * u)));
+        });
+      });
+    }
     this.enabled = true;
   }
 
   disable(): void {
+    this.cancelBalance();
+    this.cancelSync();
+    this.bodies.forEach((body) => { body.disablePreStep = true; });
     this.servos.forEach((servo) => servo.release?.());
     this.enabled = false;
+  }
+
+  private cancelSync(): void {
+    if (!this.syncObserver) return;
+    this.scene.onAfterPhysicsObservable.remove(this.syncObserver);
+    this.syncObserver = null;
+  }
+
+  private cancelBalance(): void {
+    if (!this.balanceObserver) return;
+    this.scene.onAfterPhysicsObservable.remove(this.balanceObserver);
+    this.balanceObserver = null;
   }
 }

@@ -137,10 +137,21 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       motion gate 容差不准放寬。gate：`stand_test.ts`（監工先寫紅）——
       地面生成＋站立 600 步，頭高 ≥ 出廠 80%、軀幹 up 內積 > 0.9、
       無 NaN、constraint 不裂。
-- [ ] 0010 站立穩健化：0009 綠是場景歷史巧合（新鮮場景 50–75 步前倒；
+- [x] 0010 站立穩健化：0009 綠是場景歷史巧合（新鮮場景 50–75 步前倒；
       POSITION 馬達剛性不吃 maxForce、髖屈服 0.28 rad、重心越靴前緣）。
-      stand_test 已強化為新鮮場景版（紅）。
-- [ ] 0011 地面走路實驗（spike）：站穩後不吊空播 walk timeline，量位移/
+      修法：BOOT_D 0.024→0.028（視覺＋collider 同步）。
+- [x] 0011 站立恢復：enable() 從癱姿恢復（factoryPose 快照＋2-step 同步窗）。
+      三輪後以證據作結（blocked）：被動站立本質臨界穩定——Havok POSITION
+      馬達剛性不可調，幾何/調參/damping 五實驗全倒；癱堆第 4 位小數差異
+      決定站或倒。附帶收穫：BOOT_Z 置中 0.000、gate 地面鏡射 playground
+      材質、gate 強化為六輪 enable/disable 循環（現紅，0012 接手）。
+- [x] 0012 站立主動平衡回饋：StandController 站立期間每步依軀幹前傾
+      （up.z）與 z 漂移微調髖/膝 servo 目標（u = 0.8·lean + 30·drift，
+      髖 +u 膝 −u，夾限位）。監工 probe 跨四癱等待家族 108/108 全站。
+      驗收：六輪 stand gate 全綠＋playground 真按鈕 10/10 循環全站。
+      附帶根因：main.ts HavokPlugin(true) 變動 dt ≠ headless 固定 1/60，
+      已對齊為固定步長——M7 全部「headless 綠 playground 紅」的最後解答。
+- [ ] 0013 地面走路實驗（spike）：站穩後不吊空播 walk timeline，量位移/
       跌倒數據。成功 → gate 化；失敗 → tombstone ＋與使用者議路線。
 
 ## Parked（自設計文件 §11 移入，不分先後）

@@ -54,9 +54,9 @@ const CALF_H = 0.024;
 const CALF_Y = 0.012;
 const BOOT_W = 0.016;
 const BOOT_H = 0.01;
-const BOOT_D = 0.024;
+const BOOT_D = 0.028;
 const BOOT_Y = 0.005;
-const BOOT_Z = 0.004;
+const BOOT_Z = 0.000;
 
 const TESS = 24;
 
@@ -500,6 +500,23 @@ export default function createActionFigureModel(
     bodies,
     constraints,
     actuators,
+    balance: {
+      leanGain: 0.8,
+      driftGain: 30,
+      pitchServos: [
+        { id: "servo:thigh-l.x", sign: 1 },
+        { id: "servo:thigh-r.x", sign: 1 },
+        { id: "servo:calf-l.x", sign: -1 },
+        { id: "servo:calf-r.x", sign: -1 },
+      ],
+    },
+    factoryPose: {
+      rootPosition: root.position.clone(),
+      bodies: Object.fromEntries(Object.entries(bodies).map(([id, body]) => [id, {
+        position: body.transformNode.position.clone(),
+        rotationQuaternion: body.transformNode.rotationQuaternion?.clone() ?? null,
+      }])),
+    },
     dispose(): void {
       constraints.forEach((c) => c.dispose());
       Object.values(bodies).forEach((b) => b.dispose());

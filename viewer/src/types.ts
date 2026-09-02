@@ -2,8 +2,10 @@ import type {
   Mesh,
   Physics6DoFConstraint,
   PhysicsBody,
+  Quaternion,
   Scene,
   TransformNode,
+  Vector3,
 } from "@babylonjs/core";
 
 /** M4 可動物件契約：spec 有 actuation 宣告的模型必須逐項掛上對應 actuator。
@@ -23,6 +25,15 @@ export interface Actuator {
   release?(): void;
 }
 
+export interface StandBalance {
+  leanGain: number;
+  driftGain: number;
+  pitchServos: Array<{
+    id: string;
+    sign: number;
+  }>;
+}
+
 export interface BuiltModel {
   root: TransformNode;
   nodes: Record<string, TransformNode>;
@@ -30,6 +41,14 @@ export interface BuiltModel {
   bodies: Record<string, PhysicsBody>;
   constraints: Physics6DoFConstraint[];
   actuators?: Actuator[];
+  balance?: StandBalance;
+  factoryPose?: {
+    rootPosition: Vector3;
+    bodies: Record<string, {
+      position: Vector3;
+      rotationQuaternion: Quaternion | null;
+    }>;
+  };
   dispose(): void;
 }
 

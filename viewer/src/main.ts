@@ -30,7 +30,11 @@ async function boot(): Promise<void> {
 
   try {
     const havok = await HavokPhysics();
-    scene.enablePhysics(new Vector3(0, -9.81, 0), new HavokPlugin(true, havok));
+    // useDeltaForWorldStep=false：固定 1/60 步長，與 headless gate（src/headless.ts）
+    // 同一物理積分模式。0012 教訓：true 時用真實 frame dt 餵 Havok，抖動讓
+    // 臨界系統（站立平衡）在 playground 與 gate 行為分歧（headless 108/108、
+    // playground ~50%）。60fps 下牆鐘行為不變。
+    scene.enablePhysics(new Vector3(0, -9.81, 0), new HavokPlugin(false, havok));
   } catch (err) {
     banner(`Havok 載入失敗：${String(err)}`);
     throw err;
