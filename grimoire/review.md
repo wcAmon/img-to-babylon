@@ -22,6 +22,16 @@
    - 把 `verdict`、`fidelity`、`signals.silhouetteIoU` 記進該 pass reviewHistory 的
      `eye` 欄位（如 `"eye": {"verdict": "pass", "fidelity": 0.45, "iou": 0.68}`）。
 
+### 顯微鏡（區域審查）
+
+需要單獨審查局部時，加 `--region x,y,w,h`；四個值是 0..1 分數，分別相對
+reference 與 render 各自的前景 bbox，工具會在定位 bbox 後、計算訊號前裁切：
+
+`python3 forge/divine_eye.py --reference ref.png --render render.png --region 0.2,0.0,0.6,0.4 --json`
+
+臉區慣例先取 bbox 上段（例如上例）；實際 `x,y,w,h` 由 0008 監工驗收時依角色取景校準。
+JSON 的 `region` 欄位會回報本次收到的四個分數。省略 `--region` 即維持全身審查。
+
 PhysicsBody 要到 physics pass 才會建立（見 `build.md` 的 pass 契約），所以第 3、4 步
 （runtime_export + check_colliders、physics_test）只在 physics pass 及其後（physics、
 polish）執行；blockout/structure/material pass 只跑第 1、2、5、6 步。

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Divine Eye — 確定性、零 token 的 reference↔render 多訊號評估器。
-用法: python3 forge/divine_eye.py --reference <ref.png> --render <render.png> [--json]
+用法: python3 forge/divine_eye.py --reference <ref.png> --render <render.png>
+       [--region x,y,w,h] [--json]
 exit 0=pass, 1=low-confidence/reject, 2=錯誤。
 
 移植自 img2threejs v1.3 divine_eye.py，並針對本管線改造：
@@ -417,12 +418,49 @@ def _grid_bbox_to_px(bbox, size, w, h):
     return (px0, py0, max(1, px1 - px0), max(1, py1 - py0))
 
 
-def evaluate(reference_png, render_png):
+def parse_region(value):
+    """argparse type：解析並驗證 bbox 內的分數矩形 x,y,w,h。"""
+    try:
+        parts = [float(part) for part in value.split(",")]
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(
+            "region 必須是四個逗號分隔的 0..1 分數：x,y,w,h") from exc
+    if len(parts) != 4:
+        raise argparse.ArgumentTypeError(
+            "region 必須是四個逗號分隔的 0..1 分數：x,y,w,h")
+    x, y, width, height = parts
+    if not all(math.isfinite(v) and 0.0 <= v <= 1.0 for v in parts):
+        raise argparse.ArgumentTypeError("region 的 x,y,w,h 都必須在 0..1")
+    if width <= 0.0 or height <= 0.0:
+        raise argparse.ArgumentTypeError("region 的 w 與 h 必須大於 0")
+    if x + width > 1.0 or y + height > 1.0:
+        raise argparse.ArgumentTypeError(
+            "region 必須位於前景 bbox 內（x + w <= 1 且 y + h <= 1）")
+    return tuple(parts)
+
+
+def region_bbox(bbox, region):
+    """把 bbox 內的分數 region 轉成涵蓋該區域的整數座標 bbox。"""
+    x0, y0, width, height = bbox
+    x, y, region_width, region_height = region
+    left = x0 + math.floor(x * width)
+    top = y0 + math.floor(y * height)
+    right = x0 + math.ceil((x + region_width) * width)
+    bottom = y0 + math.ceil((y + region_height) * height)
+    return (left, top, max(1, right - left), max(1, bottom - top))
+
+
+def evaluate(reference_png, render_png, region=None):
     """跑所有確定性訊號並合成 verdict + 路由動作。"""
     ref_mask, ref_warn = load_mask(reference_png)
     ren_mask, ren_warn = load_mask(render_png)
     ref_bbox = bbox_of(ref_mask, MASK_GRID)
     ren_bbox = bbox_of(ren_mask, MASK_GRID)
+    ref_full_bbox = ref_bbox
+    ren_full_bbox = ren_bbox
+    if region is not None:
+        ref_bbox = region_bbox(ref_bbox, region)
+        ren_bbox = region_bbox(ren_bbox, region)
     ref_shape = aligned_shape(ref_mask, MASK_GRID, ref_bbox)
     ren_shape = aligned_shape(ren_mask, MASK_GRID, ren_bbox)
 
@@ -433,8 +471,11 @@ def evaluate(reference_png, render_png):
 
     rw, rh, rpx = read_png_rgba(reference_png)
     vw, vh, vpx = read_png_rgba(render_png)
-    ref_px_bbox = _grid_bbox_to_px(ref_bbox, MASK_GRID, rw, rh)
-    ren_px_bbox = _grid_bbox_to_px(ren_bbox, MASK_GRID, vw, vh)
+    ref_px_bbox = _grid_bbox_to_px(ref_full_bbox, MASK_GRID, rw, rh)
+    ren_px_bbox = _grid_bbox_to_px(ren_full_bbox, MASK_GRID, vw, vh)
+    if region is not None:
+        ref_px_bbox = region_bbox(ref_px_bbox, region)
+        ren_px_bbox = region_bbox(ren_px_bbox, region)
     ref_luma = luma_grid(rw, rh, rpx, ref_px_bbox, LUMA_SIZE)
     ren_luma = luma_grid(vw, vh, vpx, ren_px_bbox, LUMA_SIZE)
     ref_edge = luma_grid(rw, rh, rpx, ref_px_bbox, EDGE_SIZE)
@@ -475,7 +516,7 @@ def evaluate(reference_png, render_png):
     else:
         verdict, action = "reject", "refine-code"
 
-    return {
+    result = {
         "verdict": verdict,
         "action": action,
         "fidelity": round(fidelity, 4),
@@ -497,16 +538,21 @@ def evaluate(reference_png, render_png):
         "reference": reference_png,
         "render": render_png,
     }
+    if region is not None:
+        result["region"] = list(region)
+    return result
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--reference", required=True)
     ap.add_argument("--render", required=True)
+    ap.add_argument("--region", type=parse_region,
+                    help="前景 bbox 內的分數矩形 x,y,w,h（各值 0..1）")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
     try:
-        result = evaluate(args.reference, args.render)
+        result = evaluate(args.reference, args.render, region=args.region)
     except Exception as exc:  # noqa: BLE001
         print(f"error: {exc}", file=sys.stderr)
         return 2

@@ -1,5 +1,5 @@
 # 0007 Divine Eye 顯微鏡：--region 區域裁切審查
-model: action-figure        status: open
+model: action-figure        status: done
 症狀: forge/divine_eye.py 只能全身審查；M6 人臉優化需要對「臉區」單獨跑
      確定性訊號。加 `--region x,y,w,h`（四個 0..1 分數，逗號分隔）：
      相對「各自前景 bbox」的分數矩形（x,y 為 bbox 內左上偏移、w,h 為佔
@@ -18,3 +18,14 @@ model: action-figure        status: open
      3. grimoire/review.md 加一小節「顯微鏡（區域審查）」記用法與臉區慣例
         （臉區 ≈ bbox 上段，實際分數由 0008 監工驗收時校準）
 notes:
+- 已實作 `--region x,y,w,h` 的 argparse 解析與邊界驗證；region 相對 reference / render
+  各自前景 bbox，於 bbox 定位後、原有 silhouette / aspect / symmetry / pHash / SSIM /
+  edge / tonal 訊號計算前套用。JSON 僅在有傳參時加入 `region`，未傳時維持原輸出。
+- 新增 stdlib 合成 PNG 測試：同圖同 region 高分且回報欄位、`x + w > 1` argparse
+  error、無 region 結果不變；未修改既有門檻常數或既有測試。
+- 文件已在 `grimoire/review.md` 增加「顯微鏡（區域審查）」與 bbox 上段臉區慣例。
+- 驗收（2026-09-02）：forge unittest 共 98 tests，`OK`、exit 0；指定 action-figure
+  hero 同圖 region 命令 verdict=`pass`、fidelity=1.0、JSON `region=[0.2,0.0,0.6,0.4]`、exit 0。
+  - 監工驗收（2026-09-02 08:46）：forge 98 tests OK；同圖 region 命令 verdict=pass、
+    region 欄位正確；越界 x+w>1 argparse 明確報錯；舊版（git show HEAD）vs 新版
+    無 --region 輸出位元級相同（diff 空）。卡標 done。

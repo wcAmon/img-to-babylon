@@ -1,4 +1,7 @@
 """divine_eye.py 測試：合成 PNG（stdlib）驗證遮罩、bbox 對齊 IoU、pHash、SSIM、裁決。"""
+import contextlib
+import io
+import json
 import os
 import struct
 import sys
@@ -217,6 +220,47 @@ class EvaluateTest(unittest.TestCase):
             rect(buf, 64, 20, 16, 44, 52, (200, 30, 30))
             write_png(p, 64, 64, bytes(buf))
             self.assertEqual(de.main([ "--reference", p, "--render", p, "--json"]), 0)
+
+    def test_identical_region_passes_and_json_reports_region(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "a.png")
+            buf = vgrad(96, 96)
+            rect(buf, 96, 24, 12, 72, 84, (200, 30, 30))
+            rect(buf, 96, 34, 18, 62, 40, (240, 200, 160))
+            write_png(p, 96, 96, bytes(buf))
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = de.main([
+                    "--reference", p, "--render", p,
+                    "--region", "0.2,0.0,0.6,0.4", "--json",
+                ])
+            result = json.loads(stdout.getvalue())
+            self.assertEqual(code, 0)
+            self.assertEqual(result["verdict"], "pass")
+            self.assertEqual(result["region"], [0.2, 0.0, 0.6, 0.4])
+            self.assertGreaterEqual(result["fidelity"], de.FIDELITY_TARGET)
+
+    def test_region_out_of_bounds_is_argparse_error(self):
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr), self.assertRaises(SystemExit) as raised:
+            de.main([
+                "--reference", "unused.png", "--render", "unused.png",
+                "--region", "0.7,0.0,0.4,0.5", "--json",
+            ])
+        self.assertEqual(raised.exception.code, 2)
+        self.assertIn("region", stderr.getvalue().lower())
+        self.assertIn("x + w", stderr.getvalue())
+
+    def test_no_region_result_is_unchanged(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "a.png")
+            buf = vgrad(96, 96)
+            rect(buf, 96, 30, 24, 66, 80, (200, 30, 30))
+            write_png(p, 96, 96, bytes(buf))
+            before = de.evaluate(p, p)
+            after = de.evaluate(p, p, region=None)
+            self.assertEqual(after, before)
+            self.assertNotIn("region", after)
 
 
 if __name__ == "__main__":
