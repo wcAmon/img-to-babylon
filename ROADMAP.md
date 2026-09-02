@@ -168,6 +168,47 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       biped 控制，工程量與風險皆高；(c′) 不抬腳的拖步（shuffle）步態——
       雙腳恆著地靠摩擦交替滑動，物理上可行但觀感差、摩擦敏感。
 
+## M8：雙足——踝關節＋質心平衡＋重心轉移步態（2026-09-03 核准開工）
+
+0013 證明：走不了不是馬達也不是控制器，是**運動學**——靴子焊在小腿上，
+兩腳踩地時質心橫移為零（恆在左靴外 1mm），單腳支撐幾何上不可能。M8 把
+腳踝裝回去，平衡從「別前傾」升級為「質心投影落在支撐面內」，再做重心轉移
+步態。純契約擴充：spec bodies/constraints/actuation 加項，doctrine 不變
+（不啟用就癱、STATIC 錨禁用、gate 量 physics body）。
+
+生死關在 0016：單腳站做不出來就 M8 tombstone、不往下燒。
+
+執行計畫（harness-first：每卡監工先寫紅 gate／探針，派 Codex，獨立驗收）：
+
+- [ ] 0014 踝關節契約：spec 拆 boot-l/r 為獨立 body（質量自 calf 分出，
+      calf+boot 總質量不變 5g），calf→boot 新增 `joint`：axis [1,0,0]、
+      angular x（俯仰）≈[-0.5,0.5]、z（側傾）≈[-0.3,0.3]、y locked、
+      actuation servo（maxForce 同 0.02）；踝軸高度約地面上 6mm、左右對稱、
+      BOOT_Z 仍 0。factory 鏡射（BODY_DEFS/CONSTRAINT_DEFS、靴 collider 移到
+      boot body、視覺 pivot 重掛）。retarget 不必映射踝（timeline 軌道是
+      servo 子集）。紅燈現成：actuation_test coverage 自動要求 boot servo、
+      physics_test 從 spec 數 constraint。驗收：tsc、physics/actuation/motion/
+      suspension/face、validate_spec --strict、重出 runtime.json＋check_colliders、
+      Divine Eye 全身輪廓不變（靴子幾何不動）、**stand_test 六輪照舊綠**——
+      踝 servo 鎖 0 撐平腳掌；站不住則允許把踝 servo 加進 balance.pitchServos
+      （sign 依證據），增益 0.8/30 不動；三輪仍紅 → blocked 帶證據交 0015。
+- [ ] 0015 質心-支撐面平衡控制器（StandBalance v2）：每步算質量加權質心投影
+      相對支撐面中心（由 boot body 位置算，雙腳＝兩靴聯集中心、單腳＝該靴），
+      俯仰誤差（z）與側傾誤差（x）各一組 PD；踝 servo 主控（俯仰 x、側傾 z）、
+      髖 servo 輔助（沿用 0012 髖/膝項）。增益由 Codex 依證據調，但 gate 編入
+      跨家族驗證：監工先寫 `balance_test.ts`——站穩後施前/後/左/右四方向
+      × 兩級衝量擾動 × 三癱家族，N 步內頭高回 ≥80%、質心回支撐面內；
+      六輪 stand_test 照舊綠。模型無 balance v2 欄位則退回 v1 行為。
+- [ ] 0016 單腳站 spike（生死關）：探針監工寫——站穩→300 步 ramp 把質心推到
+      左靴正上方（踝側傾＋髖側擺）→ ramp 抬右腿（thigh −0.6／calf +0.8）→
+      hold 300 步。判準：三癱家族全部不倒、hold 期質心投影落在左靴 16×28mm
+      內、右靴離地。達標 → 0017；不達標 → M8 tombstone（證據寫卡，與使用者
+      議是否封存）。
+- [ ] 0017 重心轉移步態：狀態機（移重心→抬腳→擺腿→落地→換邊）產生
+      setPoseTarget 前饋，疊 0015 回饋；walk_ground_probe 判準（三癱家族
+      3 循環不倒、|dz| ≥ 0.01）達標後 gate 化為 `walk_test.ts`，playground
+      加「走路」按鈕＋錄影證據。kimodo timeline 之後再考慮當上身前饋疊加。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
