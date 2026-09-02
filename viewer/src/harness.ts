@@ -18,6 +18,7 @@ import {
 } from "./motionTimeline";
 import type { MotionTimeline } from "./motionTimeline";
 import { MotionSuspension } from "./motionSuspension";
+import { StandController } from "./standController";
 
 export function installHarness(scene: Scene, model: BuiltModel, modelName: string): void {
   const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
@@ -138,6 +139,7 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
   let player: MotionTimelinePlayer | null = null;
   let loopPlayback = true;
   const suspension = new MotionSuspension(scene, model.root, model.bodies, 0.3);
+  const stand = new StandController(model);
 
   const motionRow = document.createElement("div");
   motionRow.className = "actuator-row";
@@ -257,6 +259,19 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
   };
   panel.appendChild(suspensionButton);
 
+  const standButton = document.createElement("button");
+  standButton.className = "reset";
+  standButton.textContent = "站立：關";
+  standButton.setAttribute("aria-pressed", "false");
+  standButton.onclick = () => {
+    stopPlayback();
+    if (stand.active) stand.disable();
+    else stand.enable();
+    standButton.textContent = `站立：${stand.active ? "開" : "關"}`;
+    standButton.setAttribute("aria-pressed", String(stand.active));
+  };
+  panel.appendChild(standButton);
+
   const reset = document.createElement("button");
   reset.className = "reset";
   reset.textContent = "全部歸零";
@@ -272,6 +287,7 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
   document.body.appendChild(panel);
   scene.onDisposeObservable.addOnce(() => {
     stopPlayback();
+    stand.disable();
     suspension.dispose();
   });
 }

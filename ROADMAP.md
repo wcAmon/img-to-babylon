@@ -132,7 +132,7 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
 
 執行計畫（harness-first：0009 派 Codex、0010 監工 spike）：
 
-- [ ] 0009 剛性站立：opt-in 站立模式（StandController＋playground「站立」開關），
+- [x] 0009 剛性站立：opt-in 站立模式（StandController＋playground「站立」開關），
       全伺服軸命令回出廠角撐住。可調 spec 馬達力道，既有 gate 全綠、
       motion gate 容差不准放寬。gate：`stand_test.ts`（監工先寫紅）——
       地面生成＋站立 600 步，頭高 ≥ 出廠 80%、軀幹 up 內積 > 0.9、

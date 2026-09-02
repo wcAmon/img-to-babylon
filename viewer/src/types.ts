@@ -19,6 +19,8 @@ export interface Actuator {
   min: number;
   max: number;
   set(value: number): void;
+  /** Optional physical release for actuators whose motor can be disengaged. */
+  release?(): void;
 }
 
 export interface BuiltModel {

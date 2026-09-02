@@ -402,6 +402,15 @@ export default function createActionFigureModel(
       }
       shape.material = { friction: def.friction, restitution: def.restitution };
       container.addChild(shape, Vector3.Zero(), Quaternion.Identity());
+      if (def.id.startsWith("calf-")) {
+        const bootShape = new PhysicsShapeBox(
+          Vector3.Zero(), Quaternion.Identity(), new Vector3(BOOT_W, BOOT_H, BOOT_D), scene,
+        );
+        bootShape.material = { friction: def.friction, restitution: def.restitution };
+        container.addChild(
+          bootShape, new Vector3(0, BOOT_Y - CALF_Y, BOOT_Z), Quaternion.Identity(),
+        );
+      }
       body.shape = container;
       body.setMassProperties({ mass: def.mass });
       bodies[def.id] = body;
@@ -473,6 +482,11 @@ export default function createActionFigureModel(
               armed = true;
             }
             joint.setAxisMotorTarget(ANG[k], v);
+          },
+          release(): void {
+            joint.setAxisMotorMaxForce(ANG[k], 0);
+            joint.setAxisMotorType(ANG[k], PhysicsConstraintMotorType.NONE);
+            armed = false;
           },
         });
       }
