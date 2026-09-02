@@ -137,8 +137,11 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       motion gate 容差不准放寬。gate：`stand_test.ts`（監工先寫紅）——
       地面生成＋站立 600 步，頭高 ≥ 出廠 80%、軀幹 up 內積 > 0.9、
       無 NaN、constraint 不裂。
-- [ ] 0010 地面走路實驗（spike）：站穩後不吊空播 walk timeline，量位移/
-      跌倒數據。成功 → 0011 gate 化；失敗 → tombstone ＋與使用者議路線。
+- [ ] 0010 站立穩健化：0009 綠是場景歷史巧合（新鮮場景 50–75 步前倒；
+      POSITION 馬達剛性不吃 maxForce、髖屈服 0.28 rad、重心越靴前緣）。
+      stand_test 已強化為新鮮場景版（紅）。
+- [ ] 0011 地面走路實驗（spike）：站穩後不吊空播 walk timeline，量位移/
+      跌倒數據。成功 → gate 化；失敗 → tombstone ＋與使用者議路線。
 
 ## Parked（自設計文件 §11 移入，不分先後）
 
