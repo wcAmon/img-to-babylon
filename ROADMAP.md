@@ -125,6 +125,21 @@ DynamicTexture——側面看是平的。M6 把五官換成真 3D 幾何，並�
 - [x] 0008 監工驗收：playwright 近拍正/側面截圖，hero.png 臉區 vs render
       臉區跑顯微鏡，目視＋數據雙確認，證據落 `.img2babylon/shots/`。
 
+## M7：站立平衡（2026-09-02 核准開工）
+
+doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌肉張力，
+胖靴低重心理論上站得住。終極目標：不吊空在地上播 kimodo 走路。
+
+執行計畫（harness-first：0009 派 Codex、0010 監工 spike）：
+
+- [ ] 0009 剛性站立：opt-in 站立模式（StandController＋playground「站立」開關），
+      全伺服軸命令回出廠角撐住。可調 spec 馬達力道，既有 gate 全綠、
+      motion gate 容差不准放寬。gate：`stand_test.ts`（監工先寫紅）——
+      地面生成＋站立 600 步，頭高 ≥ 出廠 80%、軀幹 up 內積 > 0.9、
+      無 NaN、constraint 不裂。
+- [ ] 0010 地面走路實驗（spike）：站穩後不吊空播 walk timeline，量位移/
+      跌倒數據。成功 → 0011 gate 化；失敗 → tombstone ＋與使用者議路線。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
