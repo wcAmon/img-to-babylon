@@ -203,7 +203,11 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       `physicsScale`（長度 ×S、質量 ×S³、伺服力矩 ×S⁴、衝量／增益依相似律），
       spec 仍寫玩具尺寸，viewer 世界 ×10、相機同步；spike 先驗證站立不再混沌、
       抗推達解析門檻、踝能移質心；過了才回 0015。舊 gate 全部在 S=10 重跑。
-- [ ] 0015a 物理尺度 ×10（2026-09-03 核准）：factory `opts.physicsScale`（S，預設 1）
+- [ ] 0015a 物理尺度 ×10（2026-09-03 核准；r1 中場 8e08eda：physicsScale 落地、
+      scale_test 10／stand_test 10 全綠；監工修正 0014 契約錯誤——joint frame 的
+      y 才是側傾／外展、z 是扭轉，踝 angular 改 y:[-0.3,0.3] z:locked；S=10 平行
+      四邊形重心轉移實測 45–59 mm；r2 切契約：action-figure 預設 S=10，全 gate
+      依相似律換算）：factory `opts.physicsScale`（S，預設 1）
       ——長度 ×S、質量 ×S³、伺服力矩 ×S⁴、driftGain ÷S；spec 仍玩具尺寸；
       main/harness/capture 依 model.physicsScale 放大地面／相機／擾動道具，
       `#scale=10` 開啟。gate `scale_test.ts`（監工寫）在 S=10：六輪站立、
