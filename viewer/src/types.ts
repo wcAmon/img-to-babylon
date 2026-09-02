@@ -32,6 +32,19 @@ export interface StandBalance {
     id: string;
     sign: number;
   }>;
+  supportBodyIds?: string[];
+  pitch?: StandBalanceAxis;
+  roll?: StandBalanceAxis;
+}
+
+export interface StandBalanceAxis {
+  proportionalGain: number;
+  derivativeGain: number;
+  leanGain?: number;
+  servos: Array<{
+    id: string;
+    sign: number;
+  }>;
 }
 
 export interface BuiltModel {

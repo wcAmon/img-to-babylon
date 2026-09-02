@@ -1,6 +1,6 @@
 import type { Observer, PhysicsBody, Scene, TransformNode } from "@babylonjs/core";
 import { Quaternion, Vector3 } from "@babylonjs/core";
-import type { Actuator, BuiltModel } from "./types";
+import type { Actuator, BuiltModel, StandBalanceAxis } from "./types";
 
 interface InitialTransform {
   position: Vector3;
@@ -14,8 +14,11 @@ export class StandController {
   private readonly root: TransformNode;
   private readonly rootPosition: Vector3;
   private readonly bodies: PhysicsBody[];
+  private readonly bodiesById: BuiltModel["bodies"];
+  private readonly balance: BuiltModel["balance"];
   private readonly torso: PhysicsBody | undefined;
   private readonly balanceServos: Array<{ servo: Actuator; sign: number }>;
+  private readonly controlledServoIds: Set<string>;
   private readonly servoById: Map<string, Actuator>;
   private readonly poseTargets = new Map<string, number>();
   private readonly leanGain: number;
@@ -31,12 +34,19 @@ export class StandController {
     this.root = model.root;
     this.rootPosition = model.factoryPose?.rootPosition.clone() ?? model.root.position.clone();
     this.bodies = Object.values(model.bodies);
+    this.bodiesById = model.bodies;
+    this.balance = model.balance;
     this.torso = model.bodies.torso;
     this.servoById = new Map(this.servos.map((servo) => [servo.id, servo]));
     this.balanceServos = (model.balance?.pitchServos ?? []).flatMap(({ id, sign }) => {
       const servo = this.servoById.get(id);
       return servo ? [{ servo, sign }] : [];
     });
+    this.controlledServoIds = new Set([
+      ...this.balanceServos.map(({ servo }) => servo.id),
+      ...(model.balance?.pitch?.servos ?? []).map(({ id }) => id),
+      ...(model.balance?.roll?.servos ?? []).map(({ id }) => id),
+    ]);
     this.leanGain = model.balance?.leanGain ?? 0;
     this.driftGain = model.balance?.driftGain ?? 0;
     Object.entries(model.bodies).forEach(([id, body]) => {
@@ -81,8 +91,11 @@ export class StandController {
       this.cancelSync();
       this.servos.forEach((servo) => servo.set(0));
     });
-    if (this.torso && this.balanceServos.length > 0) {
+    const v2 = this.balance?.supportBodyIds?.length && this.balance.pitch && this.balance.roll
+      ? this.balance : null;
+    if (this.torso && (this.balanceServos.length > 0 || v2)) {
       let steps = 0;
+      let previousError: { x: number; z: number } | null = null;
       this.balanceObserver = this.scene.onAfterPhysicsObservable.add(() => {
         steps++;
         if (steps <= 5) return;
@@ -90,6 +103,46 @@ export class StandController {
         const up = Vector3.TransformNormal(
           Vector3.Up(), this.torso!.transformNode.getWorldMatrix(),
         ).normalize();
+        if (v2) {
+          const com = Vector3.Zero();
+          let totalMass = 0;
+          this.bodies.forEach((body) => {
+            const mass = body.getMassProperties().mass ?? 0;
+            body.transformNode.computeWorldMatrix(true);
+            com.addInPlace(body.transformNode.absolutePosition.scale(mass));
+            totalMass += mass;
+          });
+          if (totalMass <= 0) return;
+          com.scaleInPlace(1 / totalMass);
+          const supports = v2.supportBodyIds!.flatMap((id) => {
+            const body = this.bodiesById[id];
+            if (!body) return [];
+            body.transformNode.computeWorldMatrix(true);
+            return [body.transformNode.absolutePosition];
+          });
+          if (supports.length === 0) return;
+          const support = supports.reduce((sum, p) => sum.addInPlace(p), Vector3.Zero())
+            .scaleInPlace(1 / supports.length);
+          const error = { x: com.x - support.x, z: com.z - support.z };
+          const dt = Math.max(1 / 240, this.scene.getEngine().getDeltaTime() / 1000);
+          const velocity = previousError
+            ? { x: (error.x - previousError.x) / dt, z: (error.z - previousError.z) / dt }
+            : { x: 0, z: 0 };
+          previousError = error;
+          const pitchU = this.axisOutput(v2.pitch!, error.z, velocity.z, up.z);
+          const rollU = this.axisOutput(v2.roll!, error.x, velocity.x, up.x);
+          const commands = new Map<string, number>();
+          for (const [axis, u] of [[v2.pitch!, pitchU], [v2.roll!, rollU]] as const) {
+            axis.servos.forEach(({ id, sign }) => commands.set(id, (commands.get(id) ?? 0) + sign * u));
+          }
+          commands.forEach((offset, id) => {
+            const servo = this.servoById.get(id);
+            if (!servo) return;
+            const base = this.poseTargets.get(id) ?? 0;
+            servo.set(Math.max(servo.min, Math.min(servo.max, base + offset)));
+          });
+          return;
+        }
         const lean = up.z;
         const drift = this.torso!.transformNode.absolutePosition.z;
         const u = this.leanGain * lean + this.driftGain * drift;
@@ -114,11 +167,17 @@ export class StandController {
   setPoseTarget(id: string, value: number): void {
     const servo = this.servoById.get(id);
     if (!servo) return;
-    if (this.enabled && this.balanceServos.some((entry) => entry.servo === servo)) {
+    if (this.enabled && this.controlledServoIds.has(id)) {
       this.poseTargets.set(id, value);
       return;
     }
     servo.set(value);
+  }
+
+  private axisOutput(axis: StandBalanceAxis, error: number, velocity: number, lean: number): number {
+    return axis.proportionalGain * error
+      + axis.derivativeGain * velocity
+      + (axis.leanGain ?? 0) * lean;
   }
 
   private cancelSync(): void {

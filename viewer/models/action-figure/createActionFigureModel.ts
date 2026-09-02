@@ -509,6 +509,31 @@ export default function createActionFigureModel(
         { id: "servo:boot-l.x", sign: 1 },
         { id: "servo:boot-r.x", sign: 1 },
       ],
+      supportBodyIds: ["boot-l", "boot-r"],
+      pitch: {
+        proportionalGain: 20,
+        derivativeGain: 1.5,
+        leanGain: 0.4,
+        servos: [
+          { id: "servo:boot-l.x", sign: 1 },
+          { id: "servo:boot-r.x", sign: 1 },
+          { id: "servo:thigh-l.x", sign: 0.35 },
+          { id: "servo:thigh-r.x", sign: 0.35 },
+          { id: "servo:calf-l.x", sign: -0.25 },
+          { id: "servo:calf-r.x", sign: -0.25 },
+        ],
+      },
+      roll: {
+        proportionalGain: 20,
+        derivativeGain: 1.5,
+        leanGain: -0.4,
+        servos: [
+          { id: "servo:boot-l.z", sign: 1 },
+          { id: "servo:boot-r.z", sign: 1 },
+          { id: "servo:thigh-l.z", sign: 0.35 },
+          { id: "servo:thigh-r.z", sign: 0.35 },
+        ],
+      },
     },
     factoryPose: {
       rootPosition: root.position.clone(),
