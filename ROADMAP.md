@@ -203,6 +203,13 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       `physicsScale`（長度 ×S、質量 ×S³、伺服力矩 ×S⁴、衝量／增益依相似律），
       spec 仍寫玩具尺寸，viewer 世界 ×10、相機同步；spike 先驗證站立不再混沌、
       抗推達解析門檻、踝能移質心；過了才回 0015。舊 gate 全部在 S=10 重跑。
+- [ ] 0015a 物理尺度 ×10（2026-09-03 核准）：factory `opts.physicsScale`（S，預設 1）
+      ——長度 ×S、質量 ×S³、伺服力矩 ×S⁴、driftGain ÷S；spec 仍玩具尺寸；
+      main/harness/capture 依 model.physicsScale 放大地面／相機／擾動道具，
+      `#scale=10` 開啟。gate `scale_test.ts`（監工寫）在 S=10：六輪站立、
+      抗推 4 方向 × base{0.002,0.004}×S^3.5 × 三癱家族全站回、踝側傾限位鎖
+      0.1 rad 能把質心橫移 ≥ 20 mm 且站住。S=1 舊 gate 照舊綠。
+      過了才回 0015（gate 力道在 S=10 依剛體雕像門檻重校）。
 - [ ] 0015 質心-支撐面平衡控制器（StandBalance v2）：每步算質量加權質心投影
       相對支撐面中心（由 boot body 位置算，雙腳＝兩靴聯集中心、單腳＝該靴），
       俯仰誤差（z）與側傾誤差（x）各一組 PD；踝 servo 主控（俯仰 x、側傾 z）、
