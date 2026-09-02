@@ -12,7 +12,7 @@
  *   C. 重心轉移原語（0016 前置）：站穩後用 servo 做平行四邊形——兩踝側傾
  *      servo:boot-*.y = +0.1、兩髖外展 servo:thigh-*.y = −0.1，300√S 步 ramp、300√S 步
  *      hold——必須仍站著、質心橫移 ≥ 0.003·S m（S=10 → 30 mm；監工實測 45–59 mm，
- *      幾何預測 h·sin 0.1 ≈ 0.045S）。0014 教訓：joint frame 對 axis x 的 y = 世界 z
+ *      幾何預測 h·sin 0.1 ≈ 0.045S）。C 強制 v1 路徑（v2 質心回饋會抵消開迴路位移）。0014 教訓：joint frame 對 axis x 的 y = 世界 z
  *      （側傾／外展）、z = 世界 −y（扭轉）——踝側傾是 .y 軸。
  *   doctrine：不啟用站立照舊癱。
  * 0015 教訓：×1 尺度（9 cm／85 g）低於 Havok 數值尺度地板——剛體方塊 0.002 N·s 即倒，
@@ -140,6 +140,9 @@ for (const collapse of [150, 300, 450]) {
   try {
     addGround(ctx);
     const model = build(ctx);
+    // C 量的是開迴路幾何原語：v2 的質心回饋會把質心拉回中心（那是 balance_test B 的事），
+    // 這裡強制走 v1 路徑（去掉 v2 欄位），只留俯仰鎖姿。
+    if (model.balance) { delete model.balance.supportBodyIds; delete model.balance.pitch; delete model.balance.roll; }
     const factoryHeadY = headY(model);
     const stand = standUp(ctx, model, 300);
     assert.ok(headY(model) >= factoryHeadY * 0.8, "C 前置：必須站穩");

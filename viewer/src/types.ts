@@ -45,6 +45,11 @@ export interface StandBalanceAxis {
     id: string;
     sign: number;
   }>;
+  /** Optional asymmetric actuator mix used while the COM error is negative. */
+  negativeErrorServos?: Array<{
+    id: string;
+    sign: number;
+  }>;
 }
 
 export interface BuiltModel {

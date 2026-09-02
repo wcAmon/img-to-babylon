@@ -21,6 +21,7 @@ export class StandController {
   private readonly controlledServoIds: Set<string>;
   private readonly servoById: Map<string, Actuator>;
   private readonly poseTargets = new Map<string, number>();
+  private balanceTarget = { x: 0, z: 0 };
   private readonly leanGain: number;
   private readonly driftGain: number;
   private readonly useV2: boolean;
@@ -44,14 +45,15 @@ export class StandController {
       return servo ? [{ servo, sign }] : [];
     });
     const usesV2 = Boolean(
-      model.physicsScale === 1
-        && model.balance?.supportBodyIds?.length && model.balance.pitch && model.balance.roll,
+      model.balance?.supportBodyIds?.length && model.balance.pitch && model.balance.roll,
     );
     this.useV2 = usesV2;
     this.controlledServoIds = new Set(usesV2
       ? [
           ...(model.balance?.pitch?.servos ?? []).map(({ id }) => id),
+          ...(model.balance?.pitch?.negativeErrorServos ?? []).map(({ id }) => id),
           ...(model.balance?.roll?.servos ?? []).map(({ id }) => id),
+          ...(model.balance?.roll?.negativeErrorServos ?? []).map(({ id }) => id),
         ]
       : this.balanceServos.map(({ servo }) => servo.id));
     this.leanGain = model.balance?.leanGain ?? 0;
@@ -73,6 +75,7 @@ export class StandController {
 
   enable(): void {
     this.poseTargets.clear();
+    this.balanceTarget = { x: 0, z: 0 };
     this.cancelSync();
     this.cancelBalance();
     this.bodies.forEach((body) => { body.disablePreStep = false; });
@@ -129,7 +132,10 @@ export class StandController {
           if (supports.length === 0) return;
           const support = supports.reduce((sum, p) => sum.addInPlace(p), Vector3.Zero())
             .scaleInPlace(1 / supports.length);
-          const error = { x: com.x - support.x, z: com.z - support.z };
+          const error = {
+            x: com.x - (support.x + this.balanceTarget.x),
+            z: com.z - (support.z + this.balanceTarget.z),
+          };
           const dt = 1 / 60;
           const velocity = previousError
             ? { x: (error.x - previousError.x) / dt, z: (error.z - previousError.z) / dt }
@@ -138,8 +144,13 @@ export class StandController {
           const pitchU = this.axisOutput(v2.pitch!, error.z, velocity.z, up.z);
           const rollU = this.axisOutput(v2.roll!, error.x, velocity.x, up.x);
           const commands = new Map<string, number>();
-          for (const [axis, u] of [[v2.pitch!, pitchU], [v2.roll!, rollU]] as const) {
-            axis.servos.forEach(({ id, sign }) => commands.set(id, (commands.get(id) ?? 0) + sign * u));
+          for (const [axis, errorValue, u] of [
+            [v2.pitch!, error.z, pitchU], [v2.roll!, error.x, rollU],
+          ] as const) {
+            const servoMix = errorValue < 0 && axis.negativeErrorServos
+              ? axis.negativeErrorServos
+              : axis.servos;
+            servoMix.forEach(({ id, sign }) => commands.set(id, (commands.get(id) ?? 0) + sign * u));
           }
           commands.forEach((offset, id) => {
             const servo = this.servoById.get(id);
@@ -163,6 +174,7 @@ export class StandController {
 
   disable(): void {
     this.poseTargets.clear();
+    this.balanceTarget = { x: 0, z: 0 };
     this.cancelBalance();
     this.cancelSync();
     this.bodies.forEach((body) => { body.disablePreStep = true; });
@@ -178,6 +190,11 @@ export class StandController {
       return;
     }
     servo.set(value);
+  }
+
+  setBalanceTarget(target: { x: number; z: number }): void {
+    if (!this.useV2) return;
+    this.balanceTarget = { x: target.x, z: target.z };
   }
 
   private axisOutput(axis: StandBalanceAxis, error: number, velocity: number, lean: number): number {

@@ -130,3 +130,62 @@ notes:
      凍結 body、永久 disablePreStep；spec 幾何／質量／限位不動；v1 退回路徑增益不動；
      不得 git add/commit；探針用完刪；notes 寫卡、status 不動；用 node --import tsx。
      三輪仍紅 → 寫清哪格倒、機制，停手。
+
+Codex r2（2026-09-03，依第二輪三輪上限停手，status 保持 open）：
+  - RED：`npx tsc --noEmit` 原文為 `Property 'setBalanceTarget' does not exist on type
+    'StandController'`（balance_test.ts:144、158）。已實作 setBalanceTarget，v2 誤差改為
+    `com - (support + target)`，enable/disable 皆清零；移除 `physicsScale===1` 限制，S=10
+    會走 v2，無完整 v2 欄位仍走原 v1。另加入可選 negativeErrorServos，controlled servo
+    id 同步涵蓋非對稱組，setPoseTarget 仍作為每步 offset 疊加前的 base。
+  - 第 1 輪完整 balance gate：前三格依序通過，首紅為
+    `[collapse 150 / push -z 0.004 N·s]`，原文 `頭高 0.1500 < 0.7040`。臨時探針顯示
+    推後 step 16/48/64 的 dz 為 -0.0274/-0.0854/-0.1625 m，up.z 為
+    -0.0415/-0.1360/-0.2700；踝與髖同為負命令，step 64 踝已 -0.4941，step 96
+    後翻落地。機制是髖權重太小且膝單向彎曲不能救後倒。
+  - 第 2 輪完整 balance gate：負 e_z 改成踝負、髖正、移除膝；roll 依 scale C 校準為
+    踝／髖反號平行四邊形。仍首紅同格，原文 `頭高 0.1500 < 0.7040`。探針證明髖正向
+    是錯向：step 16 up.z 已 -0.1294（第 1 輪 -0.0415），step 64 踝／髖各飽和
+    -0.5/+0.5，step 96 後翻落地。
+  - 第 3 輪完整 balance gate：負 e_z 改回能減慢後傾的髖負向、移除膝、髖權重提高至
+    踝的 2 倍。仍首紅同格，原文 `頭高 0.1592 < 0.7040`；前三格仍先通過，僅略延緩
+    後翻，未達 gate，故未進到 B 追蹤斷言。依上限停止，不再調參。
+  - 驗收 1 tsc：PASS（exit 0，無診斷）。驗收 2 balance_test：FAIL（第 3 輪原文如上，
+    A 未全綠，B/doctrine 未執行）。驗收 3 scale_test S=10：FAIL 於 C，原文
+    `質心橫移 0.0236 < 0.0300（平行四邊形移不動質心）`；stand_test：PASS，原文
+    `stand_test: PASS（癱後恢復站立/放掉再癱/對照照舊癱）`。
+  - physics_test：PASS（`pass:true`，12 bodies finite，11 constraints 全 ok）。
+    actuation_test：PASS（servo coverage/checks 全 ok，`pass:true`）。motion_test walk：PASS
+    （finite=true，60 frames，180 physicsSteps，constraints 11→11 stable，19 tracks 全 pass）。
+    motion_suspension_test：`motion suspension tests: pass`。face_test：
+    `face_test: PASS（六件五官立體、對稱、掛頭下）`。
+  - walk_ground_probe hold：PASS 型數據（exit 0）：standing=true、3/3 cycles、fell=false、
+    minHeadY=0.87237、minUpY=0.9999998、finite=true、constraintsStable=true。
+    forge unittest：`Ran 98 tests in 1.219s`、`OK`。
+  - 未改 balance/scale/stand gate、斷言、換算、spec；未用 STATIC 錨、凍結 body 或永久
+    disablePreStep；未 git add/commit。臨時 `tmp_balance_probe.ts` 已刪。寫 notes 前
+    `git diff --stat`：3 files changed, 37 insertions(+), 9 deletions(-)；
+    `git status --short`：僅 factory、standController.ts、types.ts 三個未 staged 修改。
+
+監工中場（2026-09-03，r2 後）：
+  - r2 diff 審過：v2 於 S>1 解鎖、setBalanceTarget、negativeErrorServos 非對稱混合、roll 依
+    平行四邊形反號（boot.y −1／thigh.y +1）。無禁用手法。
+  - −z 0.004 三輪紅：雕像 −z 0.003 即倒、v1/v2 撐 0.003——控制器已超越被動極限。監工重校
+    gate A 為 {0.002, 0.003}（契約＝全方向贏過剛體雕像），0.004 記為未 gate 延伸目標。
+    重校後 A 24 景全綠。
+  - scale_test C 因 v2 側傾回饋抵消開迴路位移而紅（23.6<30 mm）：C 量的是幾何原語，監工
+    改為強制 v1 路徑 → 綠。
+  - gate B 首次跑到：質心往正確方向但只到目標 43–48%——x 目標 ±0.040 實際 +0.0174／−0.0191；
+    z 目標 ±0.015 實際 +0.0057／−0.0040。純 P 在重力負載下的穩態誤差；增益是為抗擾調的。
+第三輪（gate B：質心目標追蹤）:
+  配方（監工定方向，數值由你依證據定）:
+     1. 前饋＋回饋：對每個軸，指令 = FF(target) + PD(error)。FF 用開迴路增益：
+        roll：踝 y ＝ +a、髖 y ＝ −a 的平行四邊形，K_roll ≈ 0.45–0.59 m/rad（S=10；
+        scale_test C 實測 a=0.1 → 45–59 mm）→ a_ff = target.x / K_roll（夾 ±0.2，0.2 以上會倒）。
+        pitch：踝 x ±0.1 開迴路得 9–19 mm（K_pitch ≈ 0.09–0.19 m/rad，弱）；可加髖 x 同向
+        前饋提高 K_pitch。用臨時探針在 S=10 量 K（含 sign），寫進 factory 的 balance 設定
+        （新增可選 feedforward 欄位，例如 {rollGain, pitchGain, rollServos, pitchServos}）。
+     2. 回饋維持現有 PD，必要時加積分項（限幅）消殘差；目標 ramp 期間穩定、hold 期收斂到
+        |誤差| ≤ 0.001S。
+     3. 不得為了 B 犧牲 A：每輪都跑完整 balance_test（A 24 景＋B＋doctrine）。
+  驗收（第三輪）: 同第二輪 1–5（balance_test 全綠為主），scale_test 10、stand_test 綠。
+  紅線: 同第二輪；gate 不動。上限三輪，仍紅寫證據停手。
