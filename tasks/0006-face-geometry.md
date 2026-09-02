@@ -32,3 +32,20 @@ notes:
     actuation_test 全綠；toy-racer physics/actuation 迴歸綠。diff 目檢：真幾何
     （眼球+眼神光球、眉盒微傾、鼻凸球、微笑 tube 弧），無貼圖作弊。卡標 done。
     視覺近拍驗收歸 0008。
+  - 0008 視覺驗收發現（2026-09-02 08:52）：正面近拍 .img2babylon/shots/face-front.png
+    眉毛被髮瀏海（hair-fringe）完全遮蔽；參考圖眉毛在髮際線下清楚可見。
+    臉對臉 Divine Eye：fidelity 0.3663（門檻 0.36 壓線過），edgeOverlap 0.237 偏低
+    ——主因即眉毛缺席。開第二輪：調眉毛位置（下移/前凸）與/或縮瀏海，
+    使正面兩眉完整可見；face_test 斷言不變仍須全綠。
+  - 第二輪修正（2026-09-02）：只調整 `hair-fringe` 視覺幾何，diameterY 由 0.008
+    收至 0.0054，hair pivot 下的 y 由 -0.003 上移至 -0.0005；瀏海下緣離開眉毛主體，
+    保留原眉眼距與臉部比例。未修改眉毛幾何、spec.json、PhysicsBody、constraints 或質量。
+  - 第二輪 gate（2026-09-02）：`npx tsc --noEmit` exit 0；`face_test.ts`
+    `PASS（六件五官立體、對稱、掛頭下）`；`physics_test.ts` `pass: true`，10 bodies
+    皆 finite、9 constraints 皆 ok；`motion_suspension_test.ts` `motion suspension tests: pass`。
+  - 第二輪監工驗收（2026-09-02 08:56）：tsc/face_test/physics_test/suspension 綠；
+    playwright 正面複驗兩眉完整可見（.img2babylon/shots/face-front.png）；
+    臉對臉 Divine Eye fidelity 0.366→0.386、phash 0.688→0.75、edgeOverlap
+    0.237→0.288，pass 有餘裕。0008 證據：face-front/face-side/
+    action-figure-hero-m6.png。頭身比與參考圖不同（3D 頭佔 27% vs 參考 45%），
+    故顯微鏡 --region 同分數矩形不可直接跨圖用，臉區驗收改各自像素裁切後全圖比。

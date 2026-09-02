@@ -262,10 +262,10 @@ export default function createActionFigureModel(
   );
   const hairFringe = MeshBuilder.CreateSphere(
     "hair-fringe",
-    { diameterX: 0.026, diameterY: 0.008, diameterZ: 0.012, segments: TESS },
+    { diameterX: 0.026, diameterY: 0.0054, diameterZ: 0.012, segments: TESS },
     scene,
   );
-  hairFringe.position.set(0, -0.003, 0.0105); // 相對 hair pivot：前額
+  hairFringe.position.set(0, -0.0005, 0.0105); // 上收瀏海下緣，完整露出眉毛區
   const hairMesh = Mesh.MergeMeshes([hairCap, hairFringe], true, true) ?? hairCap;
   hairMesh.name = "hair";
   attach("hair", hairMesh, hairPivot);
