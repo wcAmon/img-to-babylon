@@ -1,19 +1,20 @@
 /**
- * balance gate（M8 task 0015）：質心-支撐面平衡——站穩後被推，要能站回來。
+ * balance gate（M8 task 0015，S=10 重校版）：質心-支撐面平衡——被推站回來＋質心可命令。
+ * 所有量依 model.physicsScale 換算（長度 ×S、步數 ×√S、衝量 ×S^3.5）；下列數字為 base（S=1 基準）。
  * 斷言（監工定，勿改）：
- *   場景矩陣：推力方向 {+z 前, -z 後, +x 左, -x 右} × 衝量 {0.002, 0.004} N·s
- *   × 癱等待家族 {150, 300, 450} 步 = 24 個獨立新場景。每景：
- *     生成 → step 癱 → 預武裝 servo（鏡射按鈕）→ StandController.enable() → step 360
- *     → 前置：頭高 ≥ 出廠 80%（站穩才推）
- *     → 對 torso 質心施衝量 → step 300 →
- *     A. 頭高 ≥ 出廠 80%、軀幹 up·Y > 0.9（站回來）
- *     B. 質心投影落在支撐面內：相對兩靴中心 |dx| ≤ 0.017、|dz| ≤ 0.014
- *        （靴 16×28mm、腳距 18mm → 雙腳支撐面 ±17mm × ±14mm）
- *     C. 全 body 座標有限、constraint 數量不變
- *   doctrine：最後一景 disable() 後 300 步頭高 < 出廠 60%（放掉再癱）。
- * 校準依據（監工探針 2026-09-03）：0012 v1 平衡四方向撐 0.001 N·s，0.002 在 ±z/-x
- * 倒；剛體翻倒門檻約 0.2 m/s，0.004 N·s 僅給 85g 人偶 0.047 m/s——物理上可回復，
- * 倒的是控制器。兩級力道都在可回復範圍內，gate 紅是誠實紅。
+ *   A. 抗推矩陣：方向 {+z 前, -z 後, +x 左, -x 右} × base 衝量 {0.002, 0.004} × 癱家族
+ *      {150, 300, 450} = 24 景。每景：生成→癱→預武裝→enable→360 步→推 torso→300 步→
+ *      頭高 ≥ 出廠 80%、up>0.9、質心投影回雙腳支撐面（|dx| ≤ 0.017S、|dz| ≤ 0.014S）、
+ *      座標有限、constraint 不變。
+ *      校準（監工探針 2026-09-03，S=10）：剛體雕像 +z 撐 0.003／−z 0.003 即倒／±x 撐 0.006；
+ *      v1 主動平衡 +z 撐 0.004、−z 撐 0.003、±x 撐 0.008——已全方向贏過雕像。
+ *      唯一紅格 −z 0.004：後推需要非對稱策略（髖前彎＋踝蹠屈，不是蹲）——本卡目標。
+ *   B. 質心目標追蹤（0016 重心轉移前置）：站穩後 stand.setBalanceTarget({x, z})（質心投影
+ *      相對雙腳支撐面中心的目標偏移，世界單位），目標依序 x=+0.004S、x=−0.004S、
+ *      z=+0.0015S、z=−0.0015S，各 ramp 300 步＋hold 300 步後：仍站著、|質心−目標| ≤ 0.001S；
+ *      最後目標歸零 300 步後 |質心| ≤ 0.001S。校準：踝 y +0.1／髖 y −0.1 開迴路即得
+ *      橫移 0.0045–0.0059S；踝 x ±0.1 得前後 0.0009–0.0019S。
+ *   doctrine：被推站回來後 disable() 再癱。
  */
 import assert from "node:assert/strict";
 import { MeshBuilder, PhysicsBody, PhysicsMotionType, PhysicsShapeBox, Quaternion, Vector3 } from "@babylonjs/core";
@@ -115,6 +116,55 @@ for (const collapse of COLLAPSE_FAMILIES) {
   }
 }
 
+// ---- B. 質心目標追蹤（0016 重心轉移前置）----
+{
+  const ctx = await createHeadlessScene();
+  try {
+    const model = createActionFigureModel(ctx.scene, { physics: true });
+    const scale = model.physicsScale;
+    const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
+    addGround(ctx, scale);
+    const factoryHeadY = headY(model);
+    ctx.step(T(300));
+    for (const act of model.actuators ?? []) if (act.kind === "servo") act.set(0);
+    const stand = new StandController(model);
+    stand.enable();
+    ctx.step(T(360));
+    assert.ok(headY(model) >= factoryHeadY * 0.8, "B 前置：必須站穩");
+    const tol = 0.001 * scale;
+    const targets: Array<{ x: number; z: number }> = [
+      { x: 0.004 * scale, z: 0 }, { x: -0.004 * scale, z: 0 },
+      { x: 0, z: 0.0015 * scale }, { x: 0, z: -0.0015 * scale },
+    ];
+    let from = { x: 0, z: 0 };
+    for (const target of targets) {
+      const ramp = T(300);
+      for (let s = 1; s <= ramp + T(300); s++) {
+        const f = Math.min(1, s / ramp);
+        stand.setBalanceTarget({ x: from.x + (target.x - from.x) * f, z: from.z + (target.z - from.z) * f });
+        ctx.step(1);
+      }
+      from = target;
+      const tag = `B target (${target.x.toFixed(4)}, ${target.z.toFixed(4)})`;
+      assert.ok(headY(model) >= factoryHeadY * 0.8, `${tag} 追蹤中必須仍站著（頭高 ${headY(model).toFixed(4)}）`);
+      const { dx, dz } = comOffset(model);
+      assert.ok(
+        Math.hypot(dx - target.x, dz - target.z) <= tol,
+        `${tag} 質心必須到位：實際 (${dx.toFixed(4)}, ${dz.toFixed(4)})，誤差 > ${tol.toFixed(4)}`,
+      );
+    }
+    for (let s = 1; s <= T(300); s++) {
+      const f = Math.min(1, s / T(300));
+      stand.setBalanceTarget({ x: from.x * (1 - f), z: from.z * (1 - f) });
+      ctx.step(1);
+    }
+    const back = comOffset(model);
+    assert.ok(Math.hypot(back.dx, back.dz) <= tol && headY(model) >= factoryHeadY * 0.8, `B 歸零後質心必須回中（${back.dx.toFixed(4)}, ${back.dz.toFixed(4)}）`);
+  } finally {
+    ctx.dispose();
+  }
+}
+
 // ---- doctrine（獨立新場景）：被推站回來後 disable() 要再癱 ----
 {
   const ctx = await createHeadlessScene();
@@ -142,4 +192,4 @@ for (const collapse of COLLAPSE_FAMILIES) {
   }
 }
 
-console.log("balance_test: PASS（四方向×兩級衝量×三癱家族站回來、質心回支撐面、放掉再癱）");
+console.log("balance_test: PASS（24 景抗推站回來／質心目標追蹤／放掉再癱）");

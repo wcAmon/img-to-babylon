@@ -1,5 +1,5 @@
 # 0015 質心-支撐面平衡控制器（StandBalance v2）：被推要站回來
-model: action-figure        status: blocked（尺度根因，路線待議）
+model: action-figure        status: open（第二輪，S=10）
 脈絡: M8 第二卡。0014 裝了踝關節（servo:boot-{l,r}.{x,z}，x 俯仰 ±0.5、z 側傾 ±0.3）。
      0012 v1 平衡只看軀幹前傾（u = 0.8·lean + 30·drift，髖/膝/踝俯仰 servo 同一個 u），
      不看側傾、不看質心。監工探針（2026-09-03）：v1 四方向只撐得住 0.001 N·s 衝量，
@@ -102,3 +102,31 @@ notes:
     地板（接觸 slop、solver 容差為絕對量），M7「馬達剛性不可調」「站立混沌」與 M8
     「踝無效」「靴子彈飛」皆為尺度症狀。
   - 判定：本卡 blocked。路線提案見 ROADMAP M8（物理尺度 ×10 契約）。
+
+第二輪（2026-09-03，0015a 後重開；物理契約已是 S=10，所有數字以 base 表示、gate 自動 ×S）:
+  校準（監工探針，S=10）：剛體雕像 +z 撐 0.003／−z 0.003 即倒／±x 撐 0.006；v1 +z 0.004、
+  −z 0.003、±x 0.008；v2（解鎖後）與 v1 相當。gate A 的 {0.002, 0.004} 唯一紅格是 −z 0.004。
+  gate B 新增質心目標追蹤（setBalanceTarget），目前 tsc 紅（方法不存在）。
+  要做的事:
+     1. StandController 解鎖 v2 於 S>1（r1 的 physicsScale===1 條件移除；v2 增益 factory
+        已 ÷S）。v1 仍為無 v2 欄位模型的退回路徑。
+     2. `setBalanceTarget(target: {x: number; z: number}): void`：v2 的質心誤差改為
+        e = com − (support + target)；enable/disable 清零。與 setPoseTarget 基準疊加相容。
+     3. −z 0.004：後推的非對稱策略——質心在支撐面後方時，髖前彎（thigh.x 往前）＋踝
+        蹠屈把質心拉回前方，不是蹲（膝單向限位 [0,2.44] 只會把髖往後送）。可用
+        依 e_z 正負選不同 servo 權重／增益（v2 設定加 backward/forward 兩組），或加
+        e_z 的非線性項；一切由證據決定，數據寫 notes。
+     4. gate B 的橫移 ±0.004S 靠踝 y／髖 y 平行四邊形（開迴路 0.1 rad 即 0.0045–0.0059S），
+        前後 ±0.0015S 靠踝 x（開迴路 0.1 rad 得 0.0009–0.0019S）——v2 roll/pitch 軸的
+        servo 與 sign 依此校準。
+  驗收（第二輪）:
+     1. cd viewer && npx tsc --noEmit
+     2. node --import tsx scripts/balance_test.ts（A 24 景＋B 追蹤＋doctrine 全綠）
+     3. node --import tsx scripts/scale_test.ts 10；node --import tsx scripts/stand_test.ts
+     4. physics／actuation／motion(walk)／suspension／face 全綠；walk_ground_probe hold 站穩
+     5. python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'
+     6. 監工另做：playground 站立＋丟球。
+  紅線（第二輪）: 不得改 balance_test／scale_test／stand_test 斷言與換算；不得 STATIC 錨、
+     凍結 body、永久 disablePreStep；spec 幾何／質量／限位不動；v1 退回路徑增益不動；
+     不得 git add/commit；探針用完刪；notes 寫卡、status 不動；用 node --import tsx。
+     三輪仍紅 → 寫清哪格倒、機制，停手。
