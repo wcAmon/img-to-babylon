@@ -24,7 +24,7 @@ import createActionFigureModel from "../models/action-figure/createActionFigureM
 
 const STAND_STEPS = 360;
 const FALL_RATIO = 0.6;
-const VARIANTS = ["hold", "raw", "assist"] as const;
+const VARIANTS = ["hold", "raw", "assist", "assist-half", "assist-lower-half"] as const;
 type Variant = (typeof VARIANTS)[number];
 
 const argv = process.argv.slice(2);
@@ -93,6 +93,12 @@ try {
     if (variant === "hold") return;
     for (const [id, track] of Object.entries(timeline.tracks)) {
       if (variant === "assist") stand.setPoseTarget(id, track[frame]);
+      else if (variant === "assist-half") stand.setPoseTarget(id, track[frame] * 0.5);
+      else if (variant === "assist-lower-half") {
+        if (id.includes(":thigh-") || id.includes(":calf-")) {
+          stand.setPoseTarget(id, track[frame] * 0.5);
+        }
+      }
       else servos.get(id)?.set(track[frame]);
     }
   };

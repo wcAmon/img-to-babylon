@@ -16,6 +16,8 @@ export class StandController {
   private readonly bodies: PhysicsBody[];
   private readonly torso: PhysicsBody | undefined;
   private readonly balanceServos: Array<{ servo: Actuator; sign: number }>;
+  private readonly servoById: Map<string, Actuator>;
+  private readonly poseTargets = new Map<string, number>();
   private readonly leanGain: number;
   private readonly driftGain: number;
   private readonly initialTransforms = new Map<PhysicsBody, InitialTransform>();
@@ -30,9 +32,9 @@ export class StandController {
     this.rootPosition = model.factoryPose?.rootPosition.clone() ?? model.root.position.clone();
     this.bodies = Object.values(model.bodies);
     this.torso = model.bodies.torso;
-    const servoById = new Map(this.servos.map((servo) => [servo.id, servo]));
+    this.servoById = new Map(this.servos.map((servo) => [servo.id, servo]));
     this.balanceServos = (model.balance?.pitchServos ?? []).flatMap(({ id, sign }) => {
-      const servo = servoById.get(id);
+      const servo = this.servoById.get(id);
       return servo ? [{ servo, sign }] : [];
     });
     this.leanGain = model.balance?.leanGain ?? 0;
@@ -53,6 +55,7 @@ export class StandController {
   }
 
   enable(): void {
+    this.poseTargets.clear();
     this.cancelSync();
     this.cancelBalance();
     this.bodies.forEach((body) => { body.disablePreStep = false; });
@@ -91,7 +94,8 @@ export class StandController {
         const drift = this.torso!.transformNode.absolutePosition.z;
         const u = this.leanGain * lean + this.driftGain * drift;
         this.balanceServos.forEach(({ servo, sign }) => {
-          servo.set(Math.max(servo.min, Math.min(servo.max, sign * u)));
+          const base = this.poseTargets.get(servo.id) ?? 0;
+          servo.set(Math.max(servo.min, Math.min(servo.max, base + sign * u)));
         });
       });
     }
@@ -99,11 +103,22 @@ export class StandController {
   }
 
   disable(): void {
+    this.poseTargets.clear();
     this.cancelBalance();
     this.cancelSync();
     this.bodies.forEach((body) => { body.disablePreStep = true; });
     this.servos.forEach((servo) => servo.release?.());
     this.enabled = false;
+  }
+
+  setPoseTarget(id: string, value: number): void {
+    const servo = this.servoById.get(id);
+    if (!servo) return;
+    if (this.enabled && this.balanceServos.some((entry) => entry.servo === servo)) {
+      this.poseTargets.set(id, value);
+      return;
+    }
+    servo.set(value);
   }
 
   private cancelSync(): void {

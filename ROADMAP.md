@@ -151,8 +151,17 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       驗收：六輪 stand gate 全綠＋playground 真按鈕 10/10 循環全站。
       附帶根因：main.ts HavokPlugin(true) 變動 dt ≠ headless 固定 1/60，
       已對齊為固定步長——M7 全部「headless 綠 playground 紅」的最後解答。
-- [ ] 0013 地面走路實驗（spike）：站穩後不吊空播 walk timeline，量位移/
-      跌倒數據。成功 → gate 化；失敗 → tombstone ＋與使用者議路線。
+- [x] 0013 地面走路實驗（spike，tombstone）：站穩後不吊空播 walk timeline。
+      30 格矩陣（hold/raw/assist/半幅/只餵下半身 × 20fps/5fps × 三癱家族）
+      0 格達標——所有走路變體第一循環後仰倒（frame 7–13），與播放速度、
+      初始癱姿無關。機制：右腳離地單腳站 16mm 靴時髖馬達剛性不可調
+      （0010）＋回饋只控俯仰不控側傾（0012）。結論：Havok POSITION 馬達
+      ＋空中 timeline 無法地面走路。量測儀器 walk_ground_probe.ts 與
+      StandController.setPoseTarget 前饋掛鉤保留。
+      **路線待議（使用者決定）**：(a) M7 止於站立，走路封存；
+      (b) 換致動器模型——每步自算 PD 力矩 applyAngularImpulse，剛性自己掌控
+      （攻 0010/0011 根因，架構級改動）；(c) 合成地面專用步態（重心轉移＋
+      雙腳支撐相位再抬腿），但髖剛性問題仍在，風險高。
 
 ## Parked（自設計文件 §11 移入，不分先後）
 
