@@ -54,6 +54,8 @@ export class StandController {
           ...(model.balance?.pitch?.negativeErrorServos ?? []).map(({ id }) => id),
           ...(model.balance?.roll?.servos ?? []).map(({ id }) => id),
           ...(model.balance?.roll?.negativeErrorServos ?? []).map(({ id }) => id),
+          ...(model.balance?.feedforward?.pitch?.servos ?? []).map(({ id }) => id),
+          ...(model.balance?.feedforward?.roll?.servos ?? []).map(({ id }) => id),
         ]
       : this.balanceServos.map(({ servo }) => servo.id));
     this.leanGain = model.balance?.leanGain ?? 0;
@@ -105,6 +107,7 @@ export class StandController {
     if (this.torso && (this.balanceServos.length > 0 || v2)) {
       let steps = 0;
       let previousError: { x: number; z: number } | null = null;
+      const integral = { x: 0, z: 0 };
       this.balanceObserver = this.scene.onAfterPhysicsObservable.add(() => {
         steps++;
         if (steps <= 5) return;
@@ -141,8 +144,10 @@ export class StandController {
             ? { x: (error.x - previousError.x) / dt, z: (error.z - previousError.z) / dt }
             : { x: 0, z: 0 };
           previousError = error;
-          const pitchU = this.axisOutput(v2.pitch!, error.z, velocity.z, up.z);
-          const rollU = this.axisOutput(v2.roll!, error.x, velocity.x, up.x);
+          integral.x = this.nextIntegral(v2.roll!, integral.x, error.x, dt);
+          integral.z = this.nextIntegral(v2.pitch!, integral.z, error.z, dt);
+          const pitchU = this.axisOutput(v2.pitch!, error.z, velocity.z, integral.z, up.z);
+          const rollU = this.axisOutput(v2.roll!, error.x, velocity.x, integral.x, up.x);
           const commands = new Map<string, number>();
           for (const [axis, errorValue, u] of [
             [v2.pitch!, error.z, pitchU], [v2.roll!, error.x, rollU],
@@ -151,6 +156,16 @@ export class StandController {
               ? axis.negativeErrorServos
               : axis.servos;
             servoMix.forEach(({ id, sign }) => commands.set(id, (commands.get(id) ?? 0) + sign * u));
+          }
+          for (const [axis, target] of [
+            [v2.feedforward?.pitch, this.balanceTarget.z],
+            [v2.feedforward?.roll, this.balanceTarget.x],
+          ] as const) {
+            if (!axis || axis.gain === 0) continue;
+            const output = Math.max(-axis.maxOutput, Math.min(axis.maxOutput, target / axis.gain));
+            axis.servos.forEach(({ id, sign }) => {
+              commands.set(id, (commands.get(id) ?? 0) + sign * output);
+            });
           }
           commands.forEach((offset, id) => {
             const servo = this.servoById.get(id);
@@ -197,10 +212,21 @@ export class StandController {
     this.balanceTarget = { x: target.x, z: target.z };
   }
 
-  private axisOutput(axis: StandBalanceAxis, error: number, velocity: number, lean: number): number {
+  private axisOutput(
+    axis: StandBalanceAxis, error: number, velocity: number, integral: number, lean: number,
+  ): number {
     return axis.proportionalGain * error
       + axis.derivativeGain * velocity
+      + (axis.integralGain ?? 0) * integral
       + (axis.leanGain ?? 0) * lean;
+  }
+
+  private nextIntegral(axis: StandBalanceAxis, value: number, error: number, dt: number): number {
+    const gain = axis.integralGain ?? 0;
+    const maxOutput = axis.integralMaxOutput ?? 0;
+    if (gain === 0 || maxOutput <= 0) return 0;
+    const limit = maxOutput / Math.abs(gain);
+    return Math.max(-limit, Math.min(limit, value + error * dt));
   }
 
   private cancelSync(): void {

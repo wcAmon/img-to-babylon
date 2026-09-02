@@ -523,6 +523,8 @@ export default function createActionFigureModel(
       pitch: {
         proportionalGain: 20 / physicsScale,
         derivativeGain: 1.5 / physicsScale,
+        integralGain: 2 / physicsScale,
+        integralMaxOutput: 0.15,
         leanGain: 0.4,
         servos: [
           { id: "servo:boot-l.x", sign: 1 },
@@ -542,6 +544,8 @@ export default function createActionFigureModel(
       roll: {
         proportionalGain: 20 / physicsScale,
         derivativeGain: 1.5 / physicsScale,
+        integralGain: 2 / physicsScale,
+        integralMaxOutput: 0.15,
         leanGain: -0.4,
         servos: [
           { id: "servo:boot-l.y", sign: -1 },
@@ -549,6 +553,28 @@ export default function createActionFigureModel(
           { id: "servo:thigh-l.y", sign: 1 },
           { id: "servo:thigh-r.y", sign: 1 },
         ],
+      },
+      feedforward: {
+        pitch: {
+          gain: 0.11 * physicsScale,
+          maxOutput: 0.2,
+          servos: [
+            { id: "servo:boot-l.x", sign: -1 },
+            { id: "servo:boot-r.x", sign: -1 },
+            { id: "servo:thigh-l.x", sign: 1 },
+            { id: "servo:thigh-r.x", sign: 1 },
+          ],
+        },
+        roll: {
+          gain: 0.5 * physicsScale,
+          maxOutput: 0.2,
+          servos: [
+            { id: "servo:boot-l.y", sign: 1 },
+            { id: "servo:boot-r.y", sign: 1 },
+            { id: "servo:thigh-l.y", sign: -1 },
+            { id: "servo:thigh-r.y", sign: -1 },
+          ],
+        },
       },
     },
     factoryPose: {

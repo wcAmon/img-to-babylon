@@ -35,11 +35,27 @@ export interface StandBalance {
   supportBodyIds?: string[];
   pitch?: StandBalanceAxis;
   roll?: StandBalanceAxis;
+  feedforward?: {
+    pitch?: StandBalanceFeedforwardAxis;
+    roll?: StandBalanceFeedforwardAxis;
+  };
+}
+
+export interface StandBalanceFeedforwardAxis {
+  /** Open-loop COM displacement per radian of actuator command, in world units. */
+  gain: number;
+  maxOutput: number;
+  servos: Array<{
+    id: string;
+    sign: number;
+  }>;
 }
 
 export interface StandBalanceAxis {
   proportionalGain: number;
   derivativeGain: number;
+  integralGain?: number;
+  integralMaxOutput?: number;
   leanGain?: number;
   servos: Array<{
     id: string;

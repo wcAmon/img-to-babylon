@@ -1,5 +1,5 @@
 # 0015 質心-支撐面平衡控制器（StandBalance v2）：被推要站回來
-model: action-figure        status: open（第二輪，S=10）
+model: action-figure        status: blocked（三輪上限；只剩 gate B 末格積分 windup，待使用者裁決）
 脈絡: M8 第二卡。0014 裝了踝關節（servo:boot-{l,r}.{x,z}，x 俯仰 ±0.5、z 側傾 ±0.3）。
      0012 v1 平衡只看軀幹前傾（u = 0.8·lean + 30·drift，髖/膝/踝俯仰 servo 同一個 u），
      不看側傾、不看質心。監工探針（2026-09-03）：v1 四方向只撐得住 0.001 N·s 衝量，
@@ -189,3 +189,57 @@ Codex r2（2026-09-03，依第二輪三輪上限停手，status 保持 open）�
      3. 不得為了 B 犧牲 A：每輪都跑完整 balance_test（A 24 景＋B＋doctrine）。
   驗收（第三輪）: 同第二輪 1–5（balance_test 全綠為主），scale_test 10、stand_test 綠。
   紅線: 同第二輪；gate 不動。上限三輪，仍紅寫證據停手。
+
+Codex r3（2026-09-03，依第三輪三輪上限停手，status 保持 open）：
+  - RED 基線：重校後 A 24 景先全綠，B 首格 `target (0.0400, 0.0000)` 仍紅；原文
+    `實際 (0.0174, -0.0010)，誤差 > 0.0100`。根因與監工中場一致：純 P 在重力負載下
+    有穩態誤差。
+  - S=10 開迴路探針（已刪）：roll 踝 y = +a／髖 y = −a 在 a=±0.05、±0.10 時
+    Kx=0.41–0.58 m/rad，a=±0.15 會倒；pitch 單踝 x 的 Kz 含 sign 為
+    −0.070 至 −0.153 m/rad。踝 x／髖 x 反號組在 a=−0.15…+0.15 都站立，
+    Kz 含 sign為 −0.083 至 −0.134 m/rad，故選 roll gain=0.50S、pitch gain=0.11S，
+    輸出限幅 ±0.2；pitch FF 符號反轉，roll 使用踝正／髖負平行四邊形。
+  - 已落地可選 `balance.feedforward.{pitch,roll}`（gain、maxOutput、servo mix），v2 每步
+    命令為 FF(target)+PID(error)+lean，仍與 setPoseTarget base 疊加；前饋 servo id 納入
+    controlledServoIds。StandBalanceAxis 新增可選 integralGain/integralMaxOutput，enable
+    建立新積分狀態、disable/cancel 後不保留，anti-windup 依最大輸出夾積分。v1 無 v2 欄位
+    路徑與 0.8/30 語意未改。
+  - 第 1 輪完整 balance gate：A 24 景仍全綠；FF 單獨把 B 首格 x 從 0.0174 提到
+    0.0198，但仍紅，原文 `實際 (0.0198, -0.0009)，誤差 > 0.0100`。機制是 FF 與
+    現有誤差回饋抵消，閉迴路仍停在負載平衡點。
+  - 第 2 輪完整 balance gate：加入 roll/pitch Ki=2/S、I 輸出限幅 0.15；A 24 景仍全綠，
+    B 前三目標通過，閉迴路探針終值依序為 (+0.0356,+0.0000)、(−0.0328,−0.0002)、
+    (−0.0048,+0.0172)。首紅移到末格 `target (0.0000, -0.0150)`，原文
+    `實際 (0.0050, -0.0283)，誤差 > 0.0100`；負 z 過衝。
+  - 第 3 輪完整 balance gate：僅將 pitch Ki 減半為 1/S；A 24 景仍全綠，但末格變成
+    `實際 (0.0014, 0.0113)，誤差 > 0.0100`，表示前一正 z 段的積分記憶無法在 ramp/hold
+    內解除，而非單純 Ki 過大。依上限停止，回復證據較佳的第 2 輪 Ki=2/S；剩餘機制是
+    目標跨零／反向時的積分 windup，未再嘗試第四輪（可後續研究目標變向時積分 reset 或
+    back-calculation anti-windup）。
+  - 驗收 1 tsc：PASS（exit 0，無診斷）。驗收 2 balance_test：FAIL；A 24 景全綠、B
+    前三目標通過，末格原文 `B target (0.0000, -0.0150) 質心必須到位：實際
+    (0.0050, -0.0283)，誤差 > 0.0100`，故 B 未全綠且 doctrine 未執行。
+  - 驗收 3 scale_test S=10：`scale_test: PASS（S=10：六輪站立／24 景抗推／踝側傾移質心／doctrine）`；
+    stand_test：`stand_test: PASS（癱後恢復站立/放掉再癱/對照照舊癱）`。
+  - physics_test：PASS（`pass:true`，12 bodies finite，11 constraints 全 ok）。
+    actuation_test：PASS（servo coverage/checks 全 ok，`pass:true`）。motion_test walk：PASS
+    （finite=true，60 frames，180 physicsSteps，constraints 11→11 stable，19 tracks 全 pass）。
+    motion_suspension_test：`motion suspension tests: pass`。face_test：
+    `face_test: PASS（六件五官立體、對稱、掛頭下）`。
+  - walk_ground_probe hold：exit 0，standing=true、3/3 cycles、fell=false、
+    minHeadY=0.8723805、minUpY=0.9999992、finite=true、constraintsStable=true。
+    forge unittest：`Ran 98 tests in 1.155s`、`OK`。
+  - 未改 balance/scale/stand gate、斷言、換算或 spec；未用 STATIC 錨、凍結 body 或永久
+    disablePreStep；未 git add/commit。臨時 `tmp_balance_ff_probe.ts` 已刪。寫 notes 前
+    `git diff --stat`：3 files changed, 71 insertions(+), 3 deletions(-)；
+    `git status --short`：僅 factory、standController.ts、types.ts 三個未 staged 修改。
+
+監工驗收（2026-09-03，r3 後）：
+  - 獨立重跑：tsc、balance_test A 24/24 綠、B 前三目標綠、末格 `(0, −0.015)` 紅
+    （實際 (0.0050, −0.0283)：目標由 +z 反向到 −z 時積分記憶未清）；scale_test 10、stand、
+    physics、actuation、motion、suspension、face、forge 98 全綠。
+  - diff 審過：feedforward 欄位（roll gain 0.50S、pitch 0.11S、限幅 ±0.2）、限幅積分
+    （Ki 2/S、I 限幅 0.15）、v1 未動、無禁用手法。
+  - 判定：三輪上限到（r1 骨架、r2 解鎖＋A 重校、r3 前饋＋積分），剩餘單一機制＝目標
+    反向時的積分 windup，修法教科書級（目標變向時積分歸零／back-calculation anti-windup）。
+    依 dispatch.md 標 blocked、request-input：建議加派一輪範圍鎖定為 anti-windup 的 r4。
