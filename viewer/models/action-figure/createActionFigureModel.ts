@@ -3,7 +3,6 @@
 // 對應 spec: viewer/models/action-figure/spec.json
 import {
   Color3,
-  DynamicTexture,
   Mesh,
   MeshBuilder,
   Physics6DoFConstraint,
@@ -34,9 +33,6 @@ const HEAD_Y = 0.088;
 const HAIR_DX = 0.032;
 const HAIR_DY = 0.014;
 const HAIR_Y = 0.097;
-const FACE_W = 0.02;
-const FACE_H = 0.012;
-const FACE_Z = 0.0145;
 const EAR_DIA = 0.006;
 const EAR_X = 0.0145;
 
@@ -159,36 +155,6 @@ function canonicalPerp(axis: Vector3): Vector3 {
   return Vector3.Cross(axis, up).normalize();
 }
 
-/** 玩具公仔臉：眉、眼、微笑（DynamicTexture）。headless 無 canvas 時回傳 null。 */
-function paintFace(scene: Scene): DynamicTexture | null {
-  const canPaint = typeof OffscreenCanvas !== "undefined" || typeof document !== "undefined";
-  if (!canPaint) return null;
-  const tex = new DynamicTexture("face-tex", { width: 256, height: 160 }, scene, false);
-  const ctx = tex.getContext();
-  ctx.fillStyle = "#f2c29e"; // 膚色底
-  ctx.fillRect(0, 0, 256, 160);
-  ctx.fillStyle = "#3a2416"; // 眉毛
-  ctx.fillRect(34, 22, 74, 16);
-  ctx.fillRect(148, 22, 74, 16);
-  ctx.fillStyle = "#1c1c1c"; // 眼睛
-  ctx.beginPath();
-  ctx.arc(72, 76, 24, 0, Math.PI * 2);
-  ctx.arc(184, 76, 24, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#ffffff"; // 眼神光
-  ctx.beginPath();
-  ctx.arc(81, 67, 8, 0, Math.PI * 2);
-  ctx.arc(193, 67, 8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = "#b0543a"; // 微笑
-  ctx.lineWidth = 9;
-  ctx.beginPath();
-  ctx.arc(128, 112, 34, Math.PI * 0.2, Math.PI * 0.8);
-  ctx.stroke();
-  tex.update();
-  return tex;
-}
-
 export default function createActionFigureModel(
   scene: Scene,
   opts: ModelOptions = {},
@@ -216,25 +182,40 @@ export default function createActionFigureModel(
   hairMat.specularColor = new Color3(0.22, 0.16, 0.1);
   hairMat.specularPower = 32; // roughness 0.4
 
-  const faceMat = new StandardMaterial("face-print", scene);
-  const faceTex = paintFace(scene);
-  if (faceTex) {
-    faceMat.diffuseTexture = faceTex;
-  } else {
-    faceMat.diffuseColor = new Color3(0.95, 0.76, 0.62);
-  }
-  faceMat.specularColor = new Color3(0.08, 0.08, 0.08);
+  const eyeMat = new StandardMaterial("eye-black", scene);
+  eyeMat.diffuseColor = new Color3(0.015, 0.012, 0.01);
+  eyeMat.specularColor = new Color3(0.95, 0.95, 0.95);
+  eyeMat.specularPower = 192;
+
+  const highlightMat = new StandardMaterial("eye-highlight", scene);
+  highlightMat.diffuseColor = new Color3(1, 1, 1);
+  highlightMat.specularColor = new Color3(1, 1, 1);
+  highlightMat.specularPower = 128;
+
+  const browMat = new StandardMaterial("brow-dark-brown", scene);
+  browMat.diffuseColor = new Color3(0.16, 0.075, 0.035);
+  browMat.specularColor = new Color3(0.08, 0.05, 0.03);
+
+  const mouthMat = new StandardMaterial("mouth-warm-red-brown", scene);
+  mouthMat.diffuseColor = new Color3(0.52, 0.16, 0.1);
+  mouthMat.specularColor = new Color3(0.2, 0.08, 0.05);
 
   const matOf: Record<string, StandardMaterial> = {
     torso: blue,
     head: flesh,
     hair: hairMat,
-    face: faceMat,
+    "eye-l": eyeMat,
+    "eye-r": eyeMat,
+    "brow-l": browMat,
+    "brow-r": browMat,
+    nose: flesh,
+    mouth: mouthMat,
     "ear-l": flesh,
     "ear-r": flesh,
   };
-  const disposables: { dispose(): void }[] = [blue, red, flesh, hairMat, faceMat];
-  if (faceTex) disposables.push(faceTex);
+  const disposables: { dispose(): void }[] = [
+    blue, red, flesh, hairMat, eyeMat, highlightMat, browMat, mouthMat,
+  ];
 
   const nodes: Record<string, TransformNode> = {};
   const meshes: Record<string, Mesh> = {};
@@ -289,10 +270,46 @@ export default function createActionFigureModel(
   hairMesh.name = "hair";
   attach("hair", hairMesh, hairPivot);
 
-  const facePivot = pivot("face", headPivot, new Vector3(0, 0, FACE_Z));
-  attach("face", MeshBuilder.CreateBox(
-    "face", { width: FACE_W, height: FACE_H, depth: 0.002 }, scene,
-  ), facePivot);
+  // 五官都是 head 下的真實幾何；中心貼近球面，前端略凸出成玩具浮雕。
+  for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
+    const eyeId = `eye-${side}`;
+    const eyePivot = pivot(eyeId, headPivot, new Vector3(sx * 0.0045, 0.001, 0.0143));
+    attach(eyeId, MeshBuilder.CreateSphere(
+      eyeId, { diameter: 0.0048, segments: 16 }, scene,
+    ), eyePivot);
+
+    const highlight = MeshBuilder.CreateSphere(
+      `${eyeId}-highlight`, { diameter: 0.00125, segments: 10 }, scene,
+    );
+    highlight.parent = eyePivot;
+    highlight.position.set(sx * 0.00065, 0.00065, 0.00215);
+    highlight.material = highlightMat;
+
+    const browId = `brow-${side}`;
+    const browPivot = pivot(browId, headPivot, new Vector3(sx * 0.0045, 0.0052, 0.0139));
+    const brow = MeshBuilder.CreateBox(
+      browId, { width: 0.006, height: 0.00125, depth: 0.0018 }, scene,
+    );
+    brow.rotation.z = sx * -0.12;
+    attach(browId, brow, browPivot);
+  }
+
+  const nosePivot = pivot("nose", headPivot, new Vector3(0, -0.0009, 0.015));
+  attach("nose", MeshBuilder.CreateSphere(
+    "nose", { diameter: 0.0026, segments: 12 }, scene,
+  ), nosePivot);
+
+  const mouthPivot = pivot("mouth", headPivot, new Vector3(0, -0.0047, 0.0142));
+  const smilePath = Array.from({ length: 13 }, (_, i) => {
+    const angle = Math.PI * (0.2 + 0.6 * i / 12);
+    return new Vector3(0.0034 * Math.cos(angle), -0.0034 * Math.sin(angle), 0);
+  });
+  const mouth = MeshBuilder.CreateTube(
+    "mouth",
+    { path: smilePath, radius: 0.000375, tessellation: 12, cap: Mesh.CAP_ALL },
+    scene,
+  );
+  attach("mouth", mouth, mouthPivot);
 
   for (const [id, sx] of [["ear-l", 1], ["ear-r", -1]] as const) {
     const earPivot = pivot(id, headPivot, new Vector3(sx * EAR_X, 0, 0));
