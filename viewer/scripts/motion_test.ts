@@ -144,6 +144,8 @@ async function main(): Promise<number> {
   try {
     const factory = (await registry[name]()).default;
     const model = factory(ctx.scene, { physics: true });
+    const scale = model.physicsScale;
+    const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
     const actuators = new Map<string, Actuator>(
       (model.actuators ?? []).filter((a) => a.kind === "servo").map((a) => [a.id, a]),
     );
@@ -171,11 +173,11 @@ async function main(): Promise<number> {
     };
 
     Object.values(model.bodies).forEach((body) => { body.disablePreStep = false; });
-    model.root.position.y += 0.3;
+    model.root.position.y += 0.3 * scale;
     for (let i = 0; i < 2; i++) checkedStep();
     Object.values(model.bodies).forEach((body) => { body.disablePreStep = true; });
     anchor.setMotionType(PhysicsMotionType.STATIC);
-    for (let i = 0; i < SETTLE_STEPS; i++) checkedStep();
+    for (let i = 0; i < T(SETTLE_STEPS); i++) checkedStep();
 
     const bindings = new Map<string, { a: PhysicsBody; b: PhysicsBody; axis: Vector3; bind: Matrix; key: AxisKey }>();
     for (const c of servoDecls) {
@@ -198,7 +200,7 @@ async function main(): Promise<number> {
         checkedStep();
         physicsSteps++;
       }
-      if (physicsSteps <= WARMUP_STEPS) continue;
+      if (physicsSteps <= T(WARMUP_STEPS)) continue;
       for (const [id, track] of Object.entries(timeline.tracks)) {
         const binding = bindings.get(id);
         if (!binding) {
@@ -237,7 +239,7 @@ async function main(): Promise<number> {
       fps: timeline.fps,
       frames: timeline.frames,
       physicsSteps,
-      warmupSteps: WARMUP_STEPS,
+      warmupSteps: T(WARMUP_STEPS),
       finite,
       constraints: { before: constraintCount, after: model.constraints.length, stable: constraintsStable },
       tracks: trackResults,

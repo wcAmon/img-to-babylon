@@ -67,7 +67,7 @@ interface ConstraintResult {
 }
 
 function checkConstraints(
-  constraints: SpecConstraint[], bodies: Record<string, PhysicsBody>,
+  constraints: SpecConstraint[], bodies: Record<string, PhysicsBody>, scale = 1,
 ): ConstraintResult[] {
   return constraints.map((con) => {
     const a = bodies[con.bodyA];
@@ -85,17 +85,17 @@ function checkConstraints(
     a.transformNode.computeWorldMatrix(true);
     b.transformNode.computeWorldMatrix(true);
     const worldA = Vector3.TransformCoordinates(
-      Vector3.FromArray(con.pivotA), a.transformNode.getWorldMatrix(),
+      Vector3.FromArray(con.pivotA).scale(scale), a.transformNode.getWorldMatrix(),
     );
     const worldB = Vector3.TransformCoordinates(
-      Vector3.FromArray(con.pivotB), b.transformNode.getWorldMatrix(),
+      Vector3.FromArray(con.pivotB).scale(scale), b.transformNode.getWorldMatrix(),
     );
     const separation = Number(Vector3.Distance(worldA, worldB).toFixed(5));
     return {
       bodyA: con.bodyA,
       bodyB: con.bodyB,
       separation,
-      ok: separation <= CONSTRAINT_TOLERANCE,
+      ok: separation <= CONSTRAINT_TOLERANCE * scale,
     };
   });
 }
@@ -138,6 +138,7 @@ function runRollPhase(
   bodies: Record<string, PhysicsBody>,
   step: (n: number) => void,
   rollBodyId: string,
+  scale: number,
 ): RollResult {
   const fail = (message: string): RollResult => ({
     pushed: rollBodyId, forward: 0, lateral: 0, speedAtMeasure: 0,
@@ -166,10 +167,10 @@ function runRollPhase(
   );
   const start = chassis.transformNode.absolutePosition.clone();
   chassis.applyImpulse(
-    dir.scale(totalMass * ROLL_PUSH_SPEED), chassis.transformNode.absolutePosition,
+    dir.scale(totalMass * ROLL_PUSH_SPEED * Math.sqrt(scale)), chassis.transformNode.absolutePosition,
   );
 
-  step(ROLL_MEASURE_STEPS);
+  step(Math.round(ROLL_MEASURE_STEPS * Math.sqrt(scale)));
   const vel = chassis.getLinearVelocity();
   const speedAtMeasure = new Vector3(vel.x, 0, vel.z).length();
   chassis.transformNode.computeWorldMatrix(true);
@@ -183,29 +184,30 @@ function runRollPhase(
       return { wheel: con.bodyB, radius: radius ?? 0, omega: 0, slip: null, ok: false };
     }
     const omega = Math.abs(Vector3.Dot(wheel.getAngularVelocity(), axisNow));
-    const slip = speedAtMeasure > 1e-6
-      ? Math.abs(omega * radius - speedAtMeasure) / speedAtMeasure
+    const scaledRadius = radius === null ? null : radius * scale;
+    const slip = speedAtMeasure > 1e-6 && scaledRadius !== null
+      ? Math.abs(omega * scaledRadius - speedAtMeasure) / speedAtMeasure
       : null;
     return {
       wheel: con.bodyB,
-      radius,
+      radius: scaledRadius ?? 0,
       omega: Number(omega.toFixed(4)),
       slip: slip === null ? null : Number(slip.toFixed(4)),
       ok: slip !== null && slip <= ROLL_SLIP_TOLERANCE,
     };
   });
 
-  step(ROLL_COAST_STEPS);
+  step(Math.round(ROLL_COAST_STEPS * Math.sqrt(scale)));
   const disp = chassis.transformNode.absolutePosition.subtract(start);
   const forward = Vector3.Dot(disp, dir);
   const lateralVec = disp.subtract(dir.scale(forward));
   const lateral = new Vector3(lateralVec.x, 0, lateralVec.z).length();
   const constraints = checkConstraints(
-    allCons.filter((c) => c.pivotA && c.pivotB), bodies,
+    allCons.filter((c) => c.pivotA && c.pivotB), bodies, scale,
   );
-  const pass = forward >= MIN_ROLL_DISTANCE
-    && lateral <= Math.max(forward * 0.5, 0.05)
-    && speedAtMeasure >= MIN_MEASURE_SPEED
+  const pass = forward >= MIN_ROLL_DISTANCE * scale
+    && lateral <= Math.max(forward * 0.5, 0.05 * scale)
+    && speedAtMeasure >= MIN_MEASURE_SPEED * Math.sqrt(scale)
     && wheels.every((w) => w.ok)
     && constraints.every((c) => c.ok);
   return {
@@ -367,16 +369,17 @@ async function main(): Promise<number> {
   const ctx = await createHeadlessScene();
   const { scene, step } = ctx;
 
-  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
+  const factory = (await registry[name]()).default;
+  const model = factory(scene, { physics: true });
+  const scale = model.physicsScale;
+  const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
+  const ground = MeshBuilder.CreateGround("ground", { width: 10 * scale, height: 10 * scale }, scene);
   const gBody = new PhysicsBody(ground, PhysicsMotionType.STATIC, false, scene);
   const gShape = new PhysicsShapeBox(
-    new Vector3(0, -0.05, 0), Quaternion.Identity(), new Vector3(10, 0.1, 10), scene,
+    new Vector3(0, -0.05 * scale, 0), Quaternion.Identity(), new Vector3(10 * scale, 0.1 * scale, 10 * scale), scene,
   );
   gShape.material = { friction: 0.7, restitution: 0.2 };
   gBody.shape = gShape;
-
-  const factory = (await registry[name]()).default;
-  const model = factory(scene, { physics: true });
 
   const standHeight = ragdoll ? hierarchyHeight(model.root) : 0;
   const binds = ragdoll
@@ -385,19 +388,19 @@ async function main(): Promise<number> {
 
   // 抬高 0.3m 再讓物理接管；ragdoll 另加出生傾斜（直挺挺落地可能站住）
   Object.values(model.bodies).forEach((b) => { b.disablePreStep = false; });
-  model.root.position.y += 0.3;
+  model.root.position.y += 0.3 * scale;
   if (ragdoll) model.root.rotation.z += RAGDOLL_TILT;
   step(2);
   Object.values(model.bodies).forEach((b) => { b.disablePreStep = true; });
 
-  step(60); // 1 秒：自由落體 + 落地
-  if (ragdoll) step(RAGDOLL_EXTRA_STEPS); // 癱倒需要時間
+  step(T(60)); // 相似時間：自由落體 + 落地
+  if (ragdoll) step(T(RAGDOLL_EXTRA_STEPS)); // 癱倒需要時間
   if (nudgeBody && model.bodies[nudgeBody]) {
     const b = model.bodies[nudgeBody];
     const mass = b.getMassProperties().mass ?? 0.1;
-    b.applyImpulse(new Vector3(0, mass * 1.0, 0), b.transformNode.absolutePosition);
+    b.applyImpulse(new Vector3(0, mass * Math.sqrt(scale), 0), b.transformNode.absolutePosition);
   }
-  step(240); // 再 4 秒
+  step(T(240)); // 相似時間 settle
 
   const bodies = Object.entries(model.bodies).map(([id, b]) => {
     const v = b.getLinearVelocity();
@@ -409,13 +412,13 @@ async function main(): Promise<number> {
       finite: [p.x, p.y, p.z].every(Number.isFinite),
     };
   });
-  const constraints = checkConstraints(specConstraints, model.bodies);
+  const constraints = checkConstraints(specConstraints, model.bodies, scale);
   const settlePass = bodies.length > 0 && bodies.every(
-    (r) => r.speed < SETTLE_SPEED && r.y > FLOOR_EPS && r.finite,
+    (r) => r.speed < SETTLE_SPEED * Math.sqrt(scale) && r.y > FLOOR_EPS * scale && r.finite,
   ) && constraints.every((c) => c.ok);
 
   const roll = rollBody
-    ? runRollPhase(spec, model.bodies, step, rollBody)
+    ? runRollPhase(spec, model.bodies, step, rollBody, scale)
     : null;
 
   let ragdollResult: RagdollResult | null = null;

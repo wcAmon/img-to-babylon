@@ -166,7 +166,7 @@ export default function createActionFigureModel(
   scene: Scene,
   opts: ModelOptions = {},
 ): BuiltModel {
-  const physicsScale = opts.physicsScale ?? 1;
+  const physicsScale = opts.physicsScale ?? 10;
   const L = (value: number): number => value * physicsScale;
   const V = (value: Vec): Vector3 => new Vector3(
     value[0] * physicsScale, value[1] * physicsScale, value[2] * physicsScale,

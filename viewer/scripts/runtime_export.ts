@@ -58,6 +58,7 @@ async function main(): Promise<number> {
   const ctx = await createHeadlessScene();
   const factory = (await registry[name]()).default;
   const model = factory(ctx.scene, { physics: true });
+  const scale = model.physicsScale;
   ctx.scene.render(); // 讓世界矩陣就緒
 
   const meshes = Object.entries(model.meshes).map(([component, m]) => {
@@ -87,20 +88,20 @@ async function main(): Promise<number> {
       return [{
         component: cid,
         type: c.collider.type,
-        aabb: worldAabbOfLocalBox(c.collider.size, c.collider.offset, node.getWorldMatrix()),
-        volume: Number(colliderVolume(c.collider).toFixed(8)),
+        aabb: worldAabbOfLocalBox(c.collider.size.map((v) => v * scale), c.collider.offset.map((v) => v * scale), node.getWorldMatrix()),
+        volume: Number((colliderVolume(c.collider) * scale ** 3).toFixed(8)),
       }];
     });
     const first = model.nodes[b.components[0]];
     if (!first) {
       // 第一個元件本身就對不上 factory node；已記進 missingNodeErrors，稍後統一報錯並 exit 3。
-      return { id: b.id, mass: b.mass, centerOfMassWorld: [NaN, NaN, NaN], colliders };
+      return { id: b.id, mass: b.mass * scale ** 3, centerOfMassWorld: [NaN, NaN, NaN], colliders };
     }
     first.computeWorldMatrix(true);
     const com = Vector3.TransformCoordinates(
-      Vector3.FromArray(b.centerOfMass ?? [0, 0, 0]), first.getWorldMatrix(),
+      Vector3.FromArray(b.centerOfMass ?? [0, 0, 0]).scale(scale), first.getWorldMatrix(),
     );
-    return { id: b.id, mass: b.mass, centerOfMassWorld: com.asArray(), colliders };
+    return { id: b.id, mass: b.mass * scale ** 3, centerOfMassWorld: com.asArray(), colliders };
   });
 
   if (missingNodeErrors.length) {

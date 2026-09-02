@@ -45,15 +45,17 @@ if (!variant || !VARIANTS.includes(variant) || !timelinePath
 
 const ctx = await createHeadlessScene();
 try {
-  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, ctx.scene);
+  const model = createActionFigureModel(ctx.scene, { physics: true });
+  const scale = model.physicsScale;
+  const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
+  const ground = MeshBuilder.CreateGround("ground", { width: 10 * scale, height: 10 * scale }, ctx.scene);
   const groundBody = new PhysicsBody(ground, PhysicsMotionType.STATIC, false, ctx.scene);
   const shape = new PhysicsShapeBox(
-    new Vector3(0, -0.05, 0), Quaternion.Identity(), new Vector3(10, 0.1, 10), ctx.scene,
+    new Vector3(0, -0.05 * scale, 0), Quaternion.Identity(), new Vector3(10 * scale, 0.1 * scale, 10 * scale), ctx.scene,
   );
   shape.material = { friction: 0.7, restitution: 0.2 };
   groundBody.shape = shape;
 
-  const model = createActionFigureModel(ctx.scene, { physics: true });
   const servos = new Map((model.actuators ?? []).filter((a) => a.kind === "servo").map((a) => [a.id, a]));
   const timeline = validateMotionTimeline(
     JSON.parse(readFileSync(timelinePath, "utf8")) as unknown, "action-figure", new Set(servos.keys()),
@@ -77,12 +79,12 @@ try {
 
   const factoryHeadY = headY();
   const constraintCount = model.constraints.length;
-  ctx.step(collapseSteps);
+  ctx.step(T(collapseSteps));
   const collapsedHeadY = headY();
   for (const act of servos.values()) act.set(0);
   const stand = new StandController(model);
   stand.enable();
-  ctx.step(STAND_STEPS);
+  ctx.step(T(STAND_STEPS));
   const standingHeadY = headY();
   const standing = standingHeadY >= factoryHeadY * 0.8 && torsoUpY() > 0.9;
 
@@ -139,7 +141,7 @@ try {
   const result = {
     variant,
     timeline: { path: timelinePath, fps: timeline.fps, frames: timeline.frames },
-    collapseSteps,
+    collapseSteps: T(collapseSteps),
     cyclesRequested: cycles,
     cyclesCompleted: fall ? fall.cycle - 1 : cycles,
     factoryHeadY,

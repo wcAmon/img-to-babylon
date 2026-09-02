@@ -33,11 +33,11 @@ const COLLAPSE_FAMILIES = [150, 300, 450];
 const SUPPORT_HALF_X = 0.017;
 const SUPPORT_HALF_Z = 0.014;
 
-const addGround = (ctx: Ctx): void => {
-  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, ctx.scene);
+const addGround = (ctx: Ctx, scale: number): void => {
+  const ground = MeshBuilder.CreateGround("ground", { width: 10 * scale, height: 10 * scale }, ctx.scene);
   const groundBody = new PhysicsBody(ground, PhysicsMotionType.STATIC, false, ctx.scene);
   const shape = new PhysicsShapeBox(
-    new Vector3(0, -0.05, 0), Quaternion.Identity(), new Vector3(10, 0.1, 10), ctx.scene,
+    new Vector3(0, -0.05 * scale, 0), Quaternion.Identity(), new Vector3(10 * scale, 0.1 * scale, 10 * scale), ctx.scene,
   );
   shape.material = { friction: 0.7, restitution: 0.2 }; // 鏡射 harness 地面
   groundBody.shape = shape;
@@ -72,22 +72,24 @@ for (const collapse of COLLAPSE_FAMILIES) {
       const tag = `[collapse ${collapse} / push ${dirName} ${impulse} N·s]`;
       const ctx = await createHeadlessScene();
       try {
-        addGround(ctx);
         const model = createActionFigureModel(ctx.scene, { physics: true });
+        const scale = model.physicsScale;
+        const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
+        addGround(ctx, scale);
         const factoryHeadY = headY(model);
         const constraintCount = model.constraints.length;
-        ctx.step(collapse);
+        ctx.step(T(collapse));
         assert.ok(headY(model) < factoryHeadY * 0.5, `${tag} 前置：站立前必須已癱`);
         for (const act of model.actuators ?? []) if (act.kind === "servo") act.set(0);
         const stand = new StandController(model);
         stand.enable();
-        ctx.step(360);
+        ctx.step(T(360));
         assert.ok(headY(model) >= factoryHeadY * 0.8, `${tag} 前置：推之前必須站穩（${headY(model).toFixed(4)}）`);
 
         const torso = model.bodies.torso;
         torso.transformNode.computeWorldMatrix(true);
-        torso.applyImpulse(dir.scale(impulse), torso.transformNode.absolutePosition);
-        ctx.step(300);
+        torso.applyImpulse(dir.scale(impulse * scale ** 3.5), torso.transformNode.absolutePosition);
+        ctx.step(T(300));
 
         const y = headY(model);
         assert.ok(
@@ -98,7 +100,7 @@ for (const collapse of COLLAPSE_FAMILIES) {
         assert.ok(up > 0.9, `${tag} 軀幹必須朝上（up·Y ${up.toFixed(3)} <= 0.9）`);
         const { dx, dz } = comOffset(model);
         assert.ok(
-          Math.abs(dx) <= SUPPORT_HALF_X && Math.abs(dz) <= SUPPORT_HALF_Z,
+          Math.abs(dx) <= SUPPORT_HALF_X * scale && Math.abs(dz) <= SUPPORT_HALF_Z * scale,
           `${tag} 質心投影必須回到支撐面內：dx ${dx.toFixed(4)} / dz ${dz.toFixed(4)}`,
         );
         for (const [id, body] of Object.entries(model.bodies)) {
@@ -117,20 +119,22 @@ for (const collapse of COLLAPSE_FAMILIES) {
 {
   const ctx = await createHeadlessScene();
   try {
-    addGround(ctx);
     const model = createActionFigureModel(ctx.scene, { physics: true });
+    const scale = model.physicsScale;
+    const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
+    addGround(ctx, scale);
     const factoryHeadY = headY(model);
-    ctx.step(300);
+    ctx.step(T(300));
     for (const act of model.actuators ?? []) if (act.kind === "servo") act.set(0);
     const stand = new StandController(model);
     stand.enable();
-    ctx.step(360);
+    ctx.step(T(360));
     const torso = model.bodies.torso;
     torso.transformNode.computeWorldMatrix(true);
-    torso.applyImpulse(new Vector3(0, 0, 0.002), torso.transformNode.absolutePosition);
-    ctx.step(300);
+    torso.applyImpulse(new Vector3(0, 0, 0.002 * scale ** 3.5), torso.transformNode.absolutePosition);
+    ctx.step(T(300));
     stand.disable();
-    ctx.step(300);
+    ctx.step(T(300));
     const y = headY(model);
     assert.ok(y < factoryHeadY * 0.6, `disable 後必須再癱（頭高 ${y.toFixed(4)}）`);
   } finally {

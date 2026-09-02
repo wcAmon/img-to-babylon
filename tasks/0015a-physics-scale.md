@@ -1,5 +1,5 @@
 # 0015a 物理尺度 ×10：人偶在 Havok 的數值尺度地板之上模擬
-model: action-figure        status: open
+model: action-figure        status: done
 脈絡: 0015 探勘（監工，2026-09-03）證明 9 cm／85 g 的人偶低於 Havok 數值尺度地板：
      - 同尺寸剛體方塊 ×1 被 0.002 N·s 推倒（解析門檻約 0.016，低 8 倍）；×10 方塊
        （0.34×0.88×0.28 m、85 kg）依 Froude 相似律衝量 ×10^3.5，base 0.008 仍站、
@@ -112,3 +112,54 @@ notes:
 紅線（第二輪）: 不得改 scale_test／stand_test 斷言；比率型門檻不得放寬；spec 不動；
      不得 STATIC 錨、凍結 body、永久 disablePreStep；不得 git add/commit；探針用完刪；
      notes 寫卡、status 不動；用 node --import tsx。
+
+Codex r2（2026-09-03，第二輪契約切換到 S=10）：
+  - RED：改動前無參數 `stand_test.ts` 仍走 factory S=1，exit 1，首敗原文
+    `cycle1: 癱後恢復站立 6 秒後頭高必須 ≥ 出廠 80%（0.0150 < 0.0704）`。
+  - action-figure factory 預設 `physicsScale` 改為 10，opts 仍可覆寫；`main.ts` 只在 hash
+    有有效 `scale` 時覆寫 factory，因此 `#model=action-figure` 真正走 S=10，`#scale=1`
+    仍可明確開玩具世界。main/capture 初始 camera radius 與 target 都依回傳的
+    `model.physicsScale` 同步，harness 的 ground、道具、衝量與 suspension lift 亦沿用 r1 尺度路徑。
+  - 逐檔盤點並換算絕對量：physics/actuation/motion/suspension/face/walk probe/balance 的
+    長度 ×S、物理等待步數 ×√S、衝量 ×S^3.5、線速度與速度門檻 ×√S；walk timeline
+    播放仍維持原始 60 Hz 真實時間。所有角度、比例型門檻與 scale/stand 斷言未改。
+    runtime_export 以 S=10 匯出 spec 推導 collider AABB/volume、mass、COM；
+    check_colliders 本身門檻未改。
+  - 驗收 1 `npx tsc --noEmit`：PASS（exit 0，無診斷）。驗收 2：
+    `scale_test: PASS（S=10：六輪站立／24 景抗推／踝側傾移質心／doctrine）`。
+    驗收 3 無參數：`stand_test: PASS（癱後恢復站立/放掉再癱/對照照舊癱）`。
+  - 驗收 4：physics `pass:true`（12 bodies finite、11 constraints ok）；actuation 23 軸
+    coverage/servo checks 全 ok、`pass:true`；walk motion 19 tracks、`finite:true`、
+    constraints 11→11 stable、`pass:true`（180 physics steps、scaled warmup 95）；
+    `motion suspension tests: pass`；`face_test: PASS（六件五官立體、對稱、掛頭下）`。
+  - 驗收 5 hold：`standing:true`、`fell:false`、3/3 cycles、`finite:true`、
+    `constraintsStable:true`，standing/minHeadY 0.872370、minUpY 0.999999879、位移 0。
+    情報 raw：step 67（cycle 1 frame 22）跌倒，位移 0.507045 m、minHeadY 0.504746、
+    minUpY 0.409830；assist：step 65（cycle 1 frame 21）跌倒，位移 0.327257 m、
+    minHeadY 0.526809、minUpY 0.626006。三者 finite/constraintsStable 均 true。
+  - 驗收 6 runtime export：`meshes:23,bodies:12`；`check_colliders.py`：`OK`，未因
+    S=10 觸及或修改其絕對門檻。forge 初跑唯一紅為監工 0014 軸修正後 stale expectation
+    （test_retarget 仍找 `boot-l.z`）；spec/factory/actuation 均證實現契約為 `boot-l.y`。
+    最小修正該測試為 y present/z absent 後，單測 `Ran 1 test ... OK`，全套
+    `Ran 98 tests in 1.160s`、`OK`。
+  - 未改 scale_test／stand_test、spec 或任何比率型門檻；未加 STATIC 錨、凍結 body、
+    永久 disablePreStep；未 git add/commit，無臨時探針，status 保持 open。寫 notes 前
+    `git diff --stat`：11 files changed, 114 insertions(+), 95 deletions(-)；
+    `git status --short`：factory、main、8 個 scale-aware scripts 與 stale retarget test，
+    共 11 個 tracked 檔案未 staged。
+
+監工驗收（2026-09-03，r2）：
+  - diff 審查：factory 預設 physicsScale 10；main.ts 只在 hash 有 scale 才覆寫；script 絕對量
+    換算（長度 ×S、步數／速度 ×√S、衝量 ×S^3.5），比率型門檻未動；retarget 測試改驗
+    boot-l.y（0014 軸修正後的正確契約）。無禁用手法。
+  - 獨立重跑：tsc、scale_test 10（A／B 24 景／C／doctrine）、stand_test（預設 S=10 六輪）、
+    physics（action-figure、toy-racer）、actuation 23 軸、motion(walk)、suspension、face、
+    walk_ground_probe hold（standing、head 0.872）、runtime_export＋check_colliders OK、
+    forge 98/98 全綠。balance_test 只剩 −z 0.004（0015 的控制器極限，已知）。
+  - playground 預設 `#model=action-figure`（S=10、12 bodies、23 servo）：真按鈕站立 3/3
+    （0.872 ≥ 0.704），第三輪挨兩顆球仍站著，放掉全癱 0.15。
+  - 外觀：`physics=0` 出廠姿勢，capture.setCamera 以 spec 座標（內部 ×S）拍 S=10，與 S=1
+    m8 截圖像素比對 1280×720 只差 3 像素（maxDelta 27，浮點邊緣）——畫面一致。
+    （注意：setCamera 現在收 spec 座標，內部乘 physicsScale；已記 CLAUDE.md。）
+  - 契約自此：action-figure 物理世界 = spec 尺寸 × 10；S=1 僅供玩具世界目視，物理不保證。
+    status → done。

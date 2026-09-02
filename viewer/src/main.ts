@@ -47,8 +47,10 @@ async function boot(): Promise<void> {
     banner(`未知模型：${name}（registry 無此項）`);
     return;
   }
-  const requestedScale = Number(params.get("scale") ?? "1");
-  const physicsScale = Number.isFinite(requestedScale) && requestedScale > 0 ? requestedScale : 1;
+  const scaleParam = params.get("scale");
+  const requestedScale = scaleParam === null ? undefined : Number(scaleParam);
+  const physicsScale = requestedScale !== undefined && Number.isFinite(requestedScale) && requestedScale > 0
+    ? requestedScale : undefined;
   const factory = (await load()).default;
   const model = factory(scene, {
     physics: params.get("physics") !== "0",

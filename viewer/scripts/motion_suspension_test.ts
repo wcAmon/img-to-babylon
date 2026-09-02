@@ -13,14 +13,16 @@ import createActionFigureModel from "../models/action-figure/createActionFigureM
 
 const ctx = await createHeadlessScene();
 try {
-  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, ctx.scene);
+  const model = createActionFigureModel(ctx.scene, { physics: true });
+  const scale = model.physicsScale;
+  const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
+  const ground = MeshBuilder.CreateGround("ground", { width: 10 * scale, height: 10 * scale }, ctx.scene);
   const groundBody = new PhysicsBody(ground, PhysicsMotionType.STATIC, false, ctx.scene);
   groundBody.shape = new PhysicsShapeBox(
-    new Vector3(0, -0.05, 0), Quaternion.Identity(), new Vector3(10, 0.1, 10), ctx.scene,
+    new Vector3(0, -0.05 * scale, 0), Quaternion.Identity(), new Vector3(10 * scale, 0.1 * scale, 10 * scale), ctx.scene,
   );
 
-  const model = createActionFigureModel(ctx.scene, { physics: true });
-  const suspension = new MotionSuspension(ctx.scene, model.root, model.bodies, 0.3);
+  const suspension = new MotionSuspension(ctx.scene, model.root, model.bodies, 0.3 * scale);
   const anchor = suspension.anchor as PhysicsBody;
   const bodyPosition = (body: PhysicsBody): Vector3 => {
     body.transformNode.computeWorldMatrix(true);
@@ -42,14 +44,14 @@ try {
     const direction = index % 2 === 0 ? 1 : -1;
     body.setAngularVelocity(new Vector3(6 * direction, 3, -4 * direction));
   });
-  ctx.step(180);
+  ctx.step(T(180));
   Object.values(model.bodies).forEach((body, index) => {
     const direction = index % 2 === 0 ? 1 : -1;
-    body.setLinearVelocity(new Vector3(3 * direction, 2, -2 * direction));
+    body.setLinearVelocity(new Vector3(3 * direction, 2, -2 * direction).scale(Math.sqrt(scale)));
     body.setAngularVelocity(new Vector3(8 * direction, -5, 6 * direction));
   });
   Object.values(model.bodies).forEach((body) => { body.disablePreStep = false; });
-  anchor.transformNode.position.addInPlace(new Vector3(0.5, 0.3, -0.4));
+  anchor.transformNode.position.addInPlace(new Vector3(0.5, 0.3, -0.4).scale(scale));
   ctx.step(1);
   Object.values(model.bodies).forEach((body) => { body.disablePreStep = true; });
 
@@ -65,18 +67,18 @@ try {
   ctx.step(4);
   const suspendedAnchor = bodyPosition(anchor);
   assert.equal(anchor.getMotionType(), PhysicsMotionType.STATIC, "吊空 anchor 必須是 STATIC");
-  assert.ok(suspendedAnchor.y > 0.15, `anchor 物理位置應在空中，實際 y=${suspendedAnchor.y}`);
+  assert.ok(suspendedAnchor.y > 0.15 * scale, `anchor 物理位置應在空中，實際 y=${suspendedAnchor.y}`);
 
   for (const [id, body] of Object.entries(model.bodies)) {
     const actualOffset = bodyPosition(body).subtract(suspendedAnchor);
     const factoryOffset = factoryOffsets.get(id);
     assert.ok(factoryOffset, `${id} 必須有出廠相對位置`);
     const deviation = Vector3.Distance(actualOffset, factoryOffset);
-    assert.ok(deviation < 0.1, `${id} 必須回復出廠姿勢，相對位置偏差=${deviation}`);
+    assert.ok(deviation < 0.1 * scale, `${id} 必須回復出廠姿勢，相對位置偏差=${deviation}`);
   }
 
   suspension.disable();
-  ctx.step(120);
+  ctx.step(T(120));
   assert.equal(anchor.getMotionType(), PhysicsMotionType.DYNAMIC, "關閉後 anchor 必須回 DYNAMIC");
   const highestBodyY = Math.max(...Object.values(model.bodies).map((body) => bodyPosition(body).y));
   assert.ok(

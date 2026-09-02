@@ -145,16 +145,18 @@ async function main(): Promise<number> {
 
   const ctx = await createHeadlessScene();
   const { scene, step } = ctx;
-  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
+  const factory = (await registry[name]()).default;
+  const model = factory(scene, { physics: true });
+  const scale = model.physicsScale;
+  const T = (steps: number): number => Math.round(steps * Math.sqrt(scale));
+  const ground = MeshBuilder.CreateGround("ground", { width: 10 * scale, height: 10 * scale }, scene);
   const gBody = new PhysicsBody(ground, PhysicsMotionType.STATIC, false, scene);
   const gShape = new PhysicsShapeBox(
-    new Vector3(0, -0.05, 0), Quaternion.Identity(), new Vector3(10, 0.1, 10), scene,
+    new Vector3(0, -0.05 * scale, 0), Quaternion.Identity(), new Vector3(10 * scale, 0.1 * scale, 10 * scale), scene,
   );
   gShape.material = { friction: 0.7, restitution: 0.2 };
   gBody.shape = gShape;
 
-  const factory = (await registry[name]()).default;
-  const model = factory(scene, { physics: true });
   const acts: Actuator[] = model.actuators ?? [];
   const byId = new Map(acts.map((a) => [a.id, a]));
   const checks: CheckResult[] = [];
@@ -202,11 +204,11 @@ async function main(): Promise<number> {
       push("servo:anchor", false, "找不到錨 body（無從吊空）");
     } else {
       Object.values(model.bodies).forEach((b) => { b.disablePreStep = false; });
-      model.root.position.y += 0.3;
+      model.root.position.y += 0.3 * scale;
       step(2);
       Object.values(model.bodies).forEach((b) => { b.disablePreStep = true; });
       anchor.setMotionType(PhysicsMotionType.STATIC);
-      step(60);
+      step(T(60));
       const binds = new Map<SpecConstraint, Matrix>();
       for (const c of servoDecls) {
         const a = model.bodies[c.bodyA];
@@ -223,19 +225,19 @@ async function main(): Promise<number> {
           const axisKey = act.id.slice(-1) as AxisKey;
           const target = 0.6 * (Math.abs(act.min) > Math.abs(act.max) ? act.min : act.max);
           act.set(target);
-          step(SERVO_STEPS);
+          step(T(SERVO_STEPS));
           const angle = measureAngles(a, b, Vector3.FromArray(d.axis), bind)[axisKey];
           push(`servo:${d.bodyB}.${axisKey}`, Math.abs(angle - target) <= SERVO_TOL,
             `量測 ${angle.toFixed(3)} vs 目標 ${target.toFixed(3)}`);
           act.set(0);
-          step(30);
+          step(T(30));
         }
       }
       anchor.setMotionType(PhysicsMotionType.DYNAMIC);
     }
   }
 
-  if (driveDecls.length || steerDecls.length) step(SETTLE_STEPS); // 就地落定
+  if (driveDecls.length || steerDecls.length) step(T(SETTLE_STEPS)); // 就地落定
 
   // ---- steer：行進中測（靜止輪胎硬黏著轉不動）——斷言轉向角展開且車身真的畫弧 ----
   if (steer && steerDecls.length && drive) {
@@ -248,7 +250,7 @@ async function main(): Promise<number> {
     }
     // 靜態轉向（task 0001）：玩家靜止時拉滿方向，前輪必須看得見地轉
     steer.set(steer.max);
-    step(STATIC_STEER_STEPS);
+    step(T(STATIC_STEER_STEPS));
     for (const d of steerDecls) {
       const a = model.bodies[d.bodyA];
       const b = model.bodies[d.bodyB];
@@ -260,13 +262,13 @@ async function main(): Promise<number> {
         `量測 ${angle.toFixed(3)} vs 目標 ${steer.max.toFixed(3)}（門檻 ${STATIC_STEER_RATIO}×）`);
     }
     steer.set(0);
-    step(30);
+    step(T(30));
     drive.set(0.5);
-    step(30);
+    step(T(30));
     for (const target of [steer.max, steer.min]) {
       steer.set(target);
       const yaw0 = worldYaw(chassis);
-      step(STEER_STEPS);
+      step(T(STEER_STEPS));
       const yawDelta = worldYaw(chassis) - yaw0;
       for (const d of steerDecls) {
         const a = model.bodies[d.bodyA];
@@ -284,7 +286,7 @@ async function main(): Promise<number> {
     }
     steer.set(0);
     drive.set(0);
-    step(30);
+    step(T(30));
   }
 
   // ---- drive：滿油門 4 秒，量水平位移（放最後——車會開走）----
@@ -292,12 +294,12 @@ async function main(): Promise<number> {
     const chassis = model.bodies[driveDecls[0].bodyA];
     const start = horizontal(chassis.transformNode.absolutePosition.clone());
     drive.set(1);
-    step(DRIVE_STEPS);
+    step(T(DRIVE_STEPS));
     drive.set(0);
     const dist = Vector3.Distance(
       start, horizontal(chassis.transformNode.absolutePosition),
     );
-    push("drive", dist >= DRIVE_MIN_DIST, `位移 ${dist.toFixed(3)}m（門檻 ${DRIVE_MIN_DIST}）`);
+    push("drive", dist >= DRIVE_MIN_DIST * scale, `位移 ${dist.toFixed(3)}m（門檻 ${DRIVE_MIN_DIST * scale}）`);
   }
 
   const pass = checks.length > 0 && checks.every((c) => c.ok);

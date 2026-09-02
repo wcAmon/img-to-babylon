@@ -74,8 +74,8 @@ class MappingAndProjectionTest(unittest.TestCase):
         # M8 0014：踝關節 2 軸 ×2 → 19 + 4 = 23
         self.assertEqual(len(tracks), 23)
         self.assertIn("servo:boot-l.x", tracks)
-        self.assertIn("servo:boot-l.z", tracks)
-        self.assertNotIn("servo:boot-l.y", tracks)
+        self.assertIn("servo:boot-l.y", tracks)
+        self.assertNotIn("servo:boot-l.z", tracks)
         self.assertEqual(set(tracks), set(limits))
         self.assertIn("servo:forearm-l.x", tracks)
         self.assertNotIn("servo:forearm-l.y", tracks)

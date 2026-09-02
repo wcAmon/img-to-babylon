@@ -23,6 +23,7 @@ const PAIRS: [string, string][] = [["eye-l", "eye-r"], ["brow-l", "brow-r"]];
 const ctx = await createHeadlessScene();
 try {
   const model = createActionFigureModel(ctx.scene, { physics: false });
+  const scale = model.physicsScale;
   const headNode = model.nodes.head;
   assert.ok(headNode, "必須有 head 節點");
   headNode.computeWorldMatrix(true);
@@ -41,13 +42,13 @@ try {
       ...worldVerts.map((v) => v.subtract(headCenter).length()),
     );
     assert.ok(
-      reach >= HEAD_RADIUS + RELIEF_MIN,
-      `${id} 必須凸出頭球表面（reach ${reach.toFixed(5)} < ${(HEAD_RADIUS + RELIEF_MIN).toFixed(5)}）`,
+      reach >= (HEAD_RADIUS + RELIEF_MIN) * scale,
+      `${id} 必須凸出頭球表面（reach ${reach.toFixed(5)} < ${((HEAD_RADIUS + RELIEF_MIN) * scale).toFixed(5)}）`,
     );
     const c = bbox.centerWorld;
     assert.ok(c.z > headCenter.z, `${id} 必須在前半球（center z ${c.z.toFixed(5)} <= 頭心 z ${headCenter.z.toFixed(5)}）`);
     const dist = c.subtract(headCenter).length();
-    assert.ok(dist < HEAD_RADIUS * 1.6, `${id} 必須貼近頭（中心距 ${dist.toFixed(5)} >= ${(HEAD_RADIUS * 1.6).toFixed(5)}）`);
+    assert.ok(dist < HEAD_RADIUS * scale * 1.6, `${id} 必須貼近頭（中心距 ${dist.toFixed(5)} >= ${(HEAD_RADIUS * scale * 1.6).toFixed(5)}）`);
     centers.set(id, { x: c.x - headCenter.x, y: c.y - headCenter.y, z: c.z - headCenter.z });
 
     let node: TransformNode | null = mesh;
@@ -62,10 +63,10 @@ try {
   for (const [left, right] of PAIRS) {
     const l = centers.get(left)!;
     const r = centers.get(right)!;
-    assert.ok(Math.abs(l.x + r.x) < PAIR_TOL, `${left}/${right} x 必須鏡射（${l.x.toFixed(5)} vs ${r.x.toFixed(5)}）`);
-    assert.ok(Math.abs(l.y - r.y) < PAIR_TOL, `${left}/${right} y 必須一致`);
-    assert.ok(Math.abs(l.z - r.z) < PAIR_TOL, `${left}/${right} z 必須一致`);
-    assert.ok(Math.abs(l.x) > 0.002, `${left} 必須偏離中線（|x| ${Math.abs(l.x).toFixed(5)}）`);
+    assert.ok(Math.abs(l.x + r.x) < PAIR_TOL * scale, `${left}/${right} x 必須鏡射（${l.x.toFixed(5)} vs ${r.x.toFixed(5)}）`);
+    assert.ok(Math.abs(l.y - r.y) < PAIR_TOL * scale, `${left}/${right} y 必須一致`);
+    assert.ok(Math.abs(l.z - r.z) < PAIR_TOL * scale, `${left}/${right} z 必須一致`);
+    assert.ok(Math.abs(l.x) > 0.002 * scale, `${left} 必須偏離中線（|x| ${Math.abs(l.x).toFixed(5)}）`);
   }
 
   console.log("face_test: PASS（六件五官立體、對稱、掛頭下）");
