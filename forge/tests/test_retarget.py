@@ -67,11 +67,15 @@ class MappingAndProjectionTest(unittest.TestCase):
                      "R_Hip", "R_Knee"):
             self.assertIn(name, retarget.JOINT_MAP)
 
-    def test_servo_tracks_are_exactly_the_19_spec_axes(self):
+    def test_servo_tracks_are_exactly_the_23_spec_axes(self):
         with open(SPEC) as handle:
             spec = json.load(handle)
         tracks, limits = retarget.servo_tracks_from_spec(spec)
-        self.assertEqual(len(tracks), 19)
+        # M8 0014：踝關節 2 軸 ×2 → 19 + 4 = 23
+        self.assertEqual(len(tracks), 23)
+        self.assertIn("servo:boot-l.x", tracks)
+        self.assertIn("servo:boot-l.z", tracks)
+        self.assertNotIn("servo:boot-l.y", tracks)
         self.assertEqual(set(tracks), set(limits))
         self.assertIn("servo:forearm-l.x", tracks)
         self.assertNotIn("servo:forearm-l.y", tracks)
@@ -111,7 +115,7 @@ class CliTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             with open(out_path) as handle:
                 timeline = json.load(handle)
-            self.assertEqual(len(timeline["tracks"]), 19)
+            self.assertEqual(len(timeline["tracks"]), 23)
 
     def test_cli_returns_one_for_invalid_input(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -183,4 +187,4 @@ class RebaseTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             with open(out) as handle:
                 data = json.load(handle)
-            self.assertEqual(len(data["tracks"]), 19)
+            self.assertEqual(len(data["tracks"]), 23)

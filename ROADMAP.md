@@ -180,7 +180,7 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
 
 執行計畫（harness-first：每卡監工先寫紅 gate／探針，派 Codex，獨立驗收）：
 
-- [ ] 0014 踝關節契約：spec 拆 boot-l/r 為獨立 body（質量自 calf 分出，
+- [x] 0014 踝關節契約：spec 拆 boot-l/r 為獨立 body（質量自 calf 分出，
       calf+boot 總質量不變 5g），calf→boot 新增 `joint`：axis [1,0,0]、
       angular x（俯仰）≈[-0.5,0.5]、z（側傾）≈[-0.3,0.3]、y locked、
       actuation servo（maxForce 同 0.02）；踝軸高度約地面上 6mm、左右對稱、
@@ -192,6 +192,9 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       Divine Eye 全身輪廓不變（靴子幾何不動）、**stand_test 六輪照舊綠**——
       踝 servo 鎖 0 撐平腳掌；站不住則允許把踝 servo 加進 balance.pitchServos
       （sign 依證據），增益 0.8/30 不動；三輪仍紅 → blocked 帶證據交 0015。
+      結果（2026-09-03）：一輪綠。calf/boot 4g/1g、踝俯仰 servo 入平衡 sign +1；
+      改前後同相機 0 像素差、playground 真按鈕 3/3 站穩、23 servo 契約
+      （retarget 測試同步更新）。
 - [ ] 0015 質心-支撐面平衡控制器（StandBalance v2）：每步算質量加權質心投影
       相對支撐面中心（由 boot body 位置算，雙腳＝兩靴聯集中心、單腳＝該靴），
       俯仰誤差（z）與側傾誤差（x）各一組 PD；踝 servo 主控（俯仰 x、側傾 z）、

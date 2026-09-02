@@ -1,4 +1,4 @@
-// action-figure — 玩具公仔 ragdoll：10 剛體 + 9 個限位關節（脖/肩/肘/髖/膝）。
+// action-figure — 玩具公仔 ragdoll：12 剛體 + 11 個限位關節（脖/肩/肘/髖/膝/踝）。
 // 尺寸全部烘進幾何參數（公尺），不用 scaling 承載尺寸。
 // 對應 spec: viewer/models/action-figure/spec.json
 import {
@@ -114,7 +114,9 @@ for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
     bodyDef(`thigh-${side}`,
       { kind: "capsule", size: [THIGH_DIA, THIGH_H, THIGH_DIA] }, 0.0025),
     bodyDef(`calf-${side}`,
-      { kind: "capsule", size: [CALF_DIA, CALF_H, CALF_DIA] }, 0.005),
+      { kind: "capsule", size: [CALF_DIA, CALF_H, CALF_DIA] }, 0.004),
+    bodyDef(`boot-${side}`,
+      { kind: "box", size: [BOOT_W, BOOT_H, BOOT_D] }, 0.001),
   );
   CONSTRAINT_DEFS.push(
     {
@@ -144,6 +146,11 @@ for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
       type: "hinge", bodyA: `thigh-${side}`, bodyB: `calf-${side}`,
       pivotA: [0, -0.0085, 0], pivotB: [0, 0.0125, 0], axis: [1, 0, 0],
       limits: [0, 2.44],
+    },
+    {
+      type: "joint", bodyA: `calf-${side}`, bodyB: `boot-${side}`,
+      pivotA: [0, -0.006, 0], pivotB: [0, 0.001, 0], axis: [1, 0, 0],
+      angular: { x: [-0.5, 0.5], y: "locked", z: [-0.3, 0.3] },
     },
   );
 }
@@ -318,7 +325,7 @@ export default function createActionFigureModel(
     ), earPivot);
   }
 
-  // ---- 四肢（各自為剛體 root；手/靴是視覺子件）----
+  // ---- 四肢（各自為剛體 root；手是 forearm 視覺子件）----
   for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
     const upperArmPivot = pivot(
       `upper-arm-${side}`, root, new Vector3(sx * ARM_X, UPPER_ARM_Y, 0),
@@ -368,7 +375,7 @@ export default function createActionFigureModel(
     ), calfPivot);
 
     const bootPivot = pivot(
-      `boot-${side}`, calfPivot, new Vector3(0, BOOT_Y - CALF_Y, BOOT_Z),
+      `boot-${side}`, root, new Vector3(sx * LEG_X, BOOT_Y, BOOT_Z),
     );
     attach(`boot-${side}`, MeshBuilder.CreateBox(
       `boot-${side}`, { width: BOOT_W, height: BOOT_H, depth: BOOT_D }, scene,
@@ -402,15 +409,6 @@ export default function createActionFigureModel(
       }
       shape.material = { friction: def.friction, restitution: def.restitution };
       container.addChild(shape, Vector3.Zero(), Quaternion.Identity());
-      if (def.id.startsWith("calf-")) {
-        const bootShape = new PhysicsShapeBox(
-          Vector3.Zero(), Quaternion.Identity(), new Vector3(BOOT_W, BOOT_H, BOOT_D), scene,
-        );
-        bootShape.material = { friction: def.friction, restitution: def.restitution };
-        container.addChild(
-          bootShape, new Vector3(0, BOOT_Y - CALF_Y, BOOT_Z), Quaternion.Identity(),
-        );
-      }
       body.shape = container;
       body.setMassProperties({ mass: def.mass });
       bodies[def.id] = body;
@@ -508,6 +506,8 @@ export default function createActionFigureModel(
         { id: "servo:thigh-r.x", sign: 1 },
         { id: "servo:calf-l.x", sign: -1 },
         { id: "servo:calf-r.x", sign: -1 },
+        { id: "servo:boot-l.x", sign: 1 },
+        { id: "servo:boot-r.x", sign: 1 },
       ],
     },
     factoryPose: {

@@ -1,5 +1,5 @@
 # 0014 踝關節契約：靴子拆成獨立 body，小腿→靴子 2 軸伺服 joint
-model: action-figure        status: open
+model: action-figure        status: done
 脈絡: M8 第一卡（ROADMAP M8）。0013 證明走不了是運動學——靴子焊在小腿上，兩腳
      踩地時質心橫移為零，單腳支撐幾何上不可能。本卡把腳踝裝回去。
      **spec.json 已由監工改好（權威，勿改）**：
@@ -55,3 +55,59 @@ model: action-figure        status: open
      幾何常數不動；不得 git add/commit；臨時探針用完刪；notes 寫卡、status 不動；
      用 node --import tsx（不是 npx tsx）。
 notes:
+  2026-09-03 Codex 實作：
+  - factory 已鏡射踝契約：新增 boot-l/r 獨立 box body 與 calf→boot 2 軸 joint；
+    y 軸以 locked 產生 0/0 limit，boot visual pivot 改掛 root 且維持
+    [±LEG_X, BOOT_Y, BOOT_Z]；calf 複合 collider 已移除 boot 子 shape。
+    actuator 由既有迴圈擴為 23 支，新增 servo:boot-{l,r}.{x,z}。
+  - RED 基線：physics_test 報 boot-l/r「找不到 body」；actuation_test 報
+    coverage:servo:boot-l/r「spec 宣告 servo 但無對應 actuator」。最小 factory
+    修改後兩 gate 轉綠。
+  - stand 診斷（臨時探針已刪）：原 0.003/0.002 分配在 ankle pitch 未加入、
+    sign +1、sign -1 時，6 秒 headY 均約 0.0150，torsoUpY 分別約
+    0.127/0.119/0.119。保持每腿 calf+boot=0.005，探針顯示 calf 0.004 +
+    boot 0.001 且兩側 boot.x sign +1 時 headY=0.080395、torsoUpY=0.999965；
+    同質量 sign -1 仍 headY=0.0150、torsoUpY=0.117921。故依卡片授權同步把
+    factory/spec 質量改為 0.004/0.001，balance 加 servo:boot-l.x/r.x sign +1；
+    leanGain 0.8、driftGain 30 未動。
+  - 驗收 1：`npx tsc --noEmit` exit 0，無 TypeScript 診斷。
+  - 驗收 2：physics_test exit 0，`pass:true`；12 bodies 全 finite/settled，
+    11 constraints 全 `ok:true`，踝 separation l=0.00064m、r=0.00172m。
+  - 驗收 3：actuation_test exit 0，`pass:true`；boot-l/r coverage 各 2 軸；
+    boot-l x/z 量測 0.308/0.180 vs 0.300/0.180，boot-r x/z
+    0.306/0.180 vs 0.300/0.180，全部 ok。
+  - 驗收 4：motion_test exit 0，`pass:true`；finite=true、60 frames、
+    constraints 11→11 stable，既有 19 timeline tracks 全 pass。
+  - 驗收 5：stand_test exit 0：`PASS（癱後恢復站立/放掉再癱/對照照舊癱）`，
+    六輪全綠。
+  - 驗收 6：motion_suspension_test exit 0：`motion suspension tests: pass`。
+  - 驗收 7：face_test exit 0：`PASS（六件五官立體、對稱、掛頭下）`。
+  - 驗收 8：runtime_export exit 0：`meshes:23, bodies:12`；check_colliders：`OK`。
+  - 驗收 9：validate_spec --strict：`OK`。
+  - 驗收 10：forge unittest 跑 98 tests，95 pass、3 fail；三個失敗皆為
+    `forge/tests/test_retarget.py` 舊硬編碼 19 軌斷言，權威 spec/retarget 實際正確
+    產生 23，原文要點均為 `AssertionError: 23 != 19`：
+    `test_servo_tracks_are_exactly_the_19_spec_axes`、`test_cli_writes_contract_json`、
+    `test_cli_accepts_rebase_flag`。紅線禁止改 gate/斷言，且 production 若壓回 19
+    會違反本卡 23-servo 契約，故未修改測試，誠實保留此紅燈交監工處理。
+  - 臨時探針已刪；未 git add/commit。`git diff --stat`：3 files changed,
+    57 insertions(+), 17 deletions(-)（task notes 40 行、factory 26 行變更、spec 8 行變更）。
+    `git status --short`：僅 `M tasks/0014-ankle-contract.md`、
+    `M viewer/models/action-figure/createActionFigureModel.ts`、
+    `M viewer/models/action-figure/spec.json`；無臨時 probe，無 staged 檔。
+監工驗收（2026-09-03）：
+  - diff 審查：factory 只做契約鏡射（boot body、collider 搬家、calf→boot joint、視覺 pivot
+    重掛）＋卡片授權範圍內的兩個彈性（calf/boot 質量 0.004/0.001、balance.pitchServos 加
+    boot-l.x/boot-r.x sign +1）；增益 0.8/30、BOOT_* 常數未動，無禁用手法。spec 質量同步。
+  - 獨立重跑：tsc、physics（12 bodies/11 constraints）、actuation（23 servo、boot 覆蓋）、
+    motion(walk)、六輪 stand、suspension、face、runtime_export＋check_colliders、
+    validate_spec --strict 全綠。
+  - forge retarget 三個測試硬編碼「恰好 19 軌」是 gate 契約，監工更新為 23（加 boot-l.x/.z
+    斷言、boot-l.y 不生成）→ 98/98 OK。
+  - 視覺：playground physics=0 出廠姿勢同相機（alpha π/2、beta 1.5、r 0.22）拍改動前
+    （stash）／改動後兩張，stdlib 像素比對 1280×720 **0 像素差異**——外觀不變硬證據
+    （.img2babylon/shots/action-figure-hero-m8-pre.png / -m8.png）。Divine Eye 對 hero.png
+    IoU 0.629 是本次取景未依 0008 校準，非幾何變化（render-vs-render 遮罩退化不適用）。
+  - playground 真按鈕 3 輪站立循環：0.0804/0.0803/0.0804 ≥ 0.0704，放掉皆 0.015。
+  - 活體：12 bodies、11 constraints、23 actuators（servo:boot-{l,r}.{x,z}），
+    靴子 (±0.010, 0.005, 0)。status → done。
