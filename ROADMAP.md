@@ -236,6 +236,10 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       servo（另開卡）。原計畫協定：質心推到左靴→抬右腿→hold 300 步；判準三癱家族
       不倒、質心在左靴內、右靴離地。
 - [—] 0017 移交 image-to-physics（M2 下半身）：原重心轉移步態、walk gate 與 playground 走路控制由姊妹 repo 承接。
+- [ ] 0019 質量契約（2026-09-03 核准）：腿鏈 thigh 0.01／calf 0.008／boot 0.005（質量比 ≤ ~10:1）。
+      姊妹 repo 探勘：Havok POSITION 馬達本身剛體，M7–M8「軟 servo／黏滑／後向無權威」真根因是
+      關節兩側質量比（倒單擺 85 kg 撐 1 kg 底座必翻、5 kg 起剛體）。幾何／限位不動；站立類 gate 若紅
+      允許 roll 增益 ×2。
 - [x] 0018 套件入口（2026-09-03）：`viewer/src/index.ts`＋package exports／peerDependencies；
       姊妹 repo 以 tsconfig paths 指向本 checkout，link_probe 驗證單一 @babylonjs/core。
 
