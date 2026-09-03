@@ -170,6 +170,8 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
 
 ## M8：雙足——踝關節＋質心平衡＋重心轉移步態（2026-09-03 核准開工）
 
+物理行為自 2026-09-03 起在姊妹 repo 進行。
+
 0013 證明：走不了不是馬達也不是控制器，是**運動學**——靴子焊在小腿上，
 兩腳踩地時質心橫移為零（恆在左靴外 1mm），單腳支撐幾何上不可能。M8 把
 腳踝裝回去，平衡從「別前傾」升級為「質心投影落在支撐面內」，再做重心轉移
@@ -233,10 +235,9 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       馬達在腳被釘住時存彈簧能、脫離即甩腿（黏滑），慢 ramp 可避；快步態需剛硬
       servo（另開卡）。原計畫協定：質心推到左靴→抬右腿→hold 300 步；判準三癱家族
       不倒、質心在左靴內、右靴離地。
-- [ ] 0017 重心轉移步態：狀態機（移重心→抬腳→擺腿→落地→換邊）產生
-      setPoseTarget 前饋，疊 0015 回饋；walk_ground_probe 判準（三癱家族
-      3 循環不倒、|dz| ≥ 0.01）達標後 gate 化為 `walk_test.ts`，playground
-      加「走路」按鈕＋錄影證據。kimodo timeline 之後再考慮當上身前饋疊加。
+- [—] 0017 移交 image-to-physics（M2 下半身）：原重心轉移步態、walk gate 與 playground 走路控制由姊妹 repo 承接。
+- [x] 0018 套件入口（2026-09-03）：`viewer/src/index.ts`＋package exports／peerDependencies；
+      姊妹 repo 以 tsconfig paths 指向本 checkout，link_probe 驗證單一 @babylonjs/core。
 
 ## Parked（自設計文件 §11 移入，不分先後）
 

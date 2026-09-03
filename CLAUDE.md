@@ -11,6 +11,8 @@ Host 入口 symlink（單一 checkout，嚴禁複製兩份導致漂移）：
 
 - forge/ 只准 Python 3.10+ stdlib，零第三方依賴。
 - viewer/ TypeScript strict；驗證命令見 SKILL.md 第 5 步。
+- viewer 是套件入口（`src/index.ts`）；姊妹專案 image-to-physics 以路徑別名或
+  `file:` 連結本 checkout。契約歸本 repo，控制層歸物理 repo。
 - `reference/` 是外部參考 checkout（img2threejs），唯讀、不納版控。
 - 全套驗證：`python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'`
   ＋ `cd viewer && npx tsc --noEmit && npx tsx scripts/physics_test.ts <model> --spec models/<model>/spec.json`。
