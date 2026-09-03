@@ -99,3 +99,7 @@ notes:
   - 判定：**M8 生死關通過**，單腳站成立。建議 0017 的抬腿參數：髖 −0.45／膝 0.6、抬腿
     ramp ≥ 2700 base 步（S=10 下 142 s 牆鐘——步態會很慢；要快就得剛硬 servo 消黏滑，
     另開卡）。status → done。
+  - playground 重現（harness debug 出口 `__IMG2BABYLON_DEBUG__.stand`，同序列在頁面內以物理步
+    數計數執行）：hold 結束仍單腳站（頭高 0.863、右靴離地 19–20 mm；playground 與 headless
+    的抬腿高度差異來自真實 frame 節奏），影片 .img2babylon/shots/single-leg.webm（8 s）、
+    截圖 single-leg.png。
