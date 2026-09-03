@@ -3,6 +3,8 @@ from forge import validate_spec
 
 HERE = os.path.dirname(__file__)
 SAMPLE = os.path.join(HERE, "..", "..", "viewer", "models", "sample-crate", "spec.json")
+ACTION_FIGURE = os.path.join(
+    HERE, "..", "..", "viewer", "models", "action-figure", "spec.json")
 
 
 def minimal_spec():
@@ -14,6 +16,16 @@ class ValidateSpecTest(unittest.TestCase):
     def test_sample_crate_passes(self):
         errors, _ = validate_spec.validate(minimal_spec(), strict=True)
         self.assertEqual(errors, [])
+
+    def test_action_figure_leg_chain_mass_contract(self):
+        with open(ACTION_FIGURE) as handle:
+            spec = json.load(handle)
+        masses = {body["id"]: body["mass"] for body in spec["physics"]["bodies"]}
+        for side in ("l", "r"):
+            self.assertEqual(masses[f"thigh-{side}"], 0.005)
+            self.assertEqual(masses[f"calf-{side}"], 0.008)
+            self.assertEqual(masses[f"boot-{side}"], 0.005)
+        self.assertAlmostEqual(sum(masses.values()), 0.106)
 
     def test_missing_top_level_key(self):
         spec = minimal_spec()

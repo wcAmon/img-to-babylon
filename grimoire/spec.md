@@ -150,6 +150,13 @@ constraint pivot 卻忘記同步 attachment），所以驗證器強制比對：
 - 每個 `level: macro` 元件必須有 `material`，且該值必須存在於頂層 `materials[].id`。
 - 上述 `silhouette.complexity` 元件數規則。
 
+## 關節鏈質量比
+
+- 相鄰關節兩側的有效質量比應控制在約 `10:1` 以內，spec `physics.bodies[].mass`
+  與 factory 定義必須一致。倒單擺探針中，85 kg 上身由 1 kg 底座支撐必翻，底座
+  提高到 5 kg 才恢復剛體權威；過大的質量比會讓 Havok POSITION 馬達呈現黏滑或失去權威。
+  action-figure 腿鏈參考值為 thigh `0.005 kg`、calf `0.008 kg`、boot `0.005 kg`。
+
 ## 完整範例：揀蓋式藥罐（已跑過 `validate_spec.py --strict`，結果 `OK`）
 
 body（瓶身，cylinder macro，mass 0.04kg）+ cap（掀蓋，cylinder macro，mass 0.008kg，

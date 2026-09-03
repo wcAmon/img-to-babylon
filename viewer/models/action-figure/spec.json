@@ -1176,7 +1176,7 @@
         "components": [
           "thigh-l"
         ],
-        "mass": 0.0025,
+        "mass": 0.005,
         "friction": 0.6,
         "restitution": 0.2
       },
@@ -1185,7 +1185,7 @@
         "components": [
           "calf-l"
         ],
-        "mass": 0.004,
+        "mass": 0.008,
         "friction": 0.6,
         "restitution": 0.2
       },
@@ -1194,7 +1194,7 @@
         "components": [
           "boot-l"
         ],
-        "mass": 0.001,
+        "mass": 0.005,
         "friction": 0.6,
         "restitution": 0.2
       },
@@ -1222,7 +1222,7 @@
         "components": [
           "thigh-r"
         ],
-        "mass": 0.0025,
+        "mass": 0.005,
         "friction": 0.6,
         "restitution": 0.2
       },
@@ -1231,7 +1231,7 @@
         "components": [
           "calf-r"
         ],
-        "mass": 0.004,
+        "mass": 0.008,
         "friction": 0.6,
         "restitution": 0.2
       },
@@ -1240,7 +1240,7 @@
         "components": [
           "boot-r"
         ],
-        "mass": 0.001,
+        "mass": 0.005,
         "friction": 0.6,
         "restitution": 0.2
       }

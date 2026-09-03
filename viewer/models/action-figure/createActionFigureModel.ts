@@ -112,11 +112,11 @@ for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
     bodyDef(`forearm-${side}`,
       { kind: "capsule", size: [ARM_DIA, FOREARM_H, ARM_DIA] }, 0.003),
     bodyDef(`thigh-${side}`,
-      { kind: "capsule", size: [THIGH_DIA, THIGH_H, THIGH_DIA] }, 0.0025),
+      { kind: "capsule", size: [THIGH_DIA, THIGH_H, THIGH_DIA] }, 0.005),
     bodyDef(`calf-${side}`,
-      { kind: "capsule", size: [CALF_DIA, CALF_H, CALF_DIA] }, 0.004),
+      { kind: "capsule", size: [CALF_DIA, CALF_H, CALF_DIA] }, 0.008),
     bodyDef(`boot-${side}`,
-      { kind: "box", size: [BOOT_W, BOOT_H, BOOT_D] }, 0.001),
+      { kind: "box", size: [BOOT_W, BOOT_H, BOOT_D] }, 0.005),
   );
   CONSTRAINT_DEFS.push(
     {
@@ -543,9 +543,9 @@ export default function createActionFigureModel(
         ],
       },
       roll: {
-        proportionalGain: 20 / physicsScale,
-        derivativeGain: 1.5 / physicsScale,
-        integralGain: 2 / physicsScale,
+        proportionalGain: 40 / physicsScale,
+        derivativeGain: 3 / physicsScale,
+        integralGain: 4 / physicsScale,
         integralMaxOutput: 0.15,
         integralLeakSeconds: 0.5,
         leanGain: -0.4,
@@ -569,7 +569,7 @@ export default function createActionFigureModel(
         },
         roll: {
           gain: 0.5 * physicsScale,
-          maxOutput: 0.2,
+          maxOutput: 0.4,
           servos: [
             { id: "servo:boot-l.y", sign: 1 },
             { id: "servo:boot-r.y", sign: 1 },
