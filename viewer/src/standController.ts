@@ -107,6 +107,7 @@ export class StandController {
     if (this.torso && (this.balanceServos.length > 0 || v2)) {
       let steps = 0;
       let previousError: { x: number; z: number } | null = null;
+      let previousTarget = { x: this.balanceTarget.x, z: this.balanceTarget.z };
       const integral = { x: 0, z: 0 };
       this.balanceObserver = this.scene.onAfterPhysicsObservable.add(() => {
         steps++;
@@ -144,8 +145,14 @@ export class StandController {
             ? { x: (error.x - previousError.x) / dt, z: (error.z - previousError.z) / dt }
             : { x: 0, z: 0 };
           previousError = error;
-          integral.x = this.nextIntegral(v2.roll!, integral.x, error.x, dt);
-          integral.z = this.nextIntegral(v2.pitch!, integral.z, error.z, dt);
+          // 目標移動中（ramp）積分只會累積追蹤落後，反向時變過衝記憶 → 移動中漏、靜止時全力積分。
+          const moving = {
+            x: Math.abs(this.balanceTarget.x - previousTarget.x) > 1e-9,
+            z: Math.abs(this.balanceTarget.z - previousTarget.z) > 1e-9,
+          };
+          previousTarget = { x: this.balanceTarget.x, z: this.balanceTarget.z };
+          integral.x = this.nextIntegral(v2.roll!, integral.x, error.x, dt, moving.x);
+          integral.z = this.nextIntegral(v2.pitch!, integral.z, error.z, dt, moving.z);
           const pitchU = this.axisOutput(v2.pitch!, error.z, velocity.z, integral.z, up.z);
           const rollU = this.axisOutput(v2.roll!, error.x, velocity.x, integral.x, up.x);
           const commands = new Map<string, number>();
@@ -221,12 +228,17 @@ export class StandController {
       + (axis.leanGain ?? 0) * lean;
   }
 
-  private nextIntegral(axis: StandBalanceAxis, value: number, error: number, dt: number): number {
+  /** 限幅積分；目標移動中改為漏積分（時間常數 integralLeakSeconds）：ramp 期間累積的
+   *  追蹤落後在反向時會變過衝記憶（0015 r3 末格 −0.015 → −0.028），誤差過零硬歸零則
+   *  指令跳變而倒，全程漏又消不掉 hold 殘差——故只在目標移動時衰減。 */
+  private nextIntegral(axis: StandBalanceAxis, value: number, error: number, dt: number, targetMoving: boolean): number {
     const gain = axis.integralGain ?? 0;
     const maxOutput = axis.integralMaxOutput ?? 0;
     if (gain === 0 || maxOutput <= 0) return 0;
     const limit = maxOutput / Math.abs(gain);
-    return Math.max(-limit, Math.min(limit, value + error * dt));
+    const tau = axis.integralLeakSeconds ?? 0;
+    const leak = targetMoving && tau > 0 ? value / tau : 0;
+    return Math.max(-limit, Math.min(limit, value + (error - leak) * dt));
   }
 
   private cancelSync(): void {

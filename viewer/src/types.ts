@@ -56,6 +56,8 @@ export interface StandBalanceAxis {
   derivativeGain: number;
   integralGain?: number;
   integralMaxOutput?: number;
+  /** 目標移動中的漏積分時間常數（秒）；靜止時不漏。0/未設＝純限幅積分。 */
+  integralLeakSeconds?: number;
   leanGain?: number;
   servos: Array<{
     id: string;

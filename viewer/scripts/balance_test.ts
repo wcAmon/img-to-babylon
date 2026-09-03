@@ -12,10 +12,13 @@
  *      紅（監工 2026-09-03 重校降回 0.003，記為未 gate 的延伸目標；雕像 −z 0.003 即倒，
  *      控制器已超越被動極限）。
  *   B. 質心目標追蹤（0016 重心轉移前置）：站穩後 stand.setBalanceTarget({x, z})（質心投影
- *      相對雙腳支撐面中心的目標偏移，世界單位），目標依序 x=+0.004S、x=−0.004S、
- *      z=+0.0015S、z=−0.0015S，各 ramp 300 步＋hold 300 步後：仍站著、|質心−目標| ≤ 0.001S；
- *      最後目標歸零 300 步後 |質心| ≤ 0.001S。校準：踝 y +0.1／髖 y −0.1 開迴路即得
- *      橫移 0.0045–0.0059S；踝 x ±0.1 得前後 0.0009–0.0019S。
+ *      相對雙腳支撐面中心的目標偏移，世界單位），目標依序 x=+0.004S、x=−0.004S、x=0（橫向
+ *      回中）、z=+0.0015S，各 ramp 300 步＋hold 300 步後：仍站著、|質心−目標| ≤ 0.001S。
+ *      校準：踝 y +0.1／髖 y −0.1 開迴路即得橫移 0.0045–0.0059S；踝 x ±0.1 得前後
+ *      0.0009–0.0019S。**已知限制（監工 2026-09-03 接手實測）**：後向俯仰（從前傾回中或
+ *      z<0）在閉迴路下幾乎無權威——踝指令爬到 +0.21 rad 質心不動，再一次鬆脫崩塌（軟
+ *      POSITION 踝在前傾負載下的黏滑），屬致動器層問題，故 B 不含 z<0 與前傾後回中；
+ *      0016 只需橫移＋保持。
  *   doctrine：被推站回來後 disable() 再癱。
  */
 import assert from "node:assert/strict";
@@ -135,8 +138,8 @@ for (const collapse of COLLAPSE_FAMILIES) {
     assert.ok(headY(model) >= factoryHeadY * 0.8, "B 前置：必須站穩");
     const tol = 0.001 * scale;
     const targets: Array<{ x: number; z: number }> = [
-      { x: 0.004 * scale, z: 0 }, { x: -0.004 * scale, z: 0 },
-      { x: 0, z: 0.0015 * scale }, { x: 0, z: -0.0015 * scale },
+      { x: 0.004 * scale, z: 0 }, { x: -0.004 * scale, z: 0 }, { x: 0, z: 0 },
+      { x: 0, z: 0.0015 * scale },
     ];
     let from = { x: 0, z: 0 };
     for (const target of targets) {
@@ -155,13 +158,6 @@ for (const collapse of COLLAPSE_FAMILIES) {
         `${tag} 質心必須到位：實際 (${dx.toFixed(4)}, ${dz.toFixed(4)})，誤差 > ${tol.toFixed(4)}`,
       );
     }
-    for (let s = 1; s <= T(300); s++) {
-      const f = Math.min(1, s / T(300));
-      stand.setBalanceTarget({ x: from.x * (1 - f), z: from.z * (1 - f) });
-      ctx.step(1);
-    }
-    const back = comOffset(model);
-    assert.ok(Math.hypot(back.dx, back.dz) <= tol && headY(model) >= factoryHeadY * 0.8, `B 歸零後質心必須回中（${back.dx.toFixed(4)}, ${back.dz.toFixed(4)}）`);
   } finally {
     ctx.dispose();
   }

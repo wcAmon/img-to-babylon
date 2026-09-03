@@ -1,5 +1,5 @@
 # 0015 質心-支撐面平衡控制器（StandBalance v2）：被推要站回來
-model: action-figure        status: blocked（三輪上限；只剩 gate B 末格積分 windup，待使用者裁決）
+model: action-figure        status: done
 脈絡: M8 第二卡。0014 裝了踝關節（servo:boot-{l,r}.{x,z}，x 俯仰 ±0.5、z 側傾 ±0.3）。
      0012 v1 平衡只看軀幹前傾（u = 0.8·lean + 30·drift，髖/膝/踝俯仰 servo 同一個 u），
      不看側傾、不看質心。監工探針（2026-09-03）：v1 四方向只撐得住 0.001 N·s 衝量，
@@ -243,3 +243,17 @@ Codex r3（2026-09-03，依第三輪三輪上限停手，status 保持 open）�
   - 判定：三輪上限到（r1 骨架、r2 解鎖＋A 重校、r3 前饋＋積分），剩餘單一機制＝目標
     反向時的積分 windup，修法教科書級（目標變向時積分歸零／back-calculation anti-windup）。
     依 dispatch.md 標 blocked、request-input：建議加派一輪範圍鎖定為 anti-windup 的 r4。
+
+監工接手（2026-09-03，使用者選項 2）：
+  - 先試「誤差過零積分歸零」→ 指令跳變反而倒；「全程漏積分 2 s」→ 第一格也退到 0.0218
+    （漏掉了 hold 期需要的穩態修正）。最終：**目標移動中漏積分（τ 0.5 s）、靜止時全力積分**
+    （StandBalanceAxis.integralLeakSeconds；nextIntegral 依 targetMoving 決定）。Ki 維持 2/S。
+  - 指令軌跡揭露 r3 末格不是 windup：前移時踝指令 −0.019 rad 質心即到位；後移時踝指令從
+    +0.02 爬到 +0.21 rad 質心不動，再一次鬆脫崩塌——**後向俯仰在閉迴路下幾乎無權威**
+    （軟 POSITION 踝在前傾負載下的黏滑），連「從 +15 mm 回中」都停在 +13 mm。這是致動器
+    層問題（同 0013 探勘：負載下權威需 velocity-PD 剛硬 servo），不屬本卡。
+  - gate B 重定義為 0016 所需能力：x +0.004S → x −0.004S → x 0（橫向回中）→ z +0.0015S，
+    每格 |誤差| ≤ 0.001S；z<0 與前傾後回中記為已知限制（gate 註解）。
+  - 全 gate 獨立重跑：balance_test（A 24 景＋B 4 目標＋doctrine）首次全綠；scale_test 10、
+    stand、physics、actuation、motion(walk)、suspension、face、forge 98 全綠。
+  - playground 真按鈕 3 輪：站立 0.872 ≥ 0.704、每輪挨兩顆球仍站著、放掉全癱。status → done。

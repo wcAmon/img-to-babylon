@@ -525,6 +525,7 @@ export default function createActionFigureModel(
         derivativeGain: 1.5 / physicsScale,
         integralGain: 2 / physicsScale,
         integralMaxOutput: 0.15,
+        integralLeakSeconds: 0.5,
         leanGain: 0.4,
         servos: [
           { id: "servo:boot-l.x", sign: 1 },
@@ -546,6 +547,7 @@ export default function createActionFigureModel(
         derivativeGain: 1.5 / physicsScale,
         integralGain: 2 / physicsScale,
         integralMaxOutput: 0.15,
+        integralLeakSeconds: 0.5,
         leanGain: -0.4,
         servos: [
           { id: "servo:boot-l.y", sign: -1 },
