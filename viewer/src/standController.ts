@@ -22,6 +22,8 @@ export class StandController {
   private readonly servoById: Map<string, Actuator>;
   private readonly poseTargets = new Map<string, number>();
   private balanceTarget = { x: 0, z: 0 };
+  private supportBodyIds: string[] = [];
+  private defaultSupportPosition: { x: number; z: number } | null = null;
   private readonly leanGain: number;
   private readonly driftGain: number;
   private readonly useV2: boolean;
@@ -38,6 +40,7 @@ export class StandController {
     this.bodies = Object.values(model.bodies);
     this.bodiesById = model.bodies;
     this.balance = model.balance;
+    this.supportBodyIds = [...(model.balance?.supportBodyIds ?? [])];
     this.torso = model.bodies.torso;
     this.servoById = new Map(this.servos.map((servo) => [servo.id, servo]));
     this.balanceServos = (model.balance?.pitchServos ?? []).flatMap(({ id, sign }) => {
@@ -78,6 +81,8 @@ export class StandController {
   enable(): void {
     this.poseTargets.clear();
     this.balanceTarget = { x: 0, z: 0 };
+    this.supportBodyIds = [...(this.balance?.supportBodyIds ?? [])];
+    this.defaultSupportPosition = null;
     this.cancelSync();
     this.cancelBalance();
     this.bodies.forEach((body) => { body.disablePreStep = false; });
@@ -127,15 +132,9 @@ export class StandController {
           });
           if (totalMass <= 0) return;
           com.scaleInPlace(1 / totalMass);
-          const supports = v2.supportBodyIds!.flatMap((id) => {
-            const body = this.bodiesById[id];
-            if (!body) return [];
-            body.transformNode.computeWorldMatrix(true);
-            return [body.transformNode.absolutePosition];
-          });
-          if (supports.length === 0) return;
-          const support = supports.reduce((sum, p) => sum.addInPlace(p), Vector3.Zero())
-            .scaleInPlace(1 / supports.length);
+          const support = this.supportPosition(this.supportBodyIds);
+          if (!support) return;
+          this.defaultSupportPosition ??= { x: support.x, z: support.z };
           const error = {
             x: com.x - (support.x + this.balanceTarget.x),
             z: com.z - (support.z + this.balanceTarget.z),
@@ -165,8 +164,8 @@ export class StandController {
             servoMix.forEach(({ id, sign }) => commands.set(id, (commands.get(id) ?? 0) + sign * u));
           }
           for (const [axis, target] of [
-            [v2.feedforward?.pitch, this.balanceTarget.z],
-            [v2.feedforward?.roll, this.balanceTarget.x],
+            [v2.feedforward?.pitch, this.balanceTarget.z + support.z - this.defaultSupportPosition.z],
+            [v2.feedforward?.roll, this.balanceTarget.x + support.x - this.defaultSupportPosition.x],
           ] as const) {
             if (!axis || axis.gain === 0) continue;
             const output = Math.max(-axis.maxOutput, Math.min(axis.maxOutput, target / axis.gain));
@@ -219,6 +218,24 @@ export class StandController {
     this.balanceTarget = { x: target.x, z: target.z };
   }
 
+  /** Change the v2 support reference without changing the current world-space target.
+   * Translating the local target by oldSupport-newSupport keeps PID error (and therefore
+   * derivative/integral state) continuous. Feedforward is evaluated relative to the
+   * default support center, so its command is continuous across the same translation. */
+  setSupportBodies(ids: string[]): void {
+    if (!this.useV2) return;
+    const nextIds = ids.filter((id) => Boolean(this.bodiesById[id]));
+    if (nextIds.length === 0) return;
+    const previousSupport = this.supportPosition(this.supportBodyIds);
+    const nextSupport = this.supportPosition(nextIds);
+    if (!previousSupport || !nextSupport) return;
+    this.balanceTarget = {
+      x: this.balanceTarget.x + previousSupport.x - nextSupport.x,
+      z: this.balanceTarget.z + previousSupport.z - nextSupport.z,
+    };
+    this.supportBodyIds = [...nextIds];
+  }
+
   private axisOutput(
     axis: StandBalanceAxis, error: number, velocity: number, integral: number, lean: number,
   ): number {
@@ -226,6 +243,18 @@ export class StandController {
       + axis.derivativeGain * velocity
       + (axis.integralGain ?? 0) * integral
       + (axis.leanGain ?? 0) * lean;
+  }
+
+  private supportPosition(ids: string[]): Vector3 | null {
+    const supports = ids.flatMap((id) => {
+      const body = this.bodiesById[id];
+      if (!body) return [];
+      body.transformNode.computeWorldMatrix(true);
+      return [body.transformNode.absolutePosition];
+    });
+    if (supports.length === 0) return null;
+    return supports.reduce((sum, position) => sum.addInPlace(position), Vector3.Zero())
+      .scaleInPlace(1 / supports.length);
   }
 
   /** 限幅積分；目標移動中改為漏積分（時間常數 integralLeakSeconds）：ramp 期間累積的

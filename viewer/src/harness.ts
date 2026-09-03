@@ -157,6 +157,9 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
     scene, model.root, model.bodies, 0.3 * model.physicsScale,
   );
   const stand = new StandController(model);
+  // 監工除錯出口（0016）：playground 重現單腳站序列用；截圖 gate 不依賴它
+  const debug = (window as unknown as Record<string, Record<string, unknown> | undefined>).__IMG2BABYLON_DEBUG__;
+  if (debug) debug.stand = stand;
 
   const motionRow = document.createElement("div");
   motionRow.className = "actuator-row";

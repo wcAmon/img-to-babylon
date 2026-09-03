@@ -15,7 +15,7 @@
  *   右靴離地高度（boot-r.y − 出廠 boot y）。
  *
  * 用法：node --import tsx scripts/single_leg_probe.ts [--collapse 300] [--shift 0.009]
- *         [--lift-hip -0.6] [--lift-knee 0.8] [--out file]
+ *         [--lift-hip -0.6] [--lift-knee 0.8] [--lift-ramp 300] [--out file]
  */
 import { writeFileSync } from "node:fs";
 import { MeshBuilder, PhysicsBody, PhysicsMotionType, PhysicsShapeBox, Quaternion, Vector3 } from "@babylonjs/core";
@@ -29,8 +29,9 @@ const collapse = Number(arg("--collapse", "300"));
 const shiftBase = Number(arg("--shift", "0.009"));
 const liftHip = Number(arg("--lift-hip", "-0.6"));
 const liftKnee = Number(arg("--lift-knee", "0.8"));
+const liftRampBase = Number(arg("--lift-ramp", "300")); // 抬腿 ramp 步數（base，×√S）；協定預設 300，探索可放慢
 const outPath = argv.includes("--out") ? arg("--out", "") : null;
-if (![collapse, shiftBase, liftHip, liftKnee].every(Number.isFinite)) {
+if (![collapse, shiftBase, liftHip, liftKnee, liftRampBase].every(Number.isFinite)) {
   console.error("用法: single_leg_probe.ts [--collapse N] [--shift base] [--lift-hip rad] [--lift-knee rad] [--out file]");
   process.exit(2);
 }
@@ -93,13 +94,13 @@ try {
   stand.setSupportBodies(["boot-l"]);
   stand.setBalanceTarget({ x: 0, z: 0 });
   run("switch-hold", T(150));
-  run("lift-ramp", T(300), (f) => { stand.setPoseTarget("servo:thigh-r.x", liftHip * f); stand.setPoseTarget("servo:calf-r.x", liftKnee * f); });
+  run("lift-ramp", T(liftRampBase), (f) => { stand.setPoseTarget("servo:thigh-r.x", liftHip * f); stand.setPoseTarget("servo:calf-r.x", liftKnee * f); });
   run("hold", T(300));
 
   const last = phases[phases.length - 1];
   const result = {
     physicsScale: S,
-    collapse, shiftBase, liftHip, liftKnee,
+    collapse, shiftBase, liftHip, liftKnee, liftRampBase,
     factoryHeadY, standingHeadY,
     standingBeforeShift: standingHeadY >= factoryHeadY * 0.8,
     phases,
