@@ -254,6 +254,25 @@ OK
 ```
 
 
+## rupture（M10 可破裂 body）
+
+點滴袋類物件破裂時袋身不分家、液體離開——契約是**質量轉移**，不是剛體分裂。
+在 `physics.bodies[]` 上選填：
+
+```json
+{ "id": "bag", "components": ["bag", "liquid", "label"], "mass": 0.55,
+  "rupture": { "impulseThreshold": 2.0, "emptiedMass": 0.04, "puddleRadius": 0.30, "droplets": 12 } }
+```
+
+- `impulseThreshold`（N·s）：單一物理步的動量變化 |Δv|·m 超過即破裂；正數。
+- `emptiedMass`（kg）：排空後質量，必須小於 `mass`。
+- `puddleRadius`（m）：水漬最終半徑；正數。
+- `droplets`：破裂時噴出的液滴剛體數；非負整數。
+
+factory 契約：掛 actuator `rupture:<bodyId>`（kind `"rupture"`，min 0、max 1，`set(1)` 觸發、
+冪等）；破裂後 `bodies[<bodyId>]` 質量 = emptiedMass、`meshes["puddle"]` 出現、
+`bodies["droplet-<i>"]` 共 `droplets` 個。gate：`viewer/scripts/rupture_test.ts`。
+
 ## actuation（M4 可動物件契約）
 
 模型「遊戲可用」的標準是可動件可驅動、可審查。宣告了 actuation 的 spec 必須通過

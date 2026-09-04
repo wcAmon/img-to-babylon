@@ -204,3 +204,17 @@ servo 必須「吊空測」（錨 body 設 STATIC、四肢自由）。
 `isCollisionsEnabled=false` 管不到；collider 若穿插會互撞自煞。整車零件設同一
 `filterMembershipMask` 群組、`filterCollideMask` 排除自群組（toy-racer 加了之後
 滾動距離 0.36m → 3.0m——M1 時輪/車身穿插摩擦一直在偷偷耗能）。
+
+## 破裂＝質量轉移（M10 rupture）
+
+- 偵測用**動量變化**，不用 Havok 碰撞回呼：`onBeforePhysicsObservable` 記 v₀、
+  `onAfterPhysicsObservable` 算 `m·|v₁ − v₀|`。碰撞回呼的 impulse 是逐接觸點，平落四角
+  各分四分之一，門檻不可靠；Δv 是整體真相且 headless／viewer 一致。重力每步貢獻
+  m·g/60（0.55 kg 為 0.09 N·s），遠低於門檻。
+- 破裂動作一次且冪等：`setMassProperties({mass: emptiedMass})`、`body.shape` 換塌扁薄盒
+  （舊 shape dispose）、袋視覺換塌扁 mesh（另建幾何，非 scaling）、生成水漬 disc
+  （以幀數 90 幀長到全徑；動畫期間用 scaling，終態 scaling=1 且半徑烘進幾何）、
+  噴 N 顆液滴球（seed 決定方向）。
+- `dispose()` 必須連水漬、液滴、觀察者一起釋放；playground「歸位」＝ dispose ＋重建。
+- 校準法：0.55 kg 自 0.3 m 落下 Δv ≈ 2.7 m/s → 1.5 N·s（physics_test 預設落高，不可破）；
+  自 1.5 m 落下 ≈ 3 N·s 以上（必破）。門檻 2.0 落在中間。

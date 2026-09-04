@@ -17,6 +17,44 @@ class ValidateSpecTest(unittest.TestCase):
         errors, _ = validate_spec.validate(minimal_spec(), strict=True)
         self.assertEqual(errors, [])
 
+    def _with_rupture(self, rupture):
+        spec = minimal_spec()
+        spec["physics"]["bodies"][0]["rupture"] = rupture
+        return spec
+
+    def test_rupture_valid_passes(self):
+        spec = self._with_rupture(
+            {"impulseThreshold": 2.0, "emptiedMass": 0.04, "puddleRadius": 0.3, "droplets": 12})
+        errors, _ = validate_spec.validate(spec, strict=True)
+        self.assertEqual(errors, [])
+
+    def test_rupture_threshold_must_be_positive(self):
+        spec = self._with_rupture(
+            {"impulseThreshold": 0, "emptiedMass": 0.04, "puddleRadius": 0.3, "droplets": 12})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("rupture" in e and "impulseThreshold" in e for e in errors))
+
+    def test_rupture_emptied_mass_below_mass(self):
+        spec = self._with_rupture(
+            {"impulseThreshold": 2.0, "emptiedMass": 5.0, "puddleRadius": 0.3, "droplets": 12})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("rupture" in e and "emptiedMass" in e for e in errors))
+
+    def test_rupture_droplets_non_negative_int(self):
+        spec = self._with_rupture(
+            {"impulseThreshold": 2.0, "emptiedMass": 0.04, "puddleRadius": 0.3, "droplets": -1})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("rupture" in e and "droplets" in e for e in errors))
+        spec = self._with_rupture(
+            {"impulseThreshold": 2.0, "emptiedMass": 0.04, "puddleRadius": 0.3, "droplets": 2.5})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("rupture" in e and "droplets" in e for e in errors))
+
+    def test_rupture_missing_field(self):
+        spec = self._with_rupture({"impulseThreshold": 2.0, "emptiedMass": 0.04})
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("rupture" in e and "puddleRadius" in e for e in errors))
+
     def test_action_figure_leg_chain_mass_contract(self):
         with open(ACTION_FIGURE) as handle:
             spec = json.load(handle)

@@ -98,6 +98,31 @@ def _check_component_actuation(cid, c, errors):
         errors.append(f"元件 {cid} actuation light 的 emissive 必須有 on/off 十六進位色")
 
 
+_RUPTURE_POSITIVE = ("impulseThreshold", "emptiedMass", "puddleRadius")
+
+
+def _check_rupture(bid, body, errors):
+    """可破裂 body：質量轉移契約（設計文件 §3.2／§4）。"""
+    rup = body.get("rupture")
+    if rup is None:
+        return
+    if not isinstance(rup, dict):
+        errors.append(f"body {bid} rupture 必須是物件")
+        return
+    for key in _RUPTURE_POSITIVE:
+        v = rup.get(key)
+        if not isinstance(v, (int, float)) or isinstance(v, bool) or v <= 0:
+            errors.append(f"body {bid} rupture.{key} 必須為正數")
+    mass = body.get("mass")
+    em = rup.get("emptiedMass")
+    if (isinstance(mass, (int, float)) and isinstance(em, (int, float))
+            and not isinstance(em, bool) and em >= mass):
+        errors.append(f"body {bid} rupture.emptiedMass {em} 必須小於 mass {mass}")
+    d = rup.get("droplets")
+    if not isinstance(d, int) or isinstance(d, bool) or d < 0:
+        errors.append(f"body {bid} rupture.droplets 必須為非負整數")
+
+
 def _stack_height(comps):
     """componentTree 的世界 Y 範圍（沿 parent 鏈累加 position.y，±h/2）。"""
     tops, bottoms = [], []
@@ -184,6 +209,7 @@ def validate(spec, strict=False):
                 assigned[cid] = bid
         if not isinstance(b.get("mass"), (int, float)) or b["mass"] <= 0:
             errors.append(f"body {bid} mass 必須為正數")
+        _check_rupture(bid, b, errors)
     for cid in comps:
         if cid not in assigned:
             errors.append(f"元件 {cid} 未指派給任何 body")
