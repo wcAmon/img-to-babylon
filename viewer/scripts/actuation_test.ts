@@ -52,9 +52,11 @@ interface SpecConstraint {
   actuation?: SpecActuation;
 }
 interface SpecComponent { id: string; actuation?: SpecActuation }
+interface SpecRupture { impulseThreshold: number; emptiedMass: number; puddleRadius: number; droplets: number }
+interface SpecBody { id: string; mass: number; rupture?: SpecRupture }
 interface Spec {
   componentTree?: SpecComponent[];
-  physics?: { constraints?: SpecConstraint[] };
+  physics?: { bodies?: SpecBody[]; constraints?: SpecConstraint[] };
 }
 
 interface CheckResult { id: string; ok: boolean; detail: string }
@@ -137,7 +139,9 @@ async function main(): Promise<number> {
   const steerDecls = cons.filter((c) => c.actuation?.type === "steer");
   const servoDecls = cons.filter((c) => c.actuation?.type === "servo");
   const lightDecls = (spec.componentTree ?? []).filter((c) => c.actuation?.type === "light");
-  if (!driveDecls.length && !steerDecls.length && !servoDecls.length && !lightDecls.length) {
+  const ruptureDecls = (spec.physics?.bodies ?? []).filter((b) => b.rupture);
+  if (!driveDecls.length && !steerDecls.length && !servoDecls.length && !lightDecls.length
+      && !ruptureDecls.length) {
     console.log(JSON.stringify({ model: name, checks: [], pass: true,
       note: "spec 無 actuation 宣告" }));
     return 0;
@@ -178,6 +182,30 @@ async function main(): Promise<number> {
     push(`coverage:light:${c.id}`, byId.has(`light:${c.id}`),
       byId.has(`light:${c.id}`) ? "有 light actuator" : "spec 宣告 light 但無 actuator");
   }
+
+  for (const b of ruptureDecls) {
+    push(`coverage:rupture:${b.id}`, byId.has(`rupture:${b.id}`),
+      byId.has(`rupture:${b.id}`) ? "有 rupture actuator" : "spec 宣告 rupture 但無 actuator");
+  }
+  // ---- rupture（M10）：就地觸發——會改質量、生液滴，所以排在所有其他檢查之後 ----
+  const runRupture = (): void => {
+    for (const b of ruptureDecls) {
+      const act = byId.get(`rupture:${b.id}`);
+      const body = model.bodies[b.id];
+      const rup = b.rupture!;
+      if (!act || !body) continue;
+      act.set(1);
+      step(5);
+      const mass = body.getMassProperties().mass ?? NaN;
+      const dropletsA = Object.keys(model.bodies).filter((k) => k.startsWith("droplet-")).length;
+      act.set(1);
+      step(5);
+      const dropletsB = Object.keys(model.bodies).filter((k) => k.startsWith("droplet-")).length;
+      push(`rupture:${b.id}`,
+        Math.abs(mass - rup.emptiedMass) < 1e-6 && dropletsA === rup.droplets && dropletsB === rup.droplets,
+        `質量 ${mass} vs ${rup.emptiedMass}；液滴 ${dropletsA}/${dropletsB}（期望 ${rup.droplets}，冪等）`);
+    }
+  };
 
   // ---- light：headless 直接驗 emissive ----
   for (const c of lightDecls) {
@@ -301,6 +329,8 @@ async function main(): Promise<number> {
     );
     push("drive", dist >= DRIVE_MIN_DIST * scale, `位移 ${dist.toFixed(3)}m（門檻 ${DRIVE_MIN_DIST * scale}）`);
   }
+
+  if (ruptureDecls.length) { step(T(SETTLE_STEPS)); runRupture(); }
 
   const pass = checks.length > 0 && checks.every((c) => c.ok);
   const result = { model: name, checks, pass };

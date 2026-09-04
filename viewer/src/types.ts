@@ -15,8 +15,8 @@ import type {
  *   （否則 velocity 馬達目標 0 會鎖死自由滾動、position 馬達會撐住 ragdoll）；
  *   steer 例外：出廠即置中（回正彈簧），自由甩動的前軸會犁地毀掉滾動。 */
 export interface Actuator {
-  id: string; // "drive" | "steer" | `servo:<bodyB>.<axis>` | `light:<componentId>`
-  kind: "drive" | "steer" | "servo" | "light";
+  id: string; // "drive" | "steer" | `servo:<bodyB>.<axis>` | `light:<componentId>` | `rupture:<bodyId>`
+  kind: "drive" | "steer" | "servo" | "light" | "rupture";
   label: string;
   min: number;
   max: number;
