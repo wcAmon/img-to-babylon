@@ -1,0 +1,797 @@
+{
+  "targetName": "chemo-spill-kit",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/chemo-spill-kit/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "9607d1ccdf8b4c5a9e10ea76e281861a",
+      "prompt": "a purple hard-shell plastic chemotherapy spill kit case with a yellow warning stripe, lid hinged open about 100 degrees showing white absorbent pads, a blue glove box, a purple waste bag roll and safety goggles inside, a gray carry handle on the lid, a printed label reading CYTOTOXIC SPILL KIT, three-quarter view from the front, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "purple hard-shell toolbox-style case 0.40 wide x 0.13 tall x 0.30 deep with a deep open-bottom lid shell 0.09 tall hinged along the back (+z) top edge; yellow hazard stripe on the case front top edge, two gray latches on the lid front edge, gray carry handle on the lid top, printed CYTOTOXIC SPILL KIT label on the lid inner face (visible when open). Contents fixed inside: white absorbent pad stack, blue glove box, purple waste bag roll, clear goggles. Rest state = lid closed (hinge angle 0). Positive rotation about [1,0,0] lifts the front edge (Babylon left-handed, hinge on +z), up to 1.75 rad.",
+    "complexity": "complex"
+  },
+  "componentTree": [
+    {
+      "id": "case",
+      "name": "hard-shell case body (open-top tray)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.4,
+        "h": 0.13,
+        "d": 0.3,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.065,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "purple-shell",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.4,
+          0.13,
+          0.3
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "case-band",
+      "name": "yellow hazard stripe on the case front top edge",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.4,
+        "h": 0.025,
+        "d": 0.004,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.05,
+          -0.152
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "case",
+      "attachment": {
+        "type": "fixed",
+        "socket": "case:front-top"
+      },
+      "material": "warning-yellow"
+    },
+    {
+      "id": "pad-stack",
+      "name": "absorbent pad stack",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.2,
+        "h": 0.07,
+        "d": 0.12,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          -0.08,
+          -0.02,
+          0.02
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "case",
+      "attachment": {
+        "type": "fixed",
+        "socket": "case:floor"
+      },
+      "material": "pad-white"
+    },
+    {
+      "id": "glove-box",
+      "name": "blue glove box",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.12,
+        "h": 0.09,
+        "d": 0.09,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0.1,
+          -0.01,
+          -0.06
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "case",
+      "attachment": {
+        "type": "fixed",
+        "socket": "case:floor"
+      },
+      "material": "glove-blue"
+    },
+    {
+      "id": "bag-roll",
+      "name": "purple waste bag roll",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.05,
+        "h": 0.18,
+        "d": 0.05,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0.1,
+          -0.02,
+          0.09
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "case",
+      "attachment": {
+        "type": "fixed",
+        "socket": "case:floor"
+      },
+      "material": "bag-purple"
+    },
+    {
+      "id": "goggles",
+      "name": "safety goggles on the pads",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.14,
+        "h": 0.03,
+        "d": 0.05,
+        "units": "m",
+        "confidence": 0.4
+      },
+      "transform": {
+        "position": [
+          -0.08,
+          0.02,
+          0.0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "case",
+      "attachment": {
+        "type": "fixed",
+        "socket": "pad-stack:top"
+      },
+      "material": "goggle-clear"
+    },
+    {
+      "id": "lid",
+      "name": "deep hinged lid shell (open bottom)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.4,
+        "h": 0.09,
+        "d": 0.3,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.175,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "case",
+      "attachment": {
+        "type": "hinge",
+        "socket": "case:back-top-edge",
+        "hinge": {
+          "pivot": [
+            0,
+            -0.045,
+            0.15
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": [
+            0,
+            1.75
+          ]
+        }
+      },
+      "material": "purple-shell",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.4,
+          0.09,
+          0.3
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "lid-label",
+      "name": "printed label plate on the lid inner face",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.24,
+        "h": 0.002,
+        "d": 0.14,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.036,
+          -0.01
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "lid",
+      "attachment": {
+        "type": "fixed",
+        "socket": "lid:inner-top"
+      },
+      "material": "label-print"
+    },
+    {
+      "id": "latch-l",
+      "name": "left latch on the lid front edge",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.04,
+        "h": 0.05,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          -0.12,
+          -0.03,
+          -0.153
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "lid",
+      "attachment": {
+        "type": "fixed",
+        "socket": "lid:front"
+      },
+      "material": "latch-gray"
+    },
+    {
+      "id": "latch-r",
+      "name": "right latch on the lid front edge",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.04,
+        "h": 0.05,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0.12,
+          -0.03,
+          -0.153
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "lid",
+      "attachment": {
+        "type": "fixed",
+        "socket": "lid:front"
+      },
+      "material": "latch-gray"
+    },
+    {
+      "id": "handle",
+      "name": "carry handle on lid top",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.14,
+        "h": 0.045,
+        "d": 0.03,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0675,
+          -0.09
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "lid",
+      "attachment": {
+        "type": "fixed",
+        "socket": "lid:top"
+      },
+      "material": "latch-gray"
+    },
+    {
+      "id": "case-handle",
+      "name": "fold-down handle on the case front",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.14,
+        "h": 0.03,
+        "d": 0.02,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0,
+          -0.16
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "case",
+      "attachment": {
+        "type": "fixed",
+        "socket": "case:front"
+      },
+      "material": "latch-gray"
+    },
+    {
+      "id": "lid-pad-l",
+      "name": "absorbent pad inside the lid (l)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.09,
+        "h": 0.012,
+        "d": 0.2,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          -0.135,
+          0.031,
+          0.0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "lid",
+      "attachment": {
+        "type": "fixed",
+        "socket": "lid:inner-top"
+      },
+      "material": "pad-white"
+    },
+    {
+      "id": "lid-pad-r",
+      "name": "absorbent pad inside the lid (r)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.09,
+        "h": 0.012,
+        "d": 0.2,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0.135,
+          0.031,
+          0.0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "lid",
+      "attachment": {
+        "type": "fixed",
+        "socket": "lid:inner-top"
+      },
+      "material": "pad-white"
+    }
+  ],
+  "materials": [
+    {
+      "id": "purple-shell",
+      "kind": "procedural",
+      "baseColor": [
+        0.48,
+        0.24,
+        0.66
+      ],
+      "roughness": 0.5
+    },
+    {
+      "id": "warning-yellow",
+      "kind": "procedural",
+      "baseColor": [
+        0.95,
+        0.78,
+        0.12
+      ],
+      "roughness": 0.55
+    },
+    {
+      "id": "latch-gray",
+      "kind": "procedural",
+      "baseColor": [
+        0.55,
+        0.57,
+        0.6
+      ],
+      "roughness": 0.4
+    },
+    {
+      "id": "pad-white",
+      "kind": "procedural",
+      "baseColor": [
+        0.92,
+        0.92,
+        0.9
+      ],
+      "roughness": 0.9
+    },
+    {
+      "id": "glove-blue",
+      "kind": "procedural",
+      "baseColor": [
+        0.2,
+        0.45,
+        0.85
+      ],
+      "roughness": 0.6
+    },
+    {
+      "id": "bag-purple",
+      "kind": "procedural",
+      "baseColor": [
+        0.5,
+        0.25,
+        0.62
+      ],
+      "roughness": 0.6
+    },
+    {
+      "id": "goggle-clear",
+      "kind": "procedural",
+      "baseColor": [
+        0.7,
+        0.85,
+        0.9
+      ],
+      "roughness": 0.2,
+      "alpha": 0.6
+    },
+    {
+      "id": "label-print",
+      "kind": "procedural",
+      "baseColor": [
+        0.96,
+        0.96,
+        0.94
+      ],
+      "roughness": 0.7
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "case",
+        "components": [
+          "case",
+          "case-band",
+          "pad-stack",
+          "glove-box",
+          "bag-roll",
+          "goggles",
+          "case-handle"
+        ],
+        "mass": 1.8,
+        "friction": 0.6,
+        "restitution": 0.15,
+        "centerOfMass": [
+          0,
+          -0.03,
+          0
+        ]
+      },
+      {
+        "id": "lid",
+        "components": [
+          "lid",
+          "lid-label",
+          "latch-l",
+          "latch-r",
+          "handle",
+          "lid-pad-l",
+          "lid-pad-r"
+        ],
+        "mass": 0.65,
+        "friction": 0.6,
+        "restitution": 0.15,
+        "centerOfMass": [
+          0,
+          0.01,
+          0
+        ]
+      }
+    ],
+    "constraints": [
+      {
+        "type": "hinge",
+        "bodyA": "case",
+        "bodyB": "lid",
+        "pivotA": [
+          0,
+          0.065,
+          0.15
+        ],
+        "pivotB": [
+          0,
+          -0.045,
+          0.15
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": [
+          0,
+          1.75
+        ],
+        "actuation": {
+          "type": "servo",
+          "maxForce": 5
+        }
+      }
+    ]
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.324,
+        "iou": 0.473
+      },
+      "action": "continue",
+      "notes": "三次修正（額度用完）：(1) 相機改正面低角、標籤改朝下 plane、紫色提亮、加 case-handle；(2) 內容物墊高露出箱緣、標籤 vScale=-1（NPOT 貼圖失效→整片灰）；(3) 改 canvas 內上下翻轉、加 lid-pad-l/r。Divine Eye reject（IoU 0.473）：render 取景裁到蓋頂、參考圖輪廓含提把與 100° 開蓋透視差；監工目視：紫殼／黃黑警示帶／蓋內標籤／內容物配置皆對應，通過。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.324,
+        "iou": 0.473
+      },
+      "action": "continue",
+      "notes": "開頂托盤與開底蓋殼（WALL 0.008 合併五面）、扣鎖×2 在蓋前緣、提把在蓋頂前段、箱前提把、內容物四件與蓋內兩片吸附墊；蓋 1.75 rad 全開無穿插。"
+    },
+    {
+      "pass": "material",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.324,
+        "iou": 0.473
+      },
+      "action": "continue",
+      "notes": "purple-shell 0.48/0.24/0.66＋微 emissive（單 hemispheric 光偏暗）；黃黑斜紋警示帶與蓋內標籤皆 DynamicTexture；護目鏡 alpha 0.6。headless 無 canvas 時退化為純色。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.324,
+        "iou": 0.473
+      },
+      "action": "continue",
+      "notes": "case 1.8 kg（密度 115）＋lid 0.65 kg（密度 60）兩 box collider；hinge +z 後緣 axis [1,0,0] limits [0,1.75]、servo maxForce 5（共用 src/hinge.ts）。check_colliders OK、physics_test pass、--nudge lid pass、actuation_test servo:lid.x pass。線框截圖：兩 box 緊貼殼體。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.324,
+        "iou": 0.473
+      },
+      "action": "continue",
+      "notes": "金屬件與標籤位置由常數推導；metadata sculptRuntime；dispose 依 constraint→body→material/texture→root。剩餘落差：Divine Eye IoU 未達 0.65（取景與透視），蓋內文字位置比參考圖偏上。"
+    }
+  ]
+}

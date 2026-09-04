@@ -13,4 +13,8 @@ export const registry: Record<string, () => Promise<{ default: ModelFactory }>> 
   "action-figure": () => import("../models/action-figure/createActionFigureModel"),
   // M3 鴨型長腿雙足機器人
   "duck-bot": () => import("../models/duck-bot/createDuckBotModel"),
+  // M10 化療潑灑處理套件
+  "chemo-spill-kit": () => import("../models/chemo-spill-kit/createChemoSpillKitModel"),
+  "chemo-iv-bag": () => import("../models/chemo-iv-bag/createChemoIvBagModel"),
+  "cytotoxic-waste-bin": () => import("../models/cytotoxic-waste-bin/createCytotoxicWasteBinModel"),
 };
