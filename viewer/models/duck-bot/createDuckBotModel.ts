@@ -23,9 +23,7 @@ import type { Actuator, BuiltModel, ModelOptions } from "../../src/types";
 // ---- spec 尺寸與綁定姿勢（單位：公尺）----
 const BODY_DIA = 0.06;
 const BODY_Y = 0.147;
-const HEAD_W = 0.042;
-const HEAD_H = 0.02;
-const HEAD_D = 0.038;
+const HEAD_DIA = 0.036;
 const LEG_X = 0.018;
 const THIGH_W = 0.012;
 const THIGH_H = 0.055;
@@ -114,8 +112,8 @@ export default function createDuckBotModel(
 
   const yellow = new StandardMaterial("duck-yellow", scene);
   yellow.diffuseColor = new Color3(1.0, 0.72, 0.08);
-  yellow.specularColor = new Color3(0.18, 0.14, 0.04);
-  yellow.specularPower = 40;
+  yellow.specularColor = new Color3(0.3, 0.24, 0.08);
+  yellow.specularPower = 64;
   const yellowDark = new StandardMaterial("duck-yellow-dark", scene);
   yellowDark.diffuseColor = new Color3(0.96, 0.58, 0.04);
   yellowDark.specularColor = new Color3(0.14, 0.09, 0.03);
@@ -133,9 +131,21 @@ export default function createDuckBotModel(
   black.specularColor = new Color3(0.95, 0.95, 0.95);
   black.specularPower = 192;
   const chrome = new StandardMaterial("chrome", scene);
-  chrome.diffuseColor = new Color3(0.72, 0.76, 0.8);
+  chrome.diffuseColor = new Color3(0.67, 0.72, 0.78);
   chrome.specularColor = new Color3(0.98, 0.98, 1.0);
-  chrome.specularPower = 192;
+  chrome.specularPower = 256;
+  const chromeDark = new StandardMaterial("chrome-joint-dark", scene);
+  chromeDark.diffuseColor = new Color3(0.16, 0.14, 0.13);
+  chromeDark.specularColor = new Color3(0.68, 0.58, 0.5);
+  chromeDark.specularPower = 144;
+  const chromeBright = new StandardMaterial("chrome-highlight", scene);
+  chromeBright.diffuseColor = new Color3(0.88, 0.91, 0.95);
+  chromeBright.specularColor = Color3.White();
+  chromeBright.specularPower = 320;
+  const eyeHighlight = new StandardMaterial("eye-highlight", scene);
+  eyeHighlight.diffuseColor = new Color3(1, 0.98, 0.9);
+  eyeHighlight.emissiveColor = new Color3(0.22, 0.21, 0.18);
+  eyeHighlight.specularColor = Color3.White();
   const matOf: Record<string, StandardMaterial> = {
     body: yellow, head: yellow, tuft: yellow,
     "wing-l": yellowDark, "wing-r": yellowDark,
@@ -147,6 +157,7 @@ export default function createDuckBotModel(
   };
   const disposables: { dispose(): void }[] = [
     yellow, yellowDark, orange, orangeDark, black, chrome,
+    chromeDark, chromeBright, eyeHighlight,
   ];
   const nodes: Record<string, TransformNode> = {};
   const meshes: Record<string, Mesh> = {};
@@ -170,26 +181,49 @@ export default function createDuckBotModel(
     "body", { diameter: L(BODY_DIA), segments: TESS }, scene,
   ), bodyPivot);
 
-  const headPivot = pivot("head", bodyPivot, new Vector3(0, L(0.02), L(0.001)));
+  const headPivot = pivot("head", bodyPivot, new Vector3(0, L(0.038), L(0.004)));
   attach("head", MeshBuilder.CreateSphere(
-    "head", {
-      diameterX: L(HEAD_W), diameterY: L(HEAD_H), diameterZ: L(HEAD_D), segments: TESS,
-    }, scene,
+    "head", { diameter: L(HEAD_DIA), segments: TESS }, scene,
   ), headPivot);
 
-  const tuftPivot = pivot("tuft", bodyPivot, new Vector3(0, L(0.032), L(-0.002)));
+  const tuftPivot = pivot("tuft", headPivot, new Vector3(0, L(0.019), L(-0.002)));
   attach("tuft", MeshBuilder.CreateSphere(
     "tuft", { diameterX: L(0.012), diameterY: L(0.005), diameterZ: L(0.01), segments: 16 }, scene,
   ), tuftPivot);
 
   for (const [id, y, w, h, d] of [
-    ["beak-upper", 0.017, 0.034, 0.008, 0.025],
-    ["beak-lower", 0.013, 0.03, 0.006, 0.021],
+    ["beak-upper", -0.005, 0.034, 0.008, 0.025],
+    ["beak-lower", -0.009, 0.03, 0.006, 0.021],
   ] as const) {
-    const p = pivot(id, bodyPivot, new Vector3(0, L(y), L(0.026)));
+    const p = pivot(id, headPivot, new Vector3(0, L(y), L(0.023)));
     attach(id, MeshBuilder.CreateSphere(
       id, { diameterX: L(w), diameterY: L(h), diameterZ: L(d), segments: TESS }, scene,
     ), p);
+  }
+  const mouthSeam = MeshBuilder.CreateTube(
+    "mouth-seam",
+    {
+      path: [
+        new Vector3(L(-0.012), L(-0.008), L(0.0348)),
+        new Vector3(0, L(-0.0092), L(0.0358)),
+        new Vector3(L(0.012), L(-0.008), L(0.0348)),
+      ],
+      radius: L(0.00055),
+      tessellation: 8,
+    },
+    scene,
+  );
+  mouthSeam.parent = headPivot;
+  mouthSeam.material = orangeDark;
+  for (const sx of [-1, 1]) {
+    const nostril = MeshBuilder.CreateSphere(
+      `nostril-${sx < 0 ? "r" : "l"}`,
+      { diameterX: L(0.0014), diameterY: L(0.0008), diameterZ: L(0.0007), segments: 10 },
+      scene,
+    );
+    nostril.parent = headPivot;
+    nostril.position.set(L(sx * 0.0055), L(-0.001), L(0.0345));
+    nostril.material = chromeDark;
   }
 
   for (const [side, sx] of [["l", 1], ["r", -1]] as const) {
@@ -199,54 +233,114 @@ export default function createDuckBotModel(
     attach(wingId, MeshBuilder.CreateSphere(
       wingId, { diameterX: L(0.01), diameterY: L(0.032), diameterZ: L(0.025), segments: TESS }, scene,
     ), wingPivot);
+    for (const [i, y] of [-0.007, -0.012, -0.017].entries()) {
+      const feather = MeshBuilder.CreateTube(
+        `${wingId}-feather-${i}`,
+        {
+          path: [
+            new Vector3(L(-0.004), L(y), L(0.011)),
+            new Vector3(0, L(y - 0.0015), L(0.013)),
+            new Vector3(L(0.004), L(y), L(0.011)),
+          ],
+          radius: L(0.00065),
+          tessellation: 8,
+        },
+        scene,
+      );
+      feather.parent = wingPivot;
+      feather.material = yellow;
+    }
 
     const eyeId = `eye-${side}`;
-    const eyePivot = pivot(eyeId, bodyPivot, new Vector3(L(sx * 0.011), L(0.023), L(0.026)));
+    const eyePivot = pivot(eyeId, headPivot, new Vector3(L(sx * 0.009), L(0.004), L(0.0175)));
     attach(eyeId, MeshBuilder.CreateSphere(
       eyeId, { diameterX: L(0.006), diameterY: L(0.008), diameterZ: L(0.004), segments: 16 }, scene,
     ), eyePivot);
+    const glint = MeshBuilder.CreateSphere(
+      `${eyeId}-glint`, { diameter: L(0.0017), segments: 12 }, scene,
+    );
+    glint.parent = eyePivot;
+    glint.position.set(L(sx * -0.0011), L(0.0018), L(0.0021));
+    glint.material = eyeHighlight;
 
     const thighPivot = pivot(
       `thigh-${side}`, root, new Vector3(L(sx * LEG_X), L(THIGH_Y), 0),
     );
-    attach(`thigh-${side}`, MeshBuilder.CreateBox(
-      `thigh-${side}`, { width: L(THIGH_W), height: L(THIGH_H), depth: L(THIGH_D) }, scene,
+    attach(`thigh-${side}`, MeshBuilder.CreateCapsule(
+      `thigh-${side}`, { radius: L(THIGH_W / 2), height: L(THIGH_H), tessellation: TESS }, scene,
     ), thighPivot);
+    const hipSleeve = MeshBuilder.CreateCylinder(
+      `hip-sleeve-${side}`, { height: L(0.008), diameter: L(0.013), tessellation: TESS }, scene,
+    );
+    hipSleeve.parent = thighPivot;
+    hipSleeve.material = chromeDark;
+    hipSleeve.position.y = L(THIGH_H / 2);
+    hipSleeve.rotation.z = Math.PI / 2;
     const hipRing = MeshBuilder.CreateCylinder(
       `hip-ring-${side}`, { height: L(0.014), diameter: L(0.016), tessellation: TESS }, scene,
     );
     hipRing.parent = thighPivot;
-    hipRing.material = chrome;
+    hipRing.material = chromeBright;
     hipRing.position.y = L(THIGH_H / 2);
     hipRing.rotation.z = Math.PI / 2;
+    const hipBolt = MeshBuilder.CreateCylinder(
+      `hip-bolt-${side}`, { height: L(0.002), diameter: L(0.008), tessellation: TESS }, scene,
+    );
+    hipBolt.parent = thighPivot;
+    hipBolt.material = chromeBright;
+    hipBolt.position.set(L(sx * 0.008), L(THIGH_H / 2), 0);
+    hipBolt.rotation.z = Math.PI / 2;
 
     const shankPivot = pivot(
       `shank-${side}`, root, new Vector3(L(sx * LEG_X), L(SHANK_Y), 0),
     );
-    attach(`shank-${side}`, MeshBuilder.CreateBox(
-      `shank-${side}`, { width: L(SHANK_W), height: L(SHANK_H), depth: L(SHANK_D) }, scene,
+    attach(`shank-${side}`, MeshBuilder.CreateCapsule(
+      `shank-${side}`, { radius: L(SHANK_W / 2), height: L(SHANK_H), tessellation: TESS }, scene,
     ), shankPivot);
+    const kneeSleeve = MeshBuilder.CreateCylinder(
+      `knee-sleeve-${side}`, { height: L(0.008), diameter: L(0.012), tessellation: TESS }, scene,
+    );
+    kneeSleeve.parent = shankPivot;
+    kneeSleeve.material = chromeDark;
+    kneeSleeve.position.y = L(SHANK_H / 2);
+    kneeSleeve.rotation.z = Math.PI / 2;
     const kneeRing = MeshBuilder.CreateCylinder(
       `knee-ring-${side}`, { height: L(0.014), diameter: L(0.015), tessellation: TESS }, scene,
     );
     kneeRing.parent = shankPivot;
-    kneeRing.material = chrome;
+    kneeRing.material = chromeBright;
     kneeRing.position.y = L(SHANK_H / 2);
     kneeRing.rotation.z = Math.PI / 2;
+    const kneeBolt = MeshBuilder.CreateCylinder(
+      `knee-bolt-${side}`, { height: L(0.002), diameter: L(0.0075), tessellation: TESS }, scene,
+    );
+    kneeBolt.parent = shankPivot;
+    kneeBolt.material = chromeBright;
+    kneeBolt.position.set(L(sx * 0.0075), L(SHANK_H / 2), 0);
+    kneeBolt.rotation.z = Math.PI / 2;
 
     const ankleRing = MeshBuilder.CreateCylinder(
       `ankle-ring-${side}`, { height: L(0.012), diameter: L(0.013), tessellation: TESS }, scene,
     );
     ankleRing.parent = shankPivot;
-    ankleRing.material = chrome;
+    ankleRing.material = chromeBright;
     ankleRing.position.y = L(-SHANK_H / 2);
     ankleRing.rotation.z = Math.PI / 2;
+    const ankleBolt = MeshBuilder.CreateCylinder(
+      `ankle-bolt-${side}`, { height: L(0.002), diameter: L(0.007), tessellation: TESS }, scene,
+    );
+    ankleBolt.parent = shankPivot;
+    ankleBolt.material = chromeBright;
+    ankleBolt.position.set(L(sx * 0.0065), L(-SHANK_H / 2), 0);
+    ankleBolt.rotation.z = Math.PI / 2;
 
     const footPivot = pivot(
       `foot-${side}`, root, new Vector3(L(sx * LEG_X), L(FOOT_Y), L(FOOT_Z)),
     );
-    const heel = MeshBuilder.CreateBox(
-      `foot-${side}-heel`, { width: L(FOOT_W), height: L(FOOT_H), depth: L(0.022) }, scene,
+    const heel = MeshBuilder.CreateSphere(
+      `foot-${side}-heel`, {
+        diameterX: L(FOOT_W), diameterY: L(FOOT_H), diameterZ: L(0.022), segments: TESS,
+      }, scene,
     );
     heel.position.z = L(-0.009);
     const toes = [-0.008, 0, 0.008].map((x, i) => {

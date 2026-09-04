@@ -249,12 +249,12 @@ image-to-physics 目標改向：遙控雙足機器人（鴨子型態、腳很長
 與契約：圖片（tomato）→ spec → factory → 三層 gate；控制律與站立／抗推 gate 在姊妹 repo。
 設計文件 `../image-to-physics/docs/superpowers/specs/2026-09-04-duck-bot-biped-design.md`。
 
-- [ ] 0020 duck-bot（2026-09-04 開卡）：7 剛體（body 含頭一體、thigh／shank／foot ×2）、10 關節 12 軸伺服
+- [x] 0020 duck-bot（2026-09-04 開卡、同日結案：五 pass、strict spec／collider／ragdoll／12 軸 actuation 全綠；Divine Eye 因腿長比例刻意偏離 reject、監工目視通過）：7 剛體（body 含頭一體、thigh／shank／foot ×2）、10 關節 12 軸伺服
       （髖 x/y/z、膝 x、踝 x/y，servo id `servo:thigh-l.x` 慣例）；比例與質量為硬約束（腿長 ≈ 軀幹高 ×1.8、
       腳 0.024×0.007×0.040；質量 body 0.060／thigh 0.012／shank 0.012／foot 0.015，關節質量比 ≤ 10:1；
       姊妹 repo 倒單擺探針：0.40 長大腳讓單擺在腳 0.010–0.020 kg·S³ 都撐直——腳的支撐長度比質量關鍵）；
       factory `balance` 照抄 action-figure 換 id。Codex 六步到 headless gate，監工做視覺 gate 與 rig_test。
-- [ ] 0021 ragdoll gate 限位分解順序（2026-09-04 監工自做）：Havok 逐軸**限位**語意＝x swing-twist 扭轉角、
+- [x] 0021 ragdoll gate 限位分解順序（2026-09-04 監工自做、結案 7c3fb88）：Havok 逐軸**限位**語意＝x swing-twist 扭轉角、
       y asin(−g02)、z atan2(g01,g00)，與逐軸**馬達**的 XZY 不同；舊 gate 用馬達順序查限位，鎖死軸讀出 0.12–0.24 rad
       幻影角（duck-bot 踝三輪紅、action-figure 0019 後靴邊緣紅）。修正後 duck-bot ragdoll 綠；action-figure 肩露出
       真實的負載超限 0.45／0.63 rad（門檻不動，待使用者決定）。證據：姊妹 repo joint_order_probe 釘死七組＋肩三組。

@@ -11,7 +11,7 @@
   ],
   "coordinateFrame": { "up": "y", "forward": "z", "units": "m" },
   "silhouette": {
-    "outline": "round yellow duck robot with a fused small head, projecting orange bill, side wings, extremely long thin chrome legs, and broad forward orange webbed feet",
+    "outline": "round yellow duck robot with a distinct small spherical head fused into the body top, projecting orange bill, side wings, extremely long thin chrome legs, and broad forward orange webbed feet",
     "complexity": "complex"
   },
   "componentTree": [
@@ -23,22 +23,22 @@
       "collider": { "type": "sphere", "size": [0.06, 0.06, 0.06], "offset": [0, 0, 0], "confidence": 1.0 }
     },
     {
-      "id": "head", "name": "fused duck head cap", "level": "meso", "primitive": "sphere",
-      "dimensions": { "w": 0.042, "h": 0.02, "d": 0.038, "units": "m", "confidence": 0.8 },
-      "transform": { "position": [0, 0.02, 0.001], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "id": "head", "name": "fused spherical duck head", "level": "meso", "primitive": "sphere",
+      "dimensions": { "w": 0.036, "h": 0.036, "d": 0.036, "units": "m", "confidence": 0.9 },
+      "transform": { "position": [0, 0.038, 0.004], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
       "parent": "body", "attachment": { "type": "fixed", "socket": "body:top" }, "material": "duck-yellow"
     },
     {
       "id": "beak-upper", "name": "upper orange bill", "level": "meso", "primitive": "sphere",
       "dimensions": { "w": 0.034, "h": 0.008, "d": 0.025, "units": "m", "confidence": 0.8 },
-      "transform": { "position": [0, 0.017, 0.026], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
-      "parent": "body", "attachment": { "type": "fixed", "socket": "head:front" }, "material": "beak-orange"
+      "transform": { "position": [0, -0.005, 0.023], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "head", "attachment": { "type": "fixed", "socket": "head:front" }, "material": "beak-orange"
     },
     {
       "id": "beak-lower", "name": "lower orange bill", "level": "micro", "primitive": "sphere",
       "dimensions": { "w": 0.03, "h": 0.006, "d": 0.021, "units": "m", "confidence": 0.75 },
-      "transform": { "position": [0, 0.013, 0.026], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
-      "parent": "body", "attachment": { "type": "fixed", "socket": "head:front-lower" }, "material": "beak-orange-dark"
+      "transform": { "position": [0, -0.009, 0.023], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "head", "attachment": { "type": "fixed", "socket": "head:front-lower" }, "material": "beak-orange-dark"
     },
     {
       "id": "wing-l", "name": "left wing plate", "level": "meso", "primitive": "sphere",
@@ -55,20 +55,20 @@
     {
       "id": "eye-l", "name": "left glossy eye", "level": "micro", "primitive": "sphere",
       "dimensions": { "w": 0.006, "h": 0.008, "d": 0.004, "units": "m", "confidence": 0.9 },
-      "transform": { "position": [0.011, 0.023, 0.026], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
-      "parent": "body", "attachment": { "type": "fixed", "socket": "head:front-left" }, "material": "eye-black"
+      "transform": { "position": [0.009, 0.004, 0.0175], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "head", "attachment": { "type": "fixed", "socket": "head:front-left" }, "material": "eye-black"
     },
     {
       "id": "eye-r", "name": "right glossy eye", "level": "micro", "primitive": "sphere",
       "dimensions": { "w": 0.006, "h": 0.008, "d": 0.004, "units": "m", "confidence": 0.9 },
-      "transform": { "position": [-0.011, 0.023, 0.026], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
-      "parent": "body", "attachment": { "type": "fixed", "socket": "head:front-right" }, "material": "eye-black"
+      "transform": { "position": [-0.009, 0.004, 0.0175], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "head", "attachment": { "type": "fixed", "socket": "head:front-right" }, "material": "eye-black"
     },
     {
       "id": "tuft", "name": "small crown tuft", "level": "micro", "primitive": "sphere",
       "dimensions": { "w": 0.012, "h": 0.005, "d": 0.01, "units": "m", "confidence": 0.6 },
-      "transform": { "position": [0, 0.032, -0.002], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
-      "parent": "body", "attachment": { "type": "fixed", "socket": "head:crown" }, "material": "duck-yellow"
+      "transform": { "position": [0, 0.019, -0.002], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "head", "attachment": { "type": "fixed", "socket": "head:crown" }, "material": "duck-yellow"
     },
     {
       "id": "thigh-l", "name": "left upper chrome leg", "level": "macro", "primitive": "box",
@@ -146,7 +146,7 @@
       { "type": "joint", "bodyA": "shank-r", "bodyB": "foot-r", "pivotA": [0, -0.0275, 0], "pivotB": [0, 0.0035, -0.01], "axis": [1, 0, 0], "angular": { "x": [-0.6, 0.6], "y": [-0.4, 0.4], "z": "locked" }, "actuation": { "type": "servo", "maxForce": 0.02 } }
     ]
   },
-  "proportions": { "head_component": "head", "head_unit": 0.02, "total_heads": 9.0, "tolerance": 0.3 },
+  "proportions": { "head_component": "head", "head_unit": 0.036, "total_heads": 5.74, "tolerance": 0.3 },
   "buildPasses": ["blockout", "structure", "material", "physics", "polish"],
   "reviewHistory": []
 }

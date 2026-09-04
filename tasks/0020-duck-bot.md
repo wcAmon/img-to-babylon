@@ -1,5 +1,5 @@
 # 0020 duck-bot：鴨型長腿雙足機器人（姊妹 repo image-to-physics M3 題材，契約側）
-model: duck-bot        status: in-progress（2026-09-04 開卡）
+model: duck-bot        status: done（2026-09-04：五 pass 完成、headless gate 全綠、監工視覺 gate 目視通過）
 脈絡: image-to-physics 目標改向（使用者 2026-09-04）：遙控雙足機器人——鴨子型態、腳很長，之後要走、轉、跑、跳。
      設計文件 `../image-to-physics/docs/superpowers/specs/2026-09-04-duck-bot-biped-design.md` §3。
      本卡只做題材與契約：圖片 → spec → factory → 三層 gate；控制律與站立／抗推 gate 在姊妹 repo（P0009）。
@@ -115,3 +115,75 @@ notes:
   - 因上述停手條件，收尾的 forge unittest 與 action-figure physics/actuation 回歸 gate **未跑**，不可宣稱全卡驗收
     或 headless gate 完成；現況是可編譯、strict spec／collider 診斷／12 軸 actuation 已綠，ragdoll 與指定 npx
     runtime launcher 未綠。
+
+  Codex r2（2026-09-04，接續 7c3fb88 的 ragdoll 限位量測修正）：
+  - physics pass 重跑：`cd viewer && npx tsc --noEmit` 無輸出、exit 0；指定等價 loader
+    `node --import tsx scripts/runtime_export.ts duck-bot --spec models/duck-bot/spec.json --out ../.img2babylon/duck-bot/runtime.json`
+    exit 0，原文要點 `{"out":"../.img2babylon/duck-bot/runtime.json","meshes":15,"bodies":7}`；
+    `python3 forge/check_colliders.py .img2babylon/duck-bot/runtime.json` 原文 `OK`、exit 0。
+  - physics pass ragdoll：`node --import tsx scripts/physics_test.ts duck-bot --spec models/duck-bot/spec.json --ragdoll`
+    exit 0、JSON `"pass": true`；standHeight 1.815、finalHeight 0.9292、`collapsed:true`，7 bodies 全
+    `finite:true`，6 constraints 全 `ok:true`（最大 separation 0.00220），兩踝 locked-z 分別 −0.0143／0.0066，
+    六個 joints 全 `ok:true`，ragdoll `"pass": true`。這確認 r1 的 −0.24／−0.17 是 0021 已修正的量測幻影角。
+  - physics pass actuation：`node --import tsx scripts/actuation_test.ts duck-bot --spec models/duck-bot/spec.json`
+    exit 0、JSON `"pass": true`；coverage 為 thigh-l/r 各 3 軸、shank-l/r 各 1 軸、foot-l/r 各 2 軸，
+    合計 12 軸全 `ok:true`；各軸量測值與 r1 相同（thigh x/y/z、shank x、foot x/y 皆落在 gate）。全綠後
+    `python3 forge/next_pass.py done` exit 0、原文 `polish`，狀態進入 polish（index 4，該 pass corrections 0，
+    totalCorrections 2）。
+  - polish 只改 `viewer/models/duck-bot/createDuckBotModel.ts` 的視覺：黃塑膠與鉻銀高光材質；嘴縫與雙鼻孔；
+    眼睛高光；左右翅各三條羽片紋；大腿／小腿 visual 由方盒改為同長度圓角 capsule；髖、膝、踝增加深色套筒、
+    亮銀環與端蓋；腳跟 visual 改為同尺寸橢球以圓角化。未改 spec、collider 尺寸、BODY_DEFS 質量／COM、
+    CONSTRAINT_DEFS pivot／限位、servo id、factoryPose 或 balance 區塊。
+  - polish pass 重跑同組 gate：tsc 無輸出 exit 0；runtime_export exit 0，仍為 `meshes:15`、`bodies:7`；
+    check_colliders 原文 `OK`；duck-bot ragdoll exit 0、`"pass": true`，數值與 physics pass 相同（兩踝 z
+    −0.0143／0.0066）；actuation exit 0、12 軸全 `ok:true`、`"pass": true`。其後 `next_pass.py done` exit 0，
+    原文 `all-passes-complete`；status 為 `currentPass:null`、index 5、totalCorrections 2。依監工指示未做瀏覽器截圖、
+    compare 或 Divine Eye（第 5d 步由監工執行）。卡片 status 保持 in-progress。
+  - 收尾 forge：`python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'` exit 0，原文
+    `Ran 99 tests in 1.112s`／`OK`。
+  - action-figure 回歸：非 ragdoll `physics_test` exit 0、JSON `"pass": true`，12 bodies 全 `finite:true`、
+    11 constraints 全 `ok:true`；`actuation_test` exit 0、23 軸 coverage／量測全 `ok:true`、JSON `"pass": true`。
+    `physics_test --ragdoll` 如 0021 notes 的既有問題 exit 1、JSON `"pass": false`：standHeight 1.04、finalHeight
+    0.4944、`collapsed:true`，12 bodies 全 finite、11 constraints 全 ok；只有肩關節超限，upper-arm-l 角度
+    (−0.3524, 0.9894, 1.2459)、upper-arm-r (0.7945, −1.2146, −1.4292) 為 `ok:false`，兩踝 z 0.0090／−0.0117
+    與其餘 joints 均 `ok:true`。這是 0021 已確認的持續負載下 Havok 肩軟限位，不是 duck-bot polish 造成；照實
+    記錄，未修 action-figure、未放寬門檻。
+
+  Codex r3（2026-09-04，監工 hero 視覺 gate 的純視覺 correction）：
+  - correction 流程：首次 `python3 forge/next_pass.py correction` 因 r2 已完成所有 pass，原文 `已無進行中的 pass`、
+    exit 2，未增加計數；把 state 暫時重開在 polish 後，正式 correction 原文
+    `{"pass": "polish", "corrections": 1, "total": 3}`、exit 0。全 gate 綠後 `next_pass.py done` 原文
+    `all-passes-complete`；最終 status 為 `currentPass:null`、index 5、`totalCorrections:3`。卡片 status 保持
+    in-progress。
+  - 純視覺修正：`head` 沿用同 component id，從扁帽改為直徑 0.036 m 球，body-local 中心
+    `[0, 0.038, 0.004]`，在 body 球頂上方、稍微向前且與 body 嵌合；`beak-upper`、`beak-lower`、`eye-l/r`、
+    `tuft` 及嘴縫／鼻孔／眼睛高光改掛 head-local，`wing-l/r` 與羽片仍掛 body 兩側。沒有新增 physics body 或
+    collider；未改 `BODY_DEFS`、質量、collider 尺寸、COM、pivot、限位、servo id、factoryPose 或 balance。
+  - spec 比例：componentTree 同步新 head 球與親子關係；`head_component` 仍為 `head`、`head_unit` 0.036，模型
+    總高依腳底至冠頂約 0.2065 m 換算 `total_heads` 5.74，`tolerance` 仍 0.3。
+    `python3 forge/validate_spec.py viewer/models/duck-bot/spec.json --strict` 原文 `OK`、exit 0；
+    `cd viewer && npx tsc --noEmit` 無輸出、exit 0。
+  - runtime/collider：`node --import tsx scripts/runtime_export.ts duck-bot --spec models/duck-bot/spec.json
+    --out ../.img2babylon/duck-bot/runtime.json` exit 0，原文要點
+    `{"out":"../.img2babylon/duck-bot/runtime.json","meshes":15,"bodies":7}`；`check_colliders.py` 原文 `OK`、
+    exit 0。runtime 仍為 7 bodies，S=10 runtime 質量依序 body 60、thigh-l/r 12、shank-l/r 12、foot-l/r 15，
+    對應 spec 0.060／0.012／0.012／0.015 kg，總質量仍 0.138 kg。
+  - ragdoll：`node --import tsx scripts/physics_test.ts duck-bot --spec models/duck-bot/spec.json --ragdoll` exit 0、
+    JSON `"pass": true`；standHeight 2.065（加入頭球後的視覺總高）、finalHeight 0.9292、`collapsed:true`，7 bodies
+    全 `finite:true`，6 constraints 全 `ok:true`（最大 separation 0.00220），六個 joints 全 `ok:true`，ragdoll
+    `"pass": true`。
+  - actuation：`node --import tsx scripts/actuation_test.ts duck-bot --spec models/duck-bot/spec.json` exit 0、JSON
+    `"pass": true`；coverage 仍為 thigh-l/r 各 3 軸、shank-l/r 各 1 軸、foot-l/r 各 2 軸，合計 12 軸全
+    `ok:true`，各軸量測值與 r2 相同。
+  - forge：`python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'` exit 0，原文
+    `Ran 99 tests in 1.140s`／`OK`。未呼叫 tomato、未改 gate 門檻、未 git add／commit；本輪新 hero 截圖與
+    reference 對照留給監工重跑視覺 gate。
+
+  監工結案（2026-09-04）：Codex r2 polish、r3 頭球純視覺修正後獨立重跑：physics spec 與 r1 逐字相同、ragdoll pass、
+  actuation 12 軸 pass、check_colliders OK、validate --strict OK。視覺 gate（playwright 5173 `#model=duck-bot`，
+  `.img2babylon/shots/duck-bot-hero-render.png`、`duck-bot-compare.png`、`duck-bot-wireframe.png`）：目視——頭球＋身球、
+  橘嘴、眼、翅膀貼片、鉻銀等長雙段腿、橘色蹼腳，鴨子身份成立；線框確認 collider＝身球＋四腿盒＋兩腳盒（頭純視覺）。
+  Divine Eye `reject`（fidelity 0.17、輪廓 IoU 0.25 < 0.65）：硬 gate 失敗來自**設計刻意偏離**——身體計畫把腿長定為
+  軀幹高 1.8 倍（hero 圖腿約 45% 高、模型約 60%），物理優先，卡片脈絡已預告；不算修正輪、不改門檻，以監工目視結案。
+  附帶發現：`capture.setCamera` 先設 radius 再 setTarget 會被重算（姊妹 repo Parked 小卡），截圖時第三次呼叫不帶 target
+  補設 radius。姊妹 repo 端：rig_test duck-bot PASS、duck_stand_test PASS（見 image-to-physics P0009）。
