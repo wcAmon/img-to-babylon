@@ -260,6 +260,25 @@ image-to-physics 目標改向：遙控雙足機器人（鴨子型態、腳很長
       真實的負載超限 0.45／0.63 rad——**使用者 2026-09-04 決定接受為已知限制**（門檻與肩限位不動，人偶
       `--ragdoll` 自此預期紅在肩；duck-bot 綠）。證據：姊妹 repo joint_order_probe 釘死七組＋肩三組。
 
+## M10：化療潑灑處理套件＋Playground（2026-09-04 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-04-chemo-spill-set-design.md`、計畫 `docs/superpowers/plans/2026-09-04-chemo-spill-set.md`。
+三個題材物件走六步五 pass；契約只擴 `rupture`（質量轉移：袋子排空、水漬、液滴；偵測用單步動量變化
+m·|Δv|，不用碰撞回呼）。展示環境是獨立專案 `../playground`（別名吃本 checkout，自己的 git），
+`tailscale serve` 掛根路徑 `https://monkeyday.tail8e3f79.ts.net/`。
+
+- [x] 0022 rupture 契約（validate_spec TDD、Actuator kind `rupture`、harness 按鈕、`src/hinge.ts` 共用 hinge／servo
+      助手、actuation_test 覆蓋、`rupture_test.ts` gate）＋三模型＋playground＋tailnet。結果：
+      `chemo-spill-kit`（2 body、servo 蓋；Divine Eye reject IoU 0.47——取景與 100° 開蓋透視差，監工目視通過，3 修正）、
+      `chemo-iv-bag`（單 body 0.55 kg；rupture 門檻 2.0 N·s：0.3 m／0.2 m 不破、1.5 m 必破；液滴需阻尼 2.0 否則
+      理想球永滾；Divine Eye pass 0.42／IoU 0.69，2 修正）、`cytotoxic-waste-bin`（3 body、蓋＋踏板 servo；Divine Eye
+      pass 0.45／IoU 0.72，2 修正＋結案後補正：踏板 collider 與桶身 cylinder 重疊時 hinge 的 isCollisionsEnabled=false
+      擋不住→樞軸移出＋碰撞過濾群組；0.08 m 小踏板重力 3 步垂到下限→servo 出廠回位）。全部 headless gate 綠。
+      playground：三模型、側欄（打開／踩踏板／摔落／破裂／推倒／拋起／歸位／丟球／線框）、抓取拖曳、HUD、
+      `scene_test.ts` 綠；對外走 launchd 常駐系統 python3 http.server（dist 複製到 `~/.local/share/playground`）＋
+      tailscale serve。陷阱：macOS TCC 擋 launchd 起的 node 讀 ~/Desktop（卡在權限提示永不監聽）；macOS 版 Tailscale
+      不支援 serve 直接提供檔案路徑；plane 上 DynamicTexture 要在畫布內翻轉（build.md）。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
