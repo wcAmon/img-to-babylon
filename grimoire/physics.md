@@ -166,10 +166,15 @@ frame 的 `axisA/axisB` 對應 angular.x 的軸、`perpAxisA/perpAxisB` 對應 a
 ## 陷阱
 
 - 建 body 後再搬 transform：先 `body.disablePreStep = false` → 下一幀後設回 true。
-- **關節角量測必須用 XZY 順序分解**：Havok 逐軸角限位的執行語意沒有公開文件，
-  倒立擺探針（重力持續壓限位）實測：XZY Tait-Bryan 萃取與其最接近（鎖死軸殘餘
-  ≤0.05 rad），而 Babylon `toEulerAngles()`（YXZ）在兩軸同時大角度時串擾可達
-  0.19 rad，會誤報限位違規。`physics_test.ts` 的 `eulerXZY` 是準則實作。
+- **關節角量測：限位與馬達是兩種 Euler 順序**（0021，2026-09-04）。Havok 6DoF 逐軸
+  **馬達**的語意是 XZY（`eulerXZY`：髖三馬達命令 (−0.6, 0.3, 0) 讀值精確），逐軸**限位**
+  不是任何單一 Euler 順序：x（主軸）＝swing-twist 扭轉角、y = asin(−g02)、z = atan2(g01, g00)
+  （`eulerLimits`：純限位釘死七組含 y 1.2／z 1.2 大角，誤差 ≤ 0.073；XZY 在同資料 y 誤差
+  0.76、z 0.84）。單軸時所有順序重合（0014 倒立擺校準
+  分不出來）；兩軸同時大角度用錯順序會在鎖死軸讀出 0.12–0.24 rad 幻影角（踝 x 0.56／
+  y 0.33 鎖 z → XZY 讀 z −0.17）。ragdoll 限位檢查用 `eulerLimits`，actuation／motion
+  類馬達 gate 用 `eulerXZY`；Babylon `toEulerAngles()`（YXZ）兩者都不是。證據：姊妹 repo
+  `physics/scripts/joint_order_probe.ts`。
 - 持續受載下限位有 ~0.05 rad 的 solver 柔性（瞬時衝擊可暫態超越 ~0.16），
   斷言一律帶 ε（`RAGDOLL_ANGLE_EPS = 0.15`）。
 - `PhysicsShapeContainer` 的子形狀位置是相對 body 的 transform node，不是世界座標。

@@ -251,8 +251,8 @@ function jointFrame(axis: Vector3): Matrix {
   return m; // 列＝frame 基底（Babylon row-vector 慣例：v_frame × M = v_bodyA）
 }
 
-/** XZY 順序的 Tait-Bryan 萃取——經倒立擺探針實測，與 Havok 6DoF 逐軸限位的
- * 執行語意最接近（鎖死軸殘餘 ≤0.05 rad；Babylon toEulerAngles 串擾達 0.19）。 */
+/** XZY 順序的 Tait-Bryan 萃取——Havok 6DoF 逐軸**馬達**的執行語意（髖三馬達 (−0.6, 0.3, 0) 讀值精確）；
+ * 倒立擺單軸校準時與限位語意重合，兩軸同時大角度才分得出來（見 eulerLimits／0021）。ragdoll 限位檢查不用它。 */
 function eulerXZY(m: Matrix): Vector3 {
   const v = m.getRotationMatrix().m;
   const g = (r: number, c: number): number => v[r * 4 + c];
@@ -262,6 +262,23 @@ function eulerXZY(m: Matrix): Vector3 {
     Math.atan2(g(2, 0), g(0, 0)),
     Math.asin(clamp(-g(1, 0))),
   );
+}
+
+/** 限位語意的關節角（0021）：Havok 6DoF 逐軸**限位**不是任何單一 Euler 順序——x（主軸）是 swing-twist 分解的
+ * 扭轉角，y = asin(−g02)、z = atan2(g01, g00)（RotX·RotY·RotZ 列向量合成的後兩個角）。證據：姊妹 repo
+ * joint_order_probe 純限位釘死七組（髖／踝、含 y 1.2、z 1.2 大角），本式誤差 ≤ 0.073 rad；馬達語意的 eulerXZY
+ * 在同組資料 y 誤差到 0.76、z 到 0.84，鎖死軸會讀出 0.12–0.24 rad 幻影角（0020 duck-bot 踝、0019 後 action-figure 靴）。
+ * ragdoll 限位檢查用本式；actuation／motion 類馬達 gate 仍用 eulerXZY。 */
+function eulerLimits(m: Matrix): Vector3 {
+  const rot = m.getRotationMatrix();
+  const v = rot.m;
+  const g = (r: number, c: number): number => v[r * 4 + c];
+  const clamp = (x: number): number => Math.max(-1, Math.min(1, x));
+  const q = Quaternion.FromRotationMatrix(rot);
+  const n = Math.hypot(q.w, q.x);
+  let twist = n < 1e-9 ? 0 : 2 * Math.atan2(q.x / n, q.w / n);
+  if (twist > Math.PI) twist -= 2 * Math.PI; else if (twist <= -Math.PI) twist += 2 * Math.PI; // 四元數雙重覆蓋：2·atan2 落在 (−2π, 2π]
+  return new Vector3(twist, Math.asin(clamp(-g(0, 2))), Math.atan2(g(0, 1), g(0, 0)));
 }
 
 function worldRotation(b: PhysicsBody): Matrix {
@@ -303,7 +320,7 @@ function measureJoints(
     const frame = jointFrame(Vector3.FromArray(con.axis!));
     const delta = Matrix.Invert(bind).multiply(relativeRotation(a, b));
     const inFrame = frame.multiply(delta).multiply(Matrix.Invert(frame));
-    const e = eulerXZY(inFrame);
+    const e = eulerLimits(inFrame); // 0021：限位語意順序（馬達類 gate 才用 eulerXZY）
     if (con.type === "hinge") {
       const ok = con.limits === "free" || angleWithin(con.limits, e.x);
       results.push({

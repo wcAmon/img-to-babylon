@@ -254,6 +254,10 @@ image-to-physics 目標改向：遙控雙足機器人（鴨子型態、腳很長
       腳 0.024×0.007×0.040；質量 body 0.060／thigh 0.012／shank 0.012／foot 0.015，關節質量比 ≤ 10:1；
       姊妹 repo 倒單擺探針：0.40 長大腳讓單擺在腳 0.010–0.020 kg·S³ 都撐直——腳的支撐長度比質量關鍵）；
       factory `balance` 照抄 action-figure 換 id。Codex 六步到 headless gate，監工做視覺 gate 與 rig_test。
+- [ ] 0021 ragdoll gate 限位分解順序（2026-09-04 監工自做）：Havok 逐軸**限位**語意＝x swing-twist 扭轉角、
+      y asin(−g02)、z atan2(g01,g00)，與逐軸**馬達**的 XZY 不同；舊 gate 用馬達順序查限位，鎖死軸讀出 0.12–0.24 rad
+      幻影角（duck-bot 踝三輪紅、action-figure 0019 後靴邊緣紅）。修正後 duck-bot ragdoll 綠；action-figure 肩露出
+      真實的負載超限 0.45／0.63 rad（門檻不動，待使用者決定）。證據：姊妹 repo joint_order_probe 釘死七組＋肩三組。
 
 ## Parked（自設計文件 §11 移入，不分先後）
 
