@@ -26,11 +26,13 @@ const PEDAL_W = 0.09, PEDAL_H = 0.015, PEDAL_D = 0.08;
 const BIN_Y = BIN_H / 2; // 0.225
 const LID_Y = BIN_H + LID_H / 2; // 0.48
 const LID_HINGE_Y = BIN_H, LID_HINGE_Z = LID_R; // +z 後緣
-const PEDAL_Y = 0.03, PEDAL_Z = -(BIN_R_BOT + PEDAL_D / 2); // -0.17
-const PEDAL_HINGE_Z = -BIN_R_BOT; // -0.13
+// 踏板樞軸在桶身 cylinder collider（r 0.15 全高）邊緣外：collider 重疊時 hinge 的 isCollisionsEnabled=false 擋不住
+const PEDAL_HINGE_Z = -BIN_R_TOP; // -0.15
+const PEDAL_Y = 0.03, PEDAL_Z = PEDAL_HINGE_Z - PEDAL_D / 2; // -0.19
 const LID_LIMITS: [number, number] = [0, 1.5];
 const PEDAL_LIMITS: [number, number] = [-0.3, 0];
 const SERVO_FORCE = 3;
+const GROUP = 2; // 整桶零件同群組、不互撞（grimoire/physics.md 碰撞過濾）
 const TESS = 48;
 
 interface BodyDef {
@@ -174,6 +176,8 @@ export default function createCytotoxicWasteBinModel(scene: Scene, opts: ModelOp
           ? new PhysicsShapeBox(Vector3.Zero(), Quaternion.Identity(), Vector3.FromArray(col.size), scene)
           : new PhysicsShapeCylinder(new Vector3(0, -col.size[1] / 2, 0), new Vector3(0, col.size[1] / 2, 0), col.size[0] / 2, scene);
         shape.material = { friction: def.friction, restitution: def.restitution };
+        shape.filterMembershipMask = GROUP;
+        shape.filterCollideMask = ~GROUP;
         const rel = node.absolutePosition.subtract(rootPivot.absolutePosition).add(Vector3.FromArray(col.offset));
         container.addChild(shape, rel, Quaternion.Identity());
       }
@@ -185,7 +189,10 @@ export default function createCytotoxicWasteBinModel(scene: Scene, opts: ModelOp
     const pedalHinge = createHinge(scene, bodies["bin"], bodies["pedal"], PEDAL_HINGE);
     constraints.push(lidHinge, pedalHinge);
     actuators.push(makeHingeServo(lidHinge, "lid", LID_LIMITS[0], LID_LIMITS[1], SERVO_FORCE, "蓋子"));
-    actuators.push(makeHingeServo(pedalHinge, "pedal", PEDAL_LIMITS[0], PEDAL_LIMITS[1], SERVO_FORCE, "踏板"));
+    const pedalServo = makeHingeServo(pedalHinge, "pedal", PEDAL_LIMITS[0], PEDAL_LIMITS[1], SERVO_FORCE, "踏板");
+    actuators.push(pedalServo);
+    // 出廠即回位（steer 慣例的例外）：真踏板桶有回位彈簧；否則 0.08 m 小踏板在重力下 3 步就垂到下限、尖端觸地，「踩」看不出變化
+    pedalServo.set(0);
   }
 
   const built: BuiltModel = {

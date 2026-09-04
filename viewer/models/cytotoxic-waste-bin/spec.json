@@ -295,7 +295,7 @@
         "position": [
           0,
           0.03,
-          -0.17
+          -0.19
         ],
         "rotation": [
           0,
@@ -521,7 +521,7 @@
         "pivotA": [
           0,
           -0.195,
-          -0.13
+          -0.15
         ],
         "pivotB": [
           0,
@@ -610,7 +610,7 @@
         "iou": 0.721
       },
       "action": "continue",
-      "notes": "常數推導樞軸；metadata sculptRuntime；dispose 完整。剩餘落差：桶身錐度比參考圖略大、無側耳把、蓋緣無下垂裙邊。"
+      "notes": "常數推導樞軸；metadata sculptRuntime；dispose 完整。剩餘落差：桶身錐度比參考圖略大、無側耳把、蓋緣無下垂裙邊。 結案後補正（playground scene_test 揭露）：踏板 collider 與桶身 cylinder collider（r 0.15 全高）重疊，hinge isCollisionsEnabled=false 擋不住，踏板連吊空都推不動；樞軸移到 z=−0.15 圓柱邊緣外＋三 body 同碰撞過濾群組（同 toy-racer）。 踏板 servo 出廠即鎖 0（回位彈簧，steer 慣例例外）：無彈簧時踏板靠重力垂到 −0.3 下限、尖端觸地，踩下無變化。"
     }
   ]
 }
