@@ -257,7 +257,8 @@ image-to-physics 目標改向：遙控雙足機器人（鴨子型態、腳很長
 - [x] 0021 ragdoll gate 限位分解順序（2026-09-04 監工自做、結案 7c3fb88）：Havok 逐軸**限位**語意＝x swing-twist 扭轉角、
       y asin(−g02)、z atan2(g01,g00)，與逐軸**馬達**的 XZY 不同；舊 gate 用馬達順序查限位，鎖死軸讀出 0.12–0.24 rad
       幻影角（duck-bot 踝三輪紅、action-figure 0019 後靴邊緣紅）。修正後 duck-bot ragdoll 綠；action-figure 肩露出
-      真實的負載超限 0.45／0.63 rad（門檻不動，待使用者決定）。證據：姊妹 repo joint_order_probe 釘死七組＋肩三組。
+      真實的負載超限 0.45／0.63 rad——**使用者 2026-09-04 決定接受為已知限制**（門檻與肩限位不動，人偶
+      `--ragdoll` 自此預期紅在肩；duck-bot 綠）。證據：姊妹 repo joint_order_probe 釘死七組＋肩三組。
 
 ## Parked（自設計文件 §11 移入，不分先後）
 

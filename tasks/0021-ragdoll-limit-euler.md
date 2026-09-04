@@ -1,5 +1,5 @@
 # 0021 ragdoll gate 限位分解順序：Havok 限位與馬達是兩種 Euler 語意，physics_test --ragdoll 用錯順序誤報
-model: action-figure／duck-bot        status: done（2026-09-04：公式落地、duck-bot ragdoll 綠；action-figure 肩負載超限門檻待使用者決定）
+model: action-figure／duck-bot        status: done（2026-09-04：公式落地、duck-bot ragdoll 綠；action-figure 肩負載超限——使用者決定接受為已知限制，門檻不動）
 脈絡: 0020 duck-bot 的 ragdoll gate 三輪紅：兩踝（x [−0.6,0.6]、y [−0.4,0.4]、z locked）癱倒後 XZY 讀 z −0.24／−0.17，
      超 RAGDOLL_ANGLE_EPS 0.15。監工重跑 **action-figure 在 HEAD 也紅**（boot-r z −0.156、boot-l 0.148 邊緣）——
      0019 之後沒人再跑 `--ragdoll`。姊妹 repo 探針 `scripts/joint_order_probe.ts`（無地面自由落體、六種 Tait-Bryan
@@ -46,3 +46,5 @@ notes:
   其餘驗收：`npx tsc --noEmit` 無輸出 exit 0；forge unittest `Ran 99 tests`／`OK`；actuation_test action-figure／duck-bot
   皆 `pass: true`；physics_test（非 ragdoll）兩模型 `pass: true`；motion_test action-figure wave 23/23 `pass: true`
   （walk 用姊妹 repo kimodo clip 19/23，該 clip 後段振幅衰減是已知，非本卡範圍，motion_test 未改）。
+  使用者決定（2026-09-04 18:26）：action-figure `--ragdoll` 肩負載超限**接受為已知限制**，RAGDOLL_ANGLE_EPS 0.15 不動、
+  肩限位不動；人偶已非主線題材。duck-bot 全綠不受影響。
