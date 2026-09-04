@@ -27,3 +27,12 @@
   畫底色/線條/文字，貼在瓶身中段的 cylinder 面（`diffuseTexture`）。
 - 半透明塑膠：`material.alpha = 0.85`（StandardMaterial）；顏色琥珀 `(0.8, 0.52, 0.2)`。
 - 禁止：載入 .glb/.png 外部資產、`scaling` 承載尺寸、無 seed 的 random。
+
+## 陷阱：plane 上的 DynamicTexture 方向（M10）
+
+- box 的側面／頂面 UV 會把 DynamicTexture 文字鏡像或顛倒；標籤一律用 `CreatePlane`。
+- plane 上的 DynamicTexture 由正面看是**上下顛倒**的（spill-kit 蓋內標籤、waste-bin 前標籤實測）：
+  在畫布上先 `c.translate(0, h); c.scale(1, -1)` 再繪製。朝上的 plane（`rotation.x = π/2`，
+  iv-bag 標籤）由上方看則是**左右鏡像**：`c.translate(w, 0); c.scale(-1, 1)`。
+- `texture.vScale = -1` 對非二次冪貼圖不可靠（整片灰），不要用它翻轉。
+

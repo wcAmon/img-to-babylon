@@ -1,0 +1,616 @@
+{
+  "targetName": "cytotoxic-waste-bin",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/cytotoxic-waste-bin/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "00d15f1555c9475ab22f77ff3cd80f20",
+      "prompt": "a purple 30 liter hospital pedal bin with a yellow domed lid, a foot pedal at the front bottom, a white printed label reading CYTOTOXIC WASTE on the front, slightly tapered cylindrical body, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "purple tapered cylindrical pedal bin 0.30 dia x 0.45 tall with a yellow domed lid 0.31 dia x 0.06 (small yellow handle on top) hinged on the back (+z) rim, a small black foot pedal 0.09 x 0.015 x 0.08 hinged at the front (-z) bottom, white CYTOTOXIC WASTE label on the front. Rest = lid closed, pedal level. Lid opens with positive rotation about [1,0,0] up to 1.5; pedal presses with negative rotation down to -0.3.",
+    "complexity": "complex"
+  },
+  "componentTree": [
+    {
+      "id": "bin",
+      "name": "tapered bin body (open top)",
+      "level": "macro",
+      "primitive": "lathe",
+      "dimensions": {
+        "w": 0.3,
+        "h": 0.45,
+        "d": 0.3,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.225,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "bin-purple",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.3,
+          0.45,
+          0.3
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "bag-liner",
+      "name": "purple bag liner inside",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.27,
+        "h": 0.4,
+        "d": 0.27,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.02,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bin",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bin:inside"
+      },
+      "material": "liner-purple"
+    },
+    {
+      "id": "bin-label",
+      "name": "front CYTOTOXIC WASTE label",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.16,
+        "h": 0.11,
+        "d": 0.002,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.04,
+          -0.146
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bin",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bin:front"
+      },
+      "material": "label-print"
+    },
+    {
+      "id": "lid",
+      "name": "yellow domed lid",
+      "level": "macro",
+      "primitive": "lathe",
+      "dimensions": {
+        "w": 0.31,
+        "h": 0.06,
+        "d": 0.31,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.48,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bin",
+      "attachment": {
+        "type": "hinge",
+        "socket": "bin:back-rim",
+        "hinge": {
+          "pivot": [
+            0,
+            -0.03,
+            0.155
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": [
+            0,
+            1.5
+          ]
+        }
+      },
+      "material": "lid-yellow",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.31,
+          0.06,
+          0.31
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "lid-handle",
+      "name": "small handle on lid top",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.08,
+        "h": 0.02,
+        "d": 0.03,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.04,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "lid",
+      "attachment": {
+        "type": "fixed",
+        "socket": "lid:top"
+      },
+      "material": "lid-yellow"
+    },
+    {
+      "id": "lid-knob",
+      "name": "lid hinge knuckle",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.06,
+        "h": 0.02,
+        "d": 0.03,
+        "units": "m",
+        "confidence": 0.4
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.02,
+          0.155
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "lid",
+      "attachment": {
+        "type": "fixed",
+        "socket": "lid:back"
+      },
+      "material": "pedal-black"
+    },
+    {
+      "id": "pedal",
+      "name": "black foot pedal",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.09,
+        "h": 0.015,
+        "d": 0.08,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          0,
+          0.03,
+          -0.17
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bin",
+      "attachment": {
+        "type": "hinge",
+        "socket": "bin:front-bottom",
+        "hinge": {
+          "pivot": [
+            0,
+            0,
+            0.04
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": [
+            -0.3,
+            0
+          ]
+        }
+      },
+      "material": "pedal-black",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.09,
+          0.015,
+          0.08
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "pedal-arm",
+      "name": "pedal arm into bin base",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.03,
+        "h": 0.015,
+        "d": 0.03,
+        "units": "m",
+        "confidence": 0.4
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.05
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "pedal",
+      "attachment": {
+        "type": "fixed",
+        "socket": "pedal:back"
+      },
+      "material": "pedal-black"
+    }
+  ],
+  "materials": [
+    {
+      "id": "bin-purple",
+      "kind": "procedural",
+      "baseColor": [
+        0.5,
+        0.26,
+        0.68
+      ],
+      "roughness": 0.5
+    },
+    {
+      "id": "lid-yellow",
+      "kind": "procedural",
+      "baseColor": [
+        0.95,
+        0.8,
+        0.15
+      ],
+      "roughness": 0.45
+    },
+    {
+      "id": "liner-purple",
+      "kind": "procedural",
+      "baseColor": [
+        0.5,
+        0.28,
+        0.62
+      ],
+      "roughness": 0.7,
+      "alpha": 0.9
+    },
+    {
+      "id": "label-print",
+      "kind": "procedural",
+      "baseColor": [
+        0.96,
+        0.96,
+        0.94
+      ],
+      "roughness": 0.7
+    },
+    {
+      "id": "pedal-black",
+      "kind": "procedural",
+      "baseColor": [
+        0.12,
+        0.12,
+        0.13
+      ],
+      "roughness": 0.5
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "bin",
+        "components": [
+          "bin",
+          "bag-liner",
+          "bin-label"
+        ],
+        "mass": 3.0,
+        "friction": 0.6,
+        "restitution": 0.15,
+        "centerOfMass": [
+          0,
+          -0.15,
+          0
+        ]
+      },
+      {
+        "id": "lid",
+        "components": [
+          "lid",
+          "lid-handle",
+          "lid-knob"
+        ],
+        "mass": 0.35,
+        "friction": 0.6,
+        "restitution": 0.15,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "pedal",
+        "components": [
+          "pedal",
+          "pedal-arm"
+        ],
+        "mass": 0.15,
+        "friction": 0.6,
+        "restitution": 0.15,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "constraints": [
+      {
+        "type": "hinge",
+        "bodyA": "bin",
+        "bodyB": "lid",
+        "pivotA": [
+          0,
+          0.225,
+          0.155
+        ],
+        "pivotB": [
+          0,
+          -0.03,
+          0.155
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": [
+          0,
+          1.5
+        ],
+        "actuation": {
+          "type": "servo",
+          "maxForce": 3
+        }
+      },
+      {
+        "type": "hinge",
+        "bodyA": "bin",
+        "bodyB": "pedal",
+        "pivotA": [
+          0,
+          -0.195,
+          -0.13
+        ],
+        "pivotB": [
+          0,
+          0,
+          0.04
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": [
+          -0.3,
+          0
+        ],
+        "actuation": {
+          "type": "servo",
+          "maxForce": 3
+        }
+      }
+    ]
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.449,
+        "iou": 0.721
+      },
+      "action": "continue",
+      "notes": "兩次修正：(1) 踏板 0.10×0.02×0.12→0.09×0.015×0.08 貼近桶底（原本像一塊突出的板）、標籤 box→plane、紫色提亮、相機略俯視避開天際線；(2) plane 上 DynamicTexture 上下顛倒，畫布內垂直翻轉。Divine Eye pass（IoU 0.72）。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.449,
+        "iou": 0.721
+      },
+      "action": "continue",
+      "notes": "桶身 lathe 殼（外錐＋口緣外翻＋內壁）、垃圾袋內襯、圓頂蓋 lathe＋頂提把＋後緣鉸節、踏板＋臂。踏板 −0.3、蓋 1.5 全開時蓋立在後緣、踏板尖不入地。缺參考圖的兩側耳把（留待後續）。"
+    },
+    {
+      "pass": "material",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.449,
+        "iou": 0.721
+      },
+      "action": "continue",
+      "notes": "bin-purple 0.50/0.26/0.68＋微 emissive、lid-yellow、內襯 alpha 0.9、標籤 DynamicTexture、踏板黑。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.449,
+        "iou": 0.721
+      },
+      "action": "continue",
+      "notes": "bin 3.0 kg cylinder（密度 94，質心 −0.15）、lid 0.35 kg cylinder、pedal 0.15 kg box；兩 hinge（src/hinge.ts）servo maxForce 3。check_colliders OK、physics_test／--nudge lid／--nudge pedal 全 pass、actuation_test servo:lid.x／servo:pedal.x 綠。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.449,
+        "iou": 0.721
+      },
+      "action": "continue",
+      "notes": "常數推導樞軸；metadata sculptRuntime；dispose 完整。剩餘落差：桶身錐度比參考圖略大、無側耳把、蓋緣無下垂裙邊。"
+    }
+  ]
+}
