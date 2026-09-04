@@ -236,12 +236,24 @@ doctrine「ragdoll 出生即癱」的反擊：19 軸伺服鎖出廠姿勢當肌�
       servo（另開卡）。原計畫協定：質心推到左靴→抬右腿→hold 300 步；判準三癱家族
       不倒、質心在左靴內、右靴離地。
 - [—] 0017 移交 image-to-physics（M2 下半身）：原重心轉移步態、walk gate 與 playground 走路控制由姊妹 repo 承接。
-- [ ] 0019 質量契約（2026-09-03 核准）：腿鏈 thigh 0.005／calf 0.008／boot 0.005（質量比 ≤ ~10:1）。
+- [x] 0019 質量契約（2026-09-03 核准、結案 dffc640）：腿鏈 thigh 0.005／calf 0.008／boot 0.005（質量比 ≤ ~10:1）。
       姊妹 repo 探勘：Havok POSITION 馬達本身剛體，M7–M8「軟 servo／黏滑／後向無權威」真根因是
       關節兩側質量比（倒單擺 85 kg 撐 1 kg 底座必翻、5 kg 起剛體）。幾何／限位不動；站立類 gate 若紅
       roll P/D/I 與 feedforward.roll.maxOutput ×2。新總質量 0.106 kg，解除 0014 的 calf+boot 固定 5 g 舊約束。
 - [x] 0018 套件入口（2026-09-03）：`viewer/src/index.ts`＋package exports／peerDependencies；
       姊妹 repo 以 tsconfig paths 指向本 checkout，link_probe 驗證單一 @babylonjs/core。
+
+## M9：duck-bot 鴨型長腿雙足機器人（姊妹 repo M3 題材的契約側，2026-09-04 核准開工）
+
+image-to-physics 目標改向：遙控雙足機器人（鴨子型態、腳很長；走／轉／跑／跳）。本 repo 只出題材
+與契約：圖片（tomato）→ spec → factory → 三層 gate；控制律與站立／抗推 gate 在姊妹 repo。
+設計文件 `../image-to-physics/docs/superpowers/specs/2026-09-04-duck-bot-biped-design.md`。
+
+- [ ] 0020 duck-bot（2026-09-04 開卡）：7 剛體（body 含頭一體、thigh／shank／foot ×2）、10 關節 12 軸伺服
+      （髖 x/y/z、膝 x、踝 x/y，servo id `servo:thigh-l.x` 慣例）；比例與質量為硬約束（腿長 ≈ 軀幹高 ×1.8、
+      腳 0.024×0.007×0.040；質量 body 0.060／thigh 0.012／shank 0.012／foot 0.015，關節質量比 ≤ 10:1；
+      姊妹 repo 倒單擺探針：0.40 長大腳讓單擺在腳 0.010–0.020 kg·S³ 都撐直——腳的支撐長度比質量關鍵）；
+      factory `balance` 照抄 action-figure 換 id。Codex 六步到 headless gate，監工做視覺 gate 與 rig_test。
 
 ## Parked（自設計文件 §11 移入，不分先後）
 
