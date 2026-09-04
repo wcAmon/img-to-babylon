@@ -1,0 +1,395 @@
+{
+  "targetName": "chemo-iv-bag",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/chemo-iv-bag/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "d658625d8bed4e169dccad73037ccd6d",
+      "prompt": "a 500 ml clear PVC intravenous infusion bag lying flat on a table seen from directly above, filled with pale yellow chemotherapy drug solution, two purple-capped ports at the bottom end, a hanging eyelet at the top end, a white printed label reading CYTOTOXIC, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "500 ml soft IV bag lying flat: 0.14 wide (x) x 0.035 thick (y) x 0.19 long (z), frosted translucent film showing pale yellow liquid, a large purple-capped port at +z and a small purple-capped side port, hanging eyelets at -z, white CYTOTOXIC label on the top face. Single rigid body; rupture = mass transfer (bag empties to 0.04 kg, puddle spreads, droplets scatter).",
+    "complexity": "complex"
+  },
+  "componentTree": [
+    {
+      "id": "bag",
+      "name": "bag film body",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.14,
+        "h": 0.035,
+        "d": 0.19,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0175,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "bag-film",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.14,
+          0.035,
+          0.19
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "liquid",
+      "name": "pale yellow drug solution",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.13,
+        "h": 0.028,
+        "d": 0.16,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.002,
+          0.005
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:inside"
+      },
+      "material": "liquid-yellow"
+    },
+    {
+      "id": "label",
+      "name": "white CYTOTOXIC label",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.09,
+        "h": 0.001,
+        "d": 0.06,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.018,
+          -0.005
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:top"
+      },
+      "material": "label-white"
+    },
+    {
+      "id": "port-a",
+      "name": "main infusion port with large purple cap",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.024,
+        "h": 0.04,
+        "d": 0.024,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          -0.04,
+          0,
+          0.115
+        ],
+        "rotation": [
+          1.5708,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:+z"
+      },
+      "material": "port-purple"
+    },
+    {
+      "id": "port-b",
+      "name": "small side port with purple cap",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.012,
+        "h": 0.03,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0.05,
+          0,
+          0.11
+        ],
+        "rotation": [
+          1.5708,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:+z"
+      },
+      "material": "port-purple"
+    },
+    {
+      "id": "hang-eye",
+      "name": "hanging eyelet",
+      "level": "micro",
+      "primitive": "torus",
+      "dimensions": {
+        "w": 0.02,
+        "h": 0.004,
+        "d": 0.02,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          -0.105
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:-z"
+      },
+      "material": "bag-film"
+    }
+  ],
+  "materials": [
+    {
+      "id": "bag-film",
+      "kind": "procedural",
+      "baseColor": [
+        0.85,
+        0.88,
+        0.9
+      ],
+      "roughness": 0.35,
+      "alpha": 0.45
+    },
+    {
+      "id": "liquid-yellow",
+      "kind": "procedural",
+      "baseColor": [
+        0.93,
+        0.85,
+        0.45
+      ],
+      "roughness": 0.2
+    },
+    {
+      "id": "label-white",
+      "kind": "procedural",
+      "baseColor": [
+        0.97,
+        0.97,
+        0.95
+      ],
+      "roughness": 0.7
+    },
+    {
+      "id": "port-purple",
+      "kind": "procedural",
+      "baseColor": [
+        0.45,
+        0.2,
+        0.6
+      ],
+      "roughness": 0.45
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "bag",
+        "components": [
+          "bag",
+          "liquid",
+          "label",
+          "port-a",
+          "port-b",
+          "hang-eye"
+        ],
+        "mass": 0.55,
+        "friction": 0.5,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          -0.005,
+          0
+        ],
+        "rupture": {
+          "impulseThreshold": 2.0,
+          "emptiedMass": 0.04,
+          "puddleRadius": 0.3,
+          "droplets": 12
+        }
+      }
+    ],
+    "constraints": []
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.422,
+        "iou": 0.692
+      },
+      "action": "continue",
+      "notes": "兩次修正：(1) 袋寬 0.12→0.14（參考圖袋比更寬）、液體改不透明（與半透明袋膜同時透明出現斜切排序破面）、標籤 box→朝上 plane；(2) plane 由上看 u 方向反向，canvas 內水平翻轉。俯視 hero（alpha 0、beta 0.12）Divine Eye pass。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.422,
+        "iou": 0.692
+      },
+      "action": "continue",
+      "notes": "袋身 box、液體內盒、標籤 plane、主輸液口（大紫蓋，-x 側）＋小側口、吊耳 torus；塌扁袋 mesh 預建隱藏（非 spec 元件）。"
+    },
+    {
+      "pass": "material",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.422,
+        "iou": 0.692
+      },
+      "action": "continue",
+      "notes": "袋膜 alpha 0.45 雙面、液體不透明淡黃、標籤 DynamicTexture（CYTOTOXIC／化療藥物 請勿觸碰／500 mL）、紫色口蓋；水漬材質 alpha 0.55。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.422,
+        "iou": 0.692
+      },
+      "action": "continue",
+      "notes": "單剛體 0.55 kg box collider（密度 590）。rupture：Δv 偵測（單步 m·|Δv| ≥ 2.0 N·s）；破裂→質量 0.04、collider 換 0.010 薄盒、水漬 disc 90 幀長到 0.30、12 顆液滴（阻尼 2.0，否則理想球在地面永滾）。rupture_test 全綠：1.5 m 必破、0.2 m 不破、冪等、dispose 乾淨；physics_test（0.3 m）不破；actuation_test rupture:bag 綠。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.422,
+        "iou": 0.692
+      },
+      "action": "continue",
+      "notes": "seed 20260904 決定液滴方向；metadata sculptRuntime；dispose 釋放觀察者→液滴 body→水漬／液滴 mesh→材質→root。剩餘落差：袋身是直角 box 而非枕形、吊耳只做一個。"
+    }
+  ]
+}
