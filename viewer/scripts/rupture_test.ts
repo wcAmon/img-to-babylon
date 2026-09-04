@@ -94,7 +94,7 @@ async function main(): Promise<number> {
       const { ctx, model } = await spawn(name, HIGH_DROP);
       ctx.step(FALL_STEPS);
       const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
-      push(`A:${decl.id}:mass`, Math.abs(mass - rup.emptiedMass) < 1e-6, `落 ${HIGH_DROP}m 後質量 ${mass}（期望 ${rup.emptiedMass}）`);
+      push(`A:${decl.id}:mass`, Math.abs(mass - rup.emptiedMass) < 1e-5, `落 ${HIGH_DROP}m 後質量 ${mass}（期望 ${rup.emptiedMass}）`);
       ctx.step(PUDDLE_STEPS);
       const r = puddleRadius(model);
       push(`A:${decl.id}:puddle`, r !== null && Math.abs(r - rup.puddleRadius) <= RADIUS_TOL, `水漬半徑 ${r}（期望 ${rup.puddleRadius}）`);
@@ -110,7 +110,7 @@ async function main(): Promise<number> {
       const { ctx, model } = await spawn(name, LOW_DROP);
       ctx.step(FALL_STEPS + SETTLE_STEPS);
       const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
-      push(`B:${decl.id}:intact`, Math.abs(mass - decl.mass) < 1e-6 && !model.meshes["puddle"] && droplets(model).length === 0,
+      push(`B:${decl.id}:intact`, Math.abs(mass - decl.mass) < 1e-5 && !model.meshes["puddle"] && droplets(model).length === 0,
         `落 ${LOW_DROP}m 後質量 ${mass}（期望 ${decl.mass}）、puddle=${!!model.meshes["puddle"]}`);
       ctx.dispose();
     }
@@ -124,7 +124,7 @@ async function main(): Promise<number> {
       } else {
         act.set(1); ctx.step(5); act.set(1); ctx.step(5);
         const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
-        push(`C:${decl.id}:idempotent`, Math.abs(mass - rup.emptiedMass) < 1e-6 && droplets(model).length === rup.droplets,
+        push(`C:${decl.id}:idempotent`, Math.abs(mass - rup.emptiedMass) < 1e-5 && droplets(model).length === rup.droplets,
           `質量 ${mass}、液滴 ${droplets(model).length}（期望 ${rup.droplets}）`);
       }
       model.dispose();

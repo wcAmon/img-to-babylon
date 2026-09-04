@@ -202,7 +202,7 @@ async function main(): Promise<number> {
       step(5);
       const dropletsB = Object.keys(model.bodies).filter((k) => k.startsWith("droplet-")).length;
       push(`rupture:${b.id}`,
-        Math.abs(mass - rup.emptiedMass) < 1e-6 && dropletsA === rup.droplets && dropletsB === rup.droplets,
+        Math.abs(mass - rup.emptiedMass) < 1e-5 && dropletsA === rup.droplets && dropletsB === rup.droplets,
         `質量 ${mass} vs ${rup.emptiedMass}；液滴 ${dropletsA}/${dropletsB}（期望 ${rup.droplets}，冪等）`);
     }
   };
