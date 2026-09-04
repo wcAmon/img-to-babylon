@@ -11,4 +11,6 @@ export const registry: Record<string, () => Promise<{ default: ModelFactory }>> 
   "toy-racer": () => import("../models/toy-racer/createToyRacerModel"),
   // M2 玩具公仔 ragdoll（多軸限位 joint）
   "action-figure": () => import("../models/action-figure/createActionFigureModel"),
+  // M3 鴨型長腿雙足機器人
+  "duck-bot": () => import("../models/duck-bot/createDuckBotModel"),
 };

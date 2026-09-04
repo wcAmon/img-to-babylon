@@ -1,0 +1,152 @@
+{
+  "targetName": "duck-bot",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/duck-bot/hero.png",
+      "origin": "tomato",
+      "prompt": "cute toy robot duck standing on extremely long stilt-like mechanical bird legs, legs are twice as tall as the round duck body, thin chrome legs with visible knee joints, huge flat orange webbed feet, small round body with tiny fused head and orange beak, full body from head to feet, tall vertical composition, matte plastic toy, soft studio lighting, plain light gray background, no text"
+    }
+  ],
+  "coordinateFrame": { "up": "y", "forward": "z", "units": "m" },
+  "silhouette": {
+    "outline": "round yellow duck robot with a fused small head, projecting orange bill, side wings, extremely long thin chrome legs, and broad forward orange webbed feet",
+    "complexity": "complex"
+  },
+  "componentTree": [
+    {
+      "id": "body", "name": "round duck body", "level": "macro", "primitive": "sphere",
+      "dimensions": { "w": 0.06, "h": 0.06, "d": 0.06, "units": "m", "confidence": 1.0 },
+      "transform": { "position": [0, 0.147, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null, "attachment": { "type": "none" }, "material": "duck-yellow",
+      "collider": { "type": "sphere", "size": [0.06, 0.06, 0.06], "offset": [0, 0, 0], "confidence": 1.0 }
+    },
+    {
+      "id": "head", "name": "fused duck head cap", "level": "meso", "primitive": "sphere",
+      "dimensions": { "w": 0.042, "h": 0.02, "d": 0.038, "units": "m", "confidence": 0.8 },
+      "transform": { "position": [0, 0.02, 0.001], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body", "attachment": { "type": "fixed", "socket": "body:top" }, "material": "duck-yellow"
+    },
+    {
+      "id": "beak-upper", "name": "upper orange bill", "level": "meso", "primitive": "sphere",
+      "dimensions": { "w": 0.034, "h": 0.008, "d": 0.025, "units": "m", "confidence": 0.8 },
+      "transform": { "position": [0, 0.017, 0.026], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body", "attachment": { "type": "fixed", "socket": "head:front" }, "material": "beak-orange"
+    },
+    {
+      "id": "beak-lower", "name": "lower orange bill", "level": "micro", "primitive": "sphere",
+      "dimensions": { "w": 0.03, "h": 0.006, "d": 0.021, "units": "m", "confidence": 0.75 },
+      "transform": { "position": [0, 0.013, 0.026], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body", "attachment": { "type": "fixed", "socket": "head:front-lower" }, "material": "beak-orange-dark"
+    },
+    {
+      "id": "wing-l", "name": "left wing plate", "level": "meso", "primitive": "sphere",
+      "dimensions": { "w": 0.01, "h": 0.032, "d": 0.025, "units": "m", "confidence": 0.75 },
+      "transform": { "position": [0.029, -0.002, 0.002], "rotation": [0, 0, -0.22], "scale": [1, 1, 1] },
+      "parent": "body", "attachment": { "type": "fixed", "socket": "body:left" }, "material": "duck-yellow-dark"
+    },
+    {
+      "id": "wing-r", "name": "right wing plate", "level": "meso", "primitive": "sphere",
+      "dimensions": { "w": 0.01, "h": 0.032, "d": 0.025, "units": "m", "confidence": 0.75 },
+      "transform": { "position": [-0.029, -0.002, 0.002], "rotation": [0, 0, 0.22], "scale": [1, 1, 1] },
+      "parent": "body", "attachment": { "type": "fixed", "socket": "body:right" }, "material": "duck-yellow-dark"
+    },
+    {
+      "id": "eye-l", "name": "left glossy eye", "level": "micro", "primitive": "sphere",
+      "dimensions": { "w": 0.006, "h": 0.008, "d": 0.004, "units": "m", "confidence": 0.9 },
+      "transform": { "position": [0.011, 0.023, 0.026], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body", "attachment": { "type": "fixed", "socket": "head:front-left" }, "material": "eye-black"
+    },
+    {
+      "id": "eye-r", "name": "right glossy eye", "level": "micro", "primitive": "sphere",
+      "dimensions": { "w": 0.006, "h": 0.008, "d": 0.004, "units": "m", "confidence": 0.9 },
+      "transform": { "position": [-0.011, 0.023, 0.026], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body", "attachment": { "type": "fixed", "socket": "head:front-right" }, "material": "eye-black"
+    },
+    {
+      "id": "tuft", "name": "small crown tuft", "level": "micro", "primitive": "sphere",
+      "dimensions": { "w": 0.012, "h": 0.005, "d": 0.01, "units": "m", "confidence": 0.6 },
+      "transform": { "position": [0, 0.032, -0.002], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": "body", "attachment": { "type": "fixed", "socket": "head:crown" }, "material": "duck-yellow"
+    },
+    {
+      "id": "thigh-l", "name": "left upper chrome leg", "level": "macro", "primitive": "box",
+      "dimensions": { "w": 0.012, "h": 0.055, "d": 0.012, "units": "m", "confidence": 1.0 },
+      "transform": { "position": [0.018, 0.0895, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null,
+      "attachment": { "type": "joint", "socket": "body:left-hip", "joint": { "pivot": [0, 0.0275, 0], "axis": [1, 0, 0], "angular": { "x": [-1.6, 0.8], "y": [-0.5, 0.5], "z": [-0.8, 0.8] } } },
+      "material": "chrome", "collider": { "type": "box", "size": [0.012, 0.055, 0.012], "offset": [0, 0, 0], "confidence": 1.0 }
+    },
+    {
+      "id": "thigh-r", "name": "right upper chrome leg", "level": "macro", "primitive": "box",
+      "dimensions": { "w": 0.012, "h": 0.055, "d": 0.012, "units": "m", "confidence": 1.0 },
+      "transform": { "position": [-0.018, 0.0895, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null,
+      "attachment": { "type": "joint", "socket": "body:right-hip", "joint": { "pivot": [0, 0.0275, 0], "axis": [1, 0, 0], "angular": { "x": [-1.6, 0.8], "y": [-0.5, 0.5], "z": [-0.8, 0.8] } } },
+      "material": "chrome", "collider": { "type": "box", "size": [0.012, 0.055, 0.012], "offset": [0, 0, 0], "confidence": 1.0 }
+    },
+    {
+      "id": "shank-l", "name": "left lower chrome leg", "level": "macro", "primitive": "box",
+      "dimensions": { "w": 0.01, "h": 0.055, "d": 0.01, "units": "m", "confidence": 1.0 },
+      "transform": { "position": [0.018, 0.0345, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null,
+      "attachment": { "type": "joint", "socket": "thigh-l:knee", "joint": { "pivot": [0, 0.0275, 0], "axis": [1, 0, 0], "angular": { "x": [0, 2.0], "y": "locked", "z": "locked" } } },
+      "material": "chrome", "collider": { "type": "box", "size": [0.01, 0.055, 0.01], "offset": [0, 0, 0], "confidence": 1.0 }
+    },
+    {
+      "id": "shank-r", "name": "right lower chrome leg", "level": "macro", "primitive": "box",
+      "dimensions": { "w": 0.01, "h": 0.055, "d": 0.01, "units": "m", "confidence": 1.0 },
+      "transform": { "position": [-0.018, 0.0345, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null,
+      "attachment": { "type": "joint", "socket": "thigh-r:knee", "joint": { "pivot": [0, 0.0275, 0], "axis": [1, 0, 0], "angular": { "x": [0, 2.0], "y": "locked", "z": "locked" } } },
+      "material": "chrome", "collider": { "type": "box", "size": [0.01, 0.055, 0.01], "offset": [0, 0, 0], "confidence": 1.0 }
+    },
+    {
+      "id": "foot-l", "name": "left orange webbed foot", "level": "macro", "primitive": "box",
+      "dimensions": { "w": 0.024, "h": 0.007, "d": 0.04, "units": "m", "confidence": 1.0 },
+      "transform": { "position": [0.018, 0.0035, 0.01], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null,
+      "attachment": { "type": "joint", "socket": "shank-l:ankle", "joint": { "pivot": [0, 0.0035, -0.01], "axis": [1, 0, 0], "angular": { "x": [-0.6, 0.6], "y": [-0.4, 0.4], "z": "locked" } } },
+      "material": "beak-orange", "collider": { "type": "box", "size": [0.024, 0.007, 0.04], "offset": [0, 0, 0], "confidence": 1.0 }
+    },
+    {
+      "id": "foot-r", "name": "right orange webbed foot", "level": "macro", "primitive": "box",
+      "dimensions": { "w": 0.024, "h": 0.007, "d": 0.04, "units": "m", "confidence": 1.0 },
+      "transform": { "position": [-0.018, 0.0035, 0.01], "rotation": [0, 0, 0], "scale": [1, 1, 1] },
+      "parent": null,
+      "attachment": { "type": "joint", "socket": "shank-r:ankle", "joint": { "pivot": [0, 0.0035, -0.01], "axis": [1, 0, 0], "angular": { "x": [-0.6, 0.6], "y": [-0.4, 0.4], "z": "locked" } } },
+      "material": "beak-orange", "collider": { "type": "box", "size": [0.024, 0.007, 0.04], "offset": [0, 0, 0], "confidence": 1.0 }
+    }
+  ],
+  "materials": [
+    { "id": "duck-yellow", "kind": "procedural", "baseColor": [1.0, 0.72, 0.08], "roughness": 0.45 },
+    { "id": "duck-yellow-dark", "kind": "procedural", "baseColor": [0.96, 0.58, 0.04], "roughness": 0.5 },
+    { "id": "beak-orange", "kind": "procedural", "baseColor": [1.0, 0.31, 0.04], "roughness": 0.38 },
+    { "id": "beak-orange-dark", "kind": "procedural", "baseColor": [0.9, 0.16, 0.025], "roughness": 0.42 },
+    { "id": "eye-black", "kind": "procedural", "baseColor": [0.012, 0.01, 0.008], "roughness": 0.12 },
+    { "id": "chrome", "kind": "procedural", "baseColor": [0.72, 0.76, 0.8], "roughness": 0.16 }
+  ],
+  "physics": {
+    "bodies": [
+      { "id": "body", "components": ["body", "head", "beak-upper", "beak-lower", "wing-l", "wing-r", "eye-l", "eye-r", "tuft"], "mass": 0.06, "friction": 0.6, "restitution": 0.2 },
+      { "id": "thigh-l", "components": ["thigh-l"], "mass": 0.012, "friction": 0.6, "restitution": 0.2 },
+      { "id": "thigh-r", "components": ["thigh-r"], "mass": 0.012, "friction": 0.6, "restitution": 0.2 },
+      { "id": "shank-l", "components": ["shank-l"], "mass": 0.012, "friction": 0.6, "restitution": 0.2 },
+      { "id": "shank-r", "components": ["shank-r"], "mass": 0.012, "friction": 0.6, "restitution": 0.2 },
+      { "id": "foot-l", "components": ["foot-l"], "mass": 0.015, "friction": 0.8, "restitution": 0.2, "centerOfMass": [0, 0, -0.01] },
+      { "id": "foot-r", "components": ["foot-r"], "mass": 0.015, "friction": 0.8, "restitution": 0.2, "centerOfMass": [0, 0, -0.01] }
+    ],
+    "constraints": [
+      { "type": "joint", "bodyA": "body", "bodyB": "thigh-l", "pivotA": [0.018, -0.03, 0], "pivotB": [0, 0.0275, 0], "axis": [1, 0, 0], "angular": { "x": [-1.6, 0.8], "y": [-0.5, 0.5], "z": [-0.8, 0.8] }, "actuation": { "type": "servo", "maxForce": 0.02 } },
+      { "type": "joint", "bodyA": "body", "bodyB": "thigh-r", "pivotA": [-0.018, -0.03, 0], "pivotB": [0, 0.0275, 0], "axis": [1, 0, 0], "angular": { "x": [-1.6, 0.8], "y": [-0.5, 0.5], "z": [-0.8, 0.8] }, "actuation": { "type": "servo", "maxForce": 0.02 } },
+      { "type": "joint", "bodyA": "thigh-l", "bodyB": "shank-l", "pivotA": [0, -0.0275, 0], "pivotB": [0, 0.0275, 0], "axis": [1, 0, 0], "angular": { "x": [0, 2.0], "y": "locked", "z": "locked" }, "actuation": { "type": "servo", "maxForce": 0.02 } },
+      { "type": "joint", "bodyA": "thigh-r", "bodyB": "shank-r", "pivotA": [0, -0.0275, 0], "pivotB": [0, 0.0275, 0], "axis": [1, 0, 0], "angular": { "x": [0, 2.0], "y": "locked", "z": "locked" }, "actuation": { "type": "servo", "maxForce": 0.02 } },
+      { "type": "joint", "bodyA": "shank-l", "bodyB": "foot-l", "pivotA": [0, -0.0275, 0], "pivotB": [0, 0.0035, -0.01], "axis": [1, 0, 0], "angular": { "x": [-0.6, 0.6], "y": [-0.4, 0.4], "z": "locked" }, "actuation": { "type": "servo", "maxForce": 0.02 } },
+      { "type": "joint", "bodyA": "shank-r", "bodyB": "foot-r", "pivotA": [0, -0.0275, 0], "pivotB": [0, 0.0035, -0.01], "axis": [1, 0, 0], "angular": { "x": [-0.6, 0.6], "y": [-0.4, 0.4], "z": "locked" }, "actuation": { "type": "servo", "maxForce": 0.02 } }
+    ]
+  },
+  "proportions": { "head_component": "head", "head_unit": 0.02, "total_heads": 9.0, "tolerance": 0.3 },
+  "buildPasses": ["blockout", "structure", "material", "physics", "polish"],
+  "reviewHistory": []
+}

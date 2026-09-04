@@ -55,3 +55,63 @@ notes:
   `cute toy robot duck standing on extremely long stilt-like mechanical bird legs, legs are twice as tall as the round duck body, thin chrome legs with visible knee joints, huge flat orange webbed feet, small round body with tiny fused head and orange beak, full body from head to feet, tall vertical composition, matte plastic toy, soft studio lighting, plain light gray background, no text`
   （`--aspect 9:16 --seed 20260907`）。圖中大腿短、小腿長；spec 依身體計畫仍取大腿＝小腿 0.055（硬約束），外觀
   鉻銀腿、橘色蹼腳、黃色球身＋球頭＋橘嘴＋翅膀貼片。
+
+  Codex（2026-09-04，headless 執行，依三輪紅線停手）：
+  - pass 狀態：`init --model duck-bot --force` exit 0；blockout、structure、material 已各跑驗證並 `done`，共完成
+    **3/5 passes**；目前停在 physics（`correctionsThisPass: 2`, `totalCorrections: 2`），未執行 physics `done`、polish
+    或瀏覽器第 5d 步，status 未改。
+  - spec gate：模板初始 RED 為 `FAIL: strict: macro 元件 main 缺少 material`（exit 2）；完成 spec 後
+    `python3 forge/validate_spec.py viewer/models/duck-bot/spec.json --strict` 原文 `OK`（exit 0）。7 bodies、6 個
+    `type:"joint"` constraints、12 個非 locked 軸，質量總和 0.138 kg；尺寸、質量、angular limits、servo id 均照卡。
+  - TypeScript：blockout／structure／material／physics 每輪 `cd viewer && npx tsc --noEmit` 均 exit 0、無輸出。
+  - runtime/collider：指定的 `npx tsx scripts/runtime_export.ts ...` 在腳本執行前被沙盒拒絕 Unix socket，系統 TMP 與
+    `/tmp` 兩次皆 exit 1，原文核心為 `Error: listen EPERM: operation not permitted .../tsx-501/*.pipe`；為區分模型問題，
+    等價 loader 診斷 `node --import tsx scripts/runtime_export.ts duck-bot ...` exit 0，原文
+    `{"out":"../.img2babylon/duck-bot/runtime.json","meshes":15,"bodies":7}`；其後
+    `python3 forge/check_colliders.py .img2babylon/duck-bot/runtime.json` 原文 `OK`（exit 0）。指定 npx gate 因沙盒
+    launcher 尚未取得 exit 0，不能列為正式通過。
+  - collider 密度（runtime mass ÷ spec collider volume；kg/m³）：
+
+    | body id | mass kg | collider volume m³ | density kg/m³ | gate [50,3000] |
+    |---|---:|---:|---:|---|
+    | body | 0.060 | 0.000113097 | 530.5（卡片四捨五入 531） | in range |
+    | thigh-l / thigh-r | 0.012 each | 0.000007920 each | 1515.2（卡片 1515） | in range |
+    | shank-l / shank-r | 0.012 each | 0.000005500 each | 2181.8（卡片 2182） | in range |
+    | foot-l / foot-r | 0.015 each | 0.000006720 each | 2232.1（卡片 2232） | in range |
+
+  - actuation：最終 `node --import tsx scripts/actuation_test.ts duck-bot --spec models/duck-bot/spec.json` exit 0，
+    JSON `"pass": true`；coverage 原文為 thigh-l `3 軸`、thigh-r `3 軸`、shank-l `1 軸`、shank-r `1 軸`、
+    foot-l `2 軸`、foot-r `2 軸`，合計 12 軸全 `ok:true`。實測方向／數值如下（+X 依本 repo 左手座標，
+    `+Y→+Z`；髖 x 負＝前屈、膝 x 正＝屈）：
+
+    | servo id | 命令→實測 rad | 實際方向 |
+    |---|---:|---|
+    | servo:thigh-l.x | −0.960→−0.950 | −X，左髖前屈（腿往 +Z） |
+    | servo:thigh-l.y | +0.300→+0.316 | +Y，左腿正向扭轉 |
+    | servo:thigh-l.z | +0.480→+0.480 | +Z，左腿下端往 +X（外展） |
+    | servo:thigh-r.x | −0.960→−0.920 | −X，右髖前屈（腿往 +Z） |
+    | servo:thigh-r.y | +0.300→+0.278 | +Y，右腿正向扭轉 |
+    | servo:thigh-r.z | +0.480→+0.480 | +Z，右腿下端往 +X（內收） |
+    | servo:shank-l.x | +1.200→+1.193 | +X，左膝屈（腳往 −Z） |
+    | servo:shank-r.x | +1.200→+1.192 | +X，右膝屈（腳往 −Z） |
+    | servo:foot-l.x | +0.360→+0.360 | +X，左腳趾往 −Y（蹠屈） |
+    | servo:foot-l.y | +0.240→+0.240 | +Y，左腳趾往 +X（外轉） |
+    | servo:foot-r.x | +0.360→+0.360 | +X，右腳趾往 −Y（蹠屈） |
+    | servo:foot-r.y | +0.240→+0.240 | +Y，右腳趾往 +X（內轉） |
+
+  - actuation 根因與判斷：第一次 physics 實作後兩個 foot.x 都 `量測 -0.240 vs 目標 0.360`。腳中心依硬約束
+    前移 +0.010 z，未 armed 時重力令腳懸垂到 x≈+0.600；gate 以該姿勢取 bind，馬達回 +0.360 因而量到
+    0.360−0.600=−0.240。保留尺寸、質量、pivot、限位與 servo id，只把兩腳 `centerOfMass` 設為
+    `[0,0,-0.01]`（踝的 z 投影）後，foot.x/y 與其餘 10 軸全通過。
+  - ragdoll 三輪 RED，故停手：第 1 輪是 TDD 基線（factory 尚無 bodies，6 條皆 `找不到 body`，exit 1）；第 2 輪
+    加入 physics 後 collapsed/finite/constraint separation 均通過，但 foot-r locked-z `-0.2091` 超過 ±0.15；
+    第 3 輪在上述 foot COM z 修正後仍 exit 1、JSON `"pass": false`，原文要點：standHeight 1.815、
+    finalHeight 0.9292（<60%，`collapsed:true`）、7 bodies 全 `finite:true`、6 constraints 全 `ok:true`
+    （最大 separation 0.00220 < 0.005×physicsScale），但 foot-l z `-0.2397`、foot-r z `-0.1693` 使兩踝
+    `ok:false`。另以第二次 correction 試把 COM y 也移到踝 pivot，z 為 `-0.2412/-0.1886`，未改善，已回復該
+    無效實驗。機制判斷：長前伸腳在落地碰撞時對多軸踝產生 roll impulse，Havok 6DoF locked-z 柔性超過 gate
+    0.15 rad；不是 NaN、constraint 裂開、collapse 失敗或 servo coverage 問題。依「同一 gate 三輪紅」紅線不做
+    第四個 physics 修正。
+  - 因上述停手條件，收尾的 forge unittest 與 action-figure physics/actuation 回歸 gate **未跑**，不可宣稱全卡驗收
+    或 headless gate 完成；現況是可編譯、strict spec／collider 診斷／12 軸 actuation 已綠，ragdoll 與指定 npx
+    runtime launcher 未綠。
