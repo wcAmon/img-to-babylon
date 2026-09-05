@@ -1,0 +1,634 @@
+{
+  "targetName": "cytotoxic-waste-bag",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/cytotoxic-waste-bag/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "2ec9e6208b15401494e83c9772b75cd1",
+      "prompt": "a bright yellow heavy plastic cytotoxic waste bag standing upright on the floor with its top wide open like a standing paper grocery bag, rectangular flat bottom 30 cm wide 20 cm deep, 36 cm tall, the open mouth shows the dark yellow interior, black biohazard symbol and black text CYTOTOXIC WASTE printed on the front face, three-quarter view from slightly above, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "bright yellow self-standing open waste bag 0.30 wide (x) x 0.36 tall (y) x 0.20 deep (z), walls 0.006 thick, bottom 0.010, open top with a darker crinkled rim and two handle tabs rising 0.06 above the rim at the corners; black biohazard symbol centred on the front (-z) with CYTOTOXIC WASTE below it. Single rigid body with five colliders (bottom + four walls, flush, no overlap) forming a hollow container. Rest = upright. collect: sealing the bag swallows any small dynamic body inside the interior 0.288 x 0.35 x 0.188 (mass transfer into the bag).",
+    "complexity": "medium"
+  },
+  "componentTree": [
+    {
+      "id": "bag",
+      "name": "crinkled rim tube around the open top",
+      "level": "meso",
+      "primitive": "tube",
+      "dimensions": {
+        "w": 0.3,
+        "h": 0.012,
+        "d": 0.2,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.18,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "bag-dark"
+    },
+    {
+      "id": "bag-bottom",
+      "name": "flat bottom",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.3,
+        "h": 0.01,
+        "d": 0.2,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.175,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:bottom"
+      },
+      "material": "bag-yellow",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.3,
+          0.01,
+          0.2
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "wall-front",
+      "name": "front wall (-z, printed)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.3,
+        "h": 0.35,
+        "d": 0.006,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          0.005,
+          -0.097
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:front"
+      },
+      "material": "bag-yellow",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.3,
+          0.35,
+          0.006
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "wall-back",
+      "name": "back wall (+z)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.3,
+        "h": 0.35,
+        "d": 0.006,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          0.005,
+          0.097
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:back"
+      },
+      "material": "bag-yellow",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.3,
+          0.35,
+          0.006
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "wall-left",
+      "name": "left wall (-x)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.006,
+        "h": 0.35,
+        "d": 0.188,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          -0.147,
+          0.005,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:left"
+      },
+      "material": "bag-yellow",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.006,
+          0.35,
+          0.188
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "wall-right",
+      "name": "right wall (+x)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.006,
+        "h": 0.35,
+        "d": 0.188,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0.147,
+          0.005,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:right"
+      },
+      "material": "bag-yellow",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.006,
+          0.35,
+          0.188
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "bag-label",
+      "name": "black biohazard symbol and CYTOTOXIC WASTE print",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.26,
+        "h": 0.3,
+        "d": 0.001,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.01,
+          -0.1006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "wall-front:outside"
+      },
+      "material": "print-black"
+    },
+    {
+      "id": "bag-liner",
+      "name": "darker inner floor",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.286,
+        "h": 0.002,
+        "d": 0.186,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.169,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:inside"
+      },
+      "material": "bag-dark"
+    },
+    {
+      "id": "handle-l",
+      "name": "left handle tabs (front and back)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.07,
+        "h": 0.06,
+        "d": 0.006,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          -0.105,
+          0.21,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:top-left"
+      },
+      "material": "bag-yellow"
+    },
+    {
+      "id": "handle-r",
+      "name": "right handle tabs (front and back)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.07,
+        "h": 0.06,
+        "d": 0.006,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0.105,
+          0.21,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:top-right"
+      },
+      "material": "bag-yellow"
+    },
+    {
+      "id": "bag-knot",
+      "name": "gathered knot shown after sealing",
+      "level": "micro",
+      "primitive": "sphere",
+      "dimensions": {
+        "w": 0.05,
+        "h": 0.05,
+        "d": 0.05,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.205,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bag",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bag:top"
+      },
+      "material": "bag-dark"
+    }
+  ],
+  "materials": [
+    {
+      "id": "bag-yellow",
+      "kind": "procedural",
+      "baseColor": [
+        1.0,
+        0.85,
+        0.1
+      ],
+      "roughness": 0.6
+    },
+    {
+      "id": "bag-dark",
+      "kind": "procedural",
+      "baseColor": [
+        0.75,
+        0.6,
+        0.05
+      ],
+      "roughness": 0.7
+    },
+    {
+      "id": "print-black",
+      "kind": "procedural",
+      "baseColor": [
+        0.08,
+        0.08,
+        0.08
+      ],
+      "roughness": 0.8
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "bag",
+        "components": [
+          "bag",
+          "bag-bottom",
+          "wall-front",
+          "wall-back",
+          "wall-left",
+          "wall-right",
+          "bag-label",
+          "bag-liner",
+          "handle-l",
+          "handle-r",
+          "bag-knot"
+        ],
+        "mass": 0.2,
+        "friction": 0.7,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          -0.08,
+          0
+        ],
+        "collect": {
+          "interior": {
+            "size": [
+              0.288,
+              0.35,
+              0.188
+            ],
+            "offset": [
+              0,
+              0.005,
+              0
+            ]
+          },
+          "maxItemMass": 0.05
+        }
+      }
+    ],
+    "constraints": []
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.457,
+        "iou": 0.9
+      },
+      "action": "continue",
+      "notes": "參考圖第一張生成偏成封口手提軟袋，重生（seed 1212、提示強調開口如站立紙袋）後正確。開口容器 0.30×0.36×0.20 一 body 五 collider 齊平，check_colliders 密度 75；collect_test 首輪 8/8 收納、質量 0.24、冪等、dispose 乾淨。Divine Eye pass IoU 0.90。0 修正。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.457,
+        "iou": 0.9
+      },
+      "action": "continue",
+      "notes": "皺褶口緣 tube（seed 抖動）、前後四片提耳、內底、封袋打結（預設隱藏）皆已落地；封袋截圖確認口緣縮 0.3、打結顯示。"
+    },
+    {
+      "pass": "material",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.453,
+        "iou": 0.9
+      },
+      "action": "continue",
+      "notes": "標籤改透明底（DynamicTexture hasAlpha＋useAlphaFromDiffuseTexture）只印黑字，消掉異色斑；生物危害符號改三粗環＋destination-out 鏤空中心與三道缺口＋中心小環，成三葉形；字級 58→50 不再裁邊。黃色補自發光 (0.34,0.28,0.03)。Divine Eye pass 0.453。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.453,
+        "iou": 0.9
+      },
+      "action": "continue",
+      "notes": "physics_test（0.3 m 落地站穩，COM y −0.08）、actuation_test（coverage:collect:bag、無物觸發質量不變）、collect_test（8 球自 0.30 m 落入 300 步全在 interior、封袋質量 0.24、冪等、dispose 後只剩地面＋袋外 2 球）全綠。membership 8／collide ~0 讓 collide ~2 的顆粒與液滴能落進袋內。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.479,
+        "iou": 0.9
+      },
+      "action": "done",
+      "notes": "常數自 spec 推導（COLLIDERS 表、interior 由 W/D/WALL 推）、collect 掃描複製 getBodies 陣列再 dispose、封袋視覺只做一次、dispose 走守衛。修正次數 0（參考圖重生 1 次不計）。"
+    }
+  ]
+}
