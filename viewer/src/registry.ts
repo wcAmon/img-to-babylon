@@ -19,4 +19,5 @@ export const registry: Record<string, () => Promise<{ default: ModelFactory }>> 
   "cytotoxic-waste-bin": () => import("../models/cytotoxic-waste-bin/createCytotoxicWasteBinModel"),
   // M11 化療潑灑處理套件第二批
   "absorbent-powder-shaker": () => import("../models/absorbent-powder-shaker/createAbsorbentPowderShakerModel"),
+  "spill-warning-sign": () => import("../models/spill-warning-sign/createSpillWarningSignModel"),
 };

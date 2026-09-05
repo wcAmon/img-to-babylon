@@ -45,11 +45,11 @@
 | `panel-back` | box 0.30×0.60×0.015 | 0.6 kg | 222 |
 
 約束：`hinge` panel-front→panel-back，軸 x，樞軸在兩板頂端接縫（板厚各半分在樞軸兩側，
-收合時兩板相鄰不重疊）。兩板的 pivot node 各自帶 rotation.x = ±0.28，因此 hinge 角 0 = 兩板
-**同向（併攏）**、出廠展開時角 = −0.56；**limits [−0.61, 0]**：正向收合到併攏、負向只留 0.05 餘裕
-——下限就是 A 形自立的「撐帶」，重力想把兩腳撐開時由限位擋住（正角 = 抬起 −z 側的左手系規則：
-後板底在 +z，正轉往 −z 靠攏 = 收合）。`actuation: servo`（maxForce 4；0.6 kg、0.3 m 力臂 ≈ 1.8 N·m
-上限，收合只需其半）。actuator `servo:panel-back.x`；playground「展開」= set(−0.56)、「收合」= set(0)。
+收合時兩板相鄰不重疊）。兩板的 pivot node 各自帶 rotation.x = ±0.28，工具鏈（actuation_test 吊空綁定、
+0.6×限位目標）假設 hinge 角 0 ≈ 出廠姿勢，因此 `createHinge` 加選填 `restOffset = 2·LEAN`（B 側 perp
+軸預轉）讓出廠 A 形讀 0；**limits [−0.05, 0.56]**：正向收合到併攏（正角 = 抬起 −z 側的左手系規則：
+後板底在 +z，正轉往 −z 靠攏）、負向只留 0.05 餘裕——下限就是 A 形自立的「撐帶」。`actuation: servo`
+（maxForce 4）。actuator `servo:panel-back.x`；playground「展開」= set(0)、「收合」= set(0.56)。
 方向以 `--nudge panel-back` 與 scene_test 實測確認。
 
 站立驗證：physics_test 落地後 300 步兩板底邊皆在地面 0.03 m 內、頂端高度 ≥ 0.55 m。

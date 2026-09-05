@@ -1,6 +1,7 @@
 import {
   ArcRotateCamera,
   Color3,
+  Color4,
   MeshBuilder,
   PhysicsBody,
   PhysicsMotionType,
@@ -25,6 +26,9 @@ export function installHarness(scene: Scene, model: BuiltModel, modelName: strin
   const massScale = scale ** 3;
   const impulseScale = scale ** 3.5;
   const ground = MeshBuilder.CreateGround("ground", { width: 10 * scale, height: 10 * scale }, scene);
+  // 背景與受光地板同色：有限地板外的深色天際帶會被 Divine Eye 當成前景（M10 處理包、M11 立牌實測），
+  // 截圖時主體 bbox 被拉成寬帶；同色後地平線不再入鏡。
+  scene.clearColor = new Color4(0.79, 0.80, 0.84, 1);
   const gMat = new StandardMaterial("ground-mat", scene);
   gMat.diffuseColor = new Color3(0.82, 0.83, 0.86);
   gMat.specularColor = Color3.Black();

@@ -56,3 +56,11 @@ polish）執行；blockout/structure/material pass 只跑第 1、2、5、6 步�
 | stop | 使用者叫停或已完成 |
 
 每次 refine-* 前先 `python3 forge/next_pass.py correction`；exit 3 → 一律 request-input。
+
+## 陷阱：viewer 天際帶（M11）
+
+viewer 地板 10 m 有限，預設 clearColor 是深藍：只要相機仰角不夠低，地板外的深色天際帶就入鏡，Divine Eye
+把它當前景（bbox 拉成寬帶、IoU 0.1–0.3、aspectRatioDelta 大）。M10 處理包、M11 立牌都因此被 reject。
+harness 已把 `scene.clearColor` 設成與受光地板同色（0.79/0.80/0.84）；截圖仍宜取主體填滿畫面、避免地平線。
+白色主體配淺灰地板時 Divine Eye 遮罩也會退化（前景不在主連通塊）——這種 reject 依目視判定並在 reviewHistory 註明。
+

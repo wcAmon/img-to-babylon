@@ -16,6 +16,10 @@ export interface HingeDef {
   pivotB: [number, number, number];
   axis: [number, number, number];
   limits: [number, number];
+  /** 兩 body 的局部框架在出廠姿勢就繞 axis 差了 restOffset（rad，B 相對 A）時填入：B 側 perp 軸預轉
+   * 這個角，讓 hinge 角 0 = 出廠姿勢（工具鏈假設：actuation_test 以吊空綁定為 0、目標取限位 0.6 倍）。
+   * 例：A 字牌兩板 pivot 各帶 rotation.x = ±LEAN → restOffset = 2·LEAN。預設 0。 */
+  restOffset?: number;
 }
 
 /** grimoire/physics.md canonical perp：axis 接近 up 用 +x，否則用 up。 */
@@ -31,6 +35,9 @@ export function createHinge(
 ): Physics6DoFConstraint {
   const axis = Vector3.FromArray(def.axis);
   const perp = perpOf(axis);
+  const perpB = def.restOffset
+    ? Vector3.TransformNormal(perp, Matrix.RotationAxis(axis.normalizeToNew(), def.restOffset))
+    : perp;
   const hinge = new Physics6DoFConstraint(
     {
       pivotA: Vector3.FromArray(def.pivotA),
@@ -38,7 +45,7 @@ export function createHinge(
       axisA: axis,
       axisB: axis,
       perpAxisA: perp,
-      perpAxisB: perp,
+      perpAxisB: perpB,
     },
     [
       { axis: PhysicsConstraintAxis.LINEAR_X, minLimit: 0, maxLimit: 0 },

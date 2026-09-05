@@ -234,3 +234,11 @@ servo 必須「吊空測」（錨 body 設 STATIC、四肢自由）。
 - `dispose()` 連顆粒、觀察者一併釋放。
 - 校準法：側躺 90° 必倒（門檻 1.2 rad ≈ 69°）；直立 0° 不倒；蓋閉不倒。physics_test 自 0.3 m
   落下若翻倒且蓋彈開會倒粉——質心壓低（COM y −0.02）讓罐子落地站穩。
+
+## hinge 零點 = 出廠姿勢（M11 restOffset）
+
+工具鏈（actuation_test 吊空後取綁定為 0、目標取限位 0.6 倍；scene_test 相對綁定量角）假設 hinge 角 0 ≈
+出廠姿勢。若兩 body 的 pivot node 在出廠時就繞 axis 相差 θ（如 A 字牌兩板 rotation.x = ±LEAN），
+`createHinge(..., { restOffset: θ })` 會把 B 側 perp 軸預轉 θ，讓出廠姿勢讀 0，limits 也以出廠為 0 寫。
+不要反過來把 spec limits 寫成「併攏 = 0、出廠 = −θ」——gate 會紅。
+
