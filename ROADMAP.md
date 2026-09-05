@@ -318,6 +318,21 @@ harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模�
       shape 在 xy、沿 z 擠出後 rotation.y = π/2 讓 x→z（x′ = z、z′ = −x）；tomato 提示要明說「開口朝上、看得見內部」否則生成封口袋；
       python 批次替換腳本任一 assert 失敗就整檔不寫——spec 已改、TS 未改會造成 check_colliders 紅，重跑前先核對每條樣式。
 
+## M13：playground 抓取抬高＋傾斜（2026-09-05 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-05-playground-grab-lift-design.md`、計畫 `docs/superpowers/plans/2026-09-05-playground-grab-lift.md`。
+只改 `../playground`，契約側不動。被抓物件可抬高、傾斜、保持姿態；以「粉罐→鏟→袋→封袋」證明可用。
+
+- [x] 0025 `src/grabController.ts`（純物理速度伺服：手點 body-local 偏移追目標、姿態四元數伺服 P 30＋I 60、重力前饋、3 m/s／6 rad/s 上限）＋
+      `src/grab.ts` 輸入層（Shift 拖曳＝面向相機垂直面、滾輪 ±5 cm、Q／E 繞相機右軸 1.5 rad/s；`installGrab` 簽名不變，chemo.ts 零改動；
+      控制器掛 `window.__PLAYGROUND_GRAB__`）＋面板提示。scene_test 28 項綠（`grab:lift` 手點誤差 0.003、`grab:tilt` 姿態誤差 0.005、
+      `grab:carry-pour` 8/8 落袋、封袋 0.28）。tailnet 實測完整流程：粉罐開蓋抓起搬到鏟上傾倒 40 顆入斗 39、鏟後仰抬起搬到袋上前傾倒入 38、
+      封袋質量 0.20→0.314、38 顆收走（`.img2babylon/shots/playground4-{scoop,pour,sealed}.png`）。
+      陷阱：Babylon 四元數 `R.multiply(cur)` 才是世界軸旋轉（同 `TransformNode.rotate`），寫反時姿態伺服收斂到 π；純 P 姿態伺服對
+      「載重在手點前方」的恆定力矩留穩態誤差，球體在 1–3° 斜度就滾出前唇——要積分項；球體在任何水平加速下相對容器滾動，
+      搬顆粒要先後仰讓後牆托住再抬（先抬再後仰 40 顆只剩 8）；載重容器的步後殘速 ≈ 0.5·g·dt 是接觸衝量不是失控，位置穩定才是判準；
+      測試裡目標要插值滑動模擬連續拖曳，一次跳 0.5 m 會以 3 m/s 起步把內容物踢飛。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`

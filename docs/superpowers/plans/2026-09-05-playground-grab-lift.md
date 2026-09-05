@@ -32,7 +32,7 @@
 **Interfaces:**
 - Produces: `createGrabController(scene): GrabController`，介面同 spec §3（含 `target()`）。
 
-- [ ] **Step 1: 寫失敗測試** — 在 scene_test.ts 頂部 import 加 `import { createGrabController } from "../src/grabController";`，
+- [x] **Step 1: 寫失敗測試** — 在 scene_test.ts 頂部 import 加 `import { createGrabController } from "../src/grabController";`，
   並在 `push("tools:bodies", ...)` 之後插入：
 
 ```ts
@@ -63,9 +63,9 @@
   push("grab:lift", liftErr <= 0.03 && liftV < 0.05, `手點誤差 ${liftErr.toFixed(3)}（≤ 0.03）、速度 ${liftV.toFixed(3)}、斗內球 ${inScoop0}/8`);
 ```
 
-- [ ] **Step 2: 跑測試確認失敗** — `cd ../playground && npm run scene-test`；期望：tsx 找不到 `../src/grabController` 而 exit 2。
+- [x] **Step 2: 跑測試確認失敗** — `cd ../playground && npm run scene-test`；期望：tsx 找不到 `../src/grabController` 而 exit 2。
 
-- [ ] **Step 3: 實作 `src/grabController.ts`**
+- [x] **Step 3: 實作 `src/grabController.ts`**
 
 ```ts
 // 抓取控制器：速度伺服。手點（body-local 偏移）追目標點、姿態追目標四元數。純物理、無 DOM，headless 可測。
@@ -142,10 +142,10 @@ export function createGrabController(scene: Scene): GrabController {
 }
 ```
 
-- [ ] **Step 4: 跑測試確認通過** — `npm run typecheck && npm run scene-test`；期望 26 項全 ok，`grab:lift` detail 手點誤差 ≤ 0.03。
+- [x] **Step 4: 跑測試確認通過** — `npm run typecheck && npm run scene-test`；期望 26 項全 ok，`grab:lift` detail 手點誤差 ≤ 0.03。
   若誤差 > 0.03：先看 detail 的速度——速度大表示姿態伺服振盪（四元數順序反了，見 Task 2 Step 3），不是增益問題。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/grabController.ts scripts/scene_test.ts && git commit -m "playground M13：抓取控制器 grabController（手點速度伺服＋姿態伺服）；scene_test grab:lift"
@@ -159,7 +159,7 @@ cd ../playground && git add src/grabController.ts scripts/scene_test.ts && git c
 **Interfaces:**
 - Consumes: Task 1 的 `grab`、`scoop`、`scoopWorld`、`scoopBalls`、`hand0`；既有 `wbag`、`wbagBody`、`interiorOff`、`interiorHalf`。
 
-- [ ] **Step 1: 寫失敗測試** — 在 `push("grab:lift", ...)` 之後插入：
+- [x] **Step 1: 寫失敗測試** — 在 `push("grab:lift", ...)` 之後插入：
 
 ```ts
   // 搬到袋 interior 上方，繞鏟局部 +x 世界方向傾斜；符號由 TransformNormal 判定（前緣 +z 要往下）
@@ -197,14 +197,14 @@ cd ../playground && git add src/grabController.ts scripts/scene_test.ts && git c
     `袋內 ${n}/8（≥ 6）、封袋後質量 ${wbagMass2}（期望 ${(0.24 + n * 0.005).toFixed(3)}）`);
 ```
 
-- [ ] **Step 2: 跑測試** — `npm run scene-test`；期望 28 項。可能結果：
+- [x] **Step 2: 跑測試** — `npm run scene-test`；期望 28 項。可能結果：
   - `grab:tilt` 姿態誤差不收斂（≈ 3 或振盪）→ 四元數順序反了，Step 3。
   - `grab:carry-pour` 袋內 < 6 → Step 4 調整。
-- [ ] **Step 3: 若 rotErr 發散** — `grabController.ts` 的 `rotErr` 改為 `targetRot.multiply(Quaternion.Inverse(q))`，
+- [x] **Step 3: 若 rotErr 發散** — `grabController.ts` 的 `rotErr` 改為 `targetRot.multiply(Quaternion.Inverse(q))`，
   `tilt` 改為 `Quaternion.RotationAxis(axis, dTheta).multiply(targetRot)`；重跑。只翻一次，兩者一起翻。
-- [ ] **Step 4: 若袋內 < 6** — 依序試：`pourAt` 的 `frontH.scale(0.05)` 改 0.08／0.02；高度 0.45 改 0.35；每次重跑記錄 n。
+- [x] **Step 4: 若袋內 < 6** — 依序試：`pourAt` 的 `frontH.scale(0.05)` 改 0.08／0.02；高度 0.45 改 0.35；每次重跑記錄 n。
   三次內未達 6/8 停下回報，不再調。
-- [ ] **Step 5: `npm run typecheck && npm run scene-test` 綠 → Commit**
+- [x] **Step 5: `npm run typecheck && npm run scene-test` 綠 → Commit**
 
 ```bash
 git add src/grabController.ts scripts/scene_test.ts && git commit -m "playground M13：scene_test grab:tilt／grab:carry-pour（鏟起→袋上傾倒→封袋 6/8 以上）"
@@ -217,7 +217,7 @@ git add src/grabController.ts scripts/scene_test.ts && git commit -m "playground
 - Modify: `../playground/src/ui.ts`（`panel.appendChild(h);` 之後）
 - Modify: `../playground/index.html`（`.panel ol` 樣式之後）
 
-- [ ] **Step 1: 改寫 `src/grab.ts`**
+- [x] **Step 1: 改寫 `src/grab.ts`**
 
 ```ts
 // 抓取輸入層：pick → body → GrabController（純物理部分在 grabController.ts）。
@@ -303,17 +303,17 @@ export function installGrab(scene: Scene, camera: ArcRotateCamera, canvas: HTMLC
 }
 ```
 
-- [ ] **Step 2: ui.ts 加提示** — `panel.appendChild(h);` 之後插入：
+- [x] **Step 2: ui.ts 加提示** — `panel.appendChild(h);` 之後插入：
 
 ```ts
   const hint = document.createElement("div"); hint.className = "hint";
   hint.textContent = "抓取：拖曳移動｜Shift 拖曳＝上下｜滾輪＝高度｜Q／E＝傾斜"; panel.appendChild(hint);
 ```
 
-- [ ] **Step 3: index.html 加樣式** — `.panel ol { ... }` 之後加：
+- [x] **Step 3: index.html 加樣式** — `.panel ol { ... }` 之後加：
   `    .panel .hint { color: #a3adab; font-size: 11px; margin: -2px 0 8px; }`
-- [ ] **Step 4: `npm run typecheck && npm run scene-test`** 綠（chemo.ts 仍以 `installGrab(scene, camera, canvas, () => placed)` 呼叫，回傳值忽略）。
-- [ ] **Step 5: Commit**
+- [x] **Step 4: `npm run typecheck && npm run scene-test`** 綠（chemo.ts 仍以 `installGrab(scene, camera, canvas, () => placed)` 呼叫，回傳值忽略）。
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/grab.ts src/ui.ts index.html && git commit -m "playground M13：抓取輸入層（Shift 垂直面／滾輪高度／Q-E 傾斜）、面板操作提示；chemo.ts 零改動"
@@ -325,15 +325,15 @@ git add src/grab.ts src/ui.ts index.html && git commit -m "playground M13：抓�
 - Modify: `../playground/README.md`（不提交）
 - Evidence: `.img2babylon/shots/playground4-{scoop,pour,sealed}.png`
 
-- [ ] **Step 1: 起 dev** — `cd ../playground && (npm run dev &)`，等 5175 回應。
-- [ ] **Step 2: playwright** — `browser_navigate http://localhost:5175/?v=1`，等 `window.__PLAYGROUND_READY__`；`browser_evaluate` 用
+- [x] **Step 1: 起 dev** — `cd ../playground && (npm run dev &)`，等 5175 回應。
+- [x] **Step 2: playwright** — `browser_navigate http://localhost:5175/?v=1`，等 `window.__PLAYGROUND_READY__`；`browser_evaluate` 用
   `__PLAYGROUND__`（scene／placed／capture）與 `__PLAYGROUND_GRAB__` 重演 Task 2 流程（同座標、以 `requestAnimationFrame` 計步或
   `await new Promise(r => setTimeout(r, ms))`），三個時點 `capture.setCamera` 兩次＋`screenshot` → base64 JSON 落 repo 根 →
   scratchpad `decode.py` → `.img2babylon/shots/playground4-{scoop,pour,sealed}.png`。用 Read 看圖確認鏟在袋上、球落袋、封袋後結。
-- [ ] **Step 3: 完整流程盡力示範** — 粉罐「傾倒」→ 用 `__PLAYGROUND_GRAB__` 抓推板把顆粒推向鏟斗 → 抓鏟抬高搬到袋上傾斜 → 封袋；
+- [x] **Step 3: 完整流程盡力示範** — 粉罐「傾倒」→ 用 `__PLAYGROUND_GRAB__` 抓推板把顆粒推向鏟斗 → 抓鏟抬高搬到袋上傾斜 → 封袋；
   成功截 `playground4-flow.png`，不成功如實記錄於 tasks/0025。
-- [ ] **Step 4: README** — 「滑鼠／觸控可直接抓取拖曳」句後加「；Shift 拖曳上下、滾輪調高度、Q／E 傾斜（桌機）」。不 commit。
-- [ ] **Step 5: 重部署** — `npm run serve`；`curl -sI https://monkeyday.tail8e3f79.ts.net/ | head -1` 200。
+- [x] **Step 4: README** — 「滑鼠／觸控可直接抓取拖曳」句後加「；Shift 拖曳上下、滾輪調高度、Q／E 傾斜（桌機）」。不 commit。
+- [x] **Step 5: 重部署** — `npm run serve`；`curl -sI https://monkeyday.tail8e3f79.ts.net/ | head -1` 200。
 
 ### Task 5: 結案文件（img-to-babylon）
 
@@ -343,11 +343,11 @@ git add src/grab.ts src/ui.ts index.html && git commit -m "playground M13：抓�
 - Modify: `docs/next-steps.md`（移除第 1 項、狀態行加 M13）
 - Modify: 本計畫（全部勾選）
 
-- [ ] **Step 1: ROADMAP M13** — 節名「## M13：playground 抓取抬高＋傾斜（2026-09-05 核准開工、同日結案）」，列：範圍、控制器／輸入層、
+- [x] **Step 1: ROADMAP M13** — 節名「## M13：playground 抓取抬高＋傾斜（2026-09-05 核准開工、同日結案）」，列：範圍、控制器／輸入層、
   scene_test 28 項、證據路徑、教訓（四元數順序以測試定案、`__PLAYGROUND__` 不可擴充）。
-- [ ] **Step 2: tasks/0025** — 依 0024 格式：目標、做了什麼、驗證輸出（scene_test 28/28、typecheck）、證據、未做（觸控）、commit 清單。
-- [ ] **Step 3: next-steps** — 刪第 1 項並重新編號；狀態行加「M13（抓取抬高＋傾斜）」；執行提醒加「playground 工作區另一 session 檔案：只 add 自己的檔」。
-- [ ] **Step 4: Commit**
+- [x] **Step 2: tasks/0025** — 依 0024 格式：目標、做了什麼、驗證輸出（scene_test 28/28、typecheck）、證據、未做（觸控）、commit 清單。
+- [x] **Step 3: next-steps** — 刪第 1 項並重新編號；狀態行加「M13（抓取抬高＋傾斜）」；執行提醒加「playground 工作區另一 session 檔案：只 add 自己的檔」。
+- [x] **Step 4: Commit**
 
 ```bash
 git add ROADMAP.md tasks/0025-playground-grab-lift.md docs/next-steps.md docs/superpowers/plans/2026-09-05-playground-grab-lift.md && git commit -m "M13 結案：ROADMAP／tasks 0025／next-steps；計畫全勾"
