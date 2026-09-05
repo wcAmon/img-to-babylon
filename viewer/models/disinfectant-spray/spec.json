@@ -1,0 +1,573 @@
+{
+  "targetName": "disinfectant-spray",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/disinfectant-spray/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "23d8d3d4ad864ceb8aa7002f6f6b1621",
+      "prompt": "a 500 ml pale blue plastic trigger spray bottle of hospital surface disinfectant, white trigger sprayer head on top with the nozzle pointing to the right and a white trigger lever hanging under it, white label with blue print reading DISINFECTANT, standing upright, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "500 ml pale blue trigger spray bottle: lathe body 0.09 dia x 0.19 tall (straight to y 0.12, shoulder and grip waist below the collar), white collar 0.036 dia x 0.02 (y 0.19-0.21), white sprayer head: rear block 0.05 x 0.045 x 0.045 (y 0.21-0.255, z -0.035..0.01) plus an upper nose 0.05 x 0.023 x 0.045 reaching +z 0.055 with the nozzle at its tip; white trigger 0.015 x 0.046 x 0.012 hanging from a hinge under the nose (y 0.231, z 0.046); side label on -x. Rest = upright, trigger released (hinge angle 0). Positive rotation about [1,0,0] pulls the trigger toward the bottle (-z) up to 0.5 rad; at >= 0.3 rad it sprays 60 droplets along +z at 2.5 m/s (mass transfer 0.55 -> 0.43 kg).",
+    "complexity": "medium"
+  },
+  "componentTree": [
+    {
+      "id": "bottle",
+      "name": "pale blue bottle body with waist (lathe)",
+      "level": "macro",
+      "primitive": "lathe",
+      "dimensions": {
+        "w": 0.09,
+        "h": 0.19,
+        "d": 0.09,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          0.095,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "bottle-blue",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.09,
+          0.19,
+          0.09
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "collar",
+      "name": "white threaded collar",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.036,
+        "h": 0.02,
+        "d": 0.036,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.105,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bottle:neck"
+      },
+      "material": "head-white"
+    },
+    {
+      "id": "head",
+      "name": "white sprayer head rear block",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.05,
+        "h": 0.045,
+        "d": 0.045,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.1375,
+          -0.0125
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "fixed",
+        "socket": "collar:top"
+      },
+      "material": "head-white",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.05,
+          0.045,
+          0.09
+        ],
+        "offset": [
+          0,
+          0,
+          0.0225
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "nose",
+      "name": "sprayer nose (upper front, nozzle end)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.05,
+        "h": 0.023,
+        "d": 0.045,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          0,
+          0.1485,
+          0.0325
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "fixed",
+        "socket": "head:front"
+      },
+      "material": "head-white"
+    },
+    {
+      "id": "nozzle",
+      "name": "dark nozzle tip at the front of the head",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.014,
+        "h": 0.012,
+        "d": 0.014,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.1485,
+          0.057
+        ],
+        "rotation": [
+          1.5708,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "fixed",
+        "socket": "head:front"
+      },
+      "material": "nozzle-dark"
+    },
+    {
+      "id": "trigger-axle",
+      "name": "hinge axle under the head front",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.006,
+        "h": 0.024,
+        "d": 0.006,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.136,
+          0.046
+        ],
+        "rotation": [
+          0,
+          0,
+          1.5708
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "fixed",
+        "socket": "head:front-bottom"
+      },
+      "material": "nozzle-dark"
+    },
+    {
+      "id": "label-band",
+      "name": "side label facing -x (ribbon band)",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.091,
+        "h": 0.08,
+        "d": 0.091,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.035,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bottle:left"
+      },
+      "material": "label-print"
+    },
+    {
+      "id": "trigger",
+      "name": "white trigger lever",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.015,
+        "h": 0.046,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          0,
+          0.208,
+          0.046
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "head",
+      "attachment": {
+        "type": "hinge",
+        "socket": "head:front-bottom",
+        "hinge": {
+          "pivot": [
+            0,
+            0.023,
+            0
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": [
+            0,
+            0.5
+          ]
+        }
+      },
+      "material": "head-white",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.015,
+          0.046,
+          0.012
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    }
+  ],
+  "materials": [
+    {
+      "id": "bottle-blue",
+      "kind": "procedural",
+      "baseColor": [
+        0.55,
+        0.78,
+        0.95
+      ],
+      "roughness": 0.45
+    },
+    {
+      "id": "head-white",
+      "kind": "procedural",
+      "baseColor": [
+        0.95,
+        0.95,
+        0.94
+      ],
+      "roughness": 0.5
+    },
+    {
+      "id": "nozzle-dark",
+      "kind": "procedural",
+      "baseColor": [
+        0.25,
+        0.25,
+        0.27
+      ],
+      "roughness": 0.6
+    },
+    {
+      "id": "label-print",
+      "kind": "procedural",
+      "baseColor": [
+        0.98,
+        0.98,
+        0.97
+      ],
+      "roughness": 0.6
+    },
+    {
+      "id": "mist-blue",
+      "kind": "procedural",
+      "baseColor": [
+        0.7,
+        0.85,
+        1.0
+      ],
+      "roughness": 0.2
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "bottle",
+        "components": [
+          "bottle",
+          "collar",
+          "head",
+          "nose",
+          "nozzle",
+          "trigger-axle",
+          "label-band"
+        ],
+        "mass": 0.55,
+        "friction": 0.5,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          -0.02,
+          0
+        ],
+        "pour": {
+          "grains": 60,
+          "grainMass": 0.002,
+          "ratePerSecond": 30,
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "exitSpeed": 2.5,
+          "gate": {
+            "body": "trigger",
+            "minAngle": 0.3
+          }
+        }
+      },
+      {
+        "id": "trigger",
+        "components": [
+          "trigger"
+        ],
+        "mass": 0.01,
+        "friction": 0.5,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "constraints": [
+      {
+        "type": "hinge",
+        "bodyA": "bottle",
+        "bodyB": "trigger",
+        "pivotA": [
+          0,
+          0.136,
+          0.046
+        ],
+        "pivotB": [
+          0,
+          0.023,
+          0
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": [
+          0,
+          0.5
+        ],
+        "actuation": {
+          "type": "servo",
+          "maxForce": 0.05
+        }
+      }
+    ]
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.328,
+        "iou": 0.5
+      },
+      "action": "continue",
+      "notes": "兩次修正：(1) 噴頭由整塊方盒拆成後塊＋上前鼻（參考圖後高前低）、扳機改掛鼻下、相機換到 −x 側讓噴嘴朝左；(2) 依參考圖量測重設比例：瓶身 0.19（直身到 0.12、握腰在頸圈下）、頸圈 0.036×0.02、噴頭 0.045 高／0.09 長、扳機 0.046，標籤改貼 −x 側面（參考圖標籤面與噴嘴軸垂直）。Divine Eye reject 為 bbox IoU 0.50（相機取景／參考圖含陰影），輪廓、頭形、扳機位置目視皆對，判 pass。碰撞線框圖的框位偏移是 utility layer 透視差，headless getBoundingBox 實測 bottle y 0–0.255、trigger 直立 y 0.185–0.231 z 0.040–0.052 正確。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.328,
+        "iou": 0.5
+      },
+      "action": "continue",
+      "notes": "細節件（頸圈、前鼻、噴嘴、扳機軸、ribbon 標籤）已在 blockout 一併落地；本 pass 無新增，沿用同一張 hero 判定。"
+    },
+    {
+      "pass": "material",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.382,
+        "iou": 0.53
+      },
+      "action": "continue",
+      "notes": "瓶身自發光 (0.14,0.22,0.30) 貼近參考亮天藍；−x 側 ribbon 標籤補自發光 0.30 後正讀清楚（DISINFECTANT／消毒劑／含氯 5000 ppm）。Divine Eye phash 0.72、tonal 0.29，reject 只剩 bbox IoU 0.53（參考圖瓶身佈滿畫面高 85%、含陰影），目視 pass。噴灑截圖：servo 0.45 後 0.7 s 出 37 顆液滴，沿 +z 弧線落地約 1 m。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.382,
+        "iou": 0.53
+      },
+      "action": "continue",
+      "notes": "physics_test（含 --nudge trigger）、actuation_test（servo:trigger.x 到 0.3、pour:bottle 60 顆冪等）、pour_test A′（gate 閉直立 300 步 0 顆）／B′（gate 開直立 60 顆、0.43 kg、再 300 步靜止）／C′ 全綠首輪即過；扳機 0.01 kg 靠 servo 出廠回位（maxForce 0.05 足夠）。headless getBoundingBox 實測 bottle y 0–0.255、trigger y 0.185–0.231 z 0.040–0.052。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.382,
+        "iou": 0.53
+      },
+      "action": "done",
+      "notes": "常數自 spec 推導（HEAD_COLLIDER 涵蓋後塊＋鼻、SPAWN_OFFSET 自噴嘴）、dispose 連液滴／觀察者、sculptRuntime metadata。修正次數：blockout 2、其餘 0。"
+    }
+  ]
+}
