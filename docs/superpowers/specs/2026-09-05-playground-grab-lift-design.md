@@ -39,6 +39,7 @@ export interface GrabController {
   lift(dy: number): void;                          // target.y = clamp(target.y + dy, 0, 2.5)
   tilt(axis: Vector3, dTheta: number): void;       // targetRot = targetRot.multiply(Quaternion.RotationAxis(axis, dTheta))
   end(): void;                                     // 保留當前速度
+  target(): Vector3;                               // 目前目標點副本（輸入層重建平面用）
   handError(): number;                             // |target − 手點世界座標|，測試用
   rotError(): number;                              // 目標姿態與當前姿態夾角（rad），測試用
 }
@@ -68,8 +69,8 @@ export function createGrabController(scene: Scene): GrabController;
 - keydown／keyup（window）追蹤 `q`／`e`（不分大小寫）；`onBeforeRenderObservable` 每幀
   `tilt(cameraRight, dir × 1.5 × dt)`，`cameraRight = Cross(Up, camera.getTarget() − camera.position)` 正規化。
 - POINTERUP：`end()`；`camera.attachControl(canvas, true)`。
-- 回傳 `GrabController`，`chemo.ts` 不接也無妨；控制器另掛 `window.__PLAYGROUND__.grab`（型別擴充在 `grab.ts`
-  的 `declare global`，用可選欄位）供截圖腳本驅動——由 `installGrab` 內部寫入，不改 chemo.ts。
+- 回傳 `GrabController`，`chemo.ts` 不接也無妨；控制器另掛 `window.__PLAYGROUND_GRAB__`（`grab.ts` 的 `declare global`
+  可選欄位；不能擴充 `__PLAYGROUND__`——其型別宣告在 chemo.ts 且該檔會整個重新賦值）供截圖腳本驅動。
 
 ## 5. 面板提示（`src/ui.ts`、`index.html`）
 
@@ -96,7 +97,7 @@ export function createGrabController(scene: Scene): GrabController;
 
 ## 7. 證據與文件
 
-- playwright：`npm run dev`（5175）→ `__PLAYGROUND__.grab` 演流程，截 `.img2babylon/shots/playground4-{scoop,pour,sealed}.png`；
+- playwright：`npm run dev`（5175）→ `__PLAYGROUND_GRAB__` 演流程，截 `.img2babylon/shots/playground4-{scoop,pour,sealed}.png`；
   另盡力用推板把粉罐顆粒推進鏟斗示範完整流程，不成功則如實回報。
 - ROADMAP M13、`tasks/0025-playground-grab-lift.md`、`docs/next-steps.md` 更新。
 - playground README 補操作說明但**不提交**（該檔已含另一 session 未提交的跑酷段落）；只 commit
