@@ -123,6 +123,50 @@ def _check_rupture(bid, body, errors):
         errors.append(f"body {bid} rupture.droplets 必須為非負整數")
 
 
+_POUR_POSITIVE = ("grainMass", "ratePerSecond")
+
+
+def _check_pour(bid, body, constraints, errors):
+    """可傾倒 body：節流的質量轉移契約（M11 設計文件 §3.2／§4）。"""
+    pour = body.get("pour")
+    if pour is None:
+        return
+    if not isinstance(pour, dict):
+        errors.append(f"body {bid} pour 必須是物件")
+        return
+    tilt = pour.get("tiltThreshold")
+    if (not isinstance(tilt, (int, float)) or isinstance(tilt, bool)
+            or not 0 < tilt < math.pi):
+        errors.append(f"body {bid} pour.tiltThreshold 必須在 (0, π) 內")
+    for key in _POUR_POSITIVE:
+        v = pour.get(key)
+        if not isinstance(v, (int, float)) or isinstance(v, bool) or v <= 0:
+            errors.append(f"body {bid} pour.{key} 必須為正數")
+    grains = pour.get("grains")
+    if not isinstance(grains, int) or isinstance(grains, bool) or grains <= 0:
+        errors.append(f"body {bid} pour.grains 必須為正整數")
+    mass, gm = body.get("mass"), pour.get("grainMass")
+    if (isinstance(grains, int) and not isinstance(grains, bool)
+            and isinstance(mass, (int, float)) and isinstance(gm, (int, float))
+            and not isinstance(gm, bool) and grains * gm >= mass):
+        errors.append(f"body {bid} pour.grains×grainMass {grains * gm} 必須小於 mass {mass}")
+    gate = pour.get("gate")
+    if gate is None:
+        return
+    if not isinstance(gate, dict):
+        errors.append(f"body {bid} pour.gate 必須是物件")
+        return
+    hinge = next((c for c in constraints if c.get("type") == "hinge"
+                  and c.get("bodyA") == bid and c.get("bodyB") == gate.get("body")), None)
+    if hinge is None:
+        errors.append(f"body {bid} pour.gate.body {gate.get('body')!r} 不是掛在本 body 上的 hinge 之 bodyB")
+        return
+    limits, ang = hinge.get("limits"), gate.get("minAngle")
+    if (not isinstance(ang, (int, float)) or isinstance(ang, bool)
+            or not isinstance(limits, list) or not (limits[0] <= ang <= limits[1])):
+        errors.append(f"body {bid} pour.gate.minAngle {ang!r} 必須落在 hinge limits {limits!r} 內")
+
+
 def _stack_height(comps):
     """componentTree 的世界 Y 範圍（沿 parent 鏈累加 position.y，±h/2）。"""
     tops, bottoms = [], []
@@ -210,6 +254,7 @@ def validate(spec, strict=False):
         if not isinstance(b.get("mass"), (int, float)) or b["mass"] <= 0:
             errors.append(f"body {bid} mass 必須為正數")
         _check_rupture(bid, b, errors)
+        _check_pour(bid, b, spec["physics"].get("constraints", []), errors)
     for cid in comps:
         if cid not in assigned:
             errors.append(f"元件 {cid} 未指派給任何 body")

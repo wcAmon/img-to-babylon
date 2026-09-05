@@ -218,3 +218,19 @@ servo 必須「吊空測」（錨 body 設 STATIC、四肢自由）。
 - `dispose()` 必須連水漬、液滴、觀察者一起釋放；playground「歸位」＝ dispose ＋重建。
 - 校準法：0.55 kg 自 0.3 m 落下 Δv ≈ 2.7 m/s → 1.5 N·s（physics_test 預設落高，不可破）；
   自 1.5 m 落下 ≈ 3 N·s 以上（必破）。門檻 2.0 落在中間。
+
+## 傾倒＝節流的質量轉移（M11 pour）
+
+- 傾角：`node.getDirection(Vector3.Up())` 取 body 局部 +y 的世界向量，`acos(up.y)` 即傾角，每個
+  物理步在 `onAfterPhysicsObservable` 量。蓋門：蓋 hinge 角用 `hinge.ts` 的 `hingeAngle(a, b, bind)`，
+  `bind` 在**任何物理步之前**取（`relativeRotation`）。
+- 節流：條件成立時每步累積 `ratePerSecond / 60`，累積滿 1 顆就生成；條件中斷時累積歸零。
+- 生成點：pivot + up × (容器半高 + 0.015)，再加 seed 決定的 ±0.01 m 散佈（手動一次全倒時同點
+  生成會互相彈開）；若低於 `groundY + 直徑` 則抬到該高度。初速 = 容器速度 + up × 0.3 m/s。
+- 顆粒：sphere 直徑 0.010、摩擦 0.8、回彈 0.05、線性／角阻尼 2.0（理想球永滾）。碰撞過濾：
+  顆粒 `membership = GRAIN_GROUP(4)`、`collide = ~GROUP(2)`；容器與蓋 `membership = GROUP`、
+  `collide = ~GROUP`——顆粒互撞、撞地，不撞容器（避免卡在頸口），Havok 兩側 mask 都要成立才碰。
+- 每顆 `setMassProperties({ mass: mass − poured × grainMass, centerOfMass })`（質心要重給，否則歸零）。
+- `dispose()` 連顆粒、觀察者一併釋放。
+- 校準法：側躺 90° 必倒（門檻 1.2 rad ≈ 69°）；直立 0° 不倒；蓋閉不倒。physics_test 自 0.3 m
+  落下若翻倒且蓋彈開會倒粉——質心壓低（COM y −0.02）讓罐子落地站穩。

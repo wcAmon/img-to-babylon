@@ -55,6 +55,72 @@ class ValidateSpecTest(unittest.TestCase):
         errors, _ = validate_spec.validate(spec, strict=False)
         self.assertTrue(any("rupture" in e and "puddleRadius" in e for e in errors))
 
+    def _with_pour(self, pour, mass=1.0):
+        """sample-crate 加一個 hinge 蓋（cap）當 pour 的 gate，再掛 pour。"""
+        spec = minimal_spec()
+        spec["componentTree"].append({
+            "id": "cap", "name": "cap", "level": "macro", "primitive": "cylinder",
+            "dimensions": {"w": 0.1, "h": 0.02, "d": 0.1, "units": "m", "confidence": 0.8},
+            "transform": {"position": [0, 0.3, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1]},
+            "parent": spec["componentTree"][0]["id"],
+            "attachment": {"type": "hinge", "socket": "crate:top",
+                           "hinge": {"pivot": [0, -0.01, 0.05], "axis": [1, 0, 0], "limits": [0, 1.9]}},
+            "material": spec["componentTree"][0]["material"],
+            "collider": {"type": "cylinder", "size": [0.1, 0.02, 0.1], "offset": [0, 0, 0], "confidence": 0.8}})
+        body = spec["physics"]["bodies"][0]
+        body["mass"] = mass
+        spec["physics"]["bodies"].append({"id": "cap", "components": ["cap"], "mass": 0.03})
+        spec["physics"]["constraints"] = [{
+            "type": "hinge", "bodyA": body["id"], "bodyB": "cap",
+            "pivotA": [0, 0.25, 0.05], "pivotB": [0, -0.01, 0.05],
+            "axis": [1, 0, 0], "limits": [0, 1.9]}]
+        body["pour"] = pour
+        return spec
+
+    POUR_OK = {"tiltThreshold": 1.2, "grains": 40, "grainMass": 0.003, "ratePerSecond": 20,
+               "gate": {"body": "cap", "minAngle": 1.0}}
+
+    def test_pour_valid_passes(self):
+        errors, _ = validate_spec.validate(self._with_pour(dict(self.POUR_OK)), strict=True)
+        self.assertEqual(errors, [])
+
+    def test_pour_without_gate_passes(self):
+        pour = {k: v for k, v in self.POUR_OK.items() if k != "gate"}
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=True)
+        self.assertEqual(errors, [])
+
+    def test_pour_tilt_in_open_interval(self):
+        for bad in (0, 3.2):
+            pour = dict(self.POUR_OK, tiltThreshold=bad)
+            errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+            self.assertTrue(any("pour" in e and "tiltThreshold" in e for e in errors), bad)
+
+    def test_pour_grains_positive_int(self):
+        for bad in (0, 2.5, -3):
+            pour = dict(self.POUR_OK, grains=bad)
+            errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+            self.assertTrue(any("pour" in e and "grains" in e for e in errors), bad)
+
+    def test_pour_total_grain_mass_below_body_mass(self):
+        pour = dict(self.POUR_OK, grainMass=0.1)  # 40 × 0.1 = 4 ≥ 1.0
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+        self.assertTrue(any("pour" in e and "grainMass" in e for e in errors))
+
+    def test_pour_gate_body_must_be_hinged_to_this_body(self):
+        pour = dict(self.POUR_OK, gate={"body": "nope", "minAngle": 1.0})
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+        self.assertTrue(any("pour" in e and "gate.body" in e for e in errors))
+
+    def test_pour_gate_min_angle_within_hinge_limits(self):
+        pour = dict(self.POUR_OK, gate={"body": "cap", "minAngle": 3.0})
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+        self.assertTrue(any("pour" in e and "minAngle" in e for e in errors))
+
+    def test_pour_missing_field(self):
+        pour = {k: v for k, v in self.POUR_OK.items() if k != "ratePerSecond"}
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+        self.assertTrue(any("pour" in e and "ratePerSecond" in e for e in errors))
+
     def test_action_figure_leg_chain_mass_contract(self):
         with open(ACTION_FIGURE) as handle:
             spec = json.load(handle)

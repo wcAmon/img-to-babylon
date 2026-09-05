@@ -273,6 +273,27 @@ factory 契約：掛 actuator `rupture:<bodyId>`（kind `"rupture"`，min 0、ma
 冪等）；破裂後 `bodies[<bodyId>]` 質量 = emptiedMass、`meshes["puddle"]` 出現、
 `bodies["droplet-<i>"]` 共 `droplets` 個。gate：`viewer/scripts/rupture_test.ts`。
 
+## pour（M11 可傾倒 body）
+
+粉罐類物件傾倒時容器不變、內容物離開——契約仍是**質量轉移**，但是**節流**的：傾角夠大、
+蓋子夠開、還有存量時每秒倒出固定顆數。在 `physics.bodies[]` 上選填：
+
+```json
+{ "id": "bottle", "components": ["bottle", "powder-face", "label-band"], "mass": 0.45,
+  "pour": { "tiltThreshold": 1.2, "grains": 40, "grainMass": 0.003, "ratePerSecond": 20,
+            "gate": { "body": "cap", "minAngle": 1.0 } } }
+```
+
+- `tiltThreshold`（rad）：body 局部 +y 與世界 +y 的夾角達此值才倒；(0, π)。
+- `grains`：總顆數（正整數）；`grainMass`（kg）：每顆質量；`grains × grainMass < mass`。
+- `ratePerSecond`：倒出速率（顆／秒），正數。
+- `gate`（選填）：`body` 必須是掛在本 body 上（bodyA = 本 body）的 hinge 之 bodyB；hinge 角
+  ≥ `minAngle`（須在該 hinge limits 內）才倒。
+
+factory 契約：掛 actuator `pour:<bodyId>`（kind `"pour"`，min 0、max 1，`set(1)` 立即倒出全部剩餘、
+冪等；`set(0)` 無事）；每倒一顆 `bodies[<bodyId>]` 質量減 `grainMass`，顆粒為 `bodies["grain-<i>"]`
+／`meshes["grain-<i>"]`。gate：`viewer/scripts/pour_test.ts`。
+
 ## actuation（M4 可動物件契約）
 
 模型「遊戲可用」的標準是可動件可驅動、可審查。宣告了 actuation 的 spec 必須通過
