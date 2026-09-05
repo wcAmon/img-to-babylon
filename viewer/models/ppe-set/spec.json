@@ -1,0 +1,713 @@
+{
+  "targetName": "ppe-set",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/ppe-set/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "a7f61c6b28c745e289efcf48cb170cf7",
+      "prompt": "chemotherapy personal protective equipment set laid out on a table: a purple cardboard box of nitrile gloves with an oval dispensing slot on top, a sealed pale blue plastic pack containing a folded blue isolation gown, and a pair of clear safety goggles with dark gray frame and elastic strap, three-quarter view from above, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "four free rigid bodies lying on the floor, seen from above-front: a purple nitrile glove box 0.24 x 0.09 x 0.13 at the back-left (x -0.22, z +0.10), a pale blue sealed gown pack 0.34 x 0.04 x 0.28 at the back-right (x +0.12, z +0.05), clear goggles with dark frame and strap 0.17 x 0.06 x 0.09 at the front-centre (x +0.02, z -0.20), and a single purple nitrile glove 0.11 x 0.008 x 0.23 at the front-left (x -0.24, z -0.16). No constraints.",
+    "complexity": "medium"
+  },
+  "componentTree": [
+    {
+      "id": "glove-box",
+      "name": "purple nitrile glove dispenser box",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.24,
+        "h": 0.09,
+        "d": 0.13,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          -0.22,
+          0.045,
+          0.1
+        ],
+        "rotation": [
+          0,
+          0.15,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "box-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.24,
+          0.09,
+          0.13
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "glove-slot",
+      "name": "oval dispensing slot on top",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.12,
+        "h": 0.001,
+        "d": 0.06,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0455,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "glove-box",
+      "attachment": {
+        "type": "fixed",
+        "socket": "glove-box:top"
+      },
+      "material": "slot-print"
+    },
+    {
+      "id": "glove-label",
+      "name": "front label NITRILE GLOVES",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.16,
+        "h": 0.05,
+        "d": 0.001,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0,
+          -0.0655
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "glove-box",
+      "attachment": {
+        "type": "fixed",
+        "socket": "glove-box:front"
+      },
+      "material": "label-print"
+    },
+    {
+      "id": "gown-pack",
+      "name": "sealed translucent gown pack",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.34,
+        "h": 0.04,
+        "d": 0.28,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.12,
+          0.02,
+          0.05
+        ],
+        "rotation": [
+          0,
+          -0.08,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "pack-film",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.34,
+          0.04,
+          0.28
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "gown-fold",
+      "name": "folded blue gown inside",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.32,
+        "h": 0.03,
+        "d": 0.26,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "gown-pack",
+      "attachment": {
+        "type": "fixed",
+        "socket": "gown-pack:inside"
+      },
+      "material": "gown-blue"
+    },
+    {
+      "id": "gown-collar",
+      "name": "collar ring of the folded gown",
+      "level": "micro",
+      "primitive": "torus",
+      "dimensions": {
+        "w": 0.11,
+        "h": 0.006,
+        "d": 0.11,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.016,
+          0.06
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "gown-pack",
+      "attachment": {
+        "type": "fixed",
+        "socket": "gown-pack:inside"
+      },
+      "material": "gown-trim"
+    },
+    {
+      "id": "gown-label",
+      "name": "top label ISOLATION GOWN",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.12,
+        "h": 0.001,
+        "d": 0.06,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0.08,
+          0.0205,
+          -0.08
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "gown-pack",
+      "attachment": {
+        "type": "fixed",
+        "socket": "gown-pack:top"
+      },
+      "material": "label-print"
+    },
+    {
+      "id": "goggles",
+      "name": "goggles top frame bar",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.16,
+        "h": 0.012,
+        "d": 0.028,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          0.02,
+          0.03,
+          -0.2
+        ],
+        "rotation": [
+          0,
+          0.05,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "frame-gray",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.17,
+          0.06,
+          0.09
+        ],
+        "offset": [
+          0,
+          0,
+          0.02
+        ],
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "goggles-lens",
+      "name": "clear lens",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.155,
+        "h": 0.042,
+        "d": 0.03,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.003,
+          -0.004
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "goggles",
+      "attachment": {
+        "type": "fixed",
+        "socket": "goggles:front"
+      },
+      "material": "lens-clear"
+    },
+    {
+      "id": "goggles-strap",
+      "name": "elastic strap ring",
+      "level": "micro",
+      "primitive": "torus",
+      "dimensions": {
+        "w": 0.13,
+        "h": 0.008,
+        "d": 0.13,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.055
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "goggles",
+      "attachment": {
+        "type": "fixed",
+        "socket": "goggles:back"
+      },
+      "material": "strap-black"
+    },
+    {
+      "id": "glove",
+      "name": "single purple nitrile glove (palm)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.11,
+        "h": 0.008,
+        "d": 0.23,
+        "units": "m",
+        "confidence": 0.7
+      },
+      "transform": {
+        "position": [
+          -0.24,
+          0.004,
+          -0.16
+        ],
+        "rotation": [
+          0,
+          -0.3,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "glove-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.11,
+          0.008,
+          0.23
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.8
+      }
+    }
+  ],
+  "materials": [
+    {
+      "id": "box-purple",
+      "kind": "procedural",
+      "baseColor": [
+        0.42,
+        0.22,
+        0.72
+      ],
+      "roughness": 0.7
+    },
+    {
+      "id": "slot-print",
+      "kind": "procedural",
+      "baseColor": [
+        0.42,
+        0.22,
+        0.72
+      ],
+      "roughness": 0.7
+    },
+    {
+      "id": "label-print",
+      "kind": "procedural",
+      "baseColor": [
+        0.97,
+        0.97,
+        0.95
+      ],
+      "roughness": 0.6
+    },
+    {
+      "id": "pack-film",
+      "kind": "procedural",
+      "baseColor": [
+        0.82,
+        0.9,
+        0.97
+      ],
+      "roughness": 0.3,
+      "alpha": 0.8
+    },
+    {
+      "id": "gown-blue",
+      "kind": "procedural",
+      "baseColor": [
+        0.45,
+        0.72,
+        0.92
+      ],
+      "roughness": 0.8
+    },
+    {
+      "id": "gown-trim",
+      "kind": "procedural",
+      "baseColor": [
+        0.3,
+        0.55,
+        0.8
+      ],
+      "roughness": 0.8
+    },
+    {
+      "id": "frame-gray",
+      "kind": "procedural",
+      "baseColor": [
+        0.55,
+        0.58,
+        0.62
+      ],
+      "roughness": 0.5
+    },
+    {
+      "id": "lens-clear",
+      "kind": "procedural",
+      "baseColor": [
+        0.85,
+        0.92,
+        0.98
+      ],
+      "roughness": 0.1,
+      "alpha": 0.35
+    },
+    {
+      "id": "strap-black",
+      "kind": "procedural",
+      "baseColor": [
+        0.1,
+        0.1,
+        0.11
+      ],
+      "roughness": 0.8
+    },
+    {
+      "id": "glove-purple",
+      "kind": "procedural",
+      "baseColor": [
+        0.48,
+        0.38,
+        0.85
+      ],
+      "roughness": 0.6
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "glove-box",
+        "components": [
+          "glove-box",
+          "glove-slot",
+          "glove-label"
+        ],
+        "mass": 0.35,
+        "friction": 0.6,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "gown-pack",
+        "components": [
+          "gown-pack",
+          "gown-fold",
+          "gown-collar",
+          "gown-label"
+        ],
+        "mass": 0.25,
+        "friction": 0.6,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "goggles",
+        "components": [
+          "goggles",
+          "goggles-lens",
+          "goggles-strap"
+        ],
+        "mass": 0.06,
+        "friction": 0.6,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          0,
+          0.02
+        ]
+      },
+      {
+        "id": "glove",
+        "components": [
+          "glove"
+        ],
+        "mass": 0.015,
+        "friction": 0.7,
+        "restitution": 0.05,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "constraints": []
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.354,
+        "iou": 0.594
+      },
+      "action": "continue",
+      "notes": "參考圖四件（多一隻紫手套）→ 加第四個自由 body glove（0.11×0.008×0.23、0.015 kg、密度 74）。配置依參考：手套盒後左、隔離衣包後右（放大到 0.34×0.28）、護目鏡前中、手套前左。一次修正：護目鏡原為灰磚＋平放黑環，改為頂緣薄框＋大片透明鏡片盒＋後方彈性帶 torus。Divine Eye reject IoU 0.59：四件分離物件，工具只量最大連通塊（54% 前景在外）——構圖固有限制；監工目視四件位置、比例、顏色皆對，判 pass。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.354,
+        "iou": 0.594
+      },
+      "action": "continue",
+      "notes": "手套盒頂面橢圓取用口（DynamicTexture）＋正面標籤；隔離衣包半透明膜盒內藍衣＋領口 torus＋頂面標籤；護目鏡框／鏡片／帶；手套掌＋三道指縫＋拇指。"
+    },
+    {
+      "pass": "material",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.354,
+        "iou": 0.594
+      },
+      "action": "continue",
+      "notes": "紫盒 0.42/0.22/0.72、手套 0.48/0.38/0.85（各加微 emissive）、膜 alpha 0.8、鏡片 alpha 0.35、衣藍 0.45/0.72/0.92。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.354,
+        "iou": 0.594
+      },
+      "action": "continue",
+      "notes": "四 body 皆 box collider：手套盒 0.35 kg（125）、隔離衣包 0.25（66）、護目鏡 0.06（65，collider 含帶）、手套 0.015（74）；無約束。check_colliders OK、physics_test pass（落地靜止）、actuation_test 無宣告略過。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.354,
+        "iou": 0.594
+      },
+      "action": "continue",
+      "notes": "常數表驅動位置／尺寸；dispose 完整；metadata。剩餘落差：衣物與手套為硬盒近似、無皺褶。"
+    }
+  ]
+}

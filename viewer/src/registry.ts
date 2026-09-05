@@ -21,4 +21,5 @@ export const registry: Record<string, () => Promise<{ default: ModelFactory }>> 
   "absorbent-powder-shaker": () => import("../models/absorbent-powder-shaker/createAbsorbentPowderShakerModel"),
   "spill-warning-sign": () => import("../models/spill-warning-sign/createSpillWarningSignModel"),
   "absorbent-pad": () => import("../models/absorbent-pad/createAbsorbentPadModel"),
+  "ppe-set": () => import("../models/ppe-set/createPpeSetModel"),
 };
