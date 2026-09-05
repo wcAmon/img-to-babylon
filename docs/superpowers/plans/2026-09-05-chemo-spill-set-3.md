@@ -102,7 +102,7 @@ Read `sheet.png` 目視評分（likeness／colliderFit 1–10）。REJECT 先分
 - Produces: spec 欄位 `pour = { tiltThreshold?, grains, grainMass, ratePerSecond, direction?: [x,y,z], exitSpeed?, gate?: { body, minAngle } }`（無 tiltThreshold 時 gate 必填）；
   `collect = { interior: { size: [w,h,d], offset: [x,y,z] }, maxItemMass }`。
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 在 `forge/tests/test_validate_spec.py` 的 `test_pour_missing_field` 之後加入：
 
@@ -175,14 +175,14 @@ Read `sheet.png` 目視評分（likeness／colliderFit 1–10）。REJECT 先分
         self.assertTrue(any("collect" in e and "interior" in e for e in errors))
 ```
 
-- [ ] **Step 2: 跑測試確認失敗**
+- [x] **Step 2: 跑測試確認失敗**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && python3 -m unittest forge.tests.test_validate_spec -v 2>&1 | tail -25
 ```
 Expected：`test_pour_without_tilt_requires_gate`（第一段 tilt 缺就報 tiltThreshold 錯而非 gate 錯→FAIL）、`test_pour_direction_unit_vector`、`test_pour_exit_speed_positive`、`test_pour_spray_shape_passes`、五個 `test_collect_*` FAIL；其餘 OK。
 
-- [ ] **Step 3: 實作驗證**
+- [x] **Step 3: 實作驗證**
 
 `forge/validate_spec.py`：在 `_check_rupture` 之前加
 
@@ -270,14 +270,14 @@ def _check_collect(bid, body, errors):
 
 bodies 迴圈裡 `_check_pour(...)` 之後加一行 `_check_collect(bid, b, errors)`。
 
-- [ ] **Step 4: 跑測試確認通過**
+- [x] **Step 4: 跑測試確認通過**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && python3 -m unittest discover -s forge/tests -t . -p 'test_*.py' 2>&1 | tail -3 && python3 forge/validate_spec.py viewer/models/absorbent-powder-shaker/spec.json --strict
 ```
 Expected：`Ran 121 tests … OK`（112＋9）；粉罐 spec 仍 `OK`。
 
-- [ ] **Step 5: grimoire 文件**
+- [x] **Step 5: grimoire 文件**
 
 `grimoire/spec.md` pour 節：`tiltThreshold` 那行改成
 「`tiltThreshold`（rad，**選填**）：body 局部 +y 與世界 +y 的夾角達此值才倒；(0, π)。缺省 = 不看傾角（噴瓶），此時 `gate` 必填。」
@@ -326,7 +326,7 @@ restOffset 節之後加：
 - 封袋視覺只做一次（口緣 tube `scaling.set(0.3, 1, 0.3)`＋打結 mesh `setEnabled(true)`），之後 set(1) 仍可收新掉進來的東西。
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && git add forge/validate_spec.py forge/tests/test_validate_spec.py grimoire/spec.md grimoire/physics.md && git commit -m "M12 契約 forge 側：pour 加 direction／exitSpeed、tiltThreshold 選填（無則 gate 必填）；新增 collect（interior／maxItemMass）；validate_spec TDD 9 測試、grimoire 兩檔
@@ -350,7 +350,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: Task 1 的 spec 欄位。
 - Produces: `Actuator.kind` 含 `"collect"`；gate 命令 `npx tsx scripts/collect_test.ts <model> --spec <spec.json>`；pour_test 對無 tiltThreshold 的 spec 跑直立情境。
 
-- [ ] **Step 1: types.ts**
+- [x] **Step 1: types.ts**
 
 `viewer/src/types.ts` 的 `Actuator`：
 
@@ -359,11 +359,11 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
   kind: "drive" | "steer" | "servo" | "light" | "rupture" | "pour" | "collect";
 ```
 
-- [ ] **Step 2: harness.ts**
+- [x] **Step 2: harness.ts**
 
 第 130 行條件改 `if (act.kind === "rupture" || act.kind === "pour" || act.kind === "collect") {`，註解補「M12 collect 同樣」。
 
-- [ ] **Step 3: actuation_test.ts**
+- [x] **Step 3: actuation_test.ts**
 
 介面：
 
@@ -400,13 +400,13 @@ coverage 迴圈（pour 之後）：
 
 最後一行改：`if (ruptureDecls.length || pourDecls.length || collectDecls.length) { step(T(SETTLE_STEPS)); runRupture(); runPour(); runCollect(); }`。
 
-- [ ] **Step 4: pour_test.ts 切換**
+- [x] **Step 4: pour_test.ts 切換**
 
 `SpecPour.tiltThreshold` 改選填（`tiltThreshold?: number`）。檔頭註解補「無 tiltThreshold 的 spec（噴瓶）：A′／B′ 直立、gate 閉／開；C′ 不開 gate 直立 120 步無顆粒」。
 
 迴圈開頭加 `const lying = pour.tiltThreshold !== undefined;`，三處 `spawn(name, true)` 改 `spawn(name, lying)`，情境 C 的 `spawn(name, false)` 不動；C 的 `openGate(model, spec, decl);` 改 `if (lying) openGate(model, spec, decl);`。detail 文字：A 改 `${lying ? "蓋閉側躺" : "gate 閉直立"}`，C 改 `${lying ? "直立蓋開" : "直立 gate 閉"}`。
 
-- [ ] **Step 5: 新檔 `viewer/scripts/collect_test.ts`**
+- [x] **Step 5: 新檔 `viewer/scripts/collect_test.ts`**
 
 ```ts
 // 收納 gate（M12 collect）：spec 有 collect 的 body 必須 (1) 自 interior 上方 0.30 m 丟 8 顆測試球（d 0.012、0.005 kg）
@@ -550,14 +550,14 @@ async function main(): Promise<number> {
 main().then((code) => process.exit(code)).catch((err) => { console.error(err); process.exit(2); });
 ```
 
-- [ ] **Step 6: tsc 與既有 gate 不退化**
+- [x] **Step 6: tsc 與既有 gate 不退化**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit && npx tsx scripts/pour_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json | tail -3 && npx tsx scripts/actuation_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json | tail -3 && npx tsx scripts/collect_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json
 ```
 Expected：tsc 無錯；pour_test 粉罐 `"pass": true`；actuation_test pass；collect_test 印 `spec 無 collect 宣告` pass。
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && git add viewer/src/types.ts viewer/src/harness.ts viewer/scripts/actuation_test.ts viewer/scripts/pour_test.ts viewer/scripts/collect_test.ts && git commit -m "M12 契約 viewer 側：Actuator kind collect、harness 按鈕、actuation_test collect 覆蓋；pour_test 依 tiltThreshold 切換直立情境；新 gate collect_test.ts
@@ -578,14 +578,14 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: `createHinge(scene, a, b, { pivotA, pivotB, axis, limits })`、`makeHingeServo(joint, bodyB, lo, hi, maxForce, label)`、`relativeRotation`／`hingeAngle`（`viewer/src/hinge.ts`）。
 - Produces: actuators `servo:trigger.x`（0–0.5）、`pour:bottle`；bodies `bottle`、`trigger`、`grain-<i>`（液滴）。
 
-- [ ] **Step 1: 初始化與參考圖**
+- [x] **Step 1: 初始化與參考圖**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && python3 forge/next_pass.py init --model disinfectant-spray --force && mkdir -p .img2babylon/disinfectant-spray && python3 forge/tomato.py gen --seed 1201 --out .img2babylon/disinfectant-spray/hero.png --prompt "a 500 ml pale blue plastic trigger spray bottle of hospital surface disinfectant, white trigger sprayer head on top with the nozzle pointing to the right and a white trigger lever hanging under it, white label with blue print reading DISINFECTANT, standing upright, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
 ```
 agent vision 讀圖校對比例（噴頭長度、扳機位置）；記 job_id／prompt。
 
-- [ ] **Step 2: 寫 spec**
+- [x] **Step 2: 寫 spec**
 
 `viewer/models/disinfectant-spray/spec.json`（`tomatoJobId` 填 Step 1 的 job_id）：
 
@@ -660,7 +660,7 @@ agent vision 讀圖校對比例（噴頭長度、扳機位置）；記 job_id／
 
 Run: `python3 forge/validate_spec.py viewer/models/disinfectant-spray/spec.json --strict` → `OK`。
 
-- [ ] **Step 3: 寫 factory**
+- [x] **Step 3: 寫 factory**
 
 `viewer/models/disinfectant-spray/createDisinfectantSprayModel.ts`：
 
@@ -911,7 +911,7 @@ export default function createDisinfectantSprayModel(scene: Scene, opts: ModelOp
 
 `viewer/src/registry.ts` 在 `"ppe-set"` 之後加 `"disinfectant-spray": () => import("../models/disinfectant-spray/createDisinfectantSprayModel"),`。
 
-- [ ] **Step 4: headless gate（含 pour 直立情境）**
+- [x] **Step 4: headless gate（含 pour 直立情境）**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
@@ -925,12 +925,12 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 Expected：check_colliders OK（bottle 密度 ≈ 417、trigger ≈ 1010；bottle×head 齊平不重疊）；physics_test 兩次 pass；actuation_test `coverage:servo:trigger`、`servo:trigger.x`、`coverage:pour:bottle`、`pour:bottle` ok；pour_test A（gate 閉直立無液滴）、B（gate 開直立 60 顆、0.43 kg、靜止）、C 全 ok。
 若 B 液滴數不足：印 `angle`（暫時 console.log）確認扳機 servo 到 0.5；壓不下去把 `SERVO_FORCE` 調 0.1（spec 同步）。若 settle 紅：`exitSpeed` 改 2.0（spec 同步）。若 physics_test 落地翻倒：`BOTTLE_COM.y` 改 −0.03（spec 同步）。
 
-- [ ] **Step 5: 視覺 gate（五 pass 檢查點）**
+- [x] **Step 5: 視覺 gate（五 pass 檢查點）**
 
 依「共用流程片段 A／B／C」，相機 `{ alpha: -0.9, beta: 1.15, radius: 0.7, target: [0, 0.12, 0] }`。另截一張噴灑中（harness 滑桿 `servo:trigger.x` 拉到 0.45 後 0.5 s 截圖，存 `disinfectant-spray-spray.png`）與碰撞線框。
 material pass 檢查 ribbon 標籤：文字鏡像則在 `makeLabelTexture` 加 `c.translate(w, 0); c.scale(-1, 1)`。每 pass 追加 reviewHistory、`next_pass.py done`。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && git add viewer/models/disinfectant-spray viewer/src/registry.ts && git commit -m "M12 disinfectant-spray：消毒劑扳機噴瓶（扳機 servo 出廠回位＋pour 無傾角沿噴嘴 +z）；strict spec／check_colliders／physics_test／actuation_test／pour_test 綠
@@ -951,14 +951,14 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: Task 1 `collect` 欄位、Task 2 `collect_test.ts`、`PhysicsEngineV2.getBodies()`（`@babylonjs/core`）。
 - Produces: actuator `collect:bag`；body `bag`；mesh `bag-knot`（封袋後顯示）、`bag`（口緣 tube，封袋後 scaling 0.3）。
 
-- [ ] **Step 1: 初始化與參考圖**
+- [x] **Step 1: 初始化與參考圖**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && python3 forge/next_pass.py init --model cytotoxic-waste-bag --force && mkdir -p .img2babylon/cytotoxic-waste-bag && python3 forge/tomato.py gen --seed 1202 --out .img2babylon/cytotoxic-waste-bag/hero.png --prompt "a bright yellow plastic cytotoxic waste bag standing open and upright with a rectangular box-shaped self-standing bottom, 30 cm wide 36 cm tall 20 cm deep, black biohazard symbol and black text CYTOTOXIC WASTE printed on the front, slightly crinkled rim, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
 ```
 agent vision 讀圖校對比例；記 job_id／prompt。
 
-- [ ] **Step 2: 寫 spec**
+- [x] **Step 2: 寫 spec**
 
 ```json
 {
@@ -1036,7 +1036,7 @@ agent vision 讀圖校對比例；記 job_id／prompt。
 
 Run: `python3 forge/validate_spec.py viewer/models/cytotoxic-waste-bag/spec.json --strict` → `OK`。
 
-- [ ] **Step 3: 寫 factory**
+- [x] **Step 3: 寫 factory**
 
 `viewer/models/cytotoxic-waste-bag/createCytotoxicWasteBagModel.ts`：
 
@@ -1256,7 +1256,7 @@ export default function createCytotoxicWasteBagModel(scene: Scene, opts: ModelOp
 
 `viewer/src/registry.ts` 加 `"cytotoxic-waste-bag": () => import("../models/cytotoxic-waste-bag/createCytotoxicWasteBagModel"),`。
 
-- [ ] **Step 4: headless gate（含 collect gate）**
+- [x] **Step 4: headless gate（含 collect gate）**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
@@ -1269,11 +1269,11 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 Expected：check_colliders OK（密度 ≈ 75；五 collider 兩兩重疊 0%）；physics_test pass；actuation_test `coverage:collect:bag`、`collect:bag` ok；collect_test `contain`（8/8）、`collected`（質量 0.24）、`idempotent`、`dispose` 全 ok。
 若 `contain` 不足 8：印球的最終位置——若在袋外附近，是落到口緣 tube 上彈開（tube 無 collider，不可能）或穿壁（把 collect_test `DROP_HEIGHT` 改 0.20）；若在袋內但判「外」，檢查 `interior.offset` 與 `WALL_Y` 一致。若 physics_test 落地翻倒：`BAG_COM.y` 改 −0.12。
 
-- [ ] **Step 5: 視覺 gate（五 pass 檢查點）**
+- [x] **Step 5: 視覺 gate（五 pass 檢查點）**
 
 相機 `{ alpha: -0.9, beta: 1.15, radius: 1.0, target: [0, 0.18, 0] }`；另截封袋後（harness 按「封袋」）`cytotoxic-waste-bag-sealed.png` 與碰撞線框（五片薄壁）。Divine Eye 對黃袋高對比預期 pass。每 pass 追加 reviewHistory、`next_pass.py done`。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && git add viewer/models/cytotoxic-waste-bag viewer/src/registry.ts && git commit -m "M12 cytotoxic-waste-bag：開口自立廢棄物袋（一 body 五 collider＋collect 封袋質量轉移，membership 8）；strict spec／check_colliders／physics_test／actuation_test／collect_test 綠
@@ -1293,14 +1293,14 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Interfaces:**
 - Produces: bodies `scoop`、`scraper`；無 actuator、無 constraint。
 
-- [ ] **Step 1: 初始化與參考圖**
+- [x] **Step 1: 初始化與參考圖**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && python3 forge/next_pass.py init --model scoop-and-scraper --force && mkdir -p .img2babylon/scoop-and-scraper && python3 forge/tomato.py gen --seed 1203 --out .img2babylon/scoop-and-scraper/hero.png --prompt "a purple hard plastic chemical spill kit scoop shaped like a small dustpan with low side walls and a short rear handle, and a purple flat scraper push board with a low foot and a small grip block, lying side by side on a light gray floor, seen from an above-front three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
 ```
 agent vision 讀圖校對比例；記 job_id／prompt。
 
-- [ ] **Step 2: 寫 spec**
+- [x] **Step 2: 寫 spec**
 
 ```json
 {
@@ -1389,7 +1389,7 @@ agent vision 讀圖校對比例；記 job_id／prompt。
 
 Run: `python3 forge/validate_spec.py viewer/models/scoop-and-scraper/spec.json --strict` → `OK`。
 
-- [ ] **Step 3: 寫 factory**
+- [x] **Step 3: 寫 factory**
 
 `viewer/models/scoop-and-scraper/createScoopAndScraperModel.ts`：
 
@@ -1534,7 +1534,7 @@ export default function createScoopAndScraperModel(scene: Scene, opts: ModelOpti
 
 `viewer/src/registry.ts` 加 `"scoop-and-scraper": () => import("../models/scoop-and-scraper/createScoopAndScraperModel"),`。
 
-- [ ] **Step 4: headless gate**
+- [x] **Step 4: headless gate**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
@@ -1546,11 +1546,11 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 Expected：check_colliders OK（scoop ≈ 335、scraper ≈ 556；相鄰 collider 齊平）；physics_test pass；actuation_test `spec 無 actuation 宣告` pass。
 runtime_export 用 spec collider offset＋factory node 世界矩陣算 collider AABB、用 mesh 世界 AABB 比對：root 零件（`scoop`、`scraper`）的 mesh 相對 pivot 偏移必須等於 spec collider offset（`[0,0.00125,0]`、`[0,0.03,0]`），否則報「collider AABB 未包住 mesh AABB」。
 
-- [ ] **Step 5: 視覺 gate（五 pass 檢查點）**
+- [x] **Step 5: 視覺 gate（五 pass 檢查點）**
 
 相機 `{ alpha: -0.9, beta: 1.0, radius: 0.7, target: [0, 0.03, 0] }`；碰撞線框一張。Divine Eye 多物件構圖預期 reject（M11 已知系統性原因）→ 目視判定、reviewHistory 註明。每 pass 追加 reviewHistory、`next_pass.py done`。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon && git add viewer/models/scoop-and-scraper viewer/src/registry.ts && git commit -m "M12 scoop-and-scraper：小鏟（畚斗式、2.5 mm 前緣）＋推板（L 形）兩自由 body，membership 8；strict spec／check_colliders／physics_test 綠
@@ -1572,7 +1572,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Interfaces:**
 - Consumes: Task 3–5 的 actuator id `servo:trigger.x`、`collect:bag`；body id `bottle`、`bag`、`scoop`、`scraper`。
 
-- [ ] **Step 1: scene.ts**
+- [x] **Step 1: scene.ts**
 
 `SCENE` 末尾加：
 
@@ -1590,7 +1590,7 @@ export function totalMass(model: BuiltModel): number {
 }
 ```
 
-- [ ] **Step 2: ui.ts**
+- [x] **Step 2: ui.ts**
 
 `STEPS`：
 
@@ -1614,7 +1614,7 @@ const STEPS = ["隔離現場、示警（警示立牌）", "穿戴防護裝備（
     }
 ```
 
-- [ ] **Step 3: scene_test.ts**
+- [x] **Step 3: scene_test.ts**
 
 檔頭註解補「噴瓶噴灑、袋子收納＋封袋、鏟刮板兩 body」。`ppe` 之後加：
 
@@ -1668,11 +1668,11 @@ const STEPS = ["隔離現場、示警（警示立牌）", "穿戴防護裝備（
 
 import 行加 `PhysicsShapeSphere`。`respawn:all` 改期望 21：`total === 21`、detail `期望 21：2+1+3+2+2+2+4+2+1+2`。
 
-- [ ] **Step 4: README**
+- [x] **Step 4: README**
 
 `../playground/README.md` 物件清單加三行：消毒劑噴瓶（噴灑）、鏟刮板（推顆粒進鏟）、廢棄物袋（封袋收納）。
 
-- [ ] **Step 5: 跑 typecheck、gate、重部署**
+- [x] **Step 5: 跑 typecheck、gate、重部署**
 
 ```bash
 cd /Users/wake/Desktop/local_three/playground && npx tsc --noEmit -p . && npm run scene-test 2>&1 | tail -50 && npm run serve 2>&1 | tail -4
@@ -1680,11 +1680,11 @@ cd /Users/wake/Desktop/local_three/playground && npx tsc --noEmit -p . && npm ru
 Expected：scene_test `"pass": true`（24 項：18＋settle×3＋spray＋wbag×2＋tools）；serve 印 tailnet 200。
 若 `settle:disinfectant-spray` 紅（扳機出廠回位微動）：閾值仍 0.02 m/s，servo 到位後應靜止；若持續抖動，`SERVO_FORCE` 降 0.03。
 
-- [ ] **Step 6: 瀏覽器目視**
+- [x] **Step 6: 瀏覽器目視**
 
 playwright 開 `https://monkeyday.tail8e3f79.ts.net/?v=4`，等 `__PLAYGROUND_READY__`，截 overview；按「噴灑」（噴瓶）等 1.5 s 截圖；按「封袋」（廢棄物袋）截圖；檔案 `mv` 到 `.img2babylon/shots/playground3-{overview,spray,seal}.png`，Read 目視：十件都在、噴霧落地成扇形、袋口打結。
 
-- [ ] **Step 7: Commit（playground）**
+- [x] **Step 7: Commit（playground）**
 
 ```bash
 cd /Users/wake/Desktop/local_three/playground && git add -A && git commit -m "playground：M12 十件（消毒劑噴瓶／鏟刮板／廢棄物袋）、新卡片（噴灑／封袋）、isDisposed 過濾、scene_test 新斷言；重部署
@@ -1703,7 +1703,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Modify: `docs/next-steps.md`（第三批已做，抬高抓取列 UX 項，補新候選）
 - Modify: `.remember/remember.md`
 
-- [ ] **Step 1: ROADMAP M12 節**
+- [x] **Step 1: ROADMAP M12 節**
 
 ```markdown
 ## M12：化療潑灑處理套件第三批（2026-09-05 核准開工）
@@ -1716,11 +1716,11 @@ interior 內的外來小 body；`collect_test.ts` gate）。三新模型＋playg
       結果：<各模型 Divine Eye 與修正次數、gate 狀態、陷阱——結案時填>
 ```
 
-- [ ] **Step 2: 任務卡**
+- [x] **Step 2: 任務卡**
 
 `tasks/0024-chemo-spill-set-3.md` 依 0023 格式：model／status／脈絡（使用者 2026-09-05 三問三答：擴充 pour、開口容器＋collect、兩 body）／分工／驗收／notes（修正次數、教訓：membership 8 容器規則、collect dispose 守衛）。
 
-- [ ] **Step 3: next-steps 與 handoff、Commit**
+- [x] **Step 3: next-steps 與 handoff、Commit**
 
 `docs/next-steps.md`：候選 1 改為「第四批（若還要）：噴霧×水漬互動、廢棄物袋投入廢棄物桶（袋子 0.20 kg > 桶口尺寸關係）」；UX 項加「抓取抬高（shift 拖曳沿垂直面）——M12 已知限制：顆粒進袋只能靠推板→小鏟→拖到袋邊」。
 `.remember/remember.md`：State M12 結案 commit；Next 等使用者；Context 本批新陷阱。

@@ -299,6 +299,25 @@ harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模�
       觀看方位（iv-bag 水平翻轉 vs pad 垂直翻轉）；check_colliders 同 body collider 重疊以 AABB 計，耳把不能嵌進桶身 collider；
       state.json 一次只屬一個模型——兩模型的 next_pass 命令不可並行。
 
+## M12：化療潑灑處理套件第三批（2026-09-05 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-05-chemo-spill-set-3-design.md`、計畫 `docs/superpowers/plans/2026-09-05-chemo-spill-set-3.md`。
+契約：`pour` 加 `direction`／`exitSpeed`、`tiltThreshold` 改選填（無則 gate 必填；噴瓶只看扳機角）；新增 `collect`（反向的質量轉移：
+封袋掃 `PhysicsEngineV2.getBodies()`，收走 interior 內不屬本模型、質量 ≤ maxItemMass 的 dynamic body 連 mesh dispose、質量轉入袋身；
+`collect_test.ts` gate）。三新模型＋playground 十件。
+
+- [x] 0024 pour 擴充＋collect 契約（validate_spec TDD 9 測試、Actuator kind `collect`、harness 按鈕、actuation_test 覆蓋、pour_test 依 tiltThreshold
+      切換直立情境、`collect_test.ts`）＋三模型＋playground。結果：
+      `disinfectant-spray`（2 body、扳機 servo 出廠回位＋pour 60 顆×0.002 kg／30 顆·s⁻¹ 沿 +z 2.5 m/s；pour_test A′/B′/C′ 綠；Divine Eye reject
+      只剩 bbox IoU 0.53——參考圖瓶身佈滿畫面、含陰影，目視通過；2 修正：噴頭拆後塊＋前鼻、依參考圖量測重設比例＋標籤改 −x 側面）、
+      `cytotoxic-waste-bag`（1 body 五 collider 中空容器、collect；Divine Eye pass 0.48／IoU 0.90；0 修正，參考圖重生 1 次——第一張偏成封口手提袋）、
+      `scoop-and-scraper`（2 自由 body：畚斗＋斜立握把（旋轉 collider）、平板推板 8 mm；Divine Eye pass 0.47；0 修正）。全部 headless gate 綠。
+      playground：十件、新卡片（噴灑／封袋）、`isDisposed` 過濾、scene_test 25 項綠、tailnet 重部署實測噴灑（21→51 剛體、總重不變）／封袋。
+      陷阱：生成物 `collide ~2` 會穿過所有 `membership 2` 的模型件——無活動件的容器類模型改 `membership 8 / collide ~0`；標籤 plane 底色與
+      牆面材質受光不同會成一塊異色斑——改透明底（DynamicTexture hasAlpha＋useAlphaFromDiffuseTexture）只印字；ExtrudeShape 梯形牆
+      shape 在 xy、沿 z 擠出後 rotation.y = π/2 讓 x→z（x′ = z、z′ = −x）；tomato 提示要明說「開口朝上、看得見內部」否則生成封口袋；
+      python 批次替換腳本任一 assert 失敗就整檔不寫——spec 已改、TS 未改會造成 check_colliders 紅，重跑前先核對每條樣式。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
