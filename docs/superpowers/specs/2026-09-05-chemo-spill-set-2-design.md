@@ -45,11 +45,12 @@
 | `panel-back` | box 0.30×0.60×0.015 | 0.6 kg | 222 |
 
 約束：`hinge` panel-front→panel-back，軸 x，樞軸在兩板頂端接縫（板厚各半分在樞軸兩側，
-收合時兩板相鄰不重疊）。角度 0 = 出廠展開姿勢；**limits [−0.56, 0.05]**：負向收合到兩板併攏、
-正向只留 0.05 餘裕——上限就是 A 形自立的「撐帶」，重力想把兩腳撐開時由限位擋住。
-`actuation: servo`（maxForce 4；0.6 kg、0.3 m 力臂 ≈ 1.8 N·m 上限，收合只需其半）。
-actuator `servo:panel-back.x`；playground「展開」= set(0)、「收合」= set(−0.56)。
-收合方向的正負以 `--nudge panel-back` 實測後定案（左手系陷阱）。
+收合時兩板相鄰不重疊）。兩板的 pivot node 各自帶 rotation.x = ±0.28，因此 hinge 角 0 = 兩板
+**同向（併攏）**、出廠展開時角 = −0.56；**limits [−0.61, 0]**：正向收合到併攏、負向只留 0.05 餘裕
+——下限就是 A 形自立的「撐帶」，重力想把兩腳撐開時由限位擋住（正角 = 抬起 −z 側的左手系規則：
+後板底在 +z，正轉往 −z 靠攏 = 收合）。`actuation: servo`（maxForce 4；0.6 kg、0.3 m 力臂 ≈ 1.8 N·m
+上限，收合只需其半）。actuator `servo:panel-back.x`；playground「展開」= set(−0.56)、「收合」= set(0)。
+方向以 `--nudge panel-back` 與 scene_test 實測確認。
 
 站立驗證：physics_test 落地後 300 步兩板底邊皆在地面 0.03 m 內、頂端高度 ≥ 0.55 m。
 推倒後兩板在限位內甩動、平躺；不會自己站回來。
@@ -150,11 +151,13 @@ playground「傾倒」按鈕 = `servo:cap.x` set(1.6) ＋ 推倒（既有 topple
 
 ## 5. `cytotoxic-waste-bin` 補正：側耳把
 
-- spec `componentTree` 加 `handle-l`／`handle-r`（box 0.025 × 0.035 × 0.10，材質 pedal-black，
-  fixed 於 bin，位置 x = ±0.163、y = +0.075（相對 bin pivot，離地 0.30）、z = 0），
-  併入 `physics.bodies[bin].components`；質量 3.0 kg 不變。
-- factory：`BODY_DEFS.bin.colliders` 加兩個 box（同 GROUP 過濾）；lathe 側面在該高度半徑約
-  0.143，耳把內側嵌入桶壁 0.005 m（視覺接合）。
+- spec `componentTree` 加 `handle-l`／`handle-r`（box 0.03 × 0.035 × 0.10，材質 pedal-black，
+  fixed 於 bin，位置 x = ±0.166、y = +0.075（相對 bin pivot，離地 0.30）、z = 0）＋ 無 collider 的
+  micro 接橋 `handle-l-stub`／`handle-r-stub`（box 0.014 × 0.02 × 0.06，x = ±0.147），全部併入
+  `physics.bodies[bin].components`；質量 3.0 kg 不變。耳把 collider 完全落在桶身 cylinder collider
+  的 AABB（x ≤ 0.15）之外——check_colliders 的「同 body 相鄰 collider 重疊 ≤ 25%」對 AABB 計算，
+  嵌進桶壁會超標；視覺接合改由接橋負責（lathe 在該高度半徑約 0.143）。
+- factory：`BODY_DEFS.bin.colliders` 加兩個 box（同 GROUP 過濾）。
 - 重跑 strict spec／check_colliders／physics_test（--nudge lid、--nudge pedal）／actuation_test，
   重截 hero＋collider、compare、Divine Eye（預期 IoU 略升——參考圖有耳把）、目視；
   `reviewHistory` 追加一筆 `pass: "polish"` 補正紀錄（notes 註明 M11 結案後補正，不佔 M10 修正額度；
