@@ -52,8 +52,11 @@ export function createGrabController(scene: Scene): GrabController;
   - 手點世界座標 `hand = TransformCoordinates(localOffset, worldMatrix)`；
     `v = (target − hand) × GAIN(8)`，長度夾 MAX_SPEED（3 m/s）；`setLinearVelocity(v)`。
   - 姿態誤差 `err = Inverse(cur).multiply(targetRot)`（Babylon 列向量慣例：先 cur 再 err，err 為世界軸旋轉）；
-    取最短路徑（w < 0 整體取負）→ 軸角；`ω = axis × angle × ANG_GAIN(6)`，長度夾 MAX_ANG（6 rad/s）；`setAngularVelocity(ω)`。
-    angle < 1e-4 時 ω = 0。慣例若寫反，`grab:tilt` 會發散而非收斂——以測試定案。
+    取最短路徑（w < 0 整體取負）→ 軸角 e；`ω = e × ANG_GAIN(30) + I`，`I += e × ANG_KI(60) × dt`（I 夾 3 rad/s，begin 歸零），
+    ω 長度夾 MAX_ANG（6 rad/s）；`setAngularVelocity(ω)`。angle < 1e-4 時 e = 0。
+    実測定案：Babylon 慣例同 `TransformNode.rotate`——`R.multiply(cur)` 是世界軸旋轉，所以 `err = target.multiply(Inverse(cur))`、
+    `tilt` 為 `RotationAxis(axis, dθ).multiply(targetRot)`（初版寫反時 `grab:tilt` 收斂到 π）。
+    純 P（增益 6）對「載重在手點前方」的恆定力矩留 0.07 rad 穩態誤差、增益 30 仍留 0.01–0.03 rad，球體沿斗底滾出——故加積分項。
 - 線速度加重力前饋 −g·dt（`engine.gravity × getTimeStep()`），否則每步設的速度被一步重力吃掉、懸停下垂 ≈ 1 cm。
 - 多 body 模型（處理包、廢棄物桶、立牌、吸附墊）抓其中一個 body，其餘靠既有 hinge 跟隨；不控制未抓的 body。
 - 被抓 body 若 `isDisposed`（例如抓取中被封袋收走）→ 該步自動 `end()`。
@@ -83,13 +86,15 @@ export function createGrabController(scene: Scene): GrabController;
 1. 前置：8 顆測試球（d 0.012、0.005 kg、阻尼 2，同 wbag 規格）自小鏟斗內上方 0.15 m 落入（鏟局部座標
    環徑 0.03、中心 (0, 0.15, −0.03)），200 步。
 2. `controller.begin(scoop, hand)`，`hand` ＝ 鏟局部 (0, 0.02, −0.06)（靠後緣，開口在 +z 前緣）的世界座標；
-   `moveTo(hand + (0, 0.5, 0))`，90 步後再取 30 步 → **`grab:lift`**：最後 30 步 `handError()` 最大值 ≤ 0.03。
+   目標以 `glide(to, steps)` 逐步線性插值（模擬連續拖曳；一次跳 0.5 m 會以 3 m/s 起步把球踢飛）：抬 0.5 m 走 90 步、停 60 步，
+   再取 30 步 → **`grab:lift`**：最後 30 步 `handError()` 最大值 ≤ 0.03。
    （原擬「步後速度 < 0.05」不成立：斗內球 0.04 kg 壓 0.08 kg 鏟，每步接觸衝量留下 ≈ 0.5·g·dt ≈ 0.07 m/s 殘速，是負載不是失控。）
-3. `moveTo(袋 interior 中心 + (0, 0.45, 0))`（interior offset (0, 0.005, 0) 經袋 world matrix），120 步。
-4. 傾斜軸＝鏟局部 +x 的世界方向；符號用 `TransformNormal` 判定：把鏟前向 f（局部 +z 世界方向）繞軸轉 +0.2 rad，
-   若 y 分量下降則取 +，否則取 −。分 16 次 `tilt(axis, sign × 0.1)`、每次 5 步；再 60 步 → **`grab:tilt`**：
-   `rotError() < 0.1` 且 `handError() ≤ 0.03`。
-5. 300 步讓球落袋；把鏟搬回原位上方（`tilt(axis, −sign × 1.6)`、`moveTo(原手點 + (0, 0.3, 0))`、120 步）→ `end()`、60 步。
+3. 傾斜軸＝鏟局部 +x 的世界方向；符號用 `TransformNormal` 判定：把鏟前向 f（局部 +z 世界方向）繞軸轉 +0.2 rad，
+   若 y 分量下降則取 +，否則取 −。搬運前先**後仰** 0.35 rad（5 × 0.07、各 5 步，再停 60 步）讓後牆托住球——
+   球體在任何水平加速下都相對斗滾動，端平搬會從開口滾出。
+4. `glide(袋 interior 中心 + (0, 0.45, 0) − frontH × 0.05, 120)`（frontH＝鏟前向水平投影），停 60 步；
+   分 20 次 `tilt(axis, sign × 0.1)`、每次 5 步（淨前傾 1.65 rad）；再 60 步 → **`grab:tilt`**：`rotError() < 0.1` 且 `handError() ≤ 0.03`。
+5. 300 步讓球落袋；把鏟搬回原位上方（`tilt(axis, −sign × 1.65)`、`glide(原手點 + (0, 0.3, 0), 120)`）→ `end()`、60 步。
 6. 計袋內球數 n（interior 半尺寸 (0.144, 0.175, 0.094)）；`collect:bag` set(1)、2 步 →
    **`grab:carry-pour`**：`n ≥ 6` 且 `|袋質量 − (0.24 + n × 0.005)| < 1e-5` 且袋內球全 `isDisposed`。
 
