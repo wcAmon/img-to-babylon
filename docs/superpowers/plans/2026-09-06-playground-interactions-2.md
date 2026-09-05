@@ -1,6 +1,6 @@
 # M15 playground 互動續 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 吸附墊平放蓋住水漬讓水漬淡出消失；封袋時計算封入的凝固顆粒數；噴瓶一抓起噴口自動下壓 0.35 rad；headless gate 34 項。
 
@@ -30,7 +30,7 @@
 **Interfaces:**
 - Produces: `InteractionState.puddle.wiped: boolean`、`InteractionState.sealedClumps: number`、`InteractionState.sealClumps(collect: () => void): number`。
 
-- [ ] **Step 1: 先寫失敗的測試**（`push("interact:disinfect", …);` 之後插入）
+- [x] **Step 1: 先寫失敗的測試**（`push("interact:disinfect", …);` 之後插入）
 
 ```ts
   // M15：凝固顆粒入袋封袋計數（wbag 已封過一次，collect 可重複呼叫）
@@ -59,9 +59,9 @@
 
 首行註解補「M15 互動續（封袋計數／擦拭／噴瓶下壓）」。
 
-- [ ] **Step 2: 跑 typecheck 確認失敗**：`sealClumps`／`wiped` 不存在 → TS 錯誤。
+- [x] **Step 2: 跑 typecheck 確認失敗**：`sealClumps`／`wiped` 不存在 → TS 錯誤。
 
-- [ ] **Step 3: 改 interactions.ts**
+- [x] **Step 3: 改 interactions.ts**
 
 import 加 `Matrix`。常數區加：
 ```ts
@@ -132,8 +132,8 @@ export interface InteractionState {
     },
 ```
 
-- [ ] **Step 4: 驗證** `npm run typecheck && npm run scene-test` → 33 項全綠。不足時先印 half-a 的 up.y／中心 y／局部座標，再調，不放寬門檻。
-- [ ] **Step 5: Commit** `git add src/interactions.ts scripts/scene_test.ts`。
+- [x] **Step 4: 驗證** `npm run typecheck && npm run scene-test` → 33 項全綠。不足時先印 half-a 的 up.y／中心 y／局部座標，再調，不放寬門檻。
+- [x] **Step 5: Commit** `git add src/interactions.ts scripts/scene_test.ts`。
 
 ---
 
@@ -143,7 +143,7 @@ export interface InteractionState {
 - Modify: `../playground/src/grab.ts`
 - Modify: `../playground/scripts/scene_test.ts`（`interact:disinfect` 之後、Task 1 區塊之前插入）
 
-- [ ] **Step 1: 測試**（import 加 `import { aimNozzle } from "../src/grab";`）
+- [x] **Step 1: 測試**（import 加 `import { aimNozzle } from "../src/grab";`）
 
 ```ts
   // M15：噴瓶抓起自動下壓（噴口局部 +z 俯角 → −0.35）
@@ -158,8 +158,8 @@ export interface InteractionState {
   step(60);
 ```
 
-- [ ] **Step 2: typecheck 失敗**（`aimNozzle` 不存在）。
-- [ ] **Step 3: grab.ts**（`const WHEEL_STEP…` 之後）
+- [x] **Step 2: typecheck 失敗**（`aimNozzle` 不存在）。
+- [x] **Step 3: grab.ts**（`const WHEEL_STEP…` 之後）
 
 ```ts
 export const AIM_PITCH = -0.35;
@@ -179,8 +179,8 @@ export function aimNozzle(ctl: GrabController, placed: Placed[], body: PhysicsBo
 ```
 POINTERDOWN：`ctl.begin(body, pick.pickedPoint);` 之後加 `aimNozzle(ctl, placed(), body);`。檔頭註解補「噴瓶抓起自動下壓 0.35 rad」。
 
-- [ ] **Step 4: 驗證** 34 項全綠。若 y 落在 +0.3 附近＝軸方向寫反，翻轉 θ 符號。
-- [ ] **Step 5: Commit** `git add src/grab.ts scripts/scene_test.ts`。
+- [x] **Step 4: 驗證** 34 項全綠。若 y 落在 +0.3 附近＝軸方向寫反，翻轉 θ 符號。
+- [x] **Step 5: Commit** `git add src/grab.ts scripts/scene_test.ts`。
 
 ---
 
@@ -189,7 +189,7 @@ POINTERDOWN：`ctl.begin(body, pick.pickedPoint);` 之後加 `aimNozzle(ctl, pla
 **Files:**
 - Modify: `../playground/src/ui.ts`
 
-- [ ] **Step 1**：`let puddleEl` 改為 `const statusEls = new Map<string, HTMLDivElement>();`；卡片迴圈 `massEls.push(mass);` 之後：
+- [x] **Step 1**：`let puddleEl` 改為 `const statusEls = new Map<string, HTMLDivElement>();`；卡片迴圈 `massEls.push(mass);` 之後：
 ```ts
     if (p.entry.model === "chemo-iv-bag" || p.entry.model === "cytotoxic-waste-bag") {
       const status = document.createElement("div"); status.className = "status"; card.appendChild(status); statusEls.set(p.entry.model, status);
@@ -207,20 +207,20 @@ interval：
     if (wbagEl) wbagEl.textContent = inter.sealedClumps > 0 ? `已封入凝固顆粒 ${inter.sealedClumps}` : "";
 ```
 提示尾加「｜墊子蓋水漬＝擦乾」。
-- [ ] **Step 2**：typecheck、scene-test 34 綠；`git add src/ui.ts` commit。
+- [x] **Step 2**：typecheck、scene-test 34 綠；`git add src/ui.ts` commit。
 
 ---
 
 ### Task 4: 瀏覽器實測、README、重部署
 
-- [ ] dev server（`run_in_background`）→ playwright：摔落→撒粉（M14 流程）→ 抓噴瓶（`__PLAYGROUND_GRAB__.begin` 後呼叫不到 `aimNozzle`，
+- [x] dev server（`run_in_background`）→ playwright：摔落→撒粉（M14 流程）→ 抓噴瓶（`__PLAYGROUND_GRAB__.begin` 後呼叫不到 `aimNozzle`，
   改以 pointer 事件不可行→ 用 `scene.onPointerObservable.notifyObservers` 太繞：直接驗「抓起後噴口 y」改在 headless；瀏覽器只演 tilt 效果）→ 噴灑 →
   吸附墊「攤開」後 `grab.begin(half-a)` 拖到水漬上放手 → `.status` 出現「水漬已擦拭」→ 截 `playground5-wipe.png`；
   凝固顆粒鏟入袋（或 teleport 10 顆進袋）→ 按「封袋」→ 袋卡片「已封入凝固顆粒 N」→ 截 `playground5-sealed.png`。
-- [ ] README 一句（不提交）：「消毒後把攤開的吸附墊拖到水漬上會擦乾（水漬消失）；封袋時袋卡片顯示封入的凝固顆粒數；噴瓶抓起自動朝下 0.35 rad（M15）。」
-- [ ] `pkill -f "vite.*5175"`；`npm run serve`；curl 200。
+- [x] README 一句（不提交）：「消毒後把攤開的吸附墊拖到水漬上會擦乾（水漬消失）；封袋時袋卡片顯示封入的凝固顆粒數；噴瓶抓起自動朝下 0.35 rad（M15）。」
+- [x] `pkill -f "vite.*5175"`；`npm run serve`；curl 200。
 
 ### Task 5: 結案文件
 
-- [ ] ROADMAP M15、`tasks/0027-playground-interactions-2.md`、`docs/next-steps.md`、spec 実測補記、本計畫全勾；commit。
-- [ ] memory `img2babylon-m15-lessons.md`＋MEMORY.md 一行；`.remember/remember.md`。
+- [x] ROADMAP M15、`tasks/0027-playground-interactions-2.md`、`docs/next-steps.md`、spec 実測補記、本計畫全勾；commit。
+- [x] memory `img2babylon-m15-lessons.md`＋MEMORY.md 一行；`.remember/remember.md`。

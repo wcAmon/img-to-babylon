@@ -347,6 +347,21 @@ harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模�
       陷阱：「落地」用中心高度判定，疊在別的東西上就不算——噴霧落在水漬中央塌扁的空袋上（y 0.012 > 0.010）、顆粒第二層（0.015 > 0.012）都不觸發，
       gate 佈點兩次失敗都是撞到這條（第一次外環與顆粒同角度、第二次內環 r 0.03 在袋上）；粉罐與噴瓶的生成物 key 都叫 `grain-<i>`，只能靠 `entry.model` 分辨。
 
+## M15：playground 互動續（2026-09-06 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-06-playground-interactions-2-design.md`、計畫 `docs/superpowers/plans/2026-09-06-playground-interactions-2.md`。
+只改 `../playground`，契約側不動。清理流程收尾：消毒 → 吸附墊擦乾（水漬消失）→ 鏟凝固顆粒入袋封袋（顯示顆數）；噴瓶一抓起就朝下。
+
+- [x] 0027 `interactions.ts` 規則 D（吸附墊任一半片平放——局部 +y 世界 y ≥ 0.9、中心 y ≤ 0.04——且水漬中心落在半片 ±0.10×±0.125 足跡內 → alpha 每步 −1/60、到 0 `setEnabled(false)`、`wiped`；
+      消毒 100% 不淡出，改由擦拭消失）＋`sealClumps(collect)`（呼叫前後比對凝固顆粒 `isDisposed`，回傳封入數、累計 `sealedClumps`；粉罐歸位不會被計到）；
+      `grab.ts` 純函式 `aimNozzle`（噴瓶抓起把噴口俯角轉到 −0.35 rad，POINTERDOWN 呼叫）；`ui.ts` 封袋按鈕經 `sealClumps`、袋卡片「已封入凝固顆粒 N」、
+      點滴袋「水漬已擦拭」、提示補「墊子蓋水漬＝擦乾」。scene_test 34 項綠（`grab:aim-nozzle` 噴口 y −0.345；`interact:seal-count` 10/10；`interact:wipe` true／disabled）。
+      tailnet 實測走**真實輸入層**（合成 pointerdown／wheel／pointermove／pointerup）：抓噴瓶自動下壓 −0.344、滾輪抬 0.20 m、拖到水漬前 0.45 m 噴 60 滴全吸收、消毒 100%；
+      攤開吸附墊拖到水漬上放手 → 平放 up.y 0.999、「水漬已擦拭」；10 顆凝固顆粒入袋封袋 → 質量 0.20→0.23、「已封入凝固顆粒 10」
+      （`.img2babylon/shots/playground5-{wipe,sealed}.png`）。
+      陷阱：合成 `pointermove` 要帶 `button: -1`（真滑鼠移動就是 −1），帶 `button: 0` 會被 Babylon InputManager 當成按鍵狀態改變、每次 move 交替合成 up／down，
+      抓取每步放手再抓、被放手的噴瓶倒回直立（俯角讀到剛好 0）；噴瓶抓在低處不抬高就拖，瓶底拖地會把姿態伺服的俯角頂回 0——真人要先滾輪抬高。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`

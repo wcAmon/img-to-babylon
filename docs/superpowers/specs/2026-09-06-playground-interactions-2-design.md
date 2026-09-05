@@ -2,6 +2,7 @@
 
 狀態：使用者核准設計方向（四項：吸附墊擦拭讓水漬消失、消毒 100% 不淡出、凝固顆粒封袋計數、噴瓶抓起自動下壓 0.35 rad；scene_test +3）。
 候選來源：`docs/next-steps.md` 第 2 項。前作：M14 `2026-09-05-playground-cross-model-interactions-design.md`。
+実測定案（同日）：scene_test 34/34；瀏覽器以合成 pointer 事件走真實輸入層——抓噴瓶噴口 −0.344、噴灑 60/60、擦拭成功、封袋計數 10。§6 補兩條實測陷阱。
 
 ## 1. 目標與範圍
 
@@ -76,3 +77,5 @@ POINTERDOWN：`ctl.begin(body, pick.pickedPoint); aimNozzle(ctl, placed(), body)
 - 吸附墊 membership 2 與顆粒（collide ~2）互不碰撞：墊子蓋過去顆粒不被推開；擦拭只管水漬，顆粒仍要鏟。
 - 墊子壓在塌扁袋（高 0.010）邊緣會微傾：up.y 門檻 0.9（≈ 26°）留餘裕。
 - 自動下壓在抓到扳機 body 時同樣生效（讀 `bodies.bottle` 方向、tilt 作用於被抓 body，兩者 hinge 相連）。
+- 実測：噴瓶抓在低處（手點 0.08–0.13 m）不抬高就拖，瓶底拖地會把姿態伺服的俯角頂回 0——真人要先滾輪抬高（demo 抬 0.20 m 後 60/60 命中）。
+- 実測：合成 `pointermove` 要帶 `button: -1`；帶 `button: 0` 會被 Babylon InputManager 當成按鍵狀態改變、每次 move 交替合成 up／down，抓取每步放手再抓。
