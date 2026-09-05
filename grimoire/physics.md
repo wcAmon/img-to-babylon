@@ -224,6 +224,8 @@ servo 必須「吊空測」（錨 body 設 STATIC、四肢自由）。
 - 傾角：`node.getDirection(Vector3.Up())` 取 body 局部 +y 的世界向量，`acos(up.y)` 即傾角，每個
   物理步在 `onAfterPhysicsObservable` 量。蓋門：蓋 hinge 角用 `hinge.ts` 的 `hingeAngle(a, b, bind)`，
   `bind` 在**任何物理步之前**取（`relativeRotation`）。
+- 無 `tiltThreshold`（噴瓶）：只看 gate 角與存量。`direction` 用 `Vector3.TransformNormal(dir, node.getWorldMatrix())` 轉世界；
+  初速 = 容器速度 + dir × `exitSpeed`；生成點 = pivot 局部偏移（噴嘴）同法轉世界。
 - 節流：條件成立時每步累積 `ratePerSecond / 60`，累積滿 1 顆就生成；條件中斷時累積歸零。
 - 生成點：pivot + up × (容器半高 + 0.015)，再加 seed 決定的 ±0.01 m 散佈（手動一次全倒時同點
   生成會互相彈開）；若低於 `groundY + 直徑` 則抬到該高度。初速 = 容器速度 + up × 0.3 m/s。
@@ -242,3 +244,16 @@ servo 必須「吊空測」（錨 body 設 STATIC、四肢自由）。
 `createHinge(..., { restOffset: θ })` 會把 B 側 perp 軸預轉 θ，讓出廠姿勢讀 0，limits 也以出廠為 0 寫。
 不要反過來把 spec limits 寫成「併攏 = 0、出廠 = −θ」——gate 會紅。
 
+## 收納＝反向的質量轉移（M12 collect）
+
+- 掃描：`(scene.getPhysicsEngine() as PhysicsEngineV2).getBodies()` 取全場 body；**先複製陣列**再迭代（dispose 會從原陣列移除）。
+  排除本模型的 body（`Set(Object.values(bodies))`）、`isDisposed`、非 `PhysicsMotionType.DYNAMIC`、質量 0 或 > `maxItemMass`。
+- 判定：`Vector3.TransformCoordinates(b.transformNode.absolutePosition, Matrix.Invert(pivot.getWorldMatrix()))` 減 `interior.offset`，
+  三軸絕對值皆 ≤ size/2 即在內。
+- 收走：`body.dispose(); body.transformNode.dispose()`。Babylon `PhysicsBody.dispose()` 有 `_isDisposed` 守衛、`isDisposed` getter：
+  擁有者模型（粉罐、噴瓶）之後 `dispose()` 對同一 body 再呼叫不會炸。**所有讀 `bodies` 的消費者要跳過 `isDisposed`**
+  （playground HUD／topple／scene_test 計數）。不用「隱藏＋改 static」——Havok static body 的質量回報不可靠。
+- 質量：`setMassProperties({ mass: 原質量 + Σ 收進, centerOfMass })`（質心要重給）。
+- 碰撞群組陷阱：粉罐顆粒與噴瓶液滴 `collide = ~2`，會穿過所有 `membership 2` 的模型件。無活動件的容器類模型（袋子、鏟刮板）
+  用 `membership 8 / collide ~0`，生成物才會落進去、推得動。
+- 封袋視覺只做一次（口緣 tube `scaling.set(0.3, 1, 0.3)`＋打結 mesh `setEnabled(true)`），之後 set(1) 仍可收新掉進來的東西。

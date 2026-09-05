@@ -121,6 +121,73 @@ class ValidateSpecTest(unittest.TestCase):
         errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
         self.assertTrue(any("pour" in e and "ratePerSecond" in e for e in errors))
 
+    def test_pour_without_tilt_requires_gate(self):
+        pour = {k: v for k, v in self.POUR_OK.items() if k not in ("tiltThreshold", "gate")}
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+        self.assertTrue(any("pour" in e and "gate" in e for e in errors))
+        pour = {k: v for k, v in self.POUR_OK.items() if k != "tiltThreshold"}
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=True)
+        self.assertEqual(errors, [])
+
+    def test_pour_direction_unit_vector(self):
+        for bad in ([0, 0, 2], [1, 0], "up", [0, 0, True]):
+            pour = dict(self.POUR_OK, direction=bad)
+            errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+            self.assertTrue(any("pour" in e and "direction" in e for e in errors), bad)
+        pour = dict(self.POUR_OK, direction=[0, 0, 1])
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=True)
+        self.assertEqual(errors, [])
+
+    def test_pour_exit_speed_positive(self):
+        for bad in (0, -1, "fast"):
+            pour = dict(self.POUR_OK, exitSpeed=bad)
+            errors, _ = validate_spec.validate(self._with_pour(pour), strict=False)
+            self.assertTrue(any("pour" in e and "exitSpeed" in e for e in errors), bad)
+
+    def test_pour_spray_shape_passes(self):
+        pour = {"grains": 60, "grainMass": 0.002, "ratePerSecond": 30, "direction": [0, 0, 1],
+                "exitSpeed": 2.5, "gate": {"body": "cap", "minAngle": 0.3}}
+        errors, _ = validate_spec.validate(self._with_pour(pour), strict=True)
+        self.assertEqual(errors, [])
+
+    def _with_collect(self, collect, mass=0.2):
+        spec = minimal_spec()
+        body = spec["physics"]["bodies"][0]
+        body["mass"] = mass
+        body["collect"] = collect
+        return spec
+
+    COLLECT_OK = {"interior": {"size": [0.288, 0.35, 0.188], "offset": [0, 0.005, 0]}, "maxItemMass": 0.05}
+
+    def test_collect_valid_passes(self):
+        errors, _ = validate_spec.validate(self._with_collect(dict(self.COLLECT_OK)), strict=True)
+        self.assertEqual(errors, [])
+
+    def test_collect_interior_size_three_positive(self):
+        for bad in ([0.1, 0, 0.1], [0.1, 0.1], "big", [0.1, -0.1, 0.1]):
+            col = {"interior": {"size": bad, "offset": [0, 0, 0]}, "maxItemMass": 0.05}
+            errors, _ = validate_spec.validate(self._with_collect(col), strict=False)
+            self.assertTrue(any("collect" in e and "size" in e for e in errors), bad)
+
+    def test_collect_interior_offset_three_numbers(self):
+        for bad in ([0, 0], "center", [0, "a", 0]):
+            col = {"interior": {"size": [0.1, 0.1, 0.1], "offset": bad}, "maxItemMass": 0.05}
+            errors, _ = validate_spec.validate(self._with_collect(col), strict=False)
+            self.assertTrue(any("collect" in e and "offset" in e for e in errors), bad)
+
+    def test_collect_max_item_mass_positive(self):
+        for bad in (0, -0.1, "light"):
+            col = dict(self.COLLECT_OK, maxItemMass=bad)
+            errors, _ = validate_spec.validate(self._with_collect(col), strict=False)
+            self.assertTrue(any("collect" in e and "maxItemMass" in e for e in errors), bad)
+
+    def test_collect_max_item_mass_below_body_mass(self):
+        col = dict(self.COLLECT_OK, maxItemMass=0.5)  # body mass 0.2
+        errors, _ = validate_spec.validate(self._with_collect(col), strict=False)
+        self.assertTrue(any("collect" in e and "maxItemMass" in e for e in errors))
+        errors, _ = validate_spec.validate(self._with_collect({"interior": "box", "maxItemMass": 0.05}), strict=False)
+        self.assertTrue(any("collect" in e and "interior" in e for e in errors))
+
     def test_action_figure_leg_chain_mass_contract(self):
         with open(ACTION_FIGURE) as handle:
             spec = json.load(handle)

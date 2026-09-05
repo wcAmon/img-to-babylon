@@ -284,15 +284,34 @@ factory 契約：掛 actuator `rupture:<bodyId>`（kind `"rupture"`，min 0、ma
             "gate": { "body": "cap", "minAngle": 1.0 } } }
 ```
 
-- `tiltThreshold`（rad）：body 局部 +y 與世界 +y 的夾角達此值才倒；(0, π)。
+- `tiltThreshold`（rad，**選填**）：body 局部 +y 與世界 +y 的夾角達此值才倒；(0, π)。缺省 = 不看傾角（噴瓶），
+  此時 `gate` 必填（否則出廠即永倒）。
 - `grains`：總顆數（正整數）；`grainMass`（kg）：每顆質量；`grains × grainMass < mass`。
 - `ratePerSecond`：倒出速率（顆／秒），正數。
+- `direction`（選填，預設 [0, 1, 0]）：body 局部單位向量，內容物初速方向（噴瓶用噴嘴 +z）。
+- `exitSpeed`（選填，m/s，預設 0.3）：內容物離開容器的初速。生成點由 factory 決定（頸口或噴嘴），契約不規定。
 - `gate`（選填）：`body` 必須是掛在本 body 上（bodyA = 本 body）的 hinge 之 bodyB；hinge 角
   ≥ `minAngle`（須在該 hinge limits 內）才倒。
 
 factory 契約：掛 actuator `pour:<bodyId>`（kind `"pour"`，min 0、max 1，`set(1)` 立即倒出全部剩餘、
 冪等；`set(0)` 無事）；每倒一顆 `bodies[<bodyId>]` 質量減 `grainMass`，顆粒為 `bodies["grain-<i>"]`
 ／`meshes["grain-<i>"]`。gate：`viewer/scripts/pour_test.ts`。
+
+## collect（M12 容器 body）
+
+廢棄物袋類物件封袋時把掉進來的東西收進袋身——契約是**反向的質量轉移**。在 `physics.bodies[]` 上選填：
+
+```json
+{ "id": "bag", "components": ["bag", "bag-bottom", "wall-front", "wall-back", "wall-left", "wall-right"], "mass": 0.20,
+  "collect": { "interior": { "size": [0.288, 0.35, 0.188], "offset": [0, 0.005, 0] }, "maxItemMass": 0.05 } }
+```
+
+- `interior.size`（m，三正數）／`interior.offset`（三數）：body 局部框的收納區（開口容器的內腔）。
+- `maxItemMass`（kg）：只收質量 ≤ 此值的外來 dynamic body；必須小於 `mass`。
+
+factory 契約：掛 actuator `collect:<bodyId>`（kind `"collect"`，min 0、max 1，`set(1)` 觸發、冪等、可重複收新掉進來的
+東西；`set(0)` 無事）。觸發時凡**不屬本模型、dynamic、0 < 質量 ≤ maxItemMass、質心在 interior 世界框內**的 body 連 mesh
+一起 `dispose()`，本 body 質量加上收進的總質量。gate：`viewer/scripts/collect_test.ts`。
 
 ## actuation（M4 可動物件契約）
 

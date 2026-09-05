@@ -126,8 +126,12 @@ def _check_rupture(bid, body, errors):
 _POUR_POSITIVE = ("grainMass", "ratePerSecond")
 
 
+def _is_num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
 def _check_pour(bid, body, constraints, errors):
-    """可傾倒 body：節流的質量轉移契約（M11 設計文件 §3.2／§4）。"""
+    """可傾倒 body：節流的質量轉移契約（M11 設計文件 §3.2／§4；M12 §4.1 擴充 direction／exitSpeed、tilt 選填）。"""
     pour = body.get("pour")
     if pour is None:
         return
@@ -135,20 +139,29 @@ def _check_pour(bid, body, constraints, errors):
         errors.append(f"body {bid} pour 必須是物件")
         return
     tilt = pour.get("tiltThreshold")
-    if (not isinstance(tilt, (int, float)) or isinstance(tilt, bool)
-            or not 0 < tilt < math.pi):
+    if tilt is not None and (not _is_num(tilt) or not 0 < tilt < math.pi):
         errors.append(f"body {bid} pour.tiltThreshold 必須在 (0, π) 內")
+    if tilt is None and pour.get("gate") is None:
+        errors.append(f"body {bid} pour 無 tiltThreshold 時必須有 gate（否則出廠即永倒）")
+    direction = pour.get("direction")
+    if direction is not None and (
+            not isinstance(direction, list) or len(direction) != 3
+            or not all(_is_num(v) for v in direction)
+            or abs(math.sqrt(sum(v * v for v in direction)) - 1.0) > 1e-6):
+        errors.append(f"body {bid} pour.direction 必須是長度 1 的三元向量")
+    speed = pour.get("exitSpeed")
+    if speed is not None and (not _is_num(speed) or speed <= 0):
+        errors.append(f"body {bid} pour.exitSpeed 必須為正數")
     for key in _POUR_POSITIVE:
         v = pour.get(key)
-        if not isinstance(v, (int, float)) or isinstance(v, bool) or v <= 0:
+        if not _is_num(v) or v <= 0:
             errors.append(f"body {bid} pour.{key} 必須為正數")
     grains = pour.get("grains")
     if not isinstance(grains, int) or isinstance(grains, bool) or grains <= 0:
         errors.append(f"body {bid} pour.grains 必須為正整數")
     mass, gm = body.get("mass"), pour.get("grainMass")
     if (isinstance(grains, int) and not isinstance(grains, bool)
-            and isinstance(mass, (int, float)) and isinstance(gm, (int, float))
-            and not isinstance(gm, bool) and grains * gm >= mass):
+            and _is_num(mass) and _is_num(gm) and grains * gm >= mass):
         errors.append(f"body {bid} pour.grains×grainMass {grains * gm} 必須小於 mass {mass}")
     gate = pour.get("gate")
     if gate is None:
@@ -162,9 +175,33 @@ def _check_pour(bid, body, constraints, errors):
         errors.append(f"body {bid} pour.gate.body {gate.get('body')!r} 不是掛在本 body 上的 hinge 之 bodyB")
         return
     limits, ang = hinge.get("limits"), gate.get("minAngle")
-    if (not isinstance(ang, (int, float)) or isinstance(ang, bool)
-            or not isinstance(limits, list) or not (limits[0] <= ang <= limits[1])):
+    if (not _is_num(ang) or not isinstance(limits, list) or not (limits[0] <= ang <= limits[1])):
         errors.append(f"body {bid} pour.gate.minAngle {ang!r} 必須落在 hinge limits {limits!r} 內")
+
+
+def _check_collect(bid, body, errors):
+    """容器 body：收納＝反向的質量轉移（M12 設計文件 §4.2）。"""
+    col = body.get("collect")
+    if col is None:
+        return
+    if not isinstance(col, dict):
+        errors.append(f"body {bid} collect 必須是物件")
+        return
+    interior = col.get("interior")
+    if not isinstance(interior, dict):
+        errors.append(f"body {bid} collect.interior 必須是物件（size、offset）")
+    else:
+        size = interior.get("size")
+        if not (isinstance(size, list) and len(size) == 3 and all(_is_num(v) and v > 0 for v in size)):
+            errors.append(f"body {bid} collect.interior.size 必須是三個正數")
+        offset = interior.get("offset")
+        if not (isinstance(offset, list) and len(offset) == 3 and all(_is_num(v) for v in offset)):
+            errors.append(f"body {bid} collect.interior.offset 必須是三個數字")
+    mim, mass = col.get("maxItemMass"), body.get("mass")
+    if not _is_num(mim) or mim <= 0:
+        errors.append(f"body {bid} collect.maxItemMass 必須為正數")
+    elif _is_num(mass) and mim >= mass:
+        errors.append(f"body {bid} collect.maxItemMass {mim} 必須小於 mass {mass}")
 
 
 def _stack_height(comps):
@@ -255,6 +292,7 @@ def validate(spec, strict=False):
             errors.append(f"body {bid} mass 必須為正數")
         _check_rupture(bid, b, errors)
         _check_pour(bid, b, spec["physics"].get("constraints", []), errors)
+        _check_collect(bid, b, errors)
     for cid in comps:
         if cid not in assigned:
             errors.append(f"元件 {cid} 未指派給任何 body")
