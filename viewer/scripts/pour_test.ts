@@ -1,7 +1,7 @@
 // 傾倒 gate（M11 pour）：spec 有 pour 的 body 必須 (A) 蓋閉、側躺 300 步不倒——顆粒 0、質量不變；
 // (B) 蓋開（gate servo 上限）、側躺 → 300 步內顆粒數 = grains、質量 = mass − grains×grainMass，
 // 再 300 步顆粒全靜止且全部有限；(C) 直立、蓋開 120 步不倒；手動 pour:<id> set(1) 兩次只倒一輪；
-// dispose 後場景無 grain mesh。
+// dispose 後場景無 grain mesh。無 tiltThreshold 的 spec（噴瓶，M12）：A′／B′ 直立、gate 閉／開；C′ 不開 gate、直立 120 步無顆粒。
 // 用法: npx tsx scripts/pour_test.ts <model-name> --spec <spec.json> [--out result.json]
 import {
   MeshBuilder,
@@ -22,7 +22,7 @@ const SETTLE_STEPS = 300;
 const SETTLE_SPEED = 0.02;
 const LYING_LIFT = 0.06; // m：側躺時 root 抬高，讓半徑 0.04 的罐身不從地下出生
 
-interface SpecPour { tiltThreshold: number; grains: number; grainMass: number; ratePerSecond: number; gate?: { body: string; minAngle: number } }
+interface SpecPour { tiltThreshold?: number; grains: number; grainMass: number; ratePerSecond: number; gate?: { body: string; minAngle: number } }
 interface SpecBody { id: string; mass: number; pour?: SpecPour }
 interface SpecConstraint { type: string; bodyA: string; bodyB: string; limits?: number[] | "free" }
 interface Spec { physics?: { bodies?: SpecBody[]; constraints?: SpecConstraint[] } }
@@ -89,18 +89,19 @@ async function main(): Promise<number> {
   for (const decl of decls) {
     const pour = decl.pour!;
     const emptied = decl.mass - pour.grains * pour.grainMass;
-    // (A) 蓋閉側躺不倒
+    const lying = pour.tiltThreshold !== undefined; // 有傾角條件才側躺；噴瓶直立
+    // (A) 蓋閉側躺不倒（無傾角條件：gate 閉直立不倒）
     {
-      const { ctx, model } = await spawn(name, true);
+      const { ctx, model } = await spawn(name, lying);
       ctx.step(LAND_STEPS + POUR_STEPS);
       const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
       push(`A:${decl.id}:closed`, grains(model).length === 0 && Math.abs(mass - decl.mass) < 1e-5,
-        `蓋閉側躺：顆粒 ${grains(model).length}、質量 ${mass}（期望 ${decl.mass}）`);
+        `${lying ? "蓋閉側躺" : "gate 閉直立"}：顆粒 ${grains(model).length}、質量 ${mass}（期望 ${decl.mass}）`);
       ctx.dispose();
     }
-    // (B) 蓋開側躺倒空
+    // (B) 蓋開側躺倒空（無傾角條件：gate 開直立倒空）
     {
-      const { ctx, model } = await spawn(name, true);
+      const { ctx, model } = await spawn(name, lying);
       ctx.step(LAND_STEPS);
       push(`B:${decl.id}:gate`, openGate(model, spec, decl), "gate servo 可命令到上限");
       ctx.step(POUR_STEPS);
@@ -117,9 +118,9 @@ async function main(): Promise<number> {
     {
       const { ctx, model } = await spawn(name, false);
       ctx.step(60);
-      openGate(model, spec, decl);
+      if (lying) openGate(model, spec, decl);
       ctx.step(120);
-      push(`C:${decl.id}:upright`, grains(model).length === 0, `直立蓋開：顆粒 ${grains(model).length}`);
+      push(`C:${decl.id}:upright`, grains(model).length === 0, `${lying ? "直立蓋開" : "直立 gate 閉"}：顆粒 ${grains(model).length}`);
       const act = model.actuators?.find((a) => a.id === `pour:${decl.id}`);
       if (!act) {
         push(`C:${decl.id}:actuator`, false, "無 pour actuator");

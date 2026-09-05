@@ -53,8 +53,9 @@ interface SpecConstraint {
 }
 interface SpecComponent { id: string; actuation?: SpecActuation }
 interface SpecRupture { impulseThreshold: number; emptiedMass: number; puddleRadius: number; droplets: number }
-interface SpecPour { tiltThreshold: number; grains: number; grainMass: number; ratePerSecond: number; gate?: { body: string; minAngle: number } }
-interface SpecBody { id: string; mass: number; rupture?: SpecRupture; pour?: SpecPour }
+interface SpecPour { tiltThreshold?: number; grains: number; grainMass: number; ratePerSecond: number; direction?: number[]; exitSpeed?: number; gate?: { body: string; minAngle: number } }
+interface SpecCollect { interior: { size: number[]; offset: number[] }; maxItemMass: number }
+interface SpecBody { id: string; mass: number; rupture?: SpecRupture; pour?: SpecPour; collect?: SpecCollect }
 interface Spec {
   componentTree?: SpecComponent[];
   physics?: { bodies?: SpecBody[]; constraints?: SpecConstraint[] };
@@ -142,8 +143,9 @@ async function main(): Promise<number> {
   const lightDecls = (spec.componentTree ?? []).filter((c) => c.actuation?.type === "light");
   const ruptureDecls = (spec.physics?.bodies ?? []).filter((b) => b.rupture);
   const pourDecls = (spec.physics?.bodies ?? []).filter((b) => b.pour);
+  const collectDecls = (spec.physics?.bodies ?? []).filter((b) => b.collect);
   if (!driveDecls.length && !steerDecls.length && !servoDecls.length && !lightDecls.length
-      && !ruptureDecls.length && !pourDecls.length) {
+      && !ruptureDecls.length && !pourDecls.length && !collectDecls.length) {
     console.log(JSON.stringify({ model: name, checks: [], pass: true,
       note: "spec 無 actuation 宣告" }));
     return 0;
@@ -193,6 +195,24 @@ async function main(): Promise<number> {
     push(`coverage:pour:${b.id}`, byId.has(`pour:${b.id}`),
       byId.has(`pour:${b.id}`) ? "有 pour actuator" : "spec 宣告 pour 但無 actuator");
   }
+  for (const b of collectDecls) {
+    push(`coverage:collect:${b.id}`, byId.has(`collect:${b.id}`),
+      byId.has(`collect:${b.id}`) ? "有 collect actuator" : "spec 宣告 collect 但無 actuator");
+  }
+  // ---- collect（M12）：無物時觸發不改質量、冪等（有物收納由 collect_test 驗）----
+  const runCollect = (): void => {
+    for (const b of collectDecls) {
+      const act = byId.get(`collect:${b.id}`);
+      const body = model.bodies[b.id];
+      if (!act || !body) continue;
+      act.set(1); step(2);
+      const m1 = body.getMassProperties().mass ?? NaN;
+      act.set(1); step(2);
+      const m2 = body.getMassProperties().mass ?? NaN;
+      push(`collect:${b.id}`, Math.abs(m1 - b.mass) < 1e-5 && Math.abs(m2 - b.mass) < 1e-5,
+        `無物觸發兩次質量 ${m1}/${m2}（期望 ${b.mass}）`);
+    }
+  };
   // ---- pour（M11）：手動全倒——會改質量、生顆粒，排在所有其他檢查之後 ----
   const grainCount = (): number => Object.keys(model.bodies).filter((k) => k.startsWith("grain-")).length;
   const runPour = (): void => {
@@ -357,7 +377,7 @@ async function main(): Promise<number> {
     push("drive", dist >= DRIVE_MIN_DIST * scale, `位移 ${dist.toFixed(3)}m（門檻 ${DRIVE_MIN_DIST * scale}）`);
   }
 
-  if (ruptureDecls.length || pourDecls.length) { step(T(SETTLE_STEPS)); runRupture(); runPour(); }
+  if (ruptureDecls.length || pourDecls.length || collectDecls.length) { step(T(SETTLE_STEPS)); runRupture(); runPour(); runCollect(); }
 
   const pass = checks.length > 0 && checks.every((c) => c.ok);
   const result = { model: name, checks, pass };

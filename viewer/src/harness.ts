@@ -127,8 +127,8 @@ function installActuatorPanel(scene: Scene, model: BuiltModel, modelName: string
   panel.appendChild(h);
   const sliders: { input: HTMLInputElement; val: HTMLSpanElement }[] = [];
   for (const act of acts) {
-    if (act.kind === "rupture" || act.kind === "pour") {
-      // M10：破裂是一次性觸發，按鈕而非滑桿（M11 pour 同樣）；sliders 仍推入假元素對齊索引（全部歸零會 set(0)，無動作）
+    if (act.kind === "rupture" || act.kind === "pour" || act.kind === "collect") {
+      // M10：破裂是一次性觸發，按鈕而非滑桿（M11 pour、M12 collect 同樣）；sliders 仍推入假元素對齊索引（全部歸零會 set(0)，無動作）
       const b = document.createElement("button");
       b.className = "reset";
       b.textContent = act.label;
