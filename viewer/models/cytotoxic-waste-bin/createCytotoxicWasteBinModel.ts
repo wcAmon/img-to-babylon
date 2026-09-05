@@ -33,6 +33,7 @@ const LID_LIMITS: [number, number] = [0, 1.5];
 const PEDAL_LIMITS: [number, number] = [-0.3, 0];
 const SERVO_FORCE = 3;
 const GROUP = 2; // 整桶零件同群組、不互撞（grimoire/physics.md 碰撞過濾）
+const HANDLE_X = 0.166, HANDLE_Y = 0.195, HANDLE = { w: 0.03, h: 0.03, d: 0.06 }, STUB_X = 0.148; // 側耳把（M11 補正）：桶口下緣（離地 0.42），collider 落在桶身 cylinder AABB（|x|≤0.15）之外
 const TESS = 48;
 
 interface BodyDef {
@@ -42,7 +43,11 @@ interface BodyDef {
 }
 const BODY_DEFS: BodyDef[] = [
   { id: "bin", rootComponent: "bin", mass: 3.0, friction: 0.6, restitution: 0.15, centerOfMass: [0, -0.15, 0],
-    colliders: [{ component: "bin", kind: "cylinder", size: [0.30, BIN_H, 0.30], offset: [0, 0, 0] }] },
+    colliders: [
+      { component: "bin", kind: "cylinder", size: [0.30, BIN_H, 0.30], offset: [0, 0, 0] },
+      { component: "handle-l", kind: "box", size: [HANDLE.w, HANDLE.h, HANDLE.d], offset: [0, 0, 0] },
+      { component: "handle-r", kind: "box", size: [HANDLE.w, HANDLE.h, HANDLE.d], offset: [0, 0, 0] },
+    ] },
   { id: "lid", rootComponent: "lid", mass: 0.35, friction: 0.6, restitution: 0.15, centerOfMass: [0, 0, 0],
     colliders: [{ component: "lid", kind: "cylinder", size: [0.31, LID_H, 0.31], offset: [0, 0, 0] }] },
   { id: "pedal", rootComponent: "pedal", mass: 0.15, friction: 0.6, restitution: 0.15, centerOfMass: [0, 0, 0],
@@ -124,6 +129,7 @@ export default function createCytotoxicWasteBinModel(scene: Scene, opts: ModelOp
   if (labelTex) disposables.push(labelTex);
   const matOf: Record<string, StandardMaterial> = {
     bin: purple, "bag-liner": liner, "bin-label": label, lid: yellow, "lid-handle": yellow, "lid-knob": black,
+    "handle-l": black, "handle-l-stub": black, "handle-r": black, "handle-r-stub": black,
     pedal: black, "pedal-arm": black,
   };
 
@@ -144,6 +150,14 @@ export default function createCytotoxicWasteBinModel(scene: Scene, opts: ModelOp
   // 標籤：無旋轉 plane，正面朝 -z（box 前面 UV 會把文字上下顛倒）
   attach("bin-label", MeshBuilder.CreatePlane("bin-label", { width: 0.16, height: 0.11 }, scene),
     pivot("bin-label", binPivot, new Vector3(0, 0.04, -0.147)));
+  // 側耳把（M11 補正）：耳把本體在桶身 cylinder collider AABB 之外（check_colliders 重疊規則），接橋無 collider 補視覺接合
+  for (const side of [-1, 1] as const) {
+    const sfx = side < 0 ? "l" : "r";
+    attach(`handle-${sfx}`, MeshBuilder.CreateBox(`handle-${sfx}`, { width: HANDLE.w, height: HANDLE.h, depth: HANDLE.d }, scene),
+      pivot(`handle-${sfx}`, binPivot, new Vector3(side * HANDLE_X, HANDLE_Y, 0)));
+    attach(`handle-${sfx}-stub`, MeshBuilder.CreateBox(`handle-${sfx}-stub`, { width: 0.014, height: 0.02, depth: 0.04 }, scene),
+      pivot(`handle-${sfx}-stub`, binPivot, new Vector3(side * STUB_X, HANDLE_Y, 0)));
+  }
 
   // ---- lid ----
   const lidPivot = pivot("lid", root, new Vector3(0, LID_Y, 0));

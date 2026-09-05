@@ -16,7 +16,7 @@
     "units": "m"
   },
   "silhouette": {
-    "outline": "purple tapered cylindrical pedal bin 0.30 dia x 0.45 tall with a yellow domed lid 0.31 dia x 0.06 (small yellow handle on top) hinged on the back (+z) rim, a small black foot pedal 0.09 x 0.015 x 0.08 hinged at the front (-z) bottom, white CYTOTOXIC WASTE label on the front. Rest = lid closed, pedal level. Lid opens with positive rotation about [1,0,0] up to 1.5; pedal presses with negative rotation down to -0.3.",
+    "outline": "purple tapered cylindrical pedal bin 0.30 dia x 0.45 tall with a yellow domed lid 0.31 dia x 0.06 (small yellow handle on top) hinged on the back (+z) rim, a small black foot pedal 0.09 x 0.015 x 0.08 hinged at the front (-z) bottom, white CYTOTOXIC WASTE label on the front, two small black carry ears on the sides just under the rim (0.42 height). Rest = lid closed, pedal level. Lid opens with positive rotation about [1,0,0] up to 1.5; pedal presses with negative rotation down to -0.3.",
     "complexity": "complex"
   },
   "componentTree": [
@@ -140,6 +140,178 @@
         "socket": "bin:front"
       },
       "material": "label-print"
+    },
+    {
+      "id": "handle-l",
+      "name": "left side carry ear just under the rim",
+      "level": "meso",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.03,
+        "h": 0.03,
+        "d": 0.06,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          -0.166,
+          0.195,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bin",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bin:left"
+      },
+      "material": "pedal-black",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.03,
+          0.03,
+          0.06
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "handle-l-stub",
+      "name": "left handle bridge into the wall",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.014,
+        "h": 0.02,
+        "d": 0.04,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          -0.148,
+          0.195,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bin",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bin:left"
+      },
+      "material": "pedal-black"
+    },
+    {
+      "id": "handle-r",
+      "name": "right side carry ear just under the rim",
+      "level": "meso",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.03,
+        "h": 0.03,
+        "d": 0.06,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0.166,
+          0.195,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bin",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bin:right"
+      },
+      "material": "pedal-black",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.03,
+          0.03,
+          0.06
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "handle-r-stub",
+      "name": "right handle bridge into the wall",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.014,
+        "h": 0.02,
+        "d": 0.04,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0.148,
+          0.195,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bin",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bin:right"
+      },
+      "material": "pedal-black"
     },
     {
       "id": "lid",
@@ -442,7 +614,11 @@
         "components": [
           "bin",
           "bag-liner",
-          "bin-label"
+          "bin-label",
+          "handle-l",
+          "handle-l-stub",
+          "handle-r",
+          "handle-r-stub"
         ],
         "mass": 3.0,
         "friction": 0.6,
@@ -611,6 +787,18 @@
       },
       "action": "continue",
       "notes": "常數推導樞軸；metadata sculptRuntime；dispose 完整。剩餘落差：桶身錐度比參考圖略大、無側耳把、蓋緣無下垂裙邊。 結案後補正（playground scene_test 揭露）：踏板 collider 與桶身 cylinder collider（r 0.15 全高）重疊，hinge isCollisionsEnabled=false 擋不住，踏板連吊空都推不動；樞軸移到 z=−0.15 圓柱邊緣外＋三 body 同碰撞過濾群組（同 toy-racer）。 踏板 servo 出廠即鎖 0（回位彈簧，steer 慣例例外）：無彈簧時踏板靠重力垂到 −0.3 下限、尖端觸地，踩下無變化。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.369,
+        "iou": 0.715
+      },
+      "action": "continue",
+      "notes": "M11 結案後補正（不佔 M10 修正額度，重新 init 只跑一輪）：兩側耳把 handle-l/r（box 0.03×0.03×0.06，x=±0.166、離地 0.42 桶口下緣）＋無 collider 接橋 stub；耳把 collider 落在桶身 cylinder AABB（|x|≤0.15）之外以過 check_colliders 重疊規則。一次修正：初版放在桶身中段 0.30，參考圖耳把貼桶口下方。全 gate 重跑綠（check_colliders、physics_test／--nudge lid／--nudge pedal、actuation_test）；harness 背景同色後 Divine Eye pass 0.369／IoU 0.72。"
     }
   ]
 }
