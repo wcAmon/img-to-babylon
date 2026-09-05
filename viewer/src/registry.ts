@@ -17,4 +17,6 @@ export const registry: Record<string, () => Promise<{ default: ModelFactory }>> 
   "chemo-spill-kit": () => import("../models/chemo-spill-kit/createChemoSpillKitModel"),
   "chemo-iv-bag": () => import("../models/chemo-iv-bag/createChemoIvBagModel"),
   "cytotoxic-waste-bin": () => import("../models/cytotoxic-waste-bin/createCytotoxicWasteBinModel"),
+  // M11 化療潑灑處理套件第二批
+  "absorbent-powder-shaker": () => import("../models/absorbent-powder-shaker/createAbsorbentPowderShakerModel"),
 };

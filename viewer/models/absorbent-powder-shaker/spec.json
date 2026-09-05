@@ -1,0 +1,470 @@
+{
+  "targetName": "absorbent-powder-shaker",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/absorbent-powder-shaker/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "61c801f01b9f428284c03e4265e8588b",
+      "prompt": "a small white HDPE shaker bottle of chemical spill absorbent solidifier powder, 8 cm diameter 16 cm tall cylinder with a purple flip-top cap hinged at the back, a white label with purple print reading ABSORBENT, standing upright, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "white shouldered bottle 0.08 dia x 0.12 tall (body 0.10 + shoulder/neck 0.02) with a purple cap 0.056 dia x 0.037 tall on the neck, hinged at the back (+z) rim of the neck; white label with purple ABSORBENT print on the front (-z). Rest = upright, cap closed. Cap opens with positive rotation about [1,0,0] up to 1.9. Tilted past 1.2 rad with the cap open it pours 40 grains (mass transfer 0.45 -> 0.33 kg).",
+    "complexity": "medium"
+  },
+  "componentTree": [
+    {
+      "id": "bottle",
+      "name": "white bottle body with shoulder and neck (lathe)",
+      "level": "macro",
+      "primitive": "lathe",
+      "dimensions": {
+        "w": 0.08,
+        "h": 0.12,
+        "d": 0.08,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          0.06,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "bottle-white",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.08,
+          0.12,
+          0.08
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "powder-face",
+      "name": "powder surface visible in the neck",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.04,
+        "h": 0.002,
+        "d": 0.04,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0375,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bottle:inside"
+      },
+      "material": "powder-gray"
+    },
+    {
+      "id": "label-band",
+      "name": "front label (curved ribbon band)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.048,
+        "h": 0.07,
+        "d": 0.008,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.008,
+          -0.037
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "fixed",
+        "socket": "bottle:front"
+      },
+      "material": "label-print"
+    },
+    {
+      "id": "cap",
+      "name": "purple cap on the neck",
+      "level": "macro",
+      "primitive": "lathe",
+      "dimensions": {
+        "w": 0.056,
+        "h": 0.037,
+        "d": 0.056,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.1385,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "bottle",
+      "attachment": {
+        "type": "hinge",
+        "socket": "bottle:neck-back",
+        "hinge": {
+          "pivot": [
+            0,
+            -0.0185,
+            0.028
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": [
+            0,
+            1.9
+          ]
+        }
+      },
+      "material": "cap-purple",
+      "collider": {
+        "type": "cylinder",
+        "size": [
+          0.056,
+          0.037,
+          0.056
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "cap-tab",
+      "name": "thumb tab at the front of the cap",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.02,
+        "h": 0.006,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.013,
+          -0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "cap",
+      "attachment": {
+        "type": "fixed",
+        "socket": "cap:front"
+      },
+      "material": "cap-purple"
+    },
+    {
+      "id": "cap-knuckle",
+      "name": "hinge knuckle at the back of the cap",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.03,
+        "h": 0.012,
+        "d": 0.012,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.015,
+          0.028
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "cap",
+      "attachment": {
+        "type": "fixed",
+        "socket": "cap:back"
+      },
+      "material": "cap-purple"
+    }
+  ],
+  "materials": [
+    {
+      "id": "bottle-white",
+      "kind": "procedural",
+      "baseColor": [
+        0.94,
+        0.94,
+        0.92
+      ],
+      "roughness": 0.45
+    },
+    {
+      "id": "powder-gray",
+      "kind": "procedural",
+      "baseColor": [
+        0.86,
+        0.86,
+        0.84
+      ],
+      "roughness": 0.95
+    },
+    {
+      "id": "label-print",
+      "kind": "procedural",
+      "baseColor": [
+        0.98,
+        0.98,
+        0.97
+      ],
+      "roughness": 0.6
+    },
+    {
+      "id": "cap-purple",
+      "kind": "procedural",
+      "baseColor": [
+        0.42,
+        0.16,
+        0.72
+      ],
+      "roughness": 0.4
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "bottle",
+        "components": [
+          "bottle",
+          "powder-face",
+          "label-band"
+        ],
+        "mass": 0.45,
+        "friction": 0.5,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          -0.02,
+          0
+        ],
+        "pour": {
+          "tiltThreshold": 1.2,
+          "grains": 40,
+          "grainMass": 0.003,
+          "ratePerSecond": 20,
+          "gate": {
+            "body": "cap",
+            "minAngle": 1.0
+          }
+        }
+      },
+      {
+        "id": "cap",
+        "components": [
+          "cap",
+          "cap-tab",
+          "cap-knuckle"
+        ],
+        "mass": 0.03,
+        "friction": 0.5,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "constraints": [
+      {
+        "type": "hinge",
+        "bodyA": "bottle",
+        "bodyB": "cap",
+        "pivotA": [
+          0,
+          0.06,
+          0.028
+        ],
+        "pivotB": [
+          0,
+          -0.0185,
+          0.028
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": [
+          0,
+          1.9
+        ],
+        "actuation": {
+          "type": "servo",
+          "maxForce": 0.5
+        }
+      }
+    ]
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.232,
+        "iou": 0.27
+      },
+      "action": "continue",
+      "notes": "兩次修正：(1) 標籤弧帶 rotation.y 方位（實測 rotation.y=π/2−arc·π 弧心朝 −z）；arc cylinder 側面 UV 在四種畫布變換下皆直排，改 CreateRibbon（u 沿弧、v 沿高，畫布垂直翻轉即可讀）。(2) 依參考圖量比例：瓶身 0.08×0.10＋肩頸 0.02、蓋 0.056×0.037（原 0.145／0.06×0.04 偏長偏大）。Divine Eye reject：前景遮罩對白瓶配淺灰背景失效（參考圖自身 42% 前景不在主連通塊），只比對紫蓋 bbox；監工目視比例、輪廓、標籤位置皆對，判 pass。相機 beta 1.05 壓低仰角避開 viewer 有限地板的天際線。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.232,
+        "iou": 0.27
+      },
+      "action": "continue",
+      "notes": "肩頸 lathe、頸口內粉面 disc、蓋拇指片（−z）、鉸鏈節（+z）、ribbon 標籤帶。開蓋 1.6 rad 截圖：蓋自後緣翻起、頸口可見粉面。"
+    },
+    {
+      "pass": "material",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.232,
+        "iou": 0.27
+      },
+      "action": "continue",
+      "notes": "HDPE 白 0.94 加 emissive 0.16（半球光下純 diffuse 偏灰）；蓋紫 0.42/0.16/0.72 加微 emissive；標籤 DynamicTexture（ABSORBENT／吸附凝固粉／三行用法）。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.232,
+        "iou": 0.27
+      },
+      "action": "continue",
+      "notes": "bottle 0.45 kg cylinder（密度 746，COM −0.02）、cap 0.03 kg cylinder（330）；hinge servo maxForce 0.5；pour 契約：tilt 1.2、蓋門 1.0、40 顆×0.003、20 顆/s。check_colliders OK、physics_test／--nudge cap pass、actuation_test 4 項綠、pour_test A/B/C 7 項綠（側躺倒空 0.33 kg、顆粒 300 步靜止、手動冪等、dispose 乾淨）。瀏覽器實測開蓋＋推倒：40 顆、0.33 kg。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.232,
+        "iou": 0.27
+      },
+      "action": "continue",
+      "notes": "常數推導樞軸與生成點（SPOUT_OFFSET = 半高＋0.015）；顆粒與罐身不對稱碰撞過濾（顆粒互撞不撞罐）；dispose 釋放觀察者、constraint、顆粒、材質；metadata sculptRuntime。剩餘落差：蓋無螺紋肋、參考圖為旋蓋而模型為掀蓋（行為需求）。"
+    }
+  ]
+}
