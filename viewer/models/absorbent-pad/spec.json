@@ -1,0 +1,450 @@
+{
+  "targetName": "absorbent-pad",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/absorbent-pad/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "a7f17ac03a9f41579af09ca6363ef20c",
+      "prompt": "a chemotherapy spill absorbent pad folded in half like a closed book, lying on a table: the outside is a blue plastic backing, the folded edge faces the camera, a thin line of white quilted absorbent layer visible along the open edges, 20 by 25 cm and 2.5 cm thick, small white label on top, three-quarter view from above, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "absorbent pad folded in half: two 0.20 x 0.015 x 0.25 halves stacked (half-b on top of half-a), joined along the +z edge; white quilted absorbent faces inside, blue backing outside. Rest = folded (hinge angle 0). half-b unfolds over the +z edge with positive rotation about [1,0,0] up to 3.1 and lies flat beyond +z (unfolded pad 0.20 x 0.50).",
+    "complexity": "simple"
+  },
+  "componentTree": [
+    {
+      "id": "half-a",
+      "name": "bottom half (blue backing down, white face up)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.2,
+        "h": 0.015,
+        "d": 0.25,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0075,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "backing-blue",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.2,
+          0.015,
+          0.25
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "face-a",
+      "name": "quilted white face of half-a (top)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.18,
+        "h": 0.001,
+        "d": 0.23,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          0.008,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "half-a",
+      "attachment": {
+        "type": "fixed",
+        "socket": "half-a:top"
+      },
+      "material": "absorbent-white"
+    },
+    {
+      "id": "seam-white",
+      "name": "white absorbent layer visible at the open edges",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.204,
+        "h": 0.003,
+        "d": 0.252,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0075,
+          -0.002
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "half-a",
+      "attachment": {
+        "type": "fixed",
+        "socket": "half-a:top"
+      },
+      "material": "absorbent-white"
+    },
+    {
+      "id": "half-b",
+      "name": "top half (white face down, blue backing up)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.2,
+        "h": 0.015,
+        "d": 0.25,
+        "units": "m",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0225,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "half-a",
+      "attachment": {
+        "type": "hinge",
+        "socket": "half-a:+z-edge",
+        "hinge": {
+          "pivot": [
+            0,
+            -0.0075,
+            0.125
+          ],
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "limits": [
+            0,
+            3.1
+          ]
+        }
+      },
+      "material": "backing-blue",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.2,
+          0.015,
+          0.25
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "face-b",
+      "name": "quilted white face of half-b (bottom)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.18,
+        "h": 0.001,
+        "d": 0.23,
+        "units": "m",
+        "confidence": 0.6
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.008,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "half-b",
+      "attachment": {
+        "type": "fixed",
+        "socket": "half-b:bottom"
+      },
+      "material": "absorbent-white"
+    },
+    {
+      "id": "pad-label",
+      "name": "white label on top of the blue backing",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.1,
+        "h": 0.001,
+        "d": 0.06,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.008,
+          -0.02
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "half-b",
+      "attachment": {
+        "type": "fixed",
+        "socket": "half-b:top"
+      },
+      "material": "label-white"
+    }
+  ],
+  "materials": [
+    {
+      "id": "backing-blue",
+      "kind": "procedural",
+      "baseColor": [
+        0.1,
+        0.42,
+        0.85
+      ],
+      "roughness": 0.35
+    },
+    {
+      "id": "absorbent-white",
+      "kind": "procedural",
+      "baseColor": [
+        0.97,
+        0.97,
+        0.95
+      ],
+      "roughness": 0.95
+    },
+    {
+      "id": "label-white",
+      "kind": "procedural",
+      "baseColor": [
+        0.98,
+        0.98,
+        0.97
+      ],
+      "roughness": 0.6
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "half-a",
+        "components": [
+          "half-a",
+          "seam-white",
+          "face-a"
+        ],
+        "mass": 0.05,
+        "friction": 0.8,
+        "restitution": 0.05,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "half-b",
+        "components": [
+          "half-b",
+          "face-b",
+          "pad-label"
+        ],
+        "mass": 0.05,
+        "friction": 0.8,
+        "restitution": 0.05,
+        "centerOfMass": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "constraints": [
+      {
+        "type": "hinge",
+        "bodyA": "half-a",
+        "bodyB": "half-b",
+        "pivotA": [
+          0,
+          0.0075,
+          0.125
+        ],
+        "pivotB": [
+          0,
+          -0.0075,
+          0.125
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "limits": [
+          0,
+          3.1
+        ],
+        "actuation": {
+          "type": "servo",
+          "maxForce": 0.5
+        }
+      }
+    ]
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.277,
+        "iou": 0.604
+      },
+      "action": "continue",
+      "notes": "參考圖第一張生成為攤開狀態，與出廠對摺姿勢不符，重生（seed 1109）為合起如書的摺疊墊。兩次修正：(1) 白色夾層 seam-white 原本被藍盒完全包住看不見 → 外凸 2–4 mm；標籤自 −z 正面觀看顛倒 → 朝上 plane 改垂直翻轉（iv-bag 的水平翻轉對應自 +x 側觀看，朝上 plane 的正讀方向取決於觀看方位）。(2) 半片厚 0.012 → 0.015（參考圖摺疊約 3 cm）。Divine Eye reject IoU 0.604（<0.65）：參考圖是鼓起圓角的軟包、模型是硬邊薄板，刻意簡化；監工目視摺疊態輪廓、藍框白層、標籤位置皆對，判 pass。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.277,
+        "iou": 0.604
+      },
+      "action": "continue",
+      "notes": "兩半 box＋夾層薄片＋上下白色吸附面 plane（菱形壓紋 DynamicTexture，seed 微擾凹點）＋頂面標籤。攤開截圖：half-b 翻過 +z 邊平躺，白面朝上、藍框在外。"
+    },
+    {
+      "pass": "material",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.277,
+        "iou": 0.604
+      },
+      "action": "continue",
+      "notes": "防滲膜藍 0.10/0.42/0.85＋specular 0.35＋微 emissive；吸附白 0.97 加 emissive 0.15；標籤 512×320。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.277,
+        "iou": 0.604
+      },
+      "action": "continue",
+      "notes": "兩半各 0.05 kg box（密度 67）、摩擦 0.8；hinge servo maxForce 0.5 未彈飛（actuation_test 1.870 vs 1.860）；check_colliders OK、physics_test／--nudge half-b pass。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "reject",
+        "fidelity": 0.277,
+        "iou": 0.604
+      },
+      "action": "continue",
+      "notes": "常數推導（A_Y／B_Y／HINGE 由 HALF_T 解出）；dispose 完整；metadata。剩餘落差：無軟包鼓起與圓角、無側面小吊牌。"
+    }
+  ]
+}
