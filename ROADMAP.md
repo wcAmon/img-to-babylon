@@ -333,6 +333,20 @@ harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模�
       搬顆粒要先後仰讓後牆托住再抬（先抬再後仰 40 顆只剩 8）；載重容器的步後殘速 ≈ 0.5·g·dt 是接觸衝量不是失控，位置穩定才是判準；
       測試裡目標要插值滑動模擬連續拖曳，一次跳 0.5 m 會以 3 m/s 起步把內容物踢飛。
 
+## M14：playground 跨模型互動（2026-09-05 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-05-playground-cross-model-interactions-design.md`、計畫 `docs/superpowers/plans/2026-09-05-playground-cross-model-interactions.md`。
+只改 `../playground`，契約側不動（依賴的 `meshes["puddle"]`／`droplet-<i>`／`grain-<i>` 已是 grimoire 契約）。
+
+- [x] 0026 `src/interactions.ts`（每物理步純幾何掃描，無 DOM：A 粉罐顆粒落在水漬足跡內→顆粒換凝固材質 `clump`、水漬可見半徑線性縮到 0.35（30 顆）；
+      B 未凝固顆粒碰到點滴袋液滴→液滴 dispose、顆粒凝固；C 噴瓶液滴落在足跡內→dispose、消毒度 +1/20、水漬材質黃→淡藍灰、alpha 0.55→0.25）
+      ＋`installUi` 掛載、點滴袋卡片「水漬 %｜消毒 %」狀態行、提示補字。scene_test 31 項綠（`interact:absorb` 36 顆吸附、縮放 0.350、凝固 40；
+      `interact:absorb-droplet` 3/4；`interact:disinfect` 24/24、消毒度 1、顏色 (0.72, 0.82, 0.86)）。tailnet 實測：摔落破裂→抓粉罐開蓋到水漬上方傾倒
+      40 顆全凝固（35 在足跡內）、水漬 35%；抓噴瓶下壓 0.5 rad 噴灑 60 滴全被吸收、消毒 100%（`.img2babylon/shots/playground5-{absorb,disinfect}.png`）。
+      定案：判定用破裂時的**原始足跡**（`boundingBox.extendSize.x × maxScale`，未縮放的局部半徑），不隨可見縮小——否則在一點倒粉、邊緣退過後就吸不到。
+      陷阱：「落地」用中心高度判定，疊在別的東西上就不算——噴霧落在水漬中央塌扁的空袋上（y 0.012 > 0.010）、顆粒第二層（0.015 > 0.012）都不觸發，
+      gate 佈點兩次失敗都是撞到這條（第一次外環與顆粒同角度、第二次內環 r 0.03 在袋上）；粉罐與噴瓶的生成物 key 都叫 `grain-<i>`，只能靠 `entry.model` 分辨。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`

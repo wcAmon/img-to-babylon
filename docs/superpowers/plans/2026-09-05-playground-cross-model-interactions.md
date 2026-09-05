@@ -1,6 +1,6 @@
 # M14 playground 跨模型互動 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 吸附粉顆粒落在水漬上讓水漬縮小、顆粒凝固；顆粒吸掉點滴袋液滴；消毒噴霧落在水漬上讓水漬變色——以 headless gate 與瀏覽器實測證明。
 
@@ -35,7 +35,7 @@
 - Produces: `installInteractions(scene: Scene, placed: () => Placed[]): InteractionState`；
   `InteractionState { puddle: { remaining, disinfected } | null; absorbedGrains; absorbedDroplets; sprayAbsorbed }`（皆 getter，讀即時值）。
 
-- [ ] **Step 1: 先寫失敗的測試——scene_test 加 import、掛載、三項斷言**
+- [x] **Step 1: 先寫失敗的測試——scene_test 加 import、掛載、三項斷言**
 
 `scripts/scene_test.ts` 第 4–7 行 import 改為：
 
@@ -94,12 +94,12 @@ import { installInteractions } from "../src/interactions";
     `噴霧吸收 ${used}/${pMist.length}（≥ 20）、消毒度 ${inter.puddle?.disinfected}、顏色 ${pm.diffuseColor.toString()}`);
 ```
 
-- [ ] **Step 2: 跑測試確認失敗**
+- [x] **Step 2: 跑測試確認失敗**
 
 Run: `cd /Users/wake/Desktop/local_three/playground && npm run typecheck`
 Expected: FAIL `Cannot find module '../src/interactions'`。
 
-- [ ] **Step 3: 寫 `src/interactions.ts`**
+- [x] **Step 3: 寫 `src/interactions.ts`**
 
 ```ts
 // 跨模型互動（M14）：吸附粉顆粒×水漬（縮小＋凝固）、顆粒×點滴袋液滴（吸掉）、消毒噴霧×水漬（變色）。
@@ -200,13 +200,13 @@ export function installInteractions(scene: Scene, placed: () => Placed[]): Inter
 }
 ```
 
-- [ ] **Step 4: 跑 typecheck 與 scene_test**
+- [x] **Step 4: 跑 typecheck 與 scene_test**
 
 Run: `cd /Users/wake/Desktop/local_three/playground && npm run typecheck && npm run scene-test 2>&1 | tail -60`
 Expected: 31 項全 `ok: true`；`interact:absorb` 吸附 ≥ 30、縮放 ≤ 0.36；`interact:absorb-droplet` ≥ 3；`interact:disinfect` ≥ 20、消毒度 1。
 若 `interact:absorb` 不足：先印每顆最終 y 與到中心距離，分辨是「彈出足跡」還是「堆疊 y > 0.012」，再調環距，不放寬門檻。
 
-- [ ] **Step 5: Commit（只加兩檔）**
+- [x] **Step 5: Commit（只加兩檔）**
 
 ```bash
 cd /Users/wake/Desktop/local_three/playground && git status --short && git add src/interactions.ts scripts/scene_test.ts && git commit -m "playground M14：跨模型互動 interactions.ts（顆粒×水漬縮小＋凝固、顆粒×液滴、噴霧×水漬變色；足跡判定）；scene_test +3 → 31 項"
@@ -223,7 +223,7 @@ cd /Users/wake/Desktop/local_three/playground && git status --short && git add s
 **Interfaces:**
 - Consumes: Task 1 的 `installInteractions`／`InteractionState.puddle`。
 
-- [ ] **Step 1: ui.ts import 與掛載**
+- [x] **Step 1: ui.ts import 與掛載**
 
 在 `import { totalMass } from "./scene";` 之後加：
 
@@ -237,7 +237,7 @@ import { installInteractions } from "./interactions";
   const inter = installInteractions(scene, () => placed); // chemo.ts 不可動，掛載點暫放這裡
 ```
 
-- [ ] **Step 2: 點滴袋卡片加狀態行**
+- [x] **Step 2: 點滴袋卡片加狀態行**
 
 `const massEls: HTMLDivElement[] = [];` 之後加 `let puddleEl: HTMLDivElement | null = null;`。
 卡片迴圈裡 `massEls.push(mass);` 之後加：
@@ -262,7 +262,7 @@ import { installInteractions } from "./interactions";
 
 面板提示改為：「抓取：拖曳移動｜Shift 拖曳＝上下｜滾輪＝高度｜Q／E＝傾斜｜撒粉吸水漬、噴霧消毒」。
 
-- [ ] **Step 3: index.html CSS**
+- [x] **Step 3: index.html CSS**
 
 `.card .mass` 那行之後加：
 
@@ -270,7 +270,7 @@ import { installInteractions } from "./interactions";
     .card .status { color: #a3adab; font-size: 11px; margin: -2px 0 6px; }
 ```
 
-- [ ] **Step 4: 驗證並 commit**
+- [x] **Step 4: 驗證並 commit**
 
 Run: `cd /Users/wake/Desktop/local_three/playground && npm run typecheck && npm run scene-test 2>&1 | grep -c '"ok": true'`
 Expected: 31。
@@ -287,11 +287,11 @@ cd /Users/wake/Desktop/local_three/playground && git add src/ui.ts index.html &&
 - Modify: `../playground/README.md`（不提交）
 - Create: `.img2babylon/shots/playground5-absorb.png`、`playground5-disinfect.png`（gitignored）
 
-- [ ] **Step 1: 起 dev server（背景）**
+- [x] **Step 1: 起 dev server（背景）**
 
 Bash `run_in_background: true`：`cd /Users/wake/Desktop/local_three/playground && npm run dev -- --port 5175 --strictPort`。
 
-- [ ] **Step 2: playwright 演流程**
+- [x] **Step 2: playwright 演流程**
 
 `browser_navigate http://localhost:5175/?v=1`；`browser_evaluate` 等 `window.__PLAYGROUND_READY__`。用 `window.__PLAYGROUND__.placed` 與
 `window.__PLAYGROUND_GRAB__`（Vector3 由 `scene.activeCamera.position.constructor` 取）：
@@ -308,11 +308,11 @@ Bash `run_in_background: true`：`cd /Users/wake/Desktop/local_three/playground 
 
 `filename` 結果落在 img-to-babylon 根目錄：`find /Users/wake/Desktop/local_three/img-to-babylon -maxdepth 1 -name 'phase*.json'`，解碼後 `.img2babylon/shots/`，刪 json。
 
-- [ ] **Step 3: README 一句（不提交）**
+- [x] **Step 3: README 一句（不提交）**
 
 在 M13 那句後加：「撒粉在水漬上會縮小水漬、顆粒凝固（可再鏟起）；粉會吸掉散落液滴；噴霧落在水漬上會消毒變色（M14；點滴袋卡片顯示水漬／消毒 %）。」
 
-- [ ] **Step 4: 停 dev server、重部署**
+- [x] **Step 4: 停 dev server、重部署**
 
 `pkill -f "vite.*5175"`（背景任務 exit 143 屬預期），然後 `cd /Users/wake/Desktop/local_three/playground && npm run serve`；
 `curl -s -o /dev/null -w '%{http_code}' https://monkeyday.tail8e3f79.ts.net/` → 200；`curl -s https://monkeyday.tail8e3f79.ts.net/ | grep -c 'card .status'` → 1。
@@ -326,15 +326,15 @@ Bash `run_in_background: true`：`cd /Users/wake/Desktop/local_three/playground 
 - Create: `tasks/0026-playground-cross-model-interactions.md`
 - Modify: `docs/next-steps.md`（移除第 1 項、重排、加提醒）
 - Modify: `docs/superpowers/specs/2026-09-05-playground-cross-model-interactions-design.md`（実測發現補進 §1／§5／§7）
-- Modify: 本計畫（全部 `- [ ]` 打勾）
+- Modify: 本計畫（全部 `- [x]` 打勾）
 
-- [ ] **Step 1: ROADMAP M14 段**（格式同 M13：一個 `- [x] 0026 …` 條目，含 gate 數字、實測數字、陷阱）
-- [ ] **Step 2: tasks/0026**（格式同 tasks/0025：model／status／脈絡／分工／驗收／notes）
-- [ ] **Step 3: next-steps**：候選改為 第四批、Divine Eye、抓取 UX 續、小修（＋本輪新發現的候選）；提醒加「生成物 key 同名靠 entry.model 分辨」「足跡不隨縮小」。
-- [ ] **Step 4: Commit**
+- [x] **Step 1: ROADMAP M14 段**（格式同 M13：一個 `- [x] 0026 …` 條目，含 gate 數字、實測數字、陷阱）
+- [x] **Step 2: tasks/0026**（格式同 tasks/0025：model／status／脈絡／分工／驗收／notes）
+- [x] **Step 3: next-steps**：候選改為 第四批、Divine Eye、抓取 UX 續、小修（＋本輪新發現的候選）；提醒加「生成物 key 同名靠 entry.model 分辨」「足跡不隨縮小」。
+- [x] **Step 4: Commit**
 
 ```bash
 git add ROADMAP.md tasks/0026-playground-cross-model-interactions.md docs/next-steps.md docs/superpowers/specs/2026-09-05-playground-cross-model-interactions-design.md docs/superpowers/plans/2026-09-05-playground-cross-model-interactions.md && git commit -m "M14 結案：ROADMAP M14、tasks 0026、next-steps、spec 実測補記；計畫全勾"
 ```
 
-- [ ] **Step 5: memory＋handoff**：`~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m14-lessons.md`＋MEMORY.md 一行；`.remember/remember.md` 更新。
+- [x] **Step 5: memory＋handoff**：`~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m14-lessons.md`＋MEMORY.md 一行；`.remember/remember.md` 更新。

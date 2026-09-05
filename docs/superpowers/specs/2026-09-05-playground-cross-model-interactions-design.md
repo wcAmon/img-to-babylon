@@ -1,6 +1,7 @@
 # M14 設計：playground 跨模型互動——吸附粉×水漬、消毒噴霧×水漬（2026-09-05）
 
 狀態：使用者核准設計方向（三條規則、`interactions.ts` 由 `installUi` 掛載、點滴袋卡片顯示狀態、scene_test +3 用真顆粒／真液滴、grimoire 不動）。
+実測定案（同日）：scene_test 31/31；瀏覽器撒粉 40 顆全凝固、水漬 35%，噴灑 60 滴全吸收、消毒 100%。gate 佈點修正見 §5 末。
 候選來源：`docs/next-steps.md` 第 1 項。前作：M13 `2026-09-05-playground-grab-lift-design.md`。
 
 ## 1. 目標與範圍
@@ -78,6 +79,10 @@ export function installInteractions(scene: Scene, placed: () => Placed[]): Inter
    dispose ≥ 20、`disinfected === 1`、水漬材質 diffuse 與 (0.72, 0.82, 0.86) 各分量差 < 0.01。
 
 後續 `bag:respawn`／`respawn:all` 的 mesh 數斷言是「≤ 之前」，dispose 只會讓數字更小；`respawn:all` 期望 21 不變。
+
+実測修正：噴霧兩環改 r 0.11／0.15、全部錯開半個角步（π/12）。原擬內環 r 0.03 落在水漬中央**塌扁的空袋**（0.14×0.19、FLAT_H 0.010）頂上，
+中心 y 0.012 > 0.010 不算落地；與顆粒三環同角度的外環會停在凝固顆粒頂上（y 0.013）。結果 `interact:absorb` 36 顆吸附、縮放 0.350、凝固 40；
+`interact:absorb-droplet` 3/4；`interact:disinfect` 24/24、消毒度 1、顏色 (0.72, 0.82, 0.86)。
 
 ## 6. 證據與文件
 
