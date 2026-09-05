@@ -24,4 +24,5 @@ export const registry: Record<string, () => Promise<{ default: ModelFactory }>> 
   "ppe-set": () => import("../models/ppe-set/createPpeSetModel"),
   "disinfectant-spray": () => import("../models/disinfectant-spray/createDisinfectantSprayModel"),
   "cytotoxic-waste-bag": () => import("../models/cytotoxic-waste-bag/createCytotoxicWasteBagModel"),
+  "scoop-and-scraper": () => import("../models/scoop-and-scraper/createScoopAndScraperModel"),
 };

@@ -1,0 +1,649 @@
+{
+  "targetName": "scoop-and-scraper",
+  "schemaVersion": "1",
+  "sourceImages": [
+    {
+      "role": "hero",
+      "path": ".img2babylon/scoop-and-scraper/hero.png",
+      "origin": "tomato",
+      "tomatoJobId": "610825995c084773bf42f1c6f791ac2f",
+      "prompt": "a purple hard plastic chemical spill kit scoop shaped like a small dustpan with low side walls and a short rear handle, and a purple flat scraper push board with a low foot and a small grip block, lying side by side on a light gray floor, seen from an above-front three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
+    }
+  ],
+  "coordinateFrame": {
+    "up": "y",
+    "forward": "z",
+    "units": "m"
+  },
+  "silhouette": {
+    "outline": "two purple free rigid bodies lying on the floor, seen from above-front: a dustpan-style scoop (base plate 0.16 x 0.0025 x 0.14 with a 2.5 mm front lip at +z, back wall 0.06 tall, side walls 0.05 tall, a 0.12 long handle rising from the back wall top tilted 0.45 rad back from vertical) at x -0.12 z 0.02 turned so the lip faces -z (rotY 3.3), and a flat scraper push board (blade 0.16 x 0.008 x 0.09 lying flat, grip block 0.05 x 0.03 x 0.035 with a knob on the far side) at x 0.14 z -0.02 rotY -0.1. No constraints.",
+    "complexity": "medium"
+  },
+  "componentTree": [
+    {
+      "id": "scoop",
+      "name": "scoop base plate (2.5 mm front lip)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.16,
+        "h": 0.0025,
+        "d": 0.14,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          -0.12,
+          0,
+          0.02
+        ],
+        "rotation": [
+          0,
+          3.3,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "tool-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.16,
+          0.0025,
+          0.14
+        ],
+        "offset": [
+          0,
+          0.00125,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "scoop-back",
+      "name": "scoop back wall",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.16,
+        "h": 0.06,
+        "d": 0.004,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0325,
+          -0.068
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scoop",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scoop:back"
+      },
+      "material": "tool-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.16,
+          0.06,
+          0.004
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "scoop-side-l",
+      "name": "scoop left side wall",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.004,
+        "h": 0.05,
+        "d": 0.136,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          -0.078,
+          0.0275,
+          0.002
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scoop",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scoop:left"
+      },
+      "material": "tool-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.004,
+          0.05,
+          0.136
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "scoop-side-r",
+      "name": "scoop right side wall",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.004,
+        "h": 0.05,
+        "d": 0.136,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.078,
+          0.0275,
+          0.002
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scoop",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scoop:right"
+      },
+      "material": "tool-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.004,
+          0.05,
+          0.136
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "scoop-handle",
+      "name": "scoop handle rising from the back wall (tilted back 0.45 rad)",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.03,
+        "h": 0.12,
+        "d": 0.03,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.117,
+          -0.092
+        ],
+        "rotation": [
+          -0.45,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scoop",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scoop-back:top"
+      },
+      "material": "tool-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.03,
+          0.12,
+          0.03
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "scoop-lip",
+      "name": "bevelled front lip (visual wedge)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.16,
+        "h": 0.002,
+        "d": 0.02,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0012,
+          0.079
+        ],
+        "rotation": [
+          -0.12,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scoop",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scoop:front"
+      },
+      "material": "tool-purple"
+    },
+    {
+      "id": "scoop-print",
+      "name": "SCOOP print on the handle",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.026,
+        "h": 0.08,
+        "d": 0.001,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.117,
+          -0.107
+        ],
+        "rotation": [
+          -0.45,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scoop",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scoop-handle:front"
+      },
+      "material": "print-white"
+    },
+    {
+      "id": "scraper",
+      "name": "scraper flat blade",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.16,
+        "h": 0.008,
+        "d": 0.09,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.14,
+          0,
+          -0.02
+        ],
+        "rotation": [
+          0,
+          -0.1,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": null,
+      "attachment": {
+        "type": "none"
+      },
+      "material": "tool-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.16,
+          0.008,
+          0.09
+        ],
+        "offset": [
+          0,
+          0.004,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "scraper-grip",
+      "name": "scraper grip block",
+      "level": "macro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.05,
+        "h": 0.03,
+        "d": 0.035,
+        "units": "m",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.023,
+          0.02
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scraper",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scraper:top"
+      },
+      "material": "tool-purple",
+      "collider": {
+        "type": "box",
+        "size": [
+          0.05,
+          0.03,
+          0.035
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "scraper-knob",
+      "name": "grip knob",
+      "level": "micro",
+      "primitive": "cylinder",
+      "dimensions": {
+        "w": 0.022,
+        "h": 0.03,
+        "d": 0.022,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.053,
+          0.02
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scraper",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scraper-grip:top"
+      },
+      "material": "tool-purple"
+    },
+    {
+      "id": "scraper-print",
+      "name": "SCRAPER print on the blade top (near side)",
+      "level": "micro",
+      "primitive": "box",
+      "dimensions": {
+        "w": 0.1,
+        "h": 0.001,
+        "d": 0.025,
+        "units": "m",
+        "confidence": 0.5
+      },
+      "transform": {
+        "position": [
+          0,
+          0.0085,
+          -0.025
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "scraper",
+      "attachment": {
+        "type": "fixed",
+        "socket": "scraper:top"
+      },
+      "material": "print-white"
+    }
+  ],
+  "materials": [
+    {
+      "id": "tool-purple",
+      "kind": "procedural",
+      "baseColor": [
+        0.46,
+        0.2,
+        0.8
+      ],
+      "roughness": 0.45
+    },
+    {
+      "id": "print-white",
+      "kind": "procedural",
+      "baseColor": [
+        0.97,
+        0.97,
+        0.96
+      ],
+      "roughness": 0.6
+    }
+  ],
+  "physics": {
+    "bodies": [
+      {
+        "id": "scoop",
+        "components": [
+          "scoop",
+          "scoop-back",
+          "scoop-side-l",
+          "scoop-side-r",
+          "scoop-handle",
+          "scoop-lip",
+          "scoop-print"
+        ],
+        "mass": 0.08,
+        "friction": 0.6,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          0.03,
+          -0.04
+        ]
+      },
+      {
+        "id": "scraper",
+        "components": [
+          "scraper",
+          "scraper-grip",
+          "scraper-knob",
+          "scraper-print"
+        ],
+        "mass": 0.05,
+        "friction": 0.6,
+        "restitution": 0.1,
+        "centerOfMass": [
+          0,
+          0.01,
+          0.005
+        ]
+      }
+    ],
+    "constraints": []
+  },
+  "buildPasses": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "reviewHistory": [
+    {
+      "pass": "blockout",
+      "likeness": 7,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.479,
+        "iou": 0.71
+      },
+      "action": "continue",
+      "notes": "依參考圖調整：畚斗握把改自後牆頂斜立（rotation.x −0.45、旋轉 collider 以 Quaternion 加進 container）、鏟口朝 −z 面對相機（rotY 3.3）；推板改平板 8 mm 厚（10 mm 顆粒推得動爬不過）＋握塊＋圓鈕。Divine Eye pass 0.479（多物件構圖，只量最大連通塊，30% 前景在外——鏟與推板各自連通塊）。check_colliders 密度 scoop 311／scraper 298。0 修正。"
+    },
+    {
+      "pass": "structure",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.475,
+        "iou": 0.66
+      },
+      "action": "continue",
+      "notes": "側牆改前低後高梯形（ExtrudeShape：shape 在 xy 平面、沿 z 擠出厚度、rotation.y = π/2），runtime_export 的 mesh AABB 與 box collider AABB 完全吻合；headless getBoundingBox scoop y 到 0.173（斜握把頂）、scraper 0.038。Divine Eye pass 0.475。"
+    },
+    {
+      "pass": "material",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.467,
+        "iou": 0.66
+      },
+      "action": "continue",
+      "notes": "tool-purple 調亮 (0.46,0.20,0.80)＋自發光 (0.14,0.05,0.24)，spec materials 同步；SCOOP／SCRAPER 白字 plane 正讀。Divine Eye pass 0.467。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.467,
+        "iou": 0.66
+      },
+      "action": "continue",
+      "notes": "physics_test 兩 body 落地靜止；actuation_test 無宣告略過；斜握把 collider 以 Quaternion.RotationAxis(x, −0.45) 加進 container，check_colliders 與後牆 AABB 重疊 < 5%。membership 8／collide ~0 讓粉罐顆粒（collide ~2）推得動、進得了鏟。"
+    },
+    {
+      "pass": "polish",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.467,
+        "iou": 0.66
+      },
+      "action": "done",
+      "notes": "零件表（Part[]）同時餵 mesh 與 collider，root 零件 mesh 偏移 = collider offset；dispose／metadata 齊。修正次數 0。"
+    }
+  ]
+}
