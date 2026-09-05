@@ -53,7 +53,8 @@ interface SpecConstraint {
 }
 interface SpecComponent { id: string; actuation?: SpecActuation }
 interface SpecRupture { impulseThreshold: number; emptiedMass: number; puddleRadius: number; droplets: number }
-interface SpecBody { id: string; mass: number; rupture?: SpecRupture }
+interface SpecPour { tiltThreshold: number; grains: number; grainMass: number; ratePerSecond: number; gate?: { body: string; minAngle: number } }
+interface SpecBody { id: string; mass: number; rupture?: SpecRupture; pour?: SpecPour }
 interface Spec {
   componentTree?: SpecComponent[];
   physics?: { bodies?: SpecBody[]; constraints?: SpecConstraint[] };
@@ -140,8 +141,9 @@ async function main(): Promise<number> {
   const servoDecls = cons.filter((c) => c.actuation?.type === "servo");
   const lightDecls = (spec.componentTree ?? []).filter((c) => c.actuation?.type === "light");
   const ruptureDecls = (spec.physics?.bodies ?? []).filter((b) => b.rupture);
+  const pourDecls = (spec.physics?.bodies ?? []).filter((b) => b.pour);
   if (!driveDecls.length && !steerDecls.length && !servoDecls.length && !lightDecls.length
-      && !ruptureDecls.length) {
+      && !ruptureDecls.length && !pourDecls.length) {
     console.log(JSON.stringify({ model: name, checks: [], pass: true,
       note: "spec 無 actuation 宣告" }));
     return 0;
@@ -187,6 +189,31 @@ async function main(): Promise<number> {
     push(`coverage:rupture:${b.id}`, byId.has(`rupture:${b.id}`),
       byId.has(`rupture:${b.id}`) ? "有 rupture actuator" : "spec 宣告 rupture 但無 actuator");
   }
+  for (const b of pourDecls) {
+    push(`coverage:pour:${b.id}`, byId.has(`pour:${b.id}`),
+      byId.has(`pour:${b.id}`) ? "有 pour actuator" : "spec 宣告 pour 但無 actuator");
+  }
+  // ---- pour（M11）：手動全倒——會改質量、生顆粒，排在所有其他檢查之後 ----
+  const grainCount = (): number => Object.keys(model.bodies).filter((k) => k.startsWith("grain-")).length;
+  const runPour = (): void => {
+    for (const b of pourDecls) {
+      const act = byId.get(`pour:${b.id}`);
+      const body = model.bodies[b.id];
+      const pour = b.pour!;
+      if (!act || !body) continue;
+      act.set(1);
+      step(5);
+      const mass = body.getMassProperties().mass ?? NaN;
+      const grainsA = grainCount();
+      act.set(1);
+      step(5);
+      const grainsB = grainCount();
+      const expected = b.mass - pour.grains * pour.grainMass;
+      push(`pour:${b.id}`,
+        Math.abs(mass - expected) < 1e-5 && grainsA === pour.grains && grainsB === pour.grains,
+        `質量 ${mass} vs ${expected}；顆粒 ${grainsA}/${grainsB}（期望 ${pour.grains}，冪等）`);
+    }
+  };
   // ---- rupture（M10）：就地觸發——會改質量、生液滴，所以排在所有其他檢查之後 ----
   const runRupture = (): void => {
     for (const b of ruptureDecls) {
@@ -330,7 +357,7 @@ async function main(): Promise<number> {
     push("drive", dist >= DRIVE_MIN_DIST * scale, `位移 ${dist.toFixed(3)}m（門檻 ${DRIVE_MIN_DIST * scale}）`);
   }
 
-  if (ruptureDecls.length) { step(T(SETTLE_STEPS)); runRupture(); }
+  if (ruptureDecls.length || pourDecls.length) { step(T(SETTLE_STEPS)); runRupture(); runPour(); }
 
   const pass = checks.length > 0 && checks.every((c) => c.ok);
   const result = { model: name, checks, pass };

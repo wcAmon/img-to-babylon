@@ -1,6 +1,7 @@
 // 單軸 hinge 與其 servo 的共用助手（M10）：pill-bottle／toy-racer／action-figure 各自
 // 內聯了同一段 6DoF 鎖五軸的程式碼；三個新模型改用這裡，避免第四份漂移。
 import {
+  Matrix,
   Physics6DoFConstraint,
   PhysicsBody,
   PhysicsConstraintAxis,
@@ -77,4 +78,18 @@ export function makeHingeServo(
       armed = false;
     },
   };
+}
+
+/** B 相對 A 的旋轉矩陣（世界旋轉相除）。綁定姿勢要在任何物理步之前取。 */
+export function relativeRotation(a: PhysicsBody, b: PhysicsBody): Matrix {
+  a.transformNode.computeWorldMatrix(true);
+  b.transformNode.computeWorldMatrix(true);
+  return b.transformNode.getWorldMatrix().getRotationMatrix()
+    .multiply(Matrix.Invert(a.transformNode.getWorldMatrix().getRotationMatrix()));
+}
+
+/** 單軸（x）hinge 角，相對綁定姿勢 bind：所有 Euler 順序在單軸下重合，取 x 分量。 */
+export function hingeAngle(a: PhysicsBody, b: PhysicsBody, bind: Matrix): number {
+  const m = Matrix.Invert(bind).multiply(relativeRotation(a, b)).m;
+  return Math.atan2(m[6], m[5]);
 }
