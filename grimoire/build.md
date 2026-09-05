@@ -35,4 +35,7 @@
   在畫布上先 `c.translate(0, h); c.scale(1, -1)` 再繪製。朝上的 plane（`rotation.x = π/2`，
   iv-bag 標籤）由上方看則是**左右鏡像**：`c.translate(w, 0); c.scale(-1, 1)`。
 - `texture.vScale = -1` 對非二次冪貼圖不可靠（整片灰），不要用它翻轉。
+- `DynamicTexture` 預設 wrap 是 **CLAMP**（一般 `Texture` 是 WRAP）：`uScale/vScale > 1` 平鋪時，第一格以外
+  全取邊緣像素——地板格線會變成一整片邊線色（playground 地板實測）。平鋪前明確設
+  `tex.wrapU = tex.wrapV = Texture.WRAP_ADDRESSMODE`；斜視要保留細線再加 `generateMipMaps=true`＋`anisotropicFilteringLevel=16`。
 
