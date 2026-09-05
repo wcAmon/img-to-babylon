@@ -92,7 +92,7 @@ Read `sheet.png` 目視評分（likeness／colliderFit 1–10）。REJECT → �
 **Interfaces:**
 - Produces: spec 欄位 `physics.bodies[].pour = { tiltThreshold, grains, grainMass, ratePerSecond, gate?: { body, minAngle } }`。
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 在 `forge/tests/test_validate_spec.py` 的 `test_rupture_missing_field` 之後加入：
 
@@ -164,12 +164,12 @@ Read `sheet.png` 目視評分（likeness／colliderFit 1–10）。REJECT → �
         self.assertTrue(any("pour" in e and "ratePerSecond" in e for e in errors))
 ```
 
-- [ ] **Step 2: 跑測試確認失敗**
+- [x] **Step 2: 跑測試確認失敗**
 
 Run: `python3 -m unittest forge.tests.test_validate_spec -k pour -v`
 Expected: `test_pour_tilt_in_open_interval` 等 6 個 FAIL（validator 尚未認得 pour，不產生任何含 "pour" 的錯誤）；`test_pour_valid_passes`／`test_pour_without_gate_passes` 可能已 PASS（未知欄位被忽略）。
 
-- [ ] **Step 3: 實作驗證**
+- [x] **Step 3: 實作驗證**
 
 `forge/validate_spec.py`，在 `_check_rupture` 之後加：
 
@@ -221,12 +221,12 @@ def _check_pour(bid, body, constraints, errors):
 檔頭 `import math`（若尚無）。bodies 迴圈裡 `_check_rupture(bid, b, errors)` 之後加
 `_check_pour(bid, b, spec["physics"].get("constraints", []), errors)`。
 
-- [ ] **Step 4: 跑測試確認通過**
+- [x] **Step 4: 跑測試確認通過**
 
 Run: `python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'`
 Expected: 全部 OK（104 + 8）。
 
-- [ ] **Step 5: grimoire 文件**
+- [x] **Step 5: grimoire 文件**
 
 `grimoire/spec.md` 在「rupture（M10 可破裂 body）」節之後加：
 
@@ -273,7 +273,7 @@ factory 契約：掛 actuator `pour:<bodyId>`（kind `"pour"`，min 0、max 1，
   落下若翻倒且蓋彈開會倒粉——質心壓低（COM y −0.02）讓罐子落地站穩。
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add forge/validate_spec.py forge/tests/test_validate_spec.py grimoire/spec.md grimoire/physics.md
@@ -297,18 +297,18 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Interfaces:**
 - Produces: `Actuator.kind` 含 `"pour"`；`hingeAngle(a: PhysicsBody, b: PhysicsBody, bind: Matrix): number`、`relativeRotation(a, b): Matrix`（export 自 `viewer/src/hinge.ts`）；gate `npx tsx scripts/pour_test.ts <model> --spec <spec.json>`。
 
-- [ ] **Step 1: types.ts**
+- [x] **Step 1: types.ts**
 
 ```ts
   id: string; // "drive" | "steer" | `servo:<bodyB>.<axis>` | `light:<componentId>` | `rupture:<bodyId>` | `pour:<bodyId>`
   kind: "drive" | "steer" | "servo" | "light" | "rupture" | "pour";
 ```
 
-- [ ] **Step 2: harness.ts**
+- [x] **Step 2: harness.ts**
 
 把 `if (act.kind === "rupture") {` 改成 `if (act.kind === "rupture" || act.kind === "pour") {`，註解補「M11 pour 同樣一次性按鈕」。
 
-- [ ] **Step 3: hinge.ts 加量測助手**
+- [x] **Step 3: hinge.ts 加量測助手**
 
 檔頭 import 加 `Matrix`。檔尾加：
 
@@ -328,7 +328,7 @@ export function hingeAngle(a: PhysicsBody, b: PhysicsBody, bind: Matrix): number
 }
 ```
 
-- [ ] **Step 4: actuation_test.ts 加 pour**
+- [x] **Step 4: actuation_test.ts 加 pour**
 
 型別：
 
@@ -370,7 +370,7 @@ interface SpecBody { id: string; mass: number; rupture?: SpecRupture; pour?: Spe
 檔尾 `if (ruptureDecls.length) { step(T(SETTLE_STEPS)); runRupture(); }` 改為
 `if (ruptureDecls.length || pourDecls.length) { step(T(SETTLE_STEPS)); runRupture(); runPour(); }`。
 
-- [ ] **Step 5: 新檔 `viewer/scripts/pour_test.ts`**
+- [x] **Step 5: 新檔 `viewer/scripts/pour_test.ts`**
 
 ```ts
 // 傾倒 gate（M11 pour）：spec 有 pour 的 body 必須 (A) 蓋閉、側躺 300 步不倒——顆粒 0、質量不變；
@@ -519,7 +519,7 @@ async function main(): Promise<number> {
 main().then((code) => process.exit(code)).catch((err) => { console.error(err); process.exit(2); });
 ```
 
-- [ ] **Step 6: tsc 與既有 gate 不退化**
+- [x] **Step 6: tsc 與既有 gate 不退化**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
@@ -529,7 +529,7 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 ```
 Expected: tsc 無錯；pour_test 印 `spec 無 pour 宣告`；actuation／rupture `"pass": true`。
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add viewer/src/types.ts viewer/src/harness.ts viewer/src/hinge.ts viewer/scripts/actuation_test.ts viewer/scripts/pour_test.ts
@@ -552,7 +552,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: `createHinge`／`makeHingeServo`／`relativeRotation`／`hingeAngle`（`viewer/src/hinge.ts`）。
 - Produces: registry `"absorbent-powder-shaker"`；bodies `bottle`、`cap`；actuators `servo:cap.x`（[0, 1.9]）、`pour:bottle`；顆粒 `bodies["grain-0..39"]`。
 
-- [ ] **Step 1: 初始化與參考圖**
+- [x] **Step 1: 初始化與參考圖**
 
 ```bash
 python3 forge/next_pass.py init --model absorbent-powder-shaker --force
@@ -561,7 +561,7 @@ python3 forge/tomato.py gen --seed 1105 --out .img2babylon/absorbent-powder-shak
 ```
 agent vision 讀圖校對比例（蓋厚、標籤位置）；記 job_id／prompt。
 
-- [ ] **Step 2: 寫 spec**
+- [x] **Step 2: 寫 spec**
 
 ```json
 {
@@ -631,7 +631,7 @@ agent vision 讀圖校對比例（蓋厚、標籤位置）；記 job_id／prompt
 
 Run: `python3 forge/validate_spec.py viewer/models/absorbent-powder-shaker/spec.json --strict` → `OK`。
 
-- [ ] **Step 3: 寫 factory**
+- [x] **Step 3: 寫 factory**
 
 `viewer/models/absorbent-powder-shaker/createAbsorbentPowderShakerModel.ts`：
 
@@ -875,7 +875,7 @@ export default function createAbsorbentPowderShakerModel(scene: Scene, opts: Mod
   "absorbent-powder-shaker": () => import("../models/absorbent-powder-shaker/createAbsorbentPowderShakerModel"),
 ```
 
-- [ ] **Step 4: headless gate（含 pour gate）**
+- [x] **Step 4: headless gate（含 pour gate）**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
@@ -889,12 +889,12 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 Expected：check_colliders OK；physics_test 兩次 pass；actuation_test `coverage:servo:cap`、`servo:cap.x`、`coverage:pour:bottle`、`pour:bottle` 全 ok；pour_test A／B／C 全 ok。
 若 B 顆粒數不足：印出 tilt／capAngle（暫時 console.log）判斷是傾角量法還是蓋門角符號；若 settle 失敗提高阻尼到 3.0。若 physics_test 落地翻倒，降低 COM 到 −0.03。
 
-- [ ] **Step 5: 視覺 gate（五 pass 檢查點）**
+- [x] **Step 5: 視覺 gate（五 pass 檢查點）**
 
 依「共用流程片段 A／B／C」，相機 `{ alpha: -0.9, beta: 1.15, radius: 0.55, target: [0, 0.09, 0] }`。另截一張蓋開（harness 滑桿 `servo:cap.x` 拉到 1.6）與一張側躺倒粉（harness 無法傾倒——用 playwright evaluate 對 `bottle` body 施 `applyImpulse(new Vector3(0,0,0.5), 頂點)` 後等 2 s 截圖，存 `<name>-poured.png`）。
 material pass 檢查標籤：弧帶文字若左右鏡像，在 `makeLabelTexture` 加 `c.translate(w, 0); c.scale(-1, 1)`；若弧帶不在正面，調 `band.rotation.y`。每 pass 追加 reviewHistory、`next_pass.py done`。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add viewer/models/absorbent-powder-shaker viewer/src/registry.ts
@@ -918,7 +918,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 
 幾何常數（板 0.30×0.60×0.015、傾 0.28 rad）：`TOP_Y = 0.60·cos0.28 + 0.0075·sin0.28 = 0.5787`；板中心 `CY = TOP_Y − 0.30·cos0.28 + 0.0075·sin0.28 = 0.2925`、`CZ = 0.30·sin0.28 + 0.0075·cos0.28 = 0.0901`。前板 pivot (0, CY, −CZ) rotation.x = +0.28（頂在 +z 側、底在 −z）；後板 (0, CY, +CZ) rotation.x = −0.28。hinge 在兩板局部座標都是頂端內側邊：pivotA (0, 0.30, +0.0075)、pivotB (0, 0.30, −0.0075)。
 
-- [ ] **Step 1: 初始化與參考圖**
+- [x] **Step 1: 初始化與參考圖**
 
 ```bash
 python3 forge/next_pass.py init --model spill-warning-sign --force
@@ -926,7 +926,7 @@ mkdir -p .img2babylon/spill-warning-sign
 python3 forge/tomato.py gen --seed 1106 --out .img2babylon/spill-warning-sign/hero.png --prompt "a yellow A-frame floor warning sign 60 cm tall standing open on a hospital floor, two hinged plastic panels with black text CAUTION CHEMO SPILL and a biohazard symbol, black hinge cap on top, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
 ```
 
-- [ ] **Step 2: 寫 spec**
+- [x] **Step 2: 寫 spec**
 
 ```json
 {
@@ -989,7 +989,7 @@ python3 forge/tomato.py gen --seed 1106 --out .img2babylon/spill-warning-sign/he
 
 Run: `python3 forge/validate_spec.py viewer/models/spill-warning-sign/spec.json --strict` → `OK`（若 `_stack_height` 之類的高度檢查對傾斜板抱怨，依錯誤訊息調整 dimensions 說明，不改幾何）。
 
-- [ ] **Step 3: 寫 factory**
+- [x] **Step 3: 寫 factory**
 
 `viewer/models/spill-warning-sign/createSpillWarningSignModel.ts`：
 
@@ -1140,7 +1140,7 @@ export default function createSpillWarningSignModel(scene: Scene, opts: ModelOpt
 
 registry 加 `"spill-warning-sign": () => import("../models/spill-warning-sign/createSpillWarningSignModel"),`。
 
-- [ ] **Step 4: headless gate**
+- [x] **Step 4: headless gate**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
@@ -1152,11 +1152,11 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 ```
 另寫一段暫時性 tsx 探針（scratchpad，不入 repo）：落地 300 步後印兩板 pivot 的世界 y、hinge 角（`hingeAngle` 用出廠 bind 應接近 0、絕對角由 Havok 讀不到就以兩板 up 向量夾角 ≈ 0.56 判斷）、頂端高 ≥ 0.55。若 A 形塌成併攏（角趨近 0），代表方向反了：把 LIMITS 改 [0, 0.61]、servo 的展開值改 0.56，spec 同步。
 
-- [ ] **Step 5: 視覺 gate（五 pass 檢查點）**
+- [x] **Step 5: 視覺 gate（五 pass 檢查點）**
 
 相機 `{ alpha: -0.8, beta: 1.2, radius: 1.3, target: [0, 0.3, 0] }`。另截收合狀態（harness 滑桿 `servo:panel-back.x` 拉到 0）。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add viewer/models/spill-warning-sign viewer/src/registry.ts
@@ -1178,7 +1178,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Interfaces:**
 - Produces: registry `"absorbent-pad"`；bodies `half-a`（下）、`half-b`（上）；actuator `servo:half-b.x`，limits [0, 3.1]；0 = 對摺、3.1 = 攤開。
 
-- [ ] **Step 1: 初始化與參考圖**
+- [x] **Step 1: 初始化與參考圖**
 
 ```bash
 python3 forge/next_pass.py init --model absorbent-pad --force
@@ -1186,7 +1186,7 @@ mkdir -p .img2babylon/absorbent-pad
 python3 forge/tomato.py gen --seed 1107 --out .img2babylon/absorbent-pad/hero.png --prompt "a folded white chemotherapy spill absorbent pad with a blue plastic backing, folded once in half into a 20 by 25 cm rectangle 2.5 cm thick, lying on a table, quilted white absorbent surface visible at the fold, small label in the corner, three-quarter view from above, centered, plain light gray background, soft studio lighting, product photo"
 ```
 
-- [ ] **Step 2: 寫 spec**
+- [x] **Step 2: 寫 spec**
 
 ```json
 {
@@ -1249,7 +1249,7 @@ python3 forge/tomato.py gen --seed 1107 --out .img2babylon/absorbent-pad/hero.pn
 
 Run: `python3 forge/validate_spec.py viewer/models/absorbent-pad/spec.json --strict` → `OK`。
 
-- [ ] **Step 3: 寫 factory**
+- [x] **Step 3: 寫 factory**
 
 `viewer/models/absorbent-pad/createAbsorbentPadModel.ts`：
 
@@ -1414,7 +1414,7 @@ export default function createAbsorbentPadModel(scene: Scene, opts: ModelOptions
 
 registry 加 `"absorbent-pad": () => import("../models/absorbent-pad/createAbsorbentPadModel"),`。
 
-- [ ] **Step 4: headless gate**
+- [x] **Step 4: headless gate**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
@@ -1426,11 +1426,11 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 ```
 actuation_test 的 servo 檢查到位角若因 servo 太強彈飛而失敗，SERVO_FORCE 降到 0.2（spec 同步）。
 
-- [ ] **Step 5: 視覺 gate（五 pass 檢查點）**
+- [x] **Step 5: 視覺 gate（五 pass 檢查點）**
 
 相機 `{ alpha: -0.9, beta: 1.0, radius: 0.6, target: [0, 0.02, 0.05] }`。另截攤開狀態（滑桿 3.1）確認白面朝上。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add viewer/models/absorbent-pad viewer/src/registry.ts
@@ -1452,7 +1452,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Interfaces:**
 - Produces: registry `"ppe-set"`；bodies `glove-box`、`gown-pack`、`goggles`；無 actuator、`constraints: []`。
 
-- [ ] **Step 1: 初始化與參考圖**
+- [x] **Step 1: 初始化與參考圖**
 
 ```bash
 python3 forge/next_pass.py init --model ppe-set --force
@@ -1460,7 +1460,7 @@ mkdir -p .img2babylon/ppe-set
 python3 forge/tomato.py gen --seed 1108 --out .img2babylon/ppe-set/hero.png --prompt "chemotherapy personal protective equipment set laid out on a table: a purple cardboard box of nitrile gloves with an oval dispensing slot on top, a sealed pale blue plastic pack containing a folded blue isolation gown, and a pair of clear safety goggles with dark gray frame and elastic strap, three-quarter view from above, centered, plain light gray background, soft studio lighting, product photo"
 ```
 
-- [ ] **Step 2: 寫 spec**
+- [x] **Step 2: 寫 spec**
 
 ```json
 {
@@ -1541,7 +1541,7 @@ python3 forge/tomato.py gen --seed 1108 --out .img2babylon/ppe-set/hero.png --pr
 
 Run: `python3 forge/validate_spec.py viewer/models/ppe-set/spec.json --strict` → `OK`。密度：手套盒 125、隔離衣包 95、護目鏡 0.06/(0.17·0.06·0.09)=65。
 
-- [ ] **Step 3: 寫 factory**
+- [x] **Step 3: 寫 factory**
 
 `viewer/models/ppe-set/createPpeSetModel.ts`：
 
@@ -1709,7 +1709,7 @@ export default function createPpeSetModel(scene: Scene, opts: ModelOptions = {})
 
 registry 加 `"ppe-set": () => import("../models/ppe-set/createPpeSetModel"),`。
 
-- [ ] **Step 4: headless gate**
+- [x] **Step 4: headless gate**
 
 ```bash
 cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
@@ -1720,11 +1720,11 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 ```
 Expected：check_colliders OK（護目鏡 collider 含 torus 外徑 0.168 在 ±10% 內）；physics_test pass；actuation_test `spec 無 actuation 宣告`。
 
-- [ ] **Step 5: 視覺 gate（五 pass 檢查點）**
+- [x] **Step 5: 視覺 gate（五 pass 檢查點）**
 
 相機 `{ alpha: -1.0, beta: 1.05, radius: 0.9, target: [0, 0.03, -0.03] }`。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add viewer/models/ppe-set viewer/src/registry.ts
@@ -1742,7 +1742,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Modify: `viewer/models/cytotoxic-waste-bin/spec.json`（componentTree 加 4 件、bin body components、reviewHistory）
 - Modify: `viewer/models/cytotoxic-waste-bin/createCytotoxicWasteBinModel.ts`（BODY_DEFS.bin.colliders、幾何、matOf）
 
-- [ ] **Step 1: spec**
+- [x] **Step 1: spec**
 
 componentTree 在 `bin-label` 之後加（`transform.position` 相對 bin pivot；耳把 collider 完全在桶身 cylinder AABB x ≤ 0.15 之外）：
 
@@ -1770,7 +1770,7 @@ componentTree 在 `bin-label` 之後加（`transform.position` 相對 bin pivot�
 `physics.bodies[bin].components` 改 `["bin", "bag-liner", "bin-label", "handle-l", "handle-l-stub", "handle-r", "handle-r-stub"]`。
 Run strict validate → OK。
 
-- [ ] **Step 2: factory**
+- [x] **Step 2: factory**
 
 常數區加 `const HANDLE_X = 0.166, HANDLE_Y = 0.075, HANDLE = { w: 0.03, h: 0.035, d: 0.10 }, STUB_X = 0.147;`。
 `BODY_DEFS[0].colliders` 改：
@@ -1795,7 +1795,7 @@ Run strict validate → OK。
   }
 ```
 
-- [ ] **Step 3: 全 gate 重跑**
+- [x] **Step 3: 全 gate 重跑**
 
 ```bash
 python3 forge/next_pass.py init --model cytotoxic-waste-bin --force
@@ -1809,7 +1809,7 @@ cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
 ```
 check_colliders 若報耳把與桶身重疊 > 25%：把 HANDLE_X 加大到 0.17（spec 同步）。
 
-- [ ] **Step 4: 視覺 gate（單 pass）**
+- [x] **Step 4: 視覺 gate（單 pass）**
 
 重截 hero（相機 `{ alpha: -0.9, beta: 1.15, radius: 1.2, target: [0, 0.25, 0] }`）＋collider，compare，divine_eye；reviewHistory 追加：
 
@@ -1819,7 +1819,7 @@ check_colliders 若報耳把與桶身重疊 > 25%：把 HANDLE_X 加大到 0.17�
 ```
 （`fidelity`／`iou` 填 divine_eye 實測值。）跑 `python3 forge/next_pass.py done` 到 polish 完成。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add viewer/models/cytotoxic-waste-bin
@@ -1840,7 +1840,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Modify: `../playground/scripts/scene_test.ts`
 - Modify: `../playground/README.md`（物件清單）
 
-- [ ] **Step 1: scene.ts**
+- [x] **Step 1: scene.ts**
 
 ```ts
 export const SCENE: SceneEntry[] = [
@@ -1854,11 +1854,11 @@ export const SCENE: SceneEntry[] = [
 ];
 ```
 
-- [ ] **Step 2: main.ts**
+- [x] **Step 2: main.ts**
 
 `makeFloor`：`const size = 6;`、`tex.uScale = 6; tex.vScale = 6;`。相機：`new ArcRotateCamera("cam", -1.1, 1.05, 3.8, new Vector3(0, 0.25, 0), scene)`。
 
-- [ ] **Step 3: ui.ts**
+- [x] **Step 3: ui.ts**
 
 `topple` 的過濾改 `!/^(droplet|grain)-/.test(b.transformNode.name)`。STEPS 改：
 
@@ -1886,7 +1886,7 @@ const STEPS = ["隔離現場、示警（警示立牌）", "穿戴防護裝備（
 
 「推倒」條件改為 `if (!["chemo-iv-bag", "absorbent-pad"].includes(p.entry.model))`（吸附墊太薄推倒無意義）。
 
-- [ ] **Step 4: scene_test.ts**
+- [x] **Step 4: scene_test.ts**
 
 地板 `width: 6, height: 6`、shape `new Vector3(6, 0.1, 6)`。`step(3)` 前取四個 bind；`kitBind` 等之後加：
 
@@ -1948,18 +1948,18 @@ const STEPS = ["隔離現場、示警（警示立牌）", "穿戴防護裝備（
 
 `hingeAngle`／`relRot` 改從 `img2babylon-viewer/hinge` import（`relativeRotation as relRot`），刪掉本地副本（需確認 `viewer/src/index.ts` 或別名允許 `img2babylon-viewer/hinge` 路徑；若不行就保留本地副本）。
 
-- [ ] **Step 5: 跑 typecheck、gate、重部署**
+- [x] **Step 5: 跑 typecheck、gate、重部署**
 
 ```bash
 cd /Users/wake/Desktop/local_three/playground && npx tsc --noEmit -p . && npm run scene-test 2>&1 | tail -40 && npm run serve 2>&1 | tail -4
 ```
 Expected：scene_test `"pass": true`；serve 印 tailnet 200 與 wasm MIME。
 
-- [ ] **Step 6: 瀏覽器目視**
+- [x] **Step 6: 瀏覽器目視**
 
 playwright 開 `https://monkeyday.tail8e3f79.ts.net/?v=3`，等 `__PLAYGROUND_READY__`，截 overview；按「收合」（立牌）、「傾倒」（粉罐）、「攤開」（吸附墊）各等 2 s 截圖；檔案 `mv` 到 `.img2babylon/shots/playground2-{overview,fold,pour,unfold}.png`，Read 目視：七件都在、無穿地、顆粒落地成堆。
 
-- [ ] **Step 7: Commit（playground）**
+- [x] **Step 7: Commit（playground）**
 
 ```bash
 cd /Users/wake/Desktop/local_three/playground && git add -A && git commit -m "playground：M11 七件（警示立牌／吸附粉罐／吸附墊／防護裝備組）、地板 6 m、新卡片、scene_test 新斷言；重部署
@@ -1977,7 +1977,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Create: `tasks/0023-chemo-spill-set-2.md`
 - Modify: `.remember/remember.md`
 
-- [ ] **Step 1: ROADMAP M11 節**
+- [x] **Step 1: ROADMAP M11 節**
 
 ```markdown
 ## M11：化療潑灑處理套件第二批（2026-09-05 核准開工）
@@ -1989,11 +1989,11 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
       結果：<各模型 Divine Eye 與修正次數、gate 狀態、陷阱——結案時填>
 ```
 
-- [ ] **Step 2: 任務卡**
+- [x] **Step 2: 任務卡**
 
 `tasks/0023-chemo-spill-set-2.md` 依 0022 格式：model／status／脈絡／分工／驗收／notes（修正次數、教訓）。
 
-- [ ] **Step 3: handoff 與 Commit**
+- [x] **Step 3: handoff 與 Commit**
 
 更新 `.remember/remember.md`（State：M11 結案 commit；Next：等使用者；Context：本批新陷阱）。
 

@@ -279,6 +279,26 @@ m·|Δv|，不用碰撞回呼）。展示環境是獨立專案 `../playground`�
       tailscale serve。陷阱：macOS TCC 擋 launchd 起的 node 讀 ~/Desktop（卡在權限提示永不監聽）；macOS 版 Tailscale
       不支援 serve 直接提供檔案路徑；plane 上 DynamicTexture 要在畫布內翻轉（build.md）。
 
+## M11：化療潑灑處理套件第二批（2026-09-05 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-05-chemo-spill-set-2-design.md`、計畫 `docs/superpowers/plans/2026-09-05-chemo-spill-set-2.md`。
+契約只擴 `pour`（節流的質量轉移：傾角≥門檻∧蓋門角≥門檻∧有存量 → 每秒 N 顆；`pour_test.ts` gate）；
+`createHinge` 加選填 `restOffset`（兩 body 局部框架出廠即相差 θ 時讓 hinge 角 0 = 出廠姿勢，工具鏈假設如此）；
+harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模型＋桶耳把補正＋playground 七件。
+
+- [x] 0023 pour 契約（validate_spec TDD 8 測試、Actuator kind `pour`、harness 按鈕、hinge.ts `relativeRotation`／`hingeAngle`、
+      actuation_test 覆蓋、`pour_test.ts`）＋四模型＋桶耳把＋playground。結果：
+      `absorbent-powder-shaker`（2 body、蓋 servo＋pour 40 顆×0.003 kg／20 顆·s⁻¹；pour_test A/B/C 7 項綠；Divine Eye reject——白瓶配淺灰
+      背景遮罩失效，目視通過；2 修正：ribbon 標籤帶取代 arc cylinder、比例對齊參考圖）、
+      `spill-warning-sign`（2 body 梯形 ExtrudeShape 板、頂端 hinge servo 下限撐 A 形；actuation_test 初紅→ restOffset；Divine Eye 硬門檻過
+      IoU 0.83 low-confidence 0.349；0 修正）、`absorbent-pad`（2 body hinge servo 攤開 3.1；Divine Eye reject IoU 0.60 軟包 vs 硬板，目視通過；
+      2 修正）、`ppe-set`（4 自由 body 含單隻手套；Divine Eye reject 多物件構圖固有，目視通過；1 修正）、
+      `cytotoxic-waste-bin` 耳把（桶口下緣、collider 落在桶身 AABB 外＋接橋；Divine Eye pass 0.37／IoU 0.72；1 修正）。
+      playground：七件、地板 6 m、新卡片、scene_test 18 項綠、tailnet 重部署實測收合／傾倒／攤開。
+      陷阱：arc cylinder 側面 UV 軸向不可預期（改 ribbon）；DynamicTexture 預設 CLAMP 平鋪全變邊線色（地板）；朝上 plane 的正讀方向取決於
+      觀看方位（iv-bag 水平翻轉 vs pad 垂直翻轉）；check_colliders 同 body collider 重疊以 AABB 計，耳把不能嵌進桶身 collider；
+      state.json 一次只屬一個模型——兩模型的 next_pass 命令不可並行。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
