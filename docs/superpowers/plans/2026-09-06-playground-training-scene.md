@@ -33,17 +33,17 @@
 **Files:**
 - Commit（不改內容）：`src/chemo.ts`、`src/parkour/*`、`public/parkour/*`、`scripts/generate_parkour.py`、`scripts/prepare_parkour.py`、`scripts/parkour_test.ts`、`docs/**`、`.gitignore`、`package.json`、`tsconfig.json`、`README.md`、`src/main.ts`
 
-- [ ] **Step 1: 逐檔確認狀態**
+- [x] **Step 1: 逐檔確認狀態**
 
 Run: `cd ../playground && git status --short`
 Expected: 只有上列檔案（M／??）。若多出其他檔，停下回報使用者。
 
-- [ ] **Step 2: 三個 gate 全綠**
+- [x] **Step 2: 三個 gate 全綠**
 
 Run: `cd ../playground && npm run typecheck && npm run scene-test | tail -3 && npm run parkour-test`
 Expected: typecheck 無輸出；scene-test 輸出 `"pass": true`；parkour-test 印 `parkour_test PASS: …`。任一失敗停下回報（不是我的程式，不要修）。
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**
 
 ```bash
 cd ../playground && git add -A && git status --short | grep -v '^[AM] ' ; git commit -m "$(cat <<'EOF'
@@ -69,7 +69,7 @@ Expected: 最後印 `0`。
 **Interfaces:**
 - Produces: `new ParkourController(scene, spawn, opts?: ControllerOptions)`，`ControllerOptions = { capsuleHeight?: number; capsuleRadius?: number; strength?: number }`，預設 1.06／0.19／70；`feet` 語意不變（腳底）。
 
-- [ ] **Step 1: 改建構子**
+- [x] **Step 1: 改建構子**
 
 把
 ```ts
@@ -96,12 +96,12 @@ export interface ControllerOptions { capsuleHeight?:number; capsuleRadius?:numbe
 ```
 `reset()` 內 `new Vector3(0,0.53,0)` → `new Vector3(0,this.halfHeight,0)`；`tick()` 內 `.y-=0.53` → `.y-=this.halfHeight`。全檔不得再出現 `0.53`。
 
-- [ ] **Step 2: 驗證**
+- [x] **Step 2: 驗證**
 
 Run: `cd ../playground && grep -c "0\.53" src/parkour/controller.ts; npm run typecheck && npm run parkour-test`
 Expected: `0`、typecheck 無輸出、`parkour_test PASS`。
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd ../playground && git add src/parkour/controller.ts && git commit -m "$(cat <<'EOF'
@@ -126,7 +126,7 @@ EOF
 - Produces: `relRot(a, b): Matrix`、`hingeAngle(a, b, bind): number`、`class HingeReader { constructor(a: PhysicsBody, b: PhysicsBody); angle(): number }`；
   `InteractionState.spill: { center: Vector3; radius: number } | null`。
 
-- [ ] **Step 1: 建 `src/hinge.ts`**
+- [x] **Step 1: 建 `src/hinge.ts`**
 
 ```ts
 // 單軸 hinge 角讀取：以綁定時的相對旋轉為零點，取 x 軸分量（scene_test 同款，抽出供訓練快照用）。
@@ -150,12 +150,12 @@ export class HingeReader {
 }
 ```
 
-- [ ] **Step 2: scene_test 改用**
+- [x] **Step 2: scene_test 改用**
 
 刪掉 `scripts/scene_test.ts` 內 `function relRot…` 與 `function hingeAngle…` 兩個定義（含註解），在 import 區加
 `import { hingeAngle, relRot } from "../src/hinge";`。`Matrix` 若不再使用則從 `@babylonjs/core` import 移除（typecheck 會告知）。
 
-- [ ] **Step 3: interactions.ts 加 getter**
+- [x] **Step 3: interactions.ts 加 getter**
 
 在 `installInteractions` 回傳物件內、`get puddle()` 旁加：
 ```ts
@@ -166,12 +166,12 @@ export class HingeReader {
 ```
 `InteractionState` 介面加 `readonly spill: { center: Vector3; radius: number } | null;`（註解：原始足跡，擦拭後為 null）。
 
-- [ ] **Step 4: 驗證**
+- [x] **Step 4: 驗證**
 
 Run: `cd ../playground && npm run typecheck && npm run scene-test | grep -c '"ok": true'`
 Expected: `34`。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/hinge.ts src/interactions.ts scripts/scene_test.ts && git commit -m "$(cat <<'EOF'
@@ -197,7 +197,7 @@ EOF
   `installGrab(scene, camera, canvas, placed, opts: GrabOptions = {})`，`GrabOptions = { reach?: () => { origin: Vector3; radius: number }; onReject?: (reason: "too-far") => void; onBegin?: (body: PhysicsBody, placed: Placed | undefined) => void }`。
 - training_test 骨架：`Check`／`push`／`step`，最後印 `{ checks, pass }` JSON，exit code 0/1。
 
-- [ ] **Step 1: 寫失敗測試（骨架＋train:reach）**
+- [x] **Step 1: 寫失敗測試（骨架＋train:reach）**
 
 `scripts/training_test.ts`：
 ```ts
@@ -228,12 +228,12 @@ main().then((c) => process.exit(c)).catch((e) => { console.error(e); process.exi
 ```
 package.json scripts 加 `"training-test": "node --import tsx scripts/training_test.ts"`（放在 `parkour-test` 之後）。
 
-- [ ] **Step 2: 確認失敗**
+- [x] **Step 2: 確認失敗**
 
 Run: `cd ../playground && npm run training-test`
 Expected: exit 2，錯誤含 `withinReach` 不存在（`does not provide an export named`）。
 
-- [ ] **Step 3: 實作 grab.ts**
+- [x] **Step 3: 實作 grab.ts**
 
 在 `export const AIM_PITCH` 之後加：
 ```ts
@@ -278,12 +278,12 @@ POINTERMOVE 分支改為：
       if (p) ctl.moveTo(p);
 ```
 
-- [ ] **Step 4: 驗證**
+- [x] **Step 4: 驗證**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test | grep -c '"ok": true' && npm run scene-test | grep -c '"ok": true'`
 Expected: `1`、`34`。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/grab.ts scripts/training_test.ts package.json && git commit -m "$(cat <<'EOF'
@@ -307,7 +307,7 @@ EOF
 - Produces: `act(model, id): Actuator | undefined`、`interface ButtonSpec { label: string; run(): void }`、`modelButtons(p: Placed, inter: InteractionState): ButtonSpec[]`
   （只含 servo／collect 類：打開／關閉、踩踏板／放開、展開／收合、開蓋／關蓋、攤開／摺起、噴灑、封袋）。
 
-- [ ] **Step 1: 建 `src/actions.ts`**
+- [x] **Step 1: 建 `src/actions.ts`**
 
 ```ts
 // 物件操作按鈕（servo／collect 類），沙盒面板與訓練面板共用。摔落／破裂／推倒／拋起／歸位等沙盒專用留在 ui.ts。
@@ -360,7 +360,7 @@ export function modelButtons(p: Placed, inter: InteractionState): ButtonSpec[] {
 }
 ```
 
-- [ ] **Step 2: ui.ts 改用**
+- [x] **Step 2: ui.ts 改用**
 
 - 刪 ui.ts 內的 `function act(...)`，改 `import { act, modelButtons } from "./actions";`。
 - 卡片按鈕區：把 `if (p.entry.model === "chemo-spill-kit") {…}` 到 `if (p.entry.model === "cytotoxic-waste-bag") {…}` 那一整串改為：
@@ -376,12 +376,12 @@ export function modelButtons(p: Placed, inter: InteractionState): ButtonSpec[] {
 ```
 其後的 推倒／拋起／歸位 三行不動。
 
-- [ ] **Step 3: 驗證**
+- [x] **Step 3: 驗證**
 
 Run: `cd ../playground && npm run typecheck && npm run scene-test | grep -c '"ok": true'`
 Expected: `34`。再起 dev server（`run_in_background`：`cd ../playground && npm run dev -- --port 5175 --strictPort`），playwright 開 `http://localhost:5175/?scene=chemo`，snapshot 確認粉罐卡片按鈕順序「開蓋 關蓋 傾倒 推倒 拋起 歸位」、點滴袋「摔落 破裂 拋起 歸位」。
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd ../playground && git add src/actions.ts src/ui.ts && git commit -m "$(cat <<'EOF'
@@ -419,7 +419,7 @@ EOF
   export const REACH = 1.2, WEAR_DIST = 0.45, STEP_IN_PAD = 0.25, SIGN_DIST = 1.5, BIN_MOUTH_R = 0.15;
   ```
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 training_test.ts 加 import `import { createFlow, type FlowSnapshot } from "../src/training/flow";`，在 `train:reach` 之後加：
 ```ts
@@ -471,12 +471,12 @@ training_test.ts 加 import `import { createFlow, type FlowSnapshot } from "../s
   }
 ```
 
-- [ ] **Step 2: 確認失敗**
+- [x] **Step 2: 確認失敗**
 
 Run: `cd ../playground && npm run training-test`
 Expected: exit 2，`Cannot find module '../src/training/flow'`。
 
-- [ ] **Step 3: 實作 `src/training/flow.ts`**
+- [x] **Step 3: 實作 `src/training/flow.ts`**
 
 ```ts
 // 訓練流程狀態機：純邏輯、每物理步吃一份快照、回傳事件。不碰 Babylon body（副作用交給 main.ts）。
@@ -621,12 +621,12 @@ export function createFlow(): FlowState {
 }
 ```
 
-- [ ] **Step 4: 驗證**
+- [x] **Step 4: 驗證**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test | grep -c '"ok": true'`
 Expected: `8`（reach＋wear＋gloves-first＋no-ppe-contact＋stepped-in-spill＋wipe-before-disinfect＋unsealed-dispose＋doff-gate）。若哪項 false，讀 detail 修 flow.ts，不改測試期望。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/training/flow.ts scripts/training_test.ts && git commit -m "$(cat <<'EOF'
@@ -651,7 +651,7 @@ EOF
   `createRoom(scene): void`（地板＋四牆＋點滴架＋PPE 桌，全 STATIC，`isPickable=false`）、`holdBag(placed): void`、`releaseBag(placed): void`、
   `findPlaced(placed, model): Placed | undefined`。
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 training_test.ts 加 import：
 ```ts
@@ -702,12 +702,12 @@ import { BAG_HANG_Y, createRoom, findPlaced, holdBag, releaseBag, TRAINING_SCENE
 ```
 並把結尾改成先 `ctx.dispose();` 再算 `pass`。
 
-- [ ] **Step 2: 確認失敗**
+- [x] **Step 2: 確認失敗**
 
 Run: `cd ../playground && npm run training-test`
 Expected: exit 2，`Cannot find module '../src/training/world'`。
 
-- [ ] **Step 3: 實作 `src/training/world.ts`**
+- [x] **Step 3: 實作 `src/training/world.ts`**
 
 ```ts
 // 訓練場景：10×10 m 病房、五站佈局、點滴架、PPE 桌。靜物全部 STATIC、isPickable=false（抓取只認模型 body）。
@@ -812,12 +812,12 @@ export function releaseBag(placed: Placed[]): void {
 }
 ```
 
-- [ ] **Step 4: 驗證**
+- [x] **Step 4: 驗證**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test | grep -c '"ok": true'`
 Expected: `10`。若 `train:layout` 報某物件出界或未靜止，印該物件座標（不要猜）再調 `TRAINING_SCENE` 的位置。若 DynamicTexture 在 NullEngine 拋錯，`floorMaterial` 包 try／catch 回純色材質。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/training/world.ts scripts/training_test.ts && git commit -m "$(cat <<'EOF'
@@ -847,7 +847,7 @@ EOF
   export function createPlayer(scene: Scene, model: BuiltModel, run: Clip, spawn: Vector3): Player;
   ```
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 training_test.ts 加 import：
 ```ts
@@ -889,12 +889,12 @@ import { createPlayer, FIGURE_SCALE } from "../src/training/player";
   }
 ```
 
-- [ ] **Step 2: 確認失敗**
+- [x] **Step 2: 確認失敗**
 
 Run: `cd ../playground && npm run training-test`
 Expected: exit 2，`Cannot find module '../src/training/player'`。
 
-- [ ] **Step 3: 實作 `src/training/player.ts`**
+- [x] **Step 3: 實作 `src/training/player.ts`**
 
 ```ts
 // 訓練玩家：跑酷膠囊控制器（不跳）＋ action-figure ×17 FK 姿勢；PPE 穿脫只換色。
@@ -982,12 +982,12 @@ export function createPlayer(scene: Scene, model: BuiltModel, run: Clip, spawn: 
 }
 ```
 
-- [ ] **Step 4: 驗證**
+- [x] **Step 4: 驗證**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test | grep -c '"ok": true'`
 Expected: `12`。`train:s17-figure` 若頭高不在 1.2–1.8 或接點誤差大 → FigurePose 有尺度假設，讀 `src/parkour/figure.ts` 找硬編碼常數（此檔已在版控，可改），修好後 `parkour-test` 也要綠。護目鏡帶位置（0.004 S）在 Task 9 瀏覽器看，不合再調。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/training/player.ts scripts/training_test.ts && git commit -m "$(cat <<'EOF'
@@ -1018,7 +1018,7 @@ EOF
   export function moveModel(scene: Scene, p: Placed, delta: Vector3, step: (n: number) => void): void; // 多 body 整體搬移（disablePreStep 兩步）
   ```
 
-- [ ] **Step 1: 寫失敗測試（黃金路徑）**
+- [x] **Step 1: 寫失敗測試（黃金路徑）**
 
 training_test.ts 加 import：
 ```ts
@@ -1099,12 +1099,12 @@ import { act } from "../src/actions";
   }
 ```
 
-- [ ] **Step 2: 確認失敗**
+- [x] **Step 2: 確認失敗**
 
 Run: `cd ../playground && npm run training-test`
 Expected: exit 2，`Cannot find module '../src/training/snapshot'`。
 
-- [ ] **Step 3: 實作 `src/training/snapshot.ts`**
+- [x] **Step 3: 實作 `src/training/snapshot.ts`**
 
 ```ts
 // 從 Placed／InteractionState／hinge 角組出 FlowSnapshot；hinge 讀取器以 BuiltModel 為鍵快取（歸位換新模型自動重綁）。
@@ -1196,13 +1196,13 @@ export function createSnapshotter(placed: () => Placed[], inter: InteractionStat
 注意：`createSnapshotter` 必須在 spawn 後、任何 servo 命令前建（`prime()` 記綁定姿勢）；main.ts 與測試都照此順序。
 測試裡 Task 6 已對袋 `rupture`，但 kit／bin／sign 的 hinge 尚未動過，順序符合。
 
-- [ ] **Step 4: 驗證**
+- [x] **Step 4: 驗證**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test | grep -c '"ok": true'; cd ../playground && npm run training-test | grep -A2 '"train:golden"'`
 Expected: `13`；golden detail 七步 true、錯「無」、分 100。失敗時**先印座標**（`inter.puddle`、`inter.spill`、袋位置與 `binTop`、`sealed`），再調測試佈點；流程規則本身不改。
 常見：`no-sign` 誤記＝立牌 hinge 角非 0（搬移撞到）→ 搬到 −x 1.0 還撞就改 1.2；`dispose` 未觸發＝`binTop.y` 取到 lid（lid 是另一 body，`getHierarchyBoundingVectors` 只算 bin 子樹，理論不會）。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/training/snapshot.ts scripts/training_test.ts && git commit -m "$(cat <<'EOF'
@@ -1227,7 +1227,7 @@ EOF
 - Produces: `bootTraining(): Promise<void>`；`window.__TRAINING__ = { scene, placed, flow, player, grab, start(), reset() }`、`__TRAINING_READY__`。
   `installTrainingUi(deps): TrainingUi`，`TrainingUi = { toast(text): void; refresh(): void }`。
 
-- [ ] **Step 1: `src/training/style.css`**
+- [x] **Step 1: `src/training/style.css`**
 
 ```css
 body.training{background:#13202b;color:#ecf2ef;font:14px/1.5 system-ui,-apple-system,'PingFang TC',sans-serif}
@@ -1252,7 +1252,7 @@ body.training{background:#13202b;color:#ecf2ef;font:14px/1.5 system-ui,-apple-sy
 #app:focus{outline:none}
 ```
 
-- [ ] **Step 2: `src/training/ui.ts`**
+- [x] **Step 2: `src/training/ui.ts`**
 
 ```ts
 // 訓練面板：計時、七步清單、錯誤紀錄、附近物件按鈕、脫除按鈕、總評、toast。DOM 只在這裡。
@@ -1332,7 +1332,7 @@ export function installTrainingUi(d: TrainingUiDeps): TrainingUi {
 }
 ```
 
-- [ ] **Step 3: `src/training/main.ts`**
+- [x] **Step 3: `src/training/main.ts`**
 
 ```ts
 // 訓練場景入口：房間、十件物件、玩家、跟隨鏡頭、抓取（伸手範圍）、互動、流程快照→事件→副作用、UI。
@@ -1459,7 +1459,7 @@ export async function bootTraining(): Promise<void> {
 ```
 （`ui.toast` 的 error 文案改用 `ERROR_LABELS[e.id]`：從 `./flow` 多 import `ERROR_LABELS`，寫 `` ui.toast(`記錯：${ERROR_LABELS[e.id]}`, true) ``。）
 
-- [ ] **Step 4: 路由 `src/main.ts`**
+- [x] **Step 4: 路由 `src/main.ts`**
 
 ```ts
 const mode=new URLSearchParams(location.search).get('scene');
@@ -1480,12 +1480,12 @@ export {};
 ```
 跑酷面板的「物件實驗場 ↗」連結指 `?scene=chemo`，不動。
 
-- [ ] **Step 5: typecheck＋三 gate**
+- [x] **Step 5: typecheck＋三 gate**
 
 Run: `cd ../playground && npm run typecheck && npm run scene-test | grep -c '"ok": true' && npm run training-test | grep -c '"ok": true' && npm run parkour-test`
 Expected: 無型別錯、`34`、`13`、PASS。
 
-- [ ] **Step 6: 瀏覽器冒煙（playwright）**
+- [x] **Step 6: 瀏覽器冒煙（playwright）**
 
 dev server（`run_in_background`）：`cd ../playground && npm run dev -- --port 5175 --strictPort`。
 `browser_navigate` `http://localhost:5175/`，`browser_evaluate` 等 `window.__TRAINING_READY__`；截視口 → 看到房間、人偶（約 1.65 m，比桶高）、五站分散、面板七步。
@@ -1494,7 +1494,7 @@ dev server（`run_in_background`）：`cd ../playground && npm run dev -- --port
 檢查護目鏡帶／隔離衣換色：evaluate `__TRAINING__.player.wear('gown'); wear('goggles')` 後截圖看人偶；帶子位置不對就調 `player.ts` 的 `0.004 * S`。
 console 無紅字（`browser_console_messages`）。
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd ../playground && git add src/training/ui.ts src/training/style.css src/training/main.ts src/main.ts src/training/player.ts && git commit -m "$(cat <<'EOF'
@@ -1516,7 +1516,7 @@ EOF
 - Create（img-to-babylon）：`tasks/0028-playground-training-scene.md`
 - Memory：`~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m16-lessons.md`＋`MEMORY.md` 一行；更新 `playground-tailnet-deploy.md`（部署改 player-garden）；`.remember/remember.md`。
 
-- [ ] **Step 1: playwright 真實輸入層演完整七步**
+- [x] **Step 1: playwright 真實輸入層演完整七步**
 
 腳本以 `browser_evaluate` 執行，全部走真實輸入層：
 - 走位：`window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyW'}))`／`keyup`，方向靠先拖曳空白處轉鏡頭（`canvas.dispatchEvent(PointerEvent)`，pointermove **`button: -1`**）。
@@ -1526,7 +1526,7 @@ EOF
 - 截 `.img2babylon/shots/playground6-{room,ppe,absorb,done}.png`（`filename` 結果落在 img-to-babylon 根，解碼後搬）。
 - 記下實際分數與錯誤清單；演出時犯的錯**照實寫**進 tasks／spec 補記。若某步真人操作無法完成（例如鏟顆粒進袋太難），如實回報並保留 headless 黃金路徑為證據。
 
-- [ ] **Step 2: README**
+- [x] **Step 2: README**
 
 `../playground/README.md` 第一段之後加一節：
 ```markdown
@@ -1541,14 +1541,14 @@ EOF
 ```
 把「gate：`npx tsc --noEmit && npm run scene-test`」一行改為 `npx tsc --noEmit && npm run scene-test && npm run parkour-test && npm run training-test`。
 
-- [ ] **Step 3: 部署（player-garden 統包）**
+- [x] **Step 3: 部署（player-garden 統包）**
 
 Run: `cd ../player-garden && bash scripts/serve.sh 2>&1 | tail -5`
 Expected: 無錯；`curl -s https://monkeyday.tail8e3f79.ts.net/playground/ | grep -c '<canvas id="app">'` → `1`；
 `ls ~/.local/share/player-garden/www/playground/assets/*.js | head -1 | xargs grep -c '化療潑灑處理訓練'` → `1`。
 若 player-garden 工作區有別人未提交的改動，不動它，只跑腳本。
 
-- [ ] **Step 4: playground commit**
+- [x] **Step 4: playground commit**
 
 ```bash
 cd ../playground && git add README.md && git commit -m "$(cat <<'EOF'
@@ -1561,7 +1561,7 @@ EOF
 ```
 Expected: `0`（若另一 session 又有新檔，列出並回報，不要掃進）。
 
-- [ ] **Step 5: img-to-babylon 結案文件**
+- [x] **Step 5: img-to-babylon 結案文件**
 
 - `ROADMAP.md`：M15 之後加 M16 條目（訓練場景、13 項 gate、playground commit hash、上線網址）。
 - `tasks/0028-playground-training-scene.md`：仿 0027 格式——目標、做法、実測（gate 數字、瀏覽器分數與錯誤）、遺留（觸控、跳躍、脫除順序、鏟顆粒手感）。
@@ -1578,7 +1578,7 @@ EOF
 )"
 ```
 
-- [ ] **Step 6: memory 與 handoff**
+- [x] **Step 6: memory 與 handoff**
 
 - 新 `img2babylon-m16-lessons.md`（type project）：實作時真正踩到的坑（不要預寫；例如 hinge 綁定時機、膠囊推物、DynamicTexture headless、跟隨鏡頭與抓取 detach 互動）＋ How to apply；MEMORY.md 加一行。
 - 更新 `playground-tailnet-deploy.md`：部署改 `../player-garden/scripts/serve.sh`，playground 在 `/playground/` 子路徑，`com.wake.playground` 已退役。

@@ -213,3 +213,13 @@ package.json `"training-test": "node --import tsx scripts/training_test.ts"`。
 - 人偶 ×17 若 `FigurePose` 有隱含尺度假設，`train:s17-figure` 會抓到；抓到就改 figure.ts（另一 session 的檔，屆時已在版控，可改）。
 - 袋 0.30 對桶口 0.30：以「進入桶口柱即入桶」規則迴避，不做袋形變。
 - 另一 session 若仍在改 playground：前置 commit 前 `git status` 逐檔確認並告知使用者；之後我只 add 自己的檔。
+
+## 12. 実測補記（2026-09-06 結案）
+
+- gate：`training-test` 13 項（spec §9 的 10 項合併／拆分：reach 用純函式 `withinReach`／`clampToReach`；多出 doff-gate、bag-drop、player）。黃金路徑：sign 角 −0.052、
+  absorb remaining 0.35（36 顆）、disinfected 1.00（24 滴）、wipe true、sealed 10、binTop (4.00, 0.45, 3.00)、袋 dispose、100 分。
+- 瀏覽器真實輸入層七步：0 錯 100 分；但**第六步的顆粒入袋用了 `__PLAYGROUND_GRAB__.begin` API**——鏟刮板貼地掃過顆粒 0 顆入斗（鏟底碰撞盒離地 ~4 mm、前唇無斜角），
+  顆粒 `isPickable=false` 也不能直接抓。§11「膠囊推物 headless 檢查」未做，改瀏覧觀察：膠囊確實會把吸附墊撞到牆邊。
+- 設計偏離：`FlowSnapshot.grabbed` 改 `{ model, bodyKey, position }`（flow 零 Babylon body 依賴）；`bagSealed` 不進快照，flow 直接看 `sealedClumps > 0`；
+  擦拭過早（消毒 < 0.5）仍完成 `disinfect-wipe` 步並記錯（否則流程卡死）；面板「附近物件」改依主 body 目前位置；§10 的 `npm run serve` 已過時，部署改 `../player-garden/scripts/serve.sh`。
+- 陷阱：ArcRotateCamera `target =` setter 重算角度／半徑（跟隨要 `LerpToRef` 就地改）；`lift` 夾 y ≥ 0；子節點 body teleport 用 `setAbsolutePosition`；從上方 pick 粉罐會抓到蓋子。

@@ -362,6 +362,20 @@ harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模�
       陷阱：合成 `pointermove` 要帶 `button: -1`（真滑鼠移動就是 −1），帶 `button: 0` 會被 Babylon InputManager 當成按鍵狀態改變、每次 move 交替合成 up／down，
       抓取每步放手再抓、被放手的噴瓶倒回直立（俯角讀到剛好 0）；噴瓶抓在低處不抬高就拖，瓶底拖地會把姿態伺服的俯角頂回 0——真人要先滾輪抬高。
 
+## M16：playground 訓練場景（2026-09-06 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-06-playground-training-scene-design.md`、計畫 `docs/superpowers/plans/2026-09-06-playground-training-scene.md`。
+只改 `../playground`，契約側不動。從沙盒變教材：玩家（跑酷膠囊＋人偶 ×17）在 10×10 m 病房走五個站點，七步流程即時打勾、記錯、評分；首頁預設進 `?scene=training`。
+
+- [x] 0028 前置把另一 session 的跑酷／chemo.ts／public 整批提交（95aec78）。`parkour/controller.ts` 膠囊尺寸改選項；`hinge.ts` 共用 hinge 角；`InteractionState.spill`；
+      `grab.ts` `GrabOptions`（伸手 1.2 m：超距拒抓、拖曳夾進半徑）；`actions.ts` 抽出 servo／collect 按鈕供沙盒與訓練面板共用；
+      `training/{world,player,flow,snapshot,ui,main}.ts`：五站佈局＋點滴架＋PPE 桌＋掛袋（STATIC 往返）、玩家不跳＋PPE 換色、純邏輯流程狀態機
+      （七步完成條件、六種記錯、手套最後、入桶事件、分數 100−10×錯）、快照（hinge 角以 BuiltModel 快取、桶口取 bin 子樹 AABB）、面板（附近 1.5 m 物件按鈕跟物件走）。
+      `training-test` 13 項綠（黃金路徑七步 100 分：消毒 1.00、封 10、袋 dispose）；scene-test 34、parkour-test 不變。
+      tailnet https://monkeyday.tail8e3f79.ts.net/playground/ 走真實輸入層演完七步：0 錯、100 分（`.img2babylon/shots/playground6-{room,ppe,absorb,wipe,done}.png`）。
+      實測發現：ArcRotateCamera `target=` setter 會從目前位置重算 alpha／beta／radius → 跟隨鏡頭要就地 `LerpToRef`；抓粉罐要抓瓶身（pick 到瓶蓋會傾斜蓋子）；
+      鏟刮板**鏟不起**地面凝固顆粒（鏟底碰撞盒離地約 4 mm、前唇無斜角，顆粒被推著走），顆粒 `isPickable=false`——演示入袋改用抓取控制器 API，模型側修正列入 next-steps。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`
