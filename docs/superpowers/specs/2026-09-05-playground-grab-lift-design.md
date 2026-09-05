@@ -54,7 +54,7 @@ export function createGrabController(scene: Scene): GrabController;
   - 姿態誤差 `err = Inverse(cur).multiply(targetRot)`（Babylon 列向量慣例：先 cur 再 err，err 為世界軸旋轉）；
     取最短路徑（w < 0 整體取負）→ 軸角；`ω = axis × angle × ANG_GAIN(6)`，長度夾 MAX_ANG（6 rad/s）；`setAngularVelocity(ω)`。
     angle < 1e-4 時 ω = 0。慣例若寫反，`grab:tilt` 會發散而非收斂——以測試定案。
-- 重力每步只作用一次就被覆寫，穩態下垂 ≈ g·dt／GAIN ≈ 2 cm，在 `grab:lift` 門檻（3 cm）內。
+- 線速度加重力前饋 −g·dt（`engine.gravity × getTimeStep()`），否則每步設的速度被一步重力吃掉、懸停下垂 ≈ 1 cm。
 - 多 body 模型（處理包、廢棄物桶、立牌、吸附墊）抓其中一個 body，其餘靠既有 hinge 跟隨；不控制未抓的 body。
 - 被抓 body 若 `isDisposed`（例如抓取中被封袋收走）→ 該步自動 `end()`。
 
@@ -83,7 +83,8 @@ export function createGrabController(scene: Scene): GrabController;
 1. 前置：8 顆測試球（d 0.012、0.005 kg、阻尼 2，同 wbag 規格）自小鏟斗內上方 0.15 m 落入（鏟局部座標
    環徑 0.03、中心 (0, 0.15, −0.03)），200 步。
 2. `controller.begin(scoop, hand)`，`hand` ＝ 鏟局部 (0, 0.02, −0.06)（靠後緣，開口在 +z 前緣）的世界座標；
-   `moveTo(hand + (0, 0.5, 0))`，120 步 → **`grab:lift`**：`handError() ≤ 0.03` 且鏟線速度 < 0.05。
+   `moveTo(hand + (0, 0.5, 0))`，90 步後再取 30 步 → **`grab:lift`**：最後 30 步 `handError()` 最大值 ≤ 0.03。
+   （原擬「步後速度 < 0.05」不成立：斗內球 0.04 kg 壓 0.08 kg 鏟，每步接觸衝量留下 ≈ 0.5·g·dt ≈ 0.07 m/s 殘速，是負載不是失控。）
 3. `moveTo(袋 interior 中心 + (0, 0.45, 0))`（interior offset (0, 0.005, 0) 經袋 world matrix），120 步。
 4. 傾斜軸＝鏟局部 +x 的世界方向；符號用 `TransformNormal` 判定：把鏟前向 f（局部 +z 世界方向）繞軸轉 +0.2 rad，
    若 y 分量下降則取 +，否則取 −。分 16 次 `tilt(axis, sign × 0.1)`、每次 5 步；再 60 步 → **`grab:tilt`**：
