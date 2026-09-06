@@ -8,6 +8,7 @@ import {
   PhysicsBody,
   PhysicsMotionType,
   PhysicsShapeBox,
+  PhysicsShapeSphere,
   Quaternion,
   Vector3,
 } from "@babylonjs/core";
@@ -22,8 +23,9 @@ const SETTLE_STEPS = 300;
 const SETTLE_SPEED = 0.02;
 const LYING_LIFT = 0.06; // m：側躺時 root 抬高，讓半徑 0.04 的罐身不從地下出生
 
-interface SpecPour { tiltThreshold?: number; grains: number; grainMass: number; ratePerSecond: number; gate?: { body: string; minAngle: number } }
-interface SpecBody { id: string; mass: number; pour?: SpecPour }
+interface SpecPour { source?: "declared" | "collected"; tiltThreshold?: number; grains?: number; grainMass?: number; ratePerSecond: number; gate?: { body: string; minAngle: number } }
+interface SpecCollect { interior: { size: number[]; offset: number[] }; maxItemMass: number }
+interface SpecBody { id: string; mass: number; pour?: SpecPour; collect?: SpecCollect }
 interface SpecConstraint { type: string; bodyA: string; bodyB: string; limits?: number[] | "free" }
 interface Spec { physics?: { bodies?: SpecBody[]; constraints?: SpecConstraint[] } }
 interface Check { id: string; ok: boolean; detail: string }
@@ -47,6 +49,37 @@ async function spawn(name: string, lying: boolean): Promise<{ ctx: HeadlessConte
 
 function grains(model: BuiltModel): PhysicsBody[] {
   return Object.entries(model.bodies).filter(([k]) => k.startsWith("grain-")).map(([, b]) => b);
+}
+
+function emitted(model: BuiltModel): PhysicsBody[] {
+  return Object.entries(model.bodies).filter(([k]) => k.startsWith("clump-")).map(([, b]) => b);
+}
+const PRE_N = 6, PRE_D = 0.010, PRE_MASS = 0.003;
+/** collected 分支：自內腔中心上方 0.2 m 丟 PRE_N 顆球讓接觸收納吃掉（回傳斗內 held 數）。 */
+function preload(model: BuiltModel, decl: SpecBody, step: (n: number) => void): number {
+  const body = model.bodies[decl.id]; const node = body.transformNode; node.computeWorldMatrix(true);
+  const center = Vector3.TransformCoordinates(Vector3.FromArray(decl.collect!.interior.offset), node.getWorldMatrix());
+  for (let i = 0; i < PRE_N; i++) {
+    const a = (i / PRE_N) * Math.PI * 2;
+    const m = MeshBuilder.CreateSphere(`pre-${i}`, { diameter: PRE_D, segments: 6 }, node.getScene());
+    m.position = center.add(new Vector3(Math.cos(a) * 0.03, 0.2, Math.sin(a) * 0.03));
+    const b = new PhysicsBody(m, PhysicsMotionType.DYNAMIC, false, node.getScene());
+    const s = new PhysicsShapeSphere(Vector3.Zero(), PRE_D / 2, node.getScene()); s.material = { friction: 0.8, restitution: 0.05 }; b.shape = s;
+    b.setMassProperties({ mass: PRE_MASS }); b.setLinearDamping(2.0); b.setAngularDamping(2.0);
+  }
+  step(200);
+  return Object.keys(model.meshes).filter((k) => k.startsWith("held-")).length;
+}
+/** 懸空鎖姿態：每步速度歸零（重力每步只漂 ½·g·dt²），把 body 以 pitch（繞世界 x）掛在 +y 高度。 */
+function hoist(model: BuiltModel, decl: SpecBody, pitch: number, y: number, step: (n: number) => void): () => void {
+  const body = model.bodies[decl.id]; const node = body.transformNode;
+  node.computeWorldMatrix(true);
+  body.disablePreStep = false;
+  node.rotationQuaternion = Quaternion.RotationAxis(new Vector3(1, 0, 0), pitch).multiply(node.absoluteRotationQuaternion.clone());
+  node.position.y += y;
+  step(2); body.disablePreStep = true;
+  const obs = node.getScene().onBeforePhysicsObservable.add(() => { body.setLinearVelocity(Vector3.Zero()); body.setAngularVelocity(Vector3.Zero()); });
+  return () => { node.getScene().onBeforePhysicsObservable.remove(obs); };
 }
 
 function allFinite(model: BuiltModel): boolean {
@@ -88,7 +121,51 @@ async function main(): Promise<number> {
 
   for (const decl of decls) {
     const pour = decl.pour!;
-    const emptied = decl.mass - pour.grains * pour.grainMass;
+    if (pour.source === "collected") {
+      // M17：倒出收進來的東西。(A) 裝 6 顆直立不倒 (B) 前傾 1.2 rad 倒出 6 顆、質量回基準 (C) 空斗 set(1) 無事、dispose 乾淨
+      const base = decl.mass;
+      {
+        const { ctx, model } = await spawn(name, false);
+        ctx.step(LAND_STEPS);
+        const heldN = preload(model, decl, ctx.step);
+        ctx.step(120);
+        const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
+        push(`A:${decl.id}:upright-held`, heldN === PRE_N && emitted(model).length === 0 && Math.abs(mass - (base + PRE_N * PRE_MASS)) < 1e-5,
+          `held ${heldN}/${PRE_N}、直立 120 步 clump ${emitted(model).length}、質量 ${mass}（期望 ${base + PRE_N * PRE_MASS}）`);
+        ctx.dispose();
+      }
+      {
+        const { ctx, model } = await spawn(name, false);
+        ctx.step(LAND_STEPS);
+        preload(model, decl, ctx.step);
+        const release = hoist(model, decl, -1.2, 0.5, ctx.step);
+        const node = model.bodies[decl.id].transformNode; node.computeWorldMatrix(true);
+        const tilt = Math.acos(Math.max(-1, Math.min(1, node.getDirection(Vector3.Up()).y)));
+        ctx.step(POUR_STEPS);
+        release();
+        const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
+        const heldLeft = Object.keys(model.meshes).filter((k) => k.startsWith("held-")).length;
+        push(`B:${decl.id}:poured`, emitted(model).length === PRE_N && heldLeft === 0 && Math.abs(mass - base) < 1e-5 && allFinite(model),
+          `傾角 ${tilt.toFixed(2)}、clump ${emitted(model).length}（期望 ${PRE_N}）、held 剩 ${heldLeft}、質量 ${mass}（期望 ${base}）、有限 ${allFinite(model)}`);
+        ctx.dispose();
+      }
+      {
+        const { ctx, model } = await spawn(name, false);
+        ctx.step(60);
+        const act = model.actuators?.find((a) => a.id === `pour:${decl.id}`);
+        if (!act) push(`C:${decl.id}:actuator`, false, "無 pour actuator");
+        else {
+          act.set(1); ctx.step(5); act.set(1); ctx.step(5);
+          const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
+          push(`C:${decl.id}:empty-noop`, emitted(model).length === 0 && Math.abs(mass - base) < 1e-5, `空斗 set(1) 兩次：clump ${emitted(model).length}、質量 ${mass}`);
+        }
+        model.dispose();
+        push(`C:${decl.id}:dispose`, !ctx.scene.meshes.some((m) => m.name.startsWith("clump-") || m.name.startsWith("held-")), "dispose 後場景無 clump／held mesh");
+        ctx.dispose();
+      }
+      continue;
+    }
+    const emptied = decl.mass - pour.grains! * pour.grainMass!;
     const lying = pour.tiltThreshold !== undefined; // 有傾角條件才側躺；噴瓶直立
     // (A) 蓋閉側躺不倒（無傾角條件：gate 閉直立不倒）
     {
@@ -107,7 +184,7 @@ async function main(): Promise<number> {
       ctx.step(POUR_STEPS);
       const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
       const gs = grains(model);
-      push(`B:${decl.id}:poured`, gs.length === pour.grains && Math.abs(mass - emptied) < 1e-5,
+      push(`B:${decl.id}:poured`, gs.length === pour.grains! && Math.abs(mass - emptied) < 1e-5,
         `顆粒 ${gs.length}（期望 ${pour.grains}）、質量 ${mass}（期望 ${emptied}）`);
       ctx.step(SETTLE_STEPS);
       const maxSpeed = Math.max(0, ...gs.map((g) => g.getLinearVelocity().length()));
@@ -127,7 +204,7 @@ async function main(): Promise<number> {
       } else {
         act.set(1); ctx.step(5); act.set(1); ctx.step(5);
         const mass = model.bodies[decl.id].getMassProperties().mass ?? NaN;
-        push(`C:${decl.id}:idempotent`, grains(model).length === pour.grains && Math.abs(mass - emptied) < 1e-5,
+        push(`C:${decl.id}:idempotent`, grains(model).length === pour.grains! && Math.abs(mass - emptied) < 1e-5,
           `手動兩次：顆粒 ${grains(model).length}（期望 ${pour.grains}）、質量 ${mass}`);
       }
       model.dispose();

@@ -12,6 +12,7 @@ import {
   PhysicsMotionType,
   PhysicsShapeBox,
   PhysicsShapeContainer,
+  PhysicsShapeSphere,
   Quaternion,
   Scene,
   StandardMaterial,
@@ -33,6 +34,10 @@ const HELD_CAP = 120, HELD_PITCH = 0.012, HELD_COLS = 12;
 const HELD_ORIGIN = new Vector3(-0.066, 0.0025, -0.054); // 第一格：左牆內側 −0.076 + 半格、後牆內側 −0.066 + 一格；y 加半徑
 const HELD_DEFAULT_COLOR = new Color3(0.80, 0.74, 0.50);
 interface Held { mass: number; radius: number; mesh: Mesh }
+// 鏡射 spec physics.bodies[scoop].pour（兩處必須一致）——source collected：倒出收進來的東西
+const POUR = { tiltThreshold: 1.0, ratePerSecond: 20, direction: new Vector3(0, 0, 1), exitSpeed: 0.2 };
+const LIP_EXIT = new Vector3(0, 0.01, 0.07); // 唇中心（局部）
+const CLUMP_GROUP = 4, CLUMP_DAMPING = 2.0, FIXED_DT = 1 / 60;
 
 interface Part { component: string; size: [number, number, number]; pos: [number, number, number]; collider: boolean; rotX?: number }
 const SCOOP_PARTS: Part[] = [
@@ -128,6 +133,7 @@ export default function createScoopAndScraperModel(scene: Scene, opts: ModelOpti
   const bodies: Record<string, PhysicsBody> = {};
   const actuators: Actuator[] = [];
   const observers: (() => void)[] = [];
+  const spawned: Mesh[] = []; // 倒出的 clump mesh 在場景根層級，root.dispose 收不到
   const heldMat = new StandardMaterial("held-item", scene);
   heldMat.diffuseColor = HELD_DEFAULT_COLOR.clone(); heldMat.specularColor = new Color3(0.1, 0.1, 0.1);
   disposables.push(heldMat);
@@ -192,6 +198,46 @@ export default function createScoopAndScraperModel(scene: Scene, opts: ModelOpti
       id: "collect:scoop", kind: "collect", label: "鏟起", min: 0, max: 1,
       set(value: number): void { if (value > 0.5) collectScan(); },
     });
+
+    // ---- pour（source collected）：前傾 ≥ 1.0 rad 以 20 顆/s 從唇中心逐顆倒回，質量還給該顆 ----
+    let clumpN = 0, accum = 0;
+    const emitOne = (): void => {
+      const h = held.pop();
+      if (!h) return;
+      heldMass -= h.mass; delete meshes[h.mesh.name]; h.mesh.dispose();
+      scoopPivot.computeWorldMatrix(true);
+      const wm = scoopPivot.getWorldMatrix();
+      const p = Vector3.TransformCoordinates(LIP_EXIT, wm);
+      const dir = Vector3.TransformNormal(POUR.direction, wm).normalize();
+      const i = clumpN++;
+      const g = MeshBuilder.CreateSphere(`clump-${i}`, { diameter: h.radius * 2, segments: 6 }, scene);
+      g.position.copyFrom(p); g.material = heldMat; g.isPickable = false;
+      meshes[`clump-${i}`] = g; spawned.push(g);
+      const gb = new PhysicsBody(g, PhysicsMotionType.DYNAMIC, false, scene);
+      const gs = new PhysicsShapeSphere(Vector3.Zero(), h.radius, scene);
+      gs.material = { friction: 0.8, restitution: 0.05 };
+      gs.filterMembershipMask = CLUMP_GROUP; gs.filterCollideMask = ~2; // 同粉罐顆粒：撞地、撞袋（8）、撞鏟，不撞 membership 2 的模型件
+      gb.shape = gs;
+      gb.setMassProperties({ mass: h.mass });
+      gb.setLinearDamping(CLUMP_DAMPING); gb.setAngularDamping(CLUMP_DAMPING);
+      gb.setLinearVelocity(scoopBody.getLinearVelocity().add(dir.scale(POUR.exitSpeed)));
+      bodies[`clump-${i}`] = gb;
+      scoopBody.setMassProperties({ mass: SCOOP_MASS + heldMass, centerOfMass: SCOOP_COM });
+    };
+    const pourObs = scene.onAfterPhysicsObservable.add(() => {
+      if (!held.length) { accum = 0; return; }
+      scoopPivot.computeWorldMatrix(true);
+      const up = scoopPivot.getDirection(Vector3.Up());
+      const tilt = Math.acos(Math.max(-1, Math.min(1, up.y)));
+      if (tilt < POUR.tiltThreshold) { accum = 0; return; }
+      accum += POUR.ratePerSecond * FIXED_DT;
+      while (accum >= 1 && held.length) { accum -= 1; emitOne(); }
+    });
+    observers.push(() => scene.onAfterPhysicsObservable.remove(pourObs));
+    actuators.push({
+      id: "pour:scoop", kind: "pour", label: "傾倒", min: 0, max: 1,
+      set(value: number): void { if (value > 0.5) while (held.length) emitOne(); },
+    });
   }
 
   const built: BuiltModel = {
@@ -199,6 +245,7 @@ export default function createScoopAndScraperModel(scene: Scene, opts: ModelOpti
     dispose(): void {
       observers.forEach((f) => f());
       Object.values(bodies).forEach((b) => b.dispose());
+      spawned.forEach((m) => { if (!m.isDisposed()) m.dispose(); });
       disposables.forEach((d) => d.dispose());
       root.dispose(false, true);
     },
