@@ -1,11 +1,14 @@
 // scoop-and-scraper — 化療潑灑處理小鏟（畚斗式，斜立握把）＋推板（平板＋握塊）：兩個自由剛體、無約束。
 // 對應 spec: viewer/models/scoop-and-scraper/spec.json
 import {
+  AbstractMesh,
   Color3,
   DynamicTexture,
+  Matrix,
   Mesh,
   MeshBuilder,
   PhysicsBody,
+  type PhysicsEngineV2,
   PhysicsMotionType,
   PhysicsShapeBox,
   PhysicsShapeContainer,
@@ -15,7 +18,7 @@ import {
   TransformNode,
   Vector3,
 } from "@babylonjs/core";
-import type { BuiltModel, ModelOptions } from "../../src/types";
+import type { Actuator, BuiltModel, ModelOptions } from "../../src/types";
 
 // ---- spec 尺寸／位置（pivot 在各自底面中心）----
 const SCOOP_POS = new Vector3(-0.12, 0, 0.02), SCOOP_ROT_Y = 3.3, SCOOP_MASS = 0.08, SCOOP_COM = new Vector3(0, 0.03, -0.04);
@@ -24,6 +27,12 @@ const HANDLE_TILT = -0.45; // 握把自鉛垂向後（−z）傾 0.45 rad
 const FRICTION = 0.6, RESTITUTION = 0.1;
 // 無活動件：membership 8 / collide ~0——粉罐顆粒（collide ~2）才推得動、進得了鏟（grimoire/physics.md collect 節）
 const GROUP = 8;
+// 鏡射 spec physics.bodies[scoop].collect（兩處必須一致）——M17 接觸收納：內腔到唇前 1 cm、下探 2 cm
+const COLLECT = { interior: { size: new Vector3(0.152, 0.07, 0.146), offset: new Vector3(0, 0.015, 0.007) }, maxItemMass: 0.005 };
+const HELD_CAP = 120, HELD_PITCH = 0.012, HELD_COLS = 12;
+const HELD_ORIGIN = new Vector3(-0.066, 0.0025, -0.054); // 第一格：左牆內側 −0.076 + 半格、後牆內側 −0.066 + 一格；y 加半徑
+const HELD_DEFAULT_COLOR = new Color3(0.80, 0.74, 0.50);
+interface Held { mass: number; radius: number; mesh: Mesh }
 
 interface Part { component: string; size: [number, number, number]; pos: [number, number, number]; collider: boolean; rotX?: number }
 const SCOOP_PARTS: Part[] = [
@@ -117,6 +126,11 @@ export default function createScoopAndScraperModel(scene: Scene, opts: ModelOpti
 
   // ---- 物理：兩個自由 body，各自多 collider（含旋轉的握把）----
   const bodies: Record<string, PhysicsBody> = {};
+  const actuators: Actuator[] = [];
+  const observers: (() => void)[] = [];
+  const heldMat = new StandardMaterial("held-item", scene);
+  heldMat.diffuseColor = HELD_DEFAULT_COLOR.clone(); heldMat.specularColor = new Color3(0.1, 0.1, 0.1);
+  disposables.push(heldMat);
   if (opts.physics !== false && scene.getPhysicsEngine()) {
     const make = (id: string, rootPivot: TransformNode, parts: Part[], mass: number, com: Vector3): void => {
       rootPivot.computeWorldMatrix(true);
@@ -136,11 +150,54 @@ export default function createScoopAndScraperModel(scene: Scene, opts: ModelOpti
     };
     make("scoop", scoopPivot, SCOOP_PARTS, SCOOP_MASS, SCOOP_COM);
     make("scraper", scraperPivot, SCRAPER_PARTS, SCRAPER_MASS, SCRAPER_COM);
+
+    // ---- collect（trigger contact）：每步掃描內腔，合格 body 連 mesh 收走、斗內排格顯示、質量加上 ----
+    const scoopBody = bodies.scoop;
+    const held: Held[] = [];
+    let heldMass = 0;
+    const half = COLLECT.interior.size.scale(0.5);
+    const capture = (b: PhysicsBody, m: number): void => {
+      const node = b.transformNode;
+      const radius = node instanceof AbstractMesh ? node.getBoundingInfo().boundingSphere.radiusWorld : 0.005;
+      const mat = node instanceof AbstractMesh ? node.material : null;
+      if (held.length === 0 && mat instanceof StandardMaterial) heldMat.diffuseColor.copyFrom(mat.diffuseColor);
+      b.dispose(); node.dispose();
+      const n = held.length;
+      const ball = MeshBuilder.CreateSphere(`held-${n}`, { diameter: radius * 2, segments: 6 }, scene);
+      ball.parent = scoopPivot; ball.material = heldMat; ball.isPickable = false;
+      ball.position = new Vector3(HELD_ORIGIN.x + (n % HELD_COLS) * HELD_PITCH, HELD_ORIGIN.y + radius, HELD_ORIGIN.z + Math.floor(n / HELD_COLS) * HELD_PITCH);
+      meshes[`held-${n}`] = ball;
+      held.push({ mass: m, radius, mesh: ball }); heldMass += m;
+      scoopBody.setMassProperties({ mass: SCOOP_MASS + heldMass, centerOfMass: SCOOP_COM });
+    };
+    const collectScan = (): void => {
+      const engine = scene.getPhysicsEngine() as PhysicsEngineV2 | null;
+      if (!engine || held.length >= HELD_CAP) return;
+      scoopPivot.computeWorldMatrix(true);
+      const inv = Matrix.Invert(scoopPivot.getWorldMatrix());
+      const mine = new Set(Object.values(bodies)); // 含自己倒出的 clump-（出口在內腔裡）
+      for (const b of [...engine.getBodies()]) { // 複製：dispose 會改原陣列
+        if (held.length >= HELD_CAP) break;
+        if (mine.has(b) || b.isDisposed || b.getMotionType() !== PhysicsMotionType.DYNAMIC) continue;
+        const m = b.getMassProperties().mass ?? 0;
+        if (m <= 0 || m > COLLECT.maxItemMass) continue;
+        const l = Vector3.TransformCoordinates(b.transformNode.absolutePosition, inv).subtract(COLLECT.interior.offset);
+        if (Math.abs(l.x) > half.x || Math.abs(l.y) > half.y || Math.abs(l.z) > half.z) continue;
+        capture(b, m);
+      }
+    };
+    const scan = scene.onAfterPhysicsObservable.add(() => { collectScan(); });
+    observers.push(() => scene.onAfterPhysicsObservable.remove(scan));
+    actuators.push({
+      id: "collect:scoop", kind: "collect", label: "鏟起", min: 0, max: 1,
+      set(value: number): void { if (value > 0.5) collectScan(); },
+    });
   }
 
   const built: BuiltModel = {
-    physicsScale: 1, root, nodes, meshes, bodies, constraints: [], actuators: [],
+    physicsScale: 1, root, nodes, meshes, bodies, constraints: [], actuators,
     dispose(): void {
+      observers.forEach((f) => f());
       Object.values(bodies).forEach((b) => b.dispose());
       disposables.forEach((d) => d.dispose());
       root.dispose(false, true);

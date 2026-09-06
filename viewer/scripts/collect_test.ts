@@ -25,7 +25,7 @@ const BALL_D = 0.012, BALL_MASS = 0.005, BALL_DAMPING = 2.0;
 const SCATTER = 0.05;
 const OUT_X = 0.5;
 
-interface SpecCollect { interior: { size: number[]; offset: number[] }; maxItemMass: number }
+interface SpecCollect { trigger?: "manual" | "contact"; interior: { size: number[]; offset: number[] }; maxItemMass: number }
 interface SpecBody { id: string; mass: number; collect?: SpecCollect }
 interface Spec { physics?: { bodies?: SpecBody[] } }
 interface Check { id: string; ok: boolean; detail: string }
@@ -102,11 +102,23 @@ async function main(): Promise<number> {
       makeBall(scene, "test-out-1", box.center.add(new Vector3(-OUT_X, 0.1, 0))),
     ];
     step(DROP_STEPS);
-    const insideN = inBalls.filter((b) => box.inside(b.transformNode.absolutePosition)).length;
     const finite = [...inBalls, ...outBalls, ...Object.values(model.bodies)].every((b) => {
+      if (b.isDisposed) return true;
       const p = b.transformNode.absolutePosition; return [p.x, p.y, p.z].every(Number.isFinite);
     });
-    push(`contain:${decl.id}`, insideN === N_IN && finite, `袋內 ${insideN}/${N_IN}、有限 ${finite}`);
+    if (decl.collect!.trigger === "contact") {
+      // M17 接觸收納：不按 set(1) 就已收走，斗內 held-<n> 顯示、質量已加
+      const gone0 = inBalls.filter((b) => b.isDisposed && b.transformNode.isDisposed()).length;
+      const heldN = Object.keys(model.meshes).filter((k) => k.startsWith("held-")).length;
+      const kept0 = outBalls.filter((b) => !b.isDisposed).length;
+      const mass0 = body.getMassProperties().mass ?? NaN;
+      const expected0 = decl.mass + N_IN * BALL_MASS;
+      push(`contact:${decl.id}`, gone0 === N_IN && heldN === N_IN && kept0 === N_OUT && Math.abs(mass0 - expected0) < 1e-5 && finite,
+        `接觸收走 ${gone0}/${N_IN}、held ${heldN}、袋外保留 ${kept0}/${N_OUT}、質量 ${mass0}（期望 ${expected0}）、有限 ${finite}`);
+    } else {
+      const insideN = inBalls.filter((b) => box.inside(b.transformNode.absolutePosition)).length;
+      push(`contain:${decl.id}`, insideN === N_IN && finite, `袋內 ${insideN}/${N_IN}、有限 ${finite}`);
+    }
 
     const act = model.actuators?.find((a) => a.id === `collect:${decl.id}`);
     if (!act) {
