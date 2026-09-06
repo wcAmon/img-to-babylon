@@ -188,6 +188,54 @@ class ValidateSpecTest(unittest.TestCase):
         errors, _ = validate_spec.validate(self._with_collect({"interior": "box", "maxItemMass": 0.05}), strict=False)
         self.assertTrue(any("collect" in e and "interior" in e for e in errors))
 
+    def test_collect_trigger_values(self):
+        for ok in ("manual", "contact"):
+            errors, _ = validate_spec.validate(self._with_collect(dict(self.COLLECT_OK, trigger=ok)), strict=True)
+            self.assertEqual(errors, [], ok)
+        errors, _ = validate_spec.validate(self._with_collect(dict(self.COLLECT_OK, trigger="auto")), strict=False)
+        self.assertTrue(any("collect.trigger" in e for e in errors))
+
+    def _with_pour_collected(self, pour, collect=None, mass=0.08):
+        spec = self._with_pour(pour, mass=mass)
+        if collect is not None:
+            spec["physics"]["bodies"][0]["collect"] = collect
+        return spec
+
+    POUR_COLLECTED_OK = {"source": "collected", "tiltThreshold": 1.0, "ratePerSecond": 20,
+                         "direction": [0, 0, 1], "exitSpeed": 0.2}
+    COLLECT_SCOOP = {"trigger": "contact", "interior": {"size": [0.152, 0.07, 0.146], "offset": [0, 0.015, 0.007]},
+                     "maxItemMass": 0.005}
+
+    def test_pour_source_collected_passes_with_collect(self):
+        spec = self._with_pour_collected(dict(self.POUR_COLLECTED_OK), collect=dict(self.COLLECT_SCOOP))
+        errors, _ = validate_spec.validate(spec, strict=True)
+        self.assertEqual(errors, [])
+
+    def test_pour_source_values(self):
+        errors, _ = validate_spec.validate(self._with_pour(dict(self.POUR_OK, source="declared")), strict=True)
+        self.assertEqual(errors, [])
+        errors, _ = validate_spec.validate(self._with_pour(dict(self.POUR_OK, source="bucket")), strict=False)
+        self.assertTrue(any("pour.source" in e for e in errors))
+
+    def test_pour_source_collected_requires_collect(self):
+        spec = self._with_pour_collected(dict(self.POUR_COLLECTED_OK))
+        errors, _ = validate_spec.validate(spec, strict=False)
+        self.assertTrue(any("pour.source" in e and "collect" in e for e in errors))
+
+    def test_pour_source_collected_forbids_grains(self):
+        for extra in ({"grains": 40}, {"grainMass": 0.003}):
+            spec = self._with_pour_collected(dict(self.POUR_COLLECTED_OK, **extra), collect=dict(self.COLLECT_SCOOP))
+            errors, _ = validate_spec.validate(spec, strict=False)
+            self.assertTrue(any("pour.source" in e and "grains" in e for e in errors), extra)
+
+    def test_pour_source_collected_still_needs_rate_and_tilt_or_gate(self):
+        pour = {k: v for k, v in self.POUR_COLLECTED_OK.items() if k != "ratePerSecond"}
+        errors, _ = validate_spec.validate(self._with_pour_collected(pour, collect=dict(self.COLLECT_SCOOP)), strict=False)
+        self.assertTrue(any("ratePerSecond" in e for e in errors))
+        pour = {k: v for k, v in self.POUR_COLLECTED_OK.items() if k != "tiltThreshold"}
+        errors, _ = validate_spec.validate(self._with_pour_collected(pour, collect=dict(self.COLLECT_SCOOP)), strict=False)
+        self.assertTrue(any("gate" in e for e in errors))
+
     def test_action_figure_leg_chain_mass_contract(self):
         with open(ACTION_FIGURE) as handle:
             spec = json.load(handle)

@@ -292,6 +292,9 @@ factory 契約：掛 actuator `rupture:<bodyId>`（kind `"rupture"`，min 0、ma
 - `exitSpeed`（選填，m/s，預設 0.3）：內容物離開容器的初速。生成點由 factory 決定（頸口或噴嘴），契約不規定。
 - `gate`（選填）：`body` 必須是掛在本 body 上（bodyA = 本 body）的 hinge 之 bodyB；hinge 角
   ≥ `minAngle`（須在該 hinge limits 內）才倒。
+- `source`（選填，預設 `"declared"`）：`"collected"` 時倒出的是本 body `collect` 收進來的東西，逐顆歸還原質量與原半徑；
+  此時 **不得**有 `grains`／`grainMass`、同 body **必須**有 `collect`；`ratePerSecond`／`tiltThreshold`／`gate`／`direction`／`exitSpeed` 規則不變。
+  倒出的 body 命名 `bodies["clump-<i>"]`／`meshes["clump-<i>"]`（i 單調遞增、不重用），與 `grain-<i>` 區分。（M17）
 
 factory 契約：掛 actuator `pour:<bodyId>`（kind `"pour"`，min 0、max 1，`set(1)` 立即倒出全部剩餘、
 冪等；`set(0)` 無事）；每倒一顆 `bodies[<bodyId>]` 質量減 `grainMass`，顆粒為 `bodies["grain-<i>"]`
@@ -308,6 +311,8 @@ factory 契約：掛 actuator `pour:<bodyId>`（kind `"pour"`，min 0、max 1，
 
 - `interior.size`（m，三正數）／`interior.offset`（三數）：body 局部框的收納區（開口容器的內腔）。
 - `maxItemMass`（kg）：只收質量 ≤ 此值的外來 dynamic body；必須小於 `mass`。
+- `trigger`（選填，預設 `"manual"`）：`"contact"` 時每個物理步掃描，合格 body 質心一進 interior 就立刻收走，不需 set(1)；
+  `collect:<bodyId>` actuator 仍必掛（手動補收、冪等）。gate：`viewer/scripts/collect_test.ts` contact 分支、`viewer/scripts/sweep_test.ts`。（M17）
 
 factory 契約：掛 actuator `collect:<bodyId>`（kind `"collect"`，min 0、max 1，`set(1)` 觸發、冪等、可重複收新掉進來的
 東西；`set(0)` 無事）。觸發時凡**不屬本模型、dynamic、0 < 質量 ≤ maxItemMass、質心在 interior 世界框內**的 body 連 mesh

@@ -123,7 +123,6 @@ def _check_rupture(bid, body, errors):
         errors.append(f"body {bid} rupture.droplets 必須為非負整數")
 
 
-_POUR_POSITIVE = ("grainMass", "ratePerSecond")
 
 
 def _is_num(v):
@@ -152,17 +151,29 @@ def _check_pour(bid, body, constraints, errors):
     speed = pour.get("exitSpeed")
     if speed is not None and (not _is_num(speed) or speed <= 0):
         errors.append(f"body {bid} pour.exitSpeed 必須為正數")
-    for key in _POUR_POSITIVE:
-        v = pour.get(key)
-        if not _is_num(v) or v <= 0:
-            errors.append(f"body {bid} pour.{key} 必須為正數")
-    grains = pour.get("grains")
-    if not isinstance(grains, int) or isinstance(grains, bool) or grains <= 0:
-        errors.append(f"body {bid} pour.grains 必須為正整數")
-    mass, gm = body.get("mass"), pour.get("grainMass")
-    if (isinstance(grains, int) and not isinstance(grains, bool)
-            and _is_num(mass) and _is_num(gm) and grains * gm >= mass):
-        errors.append(f"body {bid} pour.grains×grainMass {grains * gm} 必須小於 mass {mass}")
+    source = pour.get("source", "declared")
+    if source not in ("declared", "collected"):
+        errors.append(f"body {bid} pour.source 必須是 declared 或 collected")
+    rate = pour.get("ratePerSecond")
+    if not _is_num(rate) or rate <= 0:
+        errors.append(f"body {bid} pour.ratePerSecond 必須為正數")
+    if source == "collected":
+        # M17：倒出收進來的東西——顆數／質量來自 collect，不得預宣告
+        if "grains" in pour or "grainMass" in pour:
+            errors.append(f"body {bid} pour.source collected 時不得有 grains／grainMass")
+        if not isinstance(body.get("collect"), dict):
+            errors.append(f"body {bid} pour.source collected 需要同 body 的 collect")
+    else:
+        gm = pour.get("grainMass")
+        if not _is_num(gm) or gm <= 0:
+            errors.append(f"body {bid} pour.grainMass 必須為正數")
+        grains = pour.get("grains")
+        if not isinstance(grains, int) or isinstance(grains, bool) or grains <= 0:
+            errors.append(f"body {bid} pour.grains 必須為正整數")
+        mass = body.get("mass")
+        if (isinstance(grains, int) and not isinstance(grains, bool)
+                and _is_num(mass) and _is_num(gm) and grains * gm >= mass):
+            errors.append(f"body {bid} pour.grains×grainMass {grains * gm} 必須小於 mass {mass}")
     gate = pour.get("gate")
     if gate is None:
         return
@@ -187,6 +198,9 @@ def _check_collect(bid, body, errors):
     if not isinstance(col, dict):
         errors.append(f"body {bid} collect 必須是物件")
         return
+    trigger = col.get("trigger", "manual")
+    if trigger not in ("manual", "contact"):
+        errors.append(f"body {bid} collect.trigger 必須是 manual 或 contact")
     interior = col.get("interior")
     if not isinstance(interior, dict):
         errors.append(f"body {bid} collect.interior 必須是物件（size、offset）")

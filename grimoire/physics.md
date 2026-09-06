@@ -257,3 +257,13 @@ servo 必須「吊空測」（錨 body 設 STATIC、四肢自由）。
 - 碰撞群組陷阱：粉罐顆粒與噴瓶液滴 `collide = ~2`，會穿過所有 `membership 2` 的模型件。無活動件的容器類模型（袋子、鏟刮板）
   用 `membership 8 / collide ~0`，生成物才會落進去、推得動。
 - 封袋視覺只做一次（口緣 tube `scaling.set(0.3, 1, 0.3)`＋打結 mesh `setEnabled(true)`），之後 set(1) 仍可收新掉進來的東西。
+
+### 接觸收納與倒回（M17 鏟刮板）
+
+- `collect.trigger: "contact"`：掃描邏輯同上，掛在 `scene.onAfterPhysicsObservable` 每步跑；容量滿即停收（鏟刮板 120）。
+- 收走一顆記 `{ mass, radius, color }`：radius 取 mesh `getBoundingInfo().boundingSphere.radiusWorld`（非 mesh 用 5 mm）、color 取 StandardMaterial diffuse。
+  斗內顯示用 factory **自有**材質 `held-item`（顏色複製第一顆），mesh `held-<n>` 掛在 body pivot 下排格——不要借用被收物的材質（歸位重建會 dispose 它）。
+- `pour.source: "collected"`：tilt／gate／節流判定同 declared；每倒一顆 pop 一筆記錄，在出口點生成同半徑同質量的球 `clump-<i>`（membership 4／collide ~2，同粉罐顆粒），
+  初速 = body 速度 + direction × exitSpeed，body 質量減回，`held-<n>` 最後一顆 dispose。`pour:<id>` set(1) 倒完剩餘、空斗無事。
+- 接觸收納排除本模型**所有** body，包含自己倒出的 `clump-`（出口點在內腔裡，否則倒出瞬間被收回）；沒倒進袋的 clump 只能由袋子收。
+- 為什麼不是剛體托起：10 mm 球對 2.5 mm 唇需 1.73 mg 推力而地面摩擦只給 0.8 mg；< 2 mm 的 collider（楔形 hull、薄 box 階梯）在 Havok 直接失效。數據見 M17 設計文件 §2。
