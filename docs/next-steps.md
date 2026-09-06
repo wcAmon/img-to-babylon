@@ -1,19 +1,17 @@
-# 下一步（2026-09-06 M16 結案後）
+# 下一步（2026-09-06 M17 結案後）
 
-狀態：M10–M12（十件物件＋pour／collect 契約）、M13（抓取抬高＋傾斜）、M14／M15（跨模型互動）、M16（訓練場景：玩家走站＋七步流程檢核評分）皆結案。
+狀態：M10–M12（十件物件＋pour／collect 契約）、M13（抓取抬高＋傾斜）、M14／M15（跨模型互動）、M16（訓練場景：玩家走站＋七步流程檢核評分）、M17（鏟刮板接觸收納：第六步真人走通）皆結案。
 上線 https://monkeyday.tail8e3f79.ts.net/playground/ （player-garden 統包，首頁預設訓練場景；`?scene=chemo` 沙盒、`?scene=parkour` 跑酷）。
-ROADMAP M16、tasks/0028、設計文件 `superpowers/specs/2026-09-06-playground-training-scene-design.md`（§12 実測補記）。
+ROADMAP M17、tasks/0029、設計文件 `superpowers/specs/2026-09-06-scoop-contact-collect-design.md`（§10 実測補記）。
 
 ## 候選（等使用者選，依價值排序）
 
-1. **鏟刮板真的鏟得起顆粒（契約側）**：目前鏟底碰撞盒離地約 4 mm、前唇無斜角，直徑 12 mm 的凝固顆粒被推著走或從底下鑽過；顆粒 `isPickable=false` 也不能直接抓。
-   選項：(a) 鏟斗 collider 底面貼地＋前唇做斜面（ExtrudeShape 梯形）；(b) 顆粒改可 pick（playground 側 `installGrab` 允許抓 grain）；(c) 兩者都做。
-   這是訓練第六步唯一還靠 API 的地方，做完七步才算真人可完整走通。gate：真物理沿走廊掃 ≥ 5 顆入斗。
-2. **訓練續**：污染狀態機（污染的手碰非廢棄物物件記錯、脫手套歸零）；教學／測驗模式（提示高亮 vs 無提示計分）；膠囊撞飛小物件（strength 30 仍把吸附墊撞到牆邊
-   → 物件 membership 與膠囊不碰、或走路時對小物件降速）；觸控（虛擬搖桿＋抓取）。
-3. **第四批物件**：N95／呼吸防護口罩、鞋套（PPE 補齊＋穿脫順序考點）、破裂藥瓶＋玻璃碎片＋尖銳物盒（第二種潑灑源、鏟刮板非替代用途）、洗眼瓶、紀錄表。
-4. **Divine Eye 工具側改善**（Parked）：白主體淺灰地板遮罩退化、多物件構圖只量最大連通塊、相機取景差 IoU 偏低 → `--multi` 聯集 bbox 或正規化縮放。先用 M10–M12 全部 hero 做回歸表。
-5. **小修**：立牌收合倒平後可再翻起；`installInteractions` 掛載點從沙盒 ui.ts 搬到 chemo.ts（現已在版控，可改）；訓練面板 toast 記錯文案用 ERROR_LABELS（已做）；
+1. **訓練續**：污染狀態機（污染的手碰非廢棄物物件記錯、脫手套歸零）；教學／測驗模式（提示高亮 vs 無提示計分）；膠囊撞飛小物件（strength 30 仍把吸附墊撞到牆邊
+   → 物件 membership 與膠囊不碰、或走路時對小物件降速）；觸控（虛擬搖桿＋抓取）；訓練面板顯示斗內顆數與「鏟子要貼地／倒前抬高」提示；
+   BIN_MOUTH_R 0.15 對 0.3 m 寬的袋子很緊（真人要把袋心對到 ±0.15 才算入桶），可放寬或改「袋任一角進桶口」。
+2. **第四批物件**：N95／呼吸防護口罩、鞋套（PPE 補齊＋穿脫順序考點）、破裂藥瓶＋玻璃碎片＋尖銳物盒（第二種潑灑源、鏟刮板非替代用途）、洗眼瓶、紀錄表。
+3. **Divine Eye 工具側改善**（Parked）：白主體淺灰地板遮罩退化、多物件構圖只量最大連通塊、相機取景差 IoU 偏低 → `--multi` 聯集 bbox 或正規化縮放。先用 M10–M12 全部 hero 做回歸表。
+4. **小修**：立牌收合倒平後可再翻起；`installInteractions` 掛載點從沙盒 ui.ts 搬到 chemo.ts（現已在版控，可改）；訓練面板 toast 記錯文案用 ERROR_LABELS（已做）；
    跑酷段鏡頭同樣用 `target =` setter（相機原地不動只轉頭），要不要改跟隨由另一 session 決定。
 
 ## 執行提醒
@@ -28,6 +26,8 @@ ROADMAP M16、tasks/0028、設計文件 `superpowers/specs/2026-09-06-playground
 - 互動判定用原始足跡；「落地」用中心高度，疊在別的物件上不算。訓練快照的 hinge 讀取器要在任何 servo 命令前建（記綁定姿勢）。
 - 瀏覽器演真實輸入層：合成 `pointermove` 帶 `button: -1`；抓低處物件先滾輪抬高；`lift` 夾 y ≥ 0（等 y < 0 會卡死）；從上方 pick 粉罐會抓到蓋子，抓後驗 `G.body`；
   子節點 body 的測試 teleport 用 `setAbsolutePosition`。長 evaluate 迴圈一律設上限，卡住時用另一個 evaluate 換掉 helper 讓它 throw。
+- 接觸收納：內腔含唇前 1 cm 地面區，鏟放在顆粒旁不動也會收；倒出的 clump 不會被同一鏟再收（排除本模型 body）；倒出要出口朝下（E 前傾，Q 後仰不倒）。
+- 瀏覽器搬運：抓著物件改 camera.alpha 後游標要從「目前目標投影」漸進滑到中央，跳點會猛拉灑光；對準袋心／桶口補償 (參考點 − 手點)；袋平移時底要高過桶緣。
 - 部署：`cd ../player-garden && bash scripts/serve.sh`（playground 以 `--base=/playground/` build 到 `dist-sub/`）；playground 自己的 `npm run serve` 已退役。
 - 截圖：viewer dev server 5173、playground 5175（背景 run_in_background；結束 `pkill -f "vite.*5175"`）；playwright 截圖落在 img-to-babylon 根，搬 `.img2babylon/shots/`。
 - 改 playground 後 `npm run typecheck && npm run scene-test && npm run parkour-test && npm run training-test`；commit 前看 `git status`，只 add 自己的檔。

@@ -136,3 +136,14 @@ scoop body 加：
 - 玩家拖鏟時手點在握把頂、斗可能鼻子朝上懸空 > 2 cm：內腔下探 2 cm 加上抓取 lift 夾 y ≥ 0 可壓到底；若仍不夠，playground 側再加「抓鏟自動放平」（同噴瓶 aimNozzle），列為備援不先做。
 - 倒出點在唇中心：前傾 1.0 rad 時唇在最低處，顆粒自唇落下；側傾也會倒（契約用 +y 夾角），與現實一致。
 - 粉罐 40 顆全在斗內時 scoop 質量 0.08 + 0.12 = 0.20 kg，抓取伺服 GAIN 足夠（M13 載重 0.04 kg 測過；plan 內 gate 驗 0.12 kg）。
+
+## 10. 実測補記（2026-09-06 結案）
+
+- gate：forge 127 測試綠；collect_test contact 8/8（質量 0.12）；pour_test 裝 6 倒 6、質量回 0.08、**新增 A2 後仰 1.2 rad 不倒**；sweep_test 掃 7 收 7（推進 0.374 m）；actuation_test 加 source collected 空斗分支。
+  playground scene_test 35（sweep:contact 7/7；carry-pour 收 15 倒 15 全落袋、封袋計 15）、training_test 14（新 train:bin-top-lid）。
+- **契約修正**：`pour.source: "collected"` 且有 `direction` 時，出口方向世界 y < 0 才倒。原因：瀏覽器 Q 後仰讓 up 向量夾角到 1 rad 也觸發，顆粒從朝上的唇噴出又掉回斗面（落點 bag 局部 y 0.27）。§3.2／§3.3 與 grimoire 已補。
+- 瀏覽器真實輸入層第六步全鏈通過（pointer／wheel／keyboard 合成事件，無 `__` API）：pick 握把 → 壓地七趟掃收 7 → 抬著走 5 m（最大傾角 0.4）→ 唇對袋心、E 前傾 0.85 再對準再倒 → 7/7 落袋 → 放旁邊、封袋 → pick 袋、抬高、踩踏板 → 平移到桶口 → 懸停即 dispose。
+  截圖 `.img2babylon/shots/playground7-{sweep,pour,bin}.png`。前五步以 API 佈置（粉罐傳送到潑灑點 set(1)），本里程碑不驗，記錯 2／80 分。
+- 實作期間偏離：§6「近物按鈕依 actuator label」改為 actions.ts 加 `scoop-and-scraper` case「傾倒」（modelButtons 本來就是逐模型 switch）。§9 備援「抓鏟自動放平」未做（不需要：壓地時位置伺服把斗壓平）。
+- 陷阱：改 camera.alpha 後第一個 pointermove 跳點會把斗內 13 顆全灑（漸進游標解決）；前傾前唇離袋心 ≥ 0.6 m 否則撞袋壁卡 0.73 rad；前傾 0.85 後鏟繞手點轉、唇甩開要重新對準；
+  袋平移時底要高過桶緣（否則撞歪桶、binTop 跑到 (4.19, 0.56, 3.03)）；對準要補償 (參考點 − 手點)。一次性未解釋：鏟子從袋正上方放手砸到袋後封袋 30 幀內 dispose 提早為 true（未重現）。

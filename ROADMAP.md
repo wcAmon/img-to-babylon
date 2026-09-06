@@ -376,6 +376,19 @@ harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模�
       實測發現：ArcRotateCamera `target=` setter 會從目前位置重算 alpha／beta／radius → 跟隨鏡頭要就地 `LerpToRef`；抓粉罐要抓瓶身（pick 到瓶蓋會傾斜蓋子）；
       鏟刮板**鏟不起**地面凝固顆粒（鏟底碰撞盒離地約 4 mm、前唇無斜角，顆粒被推著走），顆粒 `isPickable=false`——演示入袋改用抓取控制器 API，模型側修正列入 next-steps。
 
+## M17：鏟刮板接觸收納（2026-09-06 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-06-scoop-contact-collect-design.md`、計畫 `docs/superpowers/plans/2026-09-06-scoop-contact-collect.md`。
+探針證明 physicsScale 1 的剛體幾何鏟不起 10 mm 顆粒（單顆永不進、7 顆最多 3–4 且靠顆粒鏈互擠；楔形 hull／薄 box 階梯在 Havok 更差）→ 契約層接觸收納。
+
+- [x] 0029 契約：`collect.trigger: "contact"`（每步掃內腔、碰到就收）、`pour.source: "collected"`（逐顆歸還質量半徑、命名 `clump-<i>`、**出口方向朝下才倒**）；validate_spec TDD 6 測試、grimoire 兩檔。
+      鏟刮板 spec／factory：內腔到唇前 1 cm、下探 2 cm；斗內 `held-<n>` 排格；前傾 ≥ 1.0 rad 20 顆/s 從唇中心倒出。gate：collect_test contact 8/8、pour_test 裝 6 倒 6（＋後仰不倒）、新 sweep_test 掃 7 收 7、actuation_test 空斗分支。
+      playground：`clump-` 登記為凝固顆粒、傾倒按鈕、scene_test 35 項（掃收 7/7、倒袋 15/15）、training_test 加桶口不漂移守衛。
+      瀏覽器真實輸入層第六步全鏈（鏟 pick→貼地掃 7→抬著走 5 m 不灑→E 前傾 7/7 落袋→封袋→抓袋開蓋懸到桶口 dispose），不呼叫任何 `__` API
+      （`.img2babylon/shots/playground7-{sweep,pour,bin}.png`；前五步以 API 佈置，本里程碑不驗）。
+      實測修正：後仰唇朝上到 1 rad 也會觸發倒出、顆粒噴出又掉回斗 → 加出口朝下條件；抓著鏟子換鏡頭方向時游標跳點會把斗內 13 顆全灑（漸進游標後最大傾角 0.4）；
+      袋子平移時底要高過桶緣否則撞歪桶；對準袋心／桶口要補償抓取點偏移。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`

@@ -37,7 +37,7 @@
 **Interfaces:**
 - Produces: spec 鍵 `physics.bodies[].collect.trigger ∈ {"manual","contact"}`、`physics.bodies[].pour.source ∈ {"declared","collected"}`；Task 2–5 的 spec.json 與 gate 讀這兩個鍵。
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 在 `forge/tests/test_validate_spec.py` 的 `test_collect_max_item_mass_below_body_mass` 之後加：
 
@@ -91,12 +91,12 @@
         self.assertTrue(any("gate" in e for e in errors))
 ```
 
-- [ ] **Step 2: 跑測試確認失敗**
+- [x] **Step 2: 跑測試確認失敗**
 
 Run: `python3 -m unittest forge.tests.test_validate_spec -k trigger -k source 2>&1 | tail -5`
 Expected: FAIL（`collect.trigger`／`pour.source` 尚無錯誤訊息；`grains 必須為正整數` 會讓 collected 通不過）。
 
-- [ ] **Step 3: 實作驗證器**
+- [x] **Step 3: 實作驗證器**
 
 `forge/validate_spec.py` `_check_pour`：把 `grains`／`grainMass` 檢查改成依 `source` 分支。找到
 
@@ -152,12 +152,12 @@ Expected: FAIL（`collect.trigger`／`pour.source` 尚無錯誤訊息；`grains 
         errors.append(f"body {bid} collect.trigger 必須是 manual 或 contact")
 ```
 
-- [ ] **Step 4: 跑全部 forge 測試**
+- [x] **Step 4: 跑全部 forge 測試**
 
 Run: `python3 -m unittest discover -s forge/tests -t . -p 'test_*.py' 2>&1 | tail -3`
 Expected: `OK`（原本的 pour／collect 測試全綠——`test_pour_missing_field` 若靠 `grainMass 必須為正數` 訊息仍成立）。
 
-- [ ] **Step 5: grimoire 補契約**
+- [x] **Step 5: grimoire 補契約**
 
 `grimoire/spec.md` pour 節（`- gate（選填）…` 那條之後）加：
 
@@ -188,7 +188,7 @@ collect 節（`- maxItemMass…` 那條之後）加：
 - 為什麼不是剛體托起：10 mm 球對 2.5 mm 唇需 1.73 mg 推力而地面摩擦只給 0.8 mg；< 2 mm 的 collider（楔形 hull、薄 box 階梯）在 Havok 直接失效。數據見 M17 設計文件 §2。
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add forge/validate_spec.py forge/tests/test_validate_spec.py grimoire/spec.md grimoire/physics.md
@@ -211,7 +211,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: Task 1 的 spec 鍵。
 - Produces: factory 內 `held: { mass: number; radius: number; mesh: Mesh }[]`、`heldMass`、`capture(b, m)`、`collectScan()`、`meshes["held-<n>"]`、actuator `collect:scoop`；Task 3 在同一檔加 pour。
 
-- [ ] **Step 1: spec.json 加 collect**
+- [x] **Step 1: spec.json 加 collect**
 
 在 `physics.bodies` 第一筆（`"id": "scoop"`）的 `"centerOfMass"` 之後加：
 
@@ -225,7 +225,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 
 Run: `python3 -m forge.validate_spec viewer/models/scoop-and-scraper/spec.json` → 0 錯（若 CLI 用法不同，依 `python3 -m forge.validate_spec --help`）。
 
-- [ ] **Step 2: collect_test 加 contact 分支（先寫，跑會失敗）**
+- [x] **Step 2: collect_test 加 contact 分支（先寫，跑會失敗）**
 
 `viewer/scripts/collect_test.ts` 型別改為：
 
@@ -268,7 +268,7 @@ interface SpecCollect { trigger?: "manual" | "contact"; interior: { size: number
 Run: `cd viewer && npx tsx scripts/collect_test.ts scoop-and-scraper --spec models/scoop-and-scraper/spec.json | tail -20`
 Expected: `contact:scoop` false（收走 0）、`collect:scoop:actuator` false（無 actuator）。
 
-- [ ] **Step 3: factory 實作接觸收納**
+- [x] **Step 3: factory 實作接觸收納**
 
 `createScoopAndScraperModel.ts`：
 
@@ -344,18 +344,18 @@ interface Held { mass: number; radius: number; mesh: Mesh }
 
 `built` 改為 `actuators,` 並在 dispose 開頭加 `observers.forEach((f) => f());`（held mesh 是 scoopPivot 子節點，`root.dispose(false, true)` 會一起收）。
 
-- [ ] **Step 4: typecheck ＋ gate**
+- [x] **Step 4: typecheck ＋ gate**
 
 Run: `cd viewer && npx tsc --noEmit && npx tsx scripts/collect_test.ts scoop-and-scraper --spec models/scoop-and-scraper/spec.json | grep -E '"id"|"ok"|pass'`
 Expected: `contact:scoop`、`collect:scoop:collected`、`collect:scoop:idempotent`、`collect:scoop:dispose` 全 true、`"pass": true`。
 若 `contact` 收走 < 8：檢查球是否掉在斗外（collect_test 的 SCATTER 0.05 對內腔半寬 0.076 夠；若不夠把 makeBall 的 z 散佈 0.6 倍已在）。
 
-- [ ] **Step 5: 袋子回歸**
+- [x] **Step 5: 袋子回歸**
 
 Run: `cd viewer && npx tsx scripts/collect_test.ts cytotoxic-waste-bag --spec models/cytotoxic-waste-bag/spec.json | grep pass`
 Expected: `"pass": true`（manual 分支不變）。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add viewer/models/scoop-and-scraper/spec.json viewer/models/scoop-and-scraper/createScoopAndScraperModel.ts viewer/scripts/collect_test.ts
@@ -378,7 +378,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: Task 2 的 `held`、`heldMass`、`heldMat`、`scoopBody`、`scoopPivot`、`observers`、`actuators`。
 - Produces: `bodies["clump-<i>"]`／`meshes["clump-<i>"]`、actuator `pour:scoop`；Task 4 sweep_test 讀 `pour.direction`、Task 5 playground 讀 `clump-` 前綴。
 
-- [ ] **Step 1: spec.json 加 pour**
+- [x] **Step 1: spec.json 加 pour**
 
 scoop body 的 `"collect"` 之後加：
 
@@ -388,7 +388,7 @@ scoop body 的 `"collect"` 之後加：
 
 Run: `python3 -m forge.validate_spec viewer/models/scoop-and-scraper/spec.json` → 0 錯。
 
-- [ ] **Step 2: pour_test 加 collected 分支（先寫）**
+- [x] **Step 2: pour_test 加 collected 分支（先寫）**
 
 型別：
 
@@ -488,7 +488,7 @@ function hoist(model: BuiltModel, decl: SpecBody, pitch: number, y: number, step
 Run: `cd viewer && npx tsc --noEmit && npx tsx scripts/pour_test.ts scoop-and-scraper --spec models/scoop-and-scraper/spec.json | grep -E '"id"|"ok"|pass'`
 Expected: A 可能 true（Task 2 已收）、B false（clump 0）、C actuator false。
 
-- [ ] **Step 3: factory 實作 pour collected**
+- [x] **Step 3: factory 實作 pour collected**
 
 常數區加：
 
@@ -547,17 +547,17 @@ Task 2 的 `actuators.push({ id: "collect:scoop" … })` 之後加：
 dispose 加：`Object.values(bodies).forEach((b) => b.dispose());` 之後 `spawned.forEach((m) => { if (!m.isDisposed()) m.dispose(); });`（clump mesh 在場景根層級，root.dispose 收不到）。
 注意 `spawned`／`emitOne` 定義在 `if (physics)` 區塊內：把 `const spawned: Mesh[] = [];` 移到區塊外（`const observers` 旁），區塊內只 push。
 
-- [ ] **Step 4: gate**
+- [x] **Step 4: gate**
 
 Run: `cd viewer && npx tsc --noEmit && npx tsx scripts/pour_test.ts scoop-and-scraper --spec models/scoop-and-scraper/spec.json | grep -E '"id"|"ok"|pass'`
 Expected: 全 true。若 B 的 clump 0：印 `tilt`（在 hoist 後讀 `node.getDirection(Up).y`）確認 ≥ 1.0，不夠就把 `hoist` 的 pitch 換號（+1.2）。
 
-- [ ] **Step 5: 回歸**
+- [x] **Step 5: 回歸**
 
 Run: `cd viewer && npx tsx scripts/pour_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json | grep pass && npx tsx scripts/pour_test.ts disinfectant-spray --spec models/disinfectant-spray/spec.json | grep pass && npx tsx scripts/collect_test.ts scoop-and-scraper --spec models/scoop-and-scraper/spec.json | grep pass`
 Expected: 三個 `"pass": true`。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add viewer/models/scoop-and-scraper/spec.json viewer/models/scoop-and-scraper/createScoopAndScraperModel.ts viewer/scripts/pour_test.ts
@@ -579,7 +579,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Interfaces:**
 - Consumes: spec `collect.trigger`、`collect.interior`、`pour.direction`；factory 的接觸收納。
 
-- [ ] **Step 1: 寫 gate**
+- [x] **Step 1: 寫 gate**
 
 ```ts
 // 掃收 gate（M17 collect trigger contact）：spec 有 collect.trigger contact 的 body 必須能貼地掃過地面顆粒把它們收進來——
@@ -691,13 +691,13 @@ async function main(): Promise<number> {
 main().then((code) => process.exit(code)).catch((err) => { console.error(err); process.exit(2); });
 ```
 
-- [ ] **Step 2: 跑 gate**
+- [x] **Step 2: 跑 gate**
 
 Run: `cd viewer && npx tsc --noEmit && npx tsx scripts/sweep_test.ts scoop-and-scraper --spec models/scoop-and-scraper/spec.json | grep -E 'detail|pass'`
 Expected: 收進 7/7、pass true。若 < 5：確認球在內腔前方（`frontEdge` 0.08 + 0.05）、鏟真的貼地（`Math.min(v.y, 0)`）。
 Run: `cd viewer && npx tsx scripts/sweep_test.ts cytotoxic-waste-bag --spec models/cytotoxic-waste-bag/spec.json` → note 略過、pass true。
 
-- [ ] **Step 3: 全套 viewer gate**
+- [x] **Step 3: 全套 viewer gate**
 
 ```bash
 cd viewer && npx tsc --noEmit \
@@ -710,7 +710,7 @@ cd viewer && npx tsc --noEmit \
 
 Expected: 全 `"pass": true`。physics_test 若因質量／靜止判定變動失敗（collect 不改質量、collider 不改，應不會），記錄並修。
 
-- [ ] **Step 4: SKILL.md 與 reviewHistory**
+- [x] **Step 4: SKILL.md 與 reviewHistory**
 
 `SKILL.md` 第 5 步驗證命令列在 physics_test 那條之後加一條（沿用該列縮排與編號風格）：
 
@@ -731,7 +731,7 @@ Expected: 全 `"pass": true`。physics_test 若因質量／靜止判定變動失
     }
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add viewer/scripts/sweep_test.ts SKILL.md viewer/models/scoop-and-scraper/spec.json
@@ -755,7 +755,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: 鏟刮板 `bodies["clump-<i>"]`、`meshes["held-<n>"]`、actuator `pour:scoop`。
 - Produces: `InteractionState.sealedClumps` 計到鏟子倒出的 clump；按鈕「傾倒」。
 
-- [ ] **Step 1: scene_test 先改（會失敗）**
+- [x] **Step 1: scene_test 先改（會失敗）**
 
 把 M13 段從 `// M13 抓取：測試球落入鏟斗 → 抓鏟抬高（grab:lift）` 到 `push("grab:carry-pour", …);` 結束整段換成：
 
@@ -851,7 +851,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 Run: `cd ../playground && npm run typecheck && npm run scene-test 2>&1 | grep -E '"id"|"ok": false|"pass"'`
 Expected: `sweep:contact` 可能已 true（factory 已做）、`grab:carry-pour` false（`sealedNow` 0：interactions 還沒登記 clump）。
 
-- [ ] **Step 2: interactions 登記鏟子倒出物**
+- [x] **Step 2: interactions 登記鏟子倒出物**
 
 `../playground/src/interactions.ts` 每步掃描裡，`const grains = liveBodies(shaker, "grain-");` 之後加：
 
@@ -863,7 +863,7 @@ Expected: `sweep:contact` 可能已 true（factory 已做）、`grab:carry-pour`
 
 （`clump()` 已有 `absorbed` 守衛，不會重複 push；它同時把材質換成 clumpMat。）檔頭註解第 3 行補「鏟刮板 pour source collected 的 `bodies["clump-<i>"]`」。
 
-- [ ] **Step 3: 傾倒按鈕**
+- [x] **Step 3: 傾倒按鈕**
 
 `../playground/src/actions.ts` switch 加：
 
@@ -873,13 +873,13 @@ Expected: `sweep:contact` 可能已 true（factory 已做）、`grab:carry-pour`
       break;
 ```
 
-- [ ] **Step 4: gate**
+- [x] **Step 4: gate**
 
 Run: `cd ../playground && npm run typecheck && npm run scene-test 2>&1 | grep -E '"ok": false|"pass"' ; npm run training-test 2>&1 | grep -E '"ok": false|"pass"'; npm run parkour-test 2>&1 | tail -2`
 Expected: scene-test 35 項全 true（原 34 ＋ sweep:contact）、training-test 13/13、parkour PASS。
 若 `grab:lift` 的 `inScoop0` < 8：球從 0.15 m 落在斗內會被立刻收走，理論 8；少了就是彈出斗外——把落點半徑 0.03 改 0.02。
 
-- [ ] **Step 5: README**
+- [x] **Step 5: README**
 
 `../playground/README.md` 第 28 行「已知限制」換成：
 
@@ -888,7 +888,7 @@ Expected: scene-test 35 項全 true（原 34 ＋ sweep:contact）、training-tes
   純剛體在這個尺度鏟不起 10 mm 顆粒（Havok 對 < 2 mm 的碰撞體失效，見 img-to-babylon M17 設計文件 §2）。鏟子倒出的顆粒一律算凝固顆粒供封袋計數；沒倒進袋的只能由袋子收。
 ```
 
-- [ ] **Step 6: Commit（只 add 自己的檔）**
+- [x] **Step 6: Commit（只 add 自己的檔）**
 
 ```bash
 cd ../playground && git status --short
@@ -906,16 +906,16 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Files:**
 - Evidence: `.img2babylon/shots/playground7-sweep.png`、`.img2babylon/shots/playground7-pour.png`
 
-- [ ] **Step 1: 部署**
+- [x] **Step 1: 部署**
 
 Run: `cd ../player-garden && bash scripts/serve.sh 2>&1 | tail -5 && curl -s -o /dev/null -w '%{http_code}\n' https://monkeyday.tail8e3f79.ts.net/playground/ && grep -l "held-item" ~/.local/share/player-garden/www/playground/assets/*.js | head -1`
 Expected: 200、找到含 `held-item` 的 bundle。
 
-- [ ] **Step 2: 本機 dev server（截圖用）**
+- [x] **Step 2: 本機 dev server（截圖用）**
 
 Run（背景）: `cd ../playground && npm run dev -- --port 5175 --strictPort`
 
-- [ ] **Step 3: playwright 走真實輸入層**
+- [x] **Step 3: playwright 走真實輸入層**
 
 `browser_navigate http://localhost:5175/?scene=training`，等 `window.__TRAINING_READY__`。用 `browser_evaluate` 跑腳本（合成事件規則：`pointermove` 帶 `button: -1`；`WheelEvent` 給 `deltaY`；`KeyboardEvent` 在 window；`Vector3.Project` 算螢幕座標）：
 1. 開始訓練；走完前五步可用 M16 的黃金路徑腳本（`__TRAINING__.flow` 事件確認 absorb、disinfect-wipe 完成）——這五步不是本 task 驗證對象，可用鍵盤走站＋已驗過的滑鼠腳本。
@@ -924,7 +924,7 @@ Run（背景）: `cd ../playground && npm run dev -- --port 5175 --strictPort`
 3. 滾輪抬 0.4 m，拖到袋上方（袋在 (3.4, 0, 3) 附近，鏟站 (3, 0, −3.6)：先放手、走過去、再抓），按住 Q 或 E（KeyboardEvent keydown 持續 1.2 s）前傾到 clump 落袋 → 截圖 `playground7-pour.png`；按「封袋」→ `__TRAINING__.flow` 出現 dispose 步驟完成、`inter.sealedClumps` ≥ 5；袋投桶、脫除。
 4. 記錄七步結果、錯誤數、分數。**不呼叫任何 `__PLAYGROUND_GRAB__.begin`／teleport**；若某步做不到，照實寫進 task 檔與 spec §10。
 
-- [ ] **Step 4: 收尾**
+- [x] **Step 4: 收尾**
 
 Run: `pkill -f "vite.*5175"`；把 playwright 截圖搬到 `.img2babylon/shots/`（若落在 img-to-babylon 根）。
 
@@ -940,7 +940,7 @@ Run: `pkill -f "vite.*5175"`；把 playwright 截圖搬到 `.img2babylon/shots/`
 - Delete: `viewer/scripts/_m17_probe.ts`（未追蹤，`rm`）
 - Memory: 新 `img2babylon-m17-lessons.md` ＋ `MEMORY.md` 一行；`.remember/remember.md` 更新
 
-- [ ] **Step 1: ROADMAP**
+- [x] **Step 1: ROADMAP**
 
 在 `## Parked` 之前插：
 
@@ -955,7 +955,7 @@ Run: `pkill -f "vite.*5175"`；把 playwright 截圖搬到 `.img2babylon/shots/`
       playground：`clump-` 登記為凝固顆粒、傾倒按鈕、scene_test 35 項。瀏覽器真實輸入層第六步：（Task 6 結果填入）。
 ```
 
-- [ ] **Step 2: tasks/0029**
+- [x] **Step 2: tasks/0029**
 
 ```markdown
 # 0029 鏟刮板接觸收納（M17）
@@ -970,14 +970,14 @@ notes:
   - （Task 6 實作期間發現填此處）
 ```
 
-- [ ] **Step 3: next-steps、spec §10、探針**
+- [x] **Step 3: next-steps、spec §10、探針**
 
 `docs/next-steps.md`：標題改「2026-09-06 M17 結案後」，狀態行加 M17；候選移除第 1 項，訓練續／第四批／Divine Eye／小修遞補為 1–4；執行提醒加：
 `- 接觸收納：內腔含唇前 1 cm 地面區，鏟放在顆粒旁不動也會收；倒出的 clump 不會被同一鏟再收（排除本模型 body）。`
 spec 加 `## 10. 実測補記（2026-09-06 結案）`：gate 數字、瀏覽器第六步結果、實作期間偏離（若有）。
 Run: `rm viewer/scripts/_m17_probe.ts && git status --short`（應無未追蹤檔）。
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add ROADMAP.md tasks/0029-scoop-contact-collect.md docs/next-steps.md docs/superpowers/specs/2026-09-06-scoop-contact-collect-design.md docs/superpowers/plans/2026-09-06-scoop-contact-collect.md
@@ -987,7 +987,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 ```
 
-- [ ] **Step 5: 記憶與 handoff**
+- [x] **Step 5: 記憶與 handoff**
 
 寫 `~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m17-lessons.md`（type project）：探針結論（單顆永不進、互擠、靜力估計、< 2 mm collider 失效）、接觸收納契約要點（排除自身 clump、held 材質自有）、gate 陷阱；`MEMORY.md` 加一行。
 `.remember/remember.md`：State M17 結案 commit、Next 等使用者選（next-steps 候選）、Context 新陷阱。
