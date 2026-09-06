@@ -229,7 +229,9 @@ export default function createScoopAndScraperModel(scene: Scene, opts: ModelOpti
       scoopPivot.computeWorldMatrix(true);
       const up = scoopPivot.getDirection(Vector3.Up());
       const tilt = Math.acos(Math.max(-1, Math.min(1, up.y)));
-      if (tilt < POUR.tiltThreshold) { accum = 0; return; }
+      // 出口方向要朝下才倒：往後仰（唇朝上）不算——否則顆粒從朝上的唇噴出又掉回斗（M17 瀏覽器實測）
+      const exitDown = scoopPivot.getDirection(POUR.direction).y < 0;
+      if (tilt < POUR.tiltThreshold || !exitDown) { accum = 0; return; }
       accum += POUR.ratePerSecond * FIXED_DT;
       while (accum >= 1 && held.length) { accum -= 1; emitOne(); }
     });

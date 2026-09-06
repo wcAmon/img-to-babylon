@@ -294,7 +294,8 @@ factory 契約：掛 actuator `rupture:<bodyId>`（kind `"rupture"`，min 0、ma
   ≥ `minAngle`（須在該 hinge limits 內）才倒。
 - `source`（選填，預設 `"declared"`）：`"collected"` 時倒出的是本 body `collect` 收進來的東西，逐顆歸還原質量與原半徑；
   此時 **不得**有 `grains`／`grainMass`、同 body **必須**有 `collect`；`ratePerSecond`／`tiltThreshold`／`gate`／`direction`／`exitSpeed` 規則不變。
-  倒出的 body 命名 `bodies["clump-<i>"]`／`meshes["clump-<i>"]`（i 單調遞增、不重用），與 `grain-<i>` 區分。（M17）
+  倒出的 body 命名 `bodies["clump-<i>"]`／`meshes["clump-<i>"]`（i 單調遞增、不重用），與 `grain-<i>` 區分。
+  有 `direction` 時**出口方向的世界 y < 0 才倒**（唇朝上的後仰不算，否則顆粒會從朝上的唇噴出又掉回斗）。（M17）
 
 factory 契約：掛 actuator `pour:<bodyId>`（kind `"pour"`，min 0、max 1，`set(1)` 立即倒出全部剩餘、
 冪等；`set(0)` 無事）；每倒一顆 `bodies[<bodyId>]` 質量減 `grainMass`，顆粒為 `bodies["grain-<i>"]`

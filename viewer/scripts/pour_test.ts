@@ -135,6 +135,18 @@ async function main(): Promise<number> {
         ctx.dispose();
       }
       {
+        // (A2) 後仰 1.2 rad（唇朝上）不倒：出口方向世界 y ≥ 0 時 tilt 再大也不算
+        const { ctx, model } = await spawn(name, false);
+        ctx.step(LAND_STEPS);
+        preload(model, decl, ctx.step);
+        const release = hoist(model, decl, 1.2, 0.5, ctx.step);
+        ctx.step(120);
+        release();
+        const heldN = Object.keys(model.meshes).filter((k) => k.startsWith("held-")).length;
+        push(`A2:${decl.id}:lip-up`, emitted(model).length === 0 && heldN === PRE_N, `後仰 1.2 rad：clump ${emitted(model).length}（期望 0）、held ${heldN}/${PRE_N}`);
+        ctx.dispose();
+      }
+      {
         const { ctx, model } = await spawn(name, false);
         ctx.step(LAND_STEPS);
         preload(model, decl, ctx.step);
