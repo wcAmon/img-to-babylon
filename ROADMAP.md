@@ -389,6 +389,17 @@ harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模�
       實測修正：後仰唇朝上到 1 rad 也會觸發倒出、顆粒噴出又掉回斗 → 加出口朝下條件；抓著鏟子換鏡頭方向時游標跳點會把斗內 13 顆全灑（漸進游標後最大傾角 0.4）；
       袋子平移時底要高過桶緣否則撞歪桶；對準袋心／桶口要補償抓取點偏移。
 
+## M18：訓練續——手部污染、教學／測驗模式、桶口與提示（2026-09-06 核准開工、同日結案）
+
+設計文件 `docs/superpowers/specs/2026-09-06-training-contamination-modes-design.md`、計畫 `docs/superpowers/plans/2026-09-06-training-contamination-modes.md`。只改 `../playground`。
+
+- [x] 0030 flow：手部污染（抓潑灑物件即污染、污染手抓立牌／處理包／PPE 記 `cross-contamination`，被抓 body 換了才記一次；處理包旁「換手套」歸零、脫除歸零）；
+      `start(mode)` 保存 teach／quiz（判定與分數不分模式）；入桶改袋 AABB 足跡與桶口圓盤重疊＋袋頂高過桶緣 −0.05；快照 `bagBox`／`scoopHeld`／`liveClumps`。
+      `hints.ts` 純函式情境提示（七步、dispose 四分支、污染前置句）。呈現層：教學 HighlightLayer 高亮＋提示＋即時記錯，測驗靜音、錯誤區結束揭露、分數只在測驗顯示；手部狀態列、手套髒色。
+      training_test 24 項；scene-test／parkour-test 不變。瀏覽器：教學高亮截圖（`.img2babylon/shots/playground8-teach.png`）；測驗模式真人 pointer 抓粉罐（污染、無 toast）再抓處理包蓋
+      （cross-contamination、無 toast、錯誤區「結束後揭露」）→ 按換手套歸零 → API 補完 4–6 → 脫除總評 90 分才列錯誤（`playground8-quiz{,-end}.png`）；袋 body 偏桶口 0.2 m 即入桶。部署 player-garden。
+      實測修正：`.t-mode{display:inline-flex}` 蓋掉 `hidden`（開始後模式鈕不消失）→ 加 `.t-mode[hidden]{display:none}`。
+
 ## Parked（自設計文件 §11 移入，不分先後）
 
 - **本地模型駕駛**：Codex CLI `model_providers` 指向 tomato `/v1`

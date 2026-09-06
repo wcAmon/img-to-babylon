@@ -38,7 +38,7 @@
 - Produces: `type Hands = "clean" | "contaminated"`；`FlowState.hands: Hands`、`FlowState.gloveChanges: number`、`FlowState.changeGloves(): boolean`；
   `ErrorId` 加 `"cross-contamination"`；`FlowEvent` 加 `{ kind: "hands"; state: Hands }`；`export const CLEAN_MODELS: ReadonlySet<string>`。
 
-- [ ] **Step 1: 寫失敗測試**（插在 `push("train:doff-gate", …)` 那個區塊之後）
+- [x] **Step 1: 寫失敗測試**（插在 `push("train:doff-gate", …)` 那個區塊之後）
 
 ```ts
   // M18 手部污染
@@ -97,12 +97,12 @@
 ```
 並把 `train:unsealed-dispose` 的 `bagPos: new Vector3(4.05, 0.5, 3.0)` 改為 `bagBox: { min: new Vector3(3.9, 0.5, 2.9), max: new Vector3(4.2, 0.85, 3.1) }`。
 
-- [ ] **Step 2: 跑測試確認失敗**
+- [x] **Step 2: 跑測試確認失敗**
 
 Run: `cd ../playground && npm run typecheck`
 Expected: 型別錯誤（`hands`、`changeGloves`、`bagBox` 不存在）。
 
-- [ ] **Step 3: 實作 flow.ts**
+- [x] **Step 3: 實作 flow.ts**
 
 型別區：
 ```ts
@@ -162,7 +162,7 @@ export const CLEAN_MODELS: ReadonlySet<string> = new Set(["spill-warning-sign", 
       if (s.bagBox && !steps.dispose && s.binLidAngle > BIN_OPEN && distXZ(s.bagBox.min.add(s.bagBox.max).scale(0.5), s.binTop) <= BIN_MOUTH_R && s.bagBox.max.y >= s.binTop.y - BIN_RIM_TOL) {
 ```
 
-- [ ] **Step 4: 讓 snapshot.ts／main.ts 過型別**（最小改動；Task 3 再補真正的 scoopHeld／liveClumps）
+- [x] **Step 4: 讓 snapshot.ts／main.ts 過型別**（最小改動；Task 3 再補真正的 scoopHeld／liveClumps）
 
 `snapshot.ts` 的 `bagPos: pos(...)` 改為：
 ```ts
@@ -179,12 +179,12 @@ export const CLEAN_MODELS: ReadonlySet<string> = new Set(["spill-warning-sign", 
   };
 ```
 
-- [ ] **Step 5: 跑測試確認通過**
+- [x] **Step 5: 跑測試確認通過**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test 2>&1 | grep -E '"id"|"ok"' | paste - - | grep -c true`
 Expected: typecheck 零錯；19 項全 true（14 既有＋5 新）。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd ../playground && git status --short && git add src/training/flow.ts src/training/snapshot.ts scripts/training_test.ts && git commit -m "M18 訓練：手部污染狀態機（抓潑灑物件即污染、污染手抓乾淨物件記 cross-contamination 邊緣觸發、changeGloves 歸零、doff 清）；快照 bagPos→bagBox；training_test +5
@@ -204,7 +204,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Interfaces:**
 - Produces: `export type TrainingMode = "teach" | "quiz"`；`FlowState.mode: TrainingMode`；`FlowState.start(mode?: TrainingMode)`；`FlowState.maxDisinfected: number`。
 
-- [ ] **Step 1: 寫失敗測試**（接在 Task 1 測試後）
+- [x] **Step 1: 寫失敗測試**（接在 Task 1 測試後）
 
 ```ts
   {
@@ -221,12 +221,12 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
   }
 ```
 
-- [ ] **Step 2: 確認失敗**
+- [x] **Step 2: 確認失敗**
 
 Run: `cd ../playground && npm run typecheck`
 Expected: `mode`／`maxDisinfected` 不存在、`start` 不收參數。
 
-- [ ] **Step 3: 實作**
+- [x] **Step 3: 實作**
 
 ```ts
 export type TrainingMode = "teach" | "quiz";
@@ -240,12 +240,12 @@ export type TrainingMode = "teach" | "quiz";
 ```
 `reset()` 不重設 mode（保留上次選擇）。
 
-- [ ] **Step 4: 確認通過**
+- [x] **Step 4: 確認通過**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test 2>&1 | grep -c '"ok": true'`
 Expected: 20。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/training/flow.ts scripts/training_test.ts && git commit -m "M18 訓練：flow 保存 teach／quiz 模式（判定與分數不分模式）、公開 maxDisinfected；training_test +1
@@ -265,7 +265,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 **Interfaces:**
 - Produces: `export function rectCircleOverlap(min: Vector3, max: Vector3, c: Vector3, r: number): boolean`（flow.ts）；snapshot 真正填 `scoopHeld`／`liveClumps`。
 
-- [ ] **Step 1: 寫失敗測試**（接在 train:mode 後）
+- [x] **Step 1: 寫失敗測試**（接在 train:mode 後）
 
 ```ts
   {
@@ -283,12 +283,12 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
   }
 ```
 
-- [ ] **Step 2: 確認失敗**
+- [x] **Step 2: 確認失敗**
 
 Run: `cd ../playground && npm run training-test 2>&1 | grep -A1 'train:bin-overlap'`
 Expected: `"ok": false`（偏 0.2 用袋心距離判為 none）。
 
-- [ ] **Step 3: 實作 flow.ts 重疊規則**
+- [x] **Step 3: 實作 flow.ts 重疊規則**
 
 ```ts
 /** 水平矩形（AABB 的 xz）與圓是否相交：圓心夾到矩形最近點，距離 ≤ r。 */
@@ -303,7 +303,7 @@ tick 入桶：
       if (s.bagBox && !steps.dispose && s.binLidAngle > BIN_OPEN && rectCircleOverlap(s.bagBox.min, s.bagBox.max, s.binTop, BIN_MOUTH_R) && s.bagBox.max.y >= s.binTop.y - BIN_RIM_TOL) {
 ```
 
-- [ ] **Step 4: snapshot.ts 填 scoopHeld／liveClumps**
+- [x] **Step 4: snapshot.ts 填 scoopHeld／liveClumps**
 
 ```ts
       const scoop = findPlaced(ps, "scoop-and-scraper");
@@ -313,14 +313,14 @@ tick 入桶：
         bagBox: box(findPlaced(ps, "cytotoxic-waste-bag"), "bag"), scoopHeld, liveClumps,
 ```
 
-- [ ] **Step 5: 黃金路徑加 hands 斷言**：`train:golden` 條件加 `&& flow.hands === "clean"`，detail 加 `、hands ${flow.hands}`。
+- [x] **Step 5: 黃金路徑加 hands 斷言**：`train:golden` 條件加 `&& flow.hands === "clean"`，detail 加 `、hands ${flow.hands}`。
 
-- [ ] **Step 6: 確認通過**
+- [x] **Step 6: 確認通過**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test 2>&1 | grep -c '"ok": true'`
 Expected: 21（golden 仍 100 分且 hands clean——黃金路徑用 fakeGrab 抓 PPE 才有 grabbed，沒抓污染物件）。
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd ../playground && git add src/training/flow.ts src/training/snapshot.ts scripts/training_test.ts && git commit -m "M18 訓練：入桶改袋足跡與桶口圓盤重疊＋袋頂高過桶緣（BIN_RIM_TOL 0.05）；快照 scoopHeld／liveClumps；training_test +1
@@ -341,7 +341,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: `FlowState`（steps、worn、hands、maxDisinfected、started、finished）、`FlowSnapshot`、`SIGN_DIST`、`CLEAN_MODELS`（flow.ts）。
 - Produces: `export interface Hint { text: string; targets: string[] }`、`export function hintFor(flow: FlowState, s: FlowSnapshot): Hint | null`。
 
-- [ ] **Step 1: 寫失敗測試**（接在 train:bin-overlap 後；檔頭 import 加 `import { hintFor } from "../src/training/hints";`）
+- [x] **Step 1: 寫失敗測試**（接在 train:bin-overlap 後；檔頭 import 加 `import { hintFor } from "../src/training/hints";`）
 
 ```ts
   {
@@ -385,12 +385,12 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
   }
 ```
 
-- [ ] **Step 2: 確認失敗**
+- [x] **Step 2: 確認失敗**
 
 Run: `cd ../playground && npm run typecheck`
 Expected: 找不到模組 `../src/training/hints`。
 
-- [ ] **Step 3: 實作 hints.ts**
+- [x] **Step 3: 實作 hints.ts**
 
 ```ts
 // 教學模式情境提示：純函式，吃 flow 狀態＋快照回下一步文字與該高亮的模型名。無 DOM、無 Babylon 副作用。
@@ -442,12 +442,12 @@ export function hintFor(flow: FlowState, s: FlowSnapshot): Hint | null {
 ```
 （`switch` 覆蓋全部 `StepId`，TS strict 下 `h` 一定被賦值；若 tsc 抱怨「使用前未賦值」，把 `let h: Hint` 改為 `let h: Hint = { text: "", targets: [] }`。）
 
-- [ ] **Step 4: 確認通過**
+- [x] **Step 4: 確認通過**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test 2>&1 | grep -c '"ok": true'`
 Expected: 24。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd ../playground && git add src/training/hints.ts scripts/training_test.ts && git commit -m "M18 訓練：hints.ts 情境提示純函式（七步分支、dispose 四分支、污染前置句）；training_test +3（24 項）
@@ -467,7 +467,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Consumes: `flow.mode`、`flow.hands`、`flow.changeGloves()`、`hintFor()`。
 - Produces: `Player.setHandsContaminated(v: boolean)`；`TrainingUiDeps` 加 `initialMode: TrainingMode`、`onStart(mode: TrainingMode)`、`onGloveChange()`、`hint: () => Hint | null`；`TrainingUi` 加 `mode(): TrainingMode`。
 
-- [ ] **Step 1: player.ts 手套髒色**
+- [x] **Step 1: player.ts 手套髒色**
 
 ```ts
 const GLOVE_DIRTY = new Color3(0.45, 0.2, 0.3);
@@ -484,7 +484,7 @@ const GLOVE_DIRTY = new Color3(0.45, 0.2, 0.3);
     setHandsContaminated(v) { dirty = v; if (glovesOn) recolor(GLOVE_PARTS, dirty ? gloveDirtyMat : gloveMat); },
 ```
 
-- [ ] **Step 2: ui.ts**
+- [x] **Step 2: ui.ts**
 
 deps／回傳型別：
 ```ts
@@ -544,14 +544,14 @@ refresh 內改寫（quiz 靜音／隱藏）：
 ```
 （`nearKey` 比對現已包含 hands，finished 時 summary 在 key 變動時重建——`|done` 已在 key 內。）回傳 `{ toast, refresh, mode: () => mode }`。
 
-- [ ] **Step 3: style.css**
+- [x] **Step 3: style.css**
 
 ```css
 .t-mode{display:inline-flex;border:1px solid #55717a77;border-radius:9px;overflow:hidden}.t-mode button{border:0;border-radius:0;background:#17313dde}.t-mode button.on{background:#69e6c6;color:#143139}
 .t-hands{font-size:12px;color:#7fa99a;padding:4px 8px;border:1px solid #69e6c655;border-radius:6px;margin-bottom:10px}.t-hands.dirty{color:#ffd3d3;background:#4a1f26;border-color:#f08a8a88}
 ```
 
-- [ ] **Step 4: main.ts**
+- [x] **Step 4: main.ts**
 
 ```ts
 import { ArcRotateCamera, Color3, Color4, DirectionalLight, Engine, HavokPlugin, HemisphericLight, HighlightLayer, Mesh, Scene, Vector3 } from "@babylonjs/core";
@@ -603,12 +603,12 @@ import { hintFor, type Hint } from "./hints";
 （`snap.snapshot` 一步呼叫兩次成本可接受；若想省，把 tick 用的快照存到變數重用：`const s = snap.snapshot(1 / 60); for (const e of flow.tick(s)) …; lastHint = … hintFor(flow, s)`——採此寫法。）
 `window.__TRAINING__.start` 型別改 `start(mode?: TrainingMode): void`，實作 `start: (m = initialMode) => start(m)`。
 
-- [ ] **Step 5: 全套 gate**
+- [x] **Step 5: 全套 gate**
 
 Run: `cd ../playground && npm run typecheck && npm run training-test 2>&1 | grep -c '"ok": true' && npm run scene-test 2>&1 | tail -3 && npm run parkour-test 2>&1 | tail -3`
 Expected: typecheck 零錯、24、scene-test pass、parkour-test pass。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd ../playground && git status --short && git add src/training/player.ts src/training/ui.ts src/training/main.ts src/training/style.css && git commit -m "M18 訓練呈現層：教學／測驗切換（?mode=quiz）、教學 HighlightLayer 目標高亮＋情境提示、測驗記錯靜音／錯誤區結束揭露、手部狀態列與手套髒色、處理包旁換手套按鈕
@@ -625,23 +625,23 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Modify: `../playground/README.md`
 - Evidence: `.img2babylon/shots/playground8-teach.png`、`playground8-quiz.png`
 
-- [ ] **Step 1: 起 dev server**
+- [x] **Step 1: 起 dev server**
 
 Run（背景）: `cd ../playground && npm run dev -- --port 5175 --strictPort`
 
-- [ ] **Step 2: 教學模式**：開 `http://localhost:5175/?scene=training`，按「開始訓練」（預設教學），等 3 s，截圖：立牌有青色外框、提示列「下一步：把警示立牌搬到潑灑點 1.5 m 內」。
+- [x] **Step 2: 教學模式**：開 `http://localhost:5175/?scene=training`，按「開始訓練」（預設教學），等 3 s，截圖：立牌有青色外框、提示列「下一步：把警示立牌搬到潑灑點 1.5 m 內」。
   用 `window.__TRAINING__.flow.mode === "teach"` 與 `document.getElementById("t-hint").textContent` 佐證。存 `playground8-teach.png`。
 
-- [ ] **Step 3: 測驗模式**：開 `?scene=training&mode=quiz`，確認「測驗」鈕 `on`；按開始。用 API 佈置到 kit 步之後（同 training_test 黃金路徑 1–3：`moveModel` 立牌、PPE 三件 teleport 到玩家旁並以 `__PLAYGROUND_GRAB__`／或直接把 flow 抓取快照走完、`act(kit, "servo:lid.x").set(1.6)`）。
+- [x] **Step 3: 測驗模式**：開 `?scene=training&mode=quiz`，確認「測驗」鈕 `on`；按開始。用 API 佈置到 kit 步之後（同 training_test 黃金路徑 1–3：`moveModel` 立牌、PPE 三件 teleport 到玩家旁並以 `__PLAYGROUND_GRAB__`／或直接把 flow 抓取快照走完、`act(kit, "servo:lid.x").set(1.6)`）。
   真人：走到處理包旁（W），拖曳粉罐（污染）放下，再拖曳處理包蓋→ 期望：無 toast、`t-errors` 顯示「測驗中：結束後揭露」、`flow.errors` 含 `cross-contamination`、手部列紅「手部：污染」、人偶前臂變暗紫紅。
   附近物件出現「換手套（手部污染）」→ 按下 → 手部列變綠、toast「已換手套，手部乾淨」。
   之後 API 補完 4–6（同黃金路徑），走到桶旁按「脫除防護裝備」→ 總評「錯誤 1｜90 分」且錯誤區列出「手部已污染卻接觸乾淨物件」。截圖 `playground8-quiz.png`。
 
-- [ ] **Step 4: 桶口偏移**：任一模式，袋封好後真人提袋、開桶蓋，把袋心對到桶口中心偏 x 約 0.2 m 懸停（袋底高過桶緣）→ 期望 dispose 觸發、toast「廢棄物袋已投入桶」。記錄實際偏移量（`bagBox` 中心 − `binTop`）於 tasks/0030 notes。
+- [x] **Step 4: 桶口偏移**：任一模式，袋封好後真人提袋、開桶蓋，把袋心對到桶口中心偏 x 約 0.2 m 懸停（袋底高過桶緣）→ 期望 dispose 觸發、toast「廢棄物袋已投入桶」。記錄實際偏移量（`bagBox` 中心 − `binTop`）於 tasks/0030 notes。
 
-- [ ] **Step 5: 停 dev server**：`pkill -f "vite.*5175"`；截圖搬到 `.img2babylon/shots/`。
+- [x] **Step 5: 停 dev server**：`pkill -f "vite.*5175"`；截圖搬到 `.img2babylon/shots/`。
 
-- [ ] **Step 6: README 訓練段**：在「鏟刮板是接觸收納」段後加：
+- [x] **Step 6: README 訓練段**：在「鏟刮板是接觸收納」段後加：
 
 ```md
 - **教學／測驗模式**（M18）：開始前選「教學」（下一步目標物件青色高亮＋情境提示、記錯即時提示、不計分）或「測驗」（無高亮無提示、記錯不提示、錯誤與分數結束才揭露）；`?mode=quiz` 預設測驗。判定與分數兩模式相同。
@@ -652,7 +652,7 @@ Run（背景）: `cd ../playground && npm run dev -- --port 5175 --strictPort`
 ```
 把「gate：`npm run training-test`（13 項…）」那行的 13 改為 24。
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd ../playground && git add README.md && git commit -m "M18 README：教學／測驗模式、手部污染與換手套、桶口足跡判定；training-test 24 項
@@ -671,12 +671,12 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Modify: `docs/superpowers/plans/2026-09-06-training-contamination-modes.md`（勾選）、`.remember/remember.md`
 - Memory: `~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m18-lessons.md`＋`MEMORY.md` 一行
 
-- [ ] **Step 1: 部署**
+- [x] **Step 1: 部署**
 
 Run: `cd ../player-garden && bash scripts/serve.sh && curl -s -o /dev/null -w '%{http_code}\n' https://monkeyday.tail8e3f79.ts.net/playground/`
 Expected: 200；`grep -l "cross-contamination" ~/.local/share/player-garden/www/playground/assets/*.js` 有命中。
 
-- [ ] **Step 2: ROADMAP.md M18 段**
+- [x] **Step 2: ROADMAP.md M18 段**
 
 ```md
 ## M18：訓練續——手部污染、教學／測驗模式、桶口與提示（2026-09-06 核准開工、同日結案）
@@ -689,11 +689,11 @@ Expected: 200；`grep -l "cross-contamination" ~/.local/share/player-garden/www/
       training_test 24 項；scene-test／parkour-test 不變；瀏覽器：教學高亮截圖、測驗模式真人抓粉罐再抓處理包不 toast、換手套歸零、結束揭露 90 分；桶口偏 0.2 m 入桶。部署 player-garden。
 ```
 
-- [ ] **Step 3: tasks/0030**（依 0029 格式：標題、model 行、脈絡、分工、驗收、notes；notes 記瀏覧器實測數字與任何修正）。
+- [x] **Step 3: tasks/0030**（依 0029 格式：標題、model 行、脈絡、分工、驗收、notes；notes 記瀏覧器實測數字與任何修正）。
 
-- [ ] **Step 4: docs/next-steps.md**：狀態行加 M18；候選 1「訓練續」改為剩餘項（膠囊撞飛小物件／觸控／物件層污染傳播／教學強制順序）；執行提醒加「flow 判定不分模式，模式差異只在 main／ui」「入桶看袋 AABB 足跡重疊，不是袋心」。
+- [x] **Step 4: docs/next-steps.md**：狀態行加 M18；候選 1「訓練續」改為剩餘項（膠囊撞飛小物件／觸控／物件層污染傳播／教學強制順序）；執行提醒加「flow 判定不分模式，模式差異只在 main／ui」「入桶看袋 AABB 足跡重疊，不是袋心」。
 
-- [ ] **Step 5: 勾選計畫全部 `- [ ]` → `- [x]`；commit img-to-babylon**
+- [x] **Step 5: 勾選計畫全部 `- [ ]` → `- [x]`；commit img-to-babylon**
 
 ```bash
 git add ROADMAP.md tasks/0030-training-contamination-modes.md docs/next-steps.md docs/superpowers/plans/2026-09-06-training-contamination-modes.md && git commit -m "M18 結案：ROADMAP／tasks 0030／next-steps；計畫全勾
@@ -702,6 +702,6 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 ```
 
-- [ ] **Step 6: 記憶與 handoff**：寫 `img2babylon-m18-lessons.md`（只記非顯而易見的教訓：瀏覽器實測發現的問題與修法）＋ MEMORY.md 一行；更新 `.remember/remember.md`（State：M18 結案 commit；Next：等使用者選；Context：新陷阱）。
+- [x] **Step 6: 記憶與 handoff**：寫 `img2babylon-m18-lessons.md`（只記非顯而易見的教訓：瀏覽器實測發現的問題與修法）＋ MEMORY.md 一行；更新 `.remember/remember.md`（State：M18 結案 commit；Next：等使用者選；Context：新陷阱）。
 
-- [ ] **Step 7: 兩 repo `git status` 乾淨、dev server 已停，向使用者結案回報**。
+- [x] **Step 7: 兩 repo `git status` 乾淨、dev server 已停，向使用者結案回報**。
