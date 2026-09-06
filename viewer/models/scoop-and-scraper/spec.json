@@ -650,6 +650,18 @@
       },
       "action": "done",
       "notes": "零件表（Part[]）同時餵 mesh 與 collider，root 零件 mesh 偏移 = collider offset；dispose／metadata 齊。修正次數 0。"
+    },
+    {
+      "pass": "physics",
+      "likeness": 8,
+      "colliderFit": 9,
+      "eye": {
+        "verdict": "pass",
+        "fidelity": 0.467,
+        "iou": 0.66
+      },
+      "action": "done",
+      "notes": "M17 接觸收納：scoop 加 collect trigger contact（內腔到唇前 1 cm、下探 2 cm、maxItemMass 0.005）＋ pour source collected（前傾 ≥ 1.0 rad、20 顆/s、唇中心倒出 clump-<i>）。探針證明純剛體在 Havok 尺度鏟不起 10 mm 顆粒（單顆永不進、7 顆最多 3–4）；collect_test contact 8/8、pour_test 裝 6 倒 6、sweep_test 掃 7 收 7。collider／mesh 不變，Divine Eye 不重跑。"
     }
   ]
 }

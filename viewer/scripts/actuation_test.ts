@@ -53,7 +53,7 @@ interface SpecConstraint {
 }
 interface SpecComponent { id: string; actuation?: SpecActuation }
 interface SpecRupture { impulseThreshold: number; emptiedMass: number; puddleRadius: number; droplets: number }
-interface SpecPour { tiltThreshold?: number; grains: number; grainMass: number; ratePerSecond: number; direction?: number[]; exitSpeed?: number; gate?: { body: string; minAngle: number } }
+interface SpecPour { source?: "declared" | "collected"; tiltThreshold?: number; grains?: number; grainMass?: number; ratePerSecond: number; direction?: number[]; exitSpeed?: number; gate?: { body: string; minAngle: number } }
 interface SpecCollect { interior: { size: number[]; offset: number[] }; maxItemMass: number }
 interface SpecBody { id: string; mass: number; rupture?: SpecRupture; pour?: SpecPour; collect?: SpecCollect }
 interface Spec {
@@ -228,7 +228,14 @@ async function main(): Promise<number> {
       act.set(1);
       step(5);
       const grainsB = grainCount();
-      const expected = b.mass - pour.grains * pour.grainMass;
+      if (pour.source === "collected") {
+        // M17：倒的是收進來的東西——空斗 set(1) 無事（有物倒出由 pour_test collected 分支驗）
+        const clumps = Object.keys(model.bodies).filter((k) => k.startsWith("clump-")).length;
+        push(`pour:${b.id}`, Math.abs(mass - b.mass) < 1e-5 && clumps === 0,
+          `source collected 空斗：質量 ${mass} vs ${b.mass}；clump ${clumps}（期望 0）`);
+        continue;
+      }
+      const expected = b.mass - pour.grains! * pour.grainMass!;
       push(`pour:${b.id}`,
         Math.abs(mass - expected) < 1e-5 && grainsA === pour.grains && grainsB === pour.grains,
         `質量 ${mass} vs ${expected}；顆粒 ${grainsA}/${grainsB}（期望 ${pour.grains}，冪等）`);
