@@ -1,0 +1,627 @@
+[
+  {
+    "id": "torso",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pelvis",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "neck",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "head",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "hair-cap",
+    "nativeRecipe": "scalp-cap",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "ponytail",
+    "nativeRecipe": "tail-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "upper-arm-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "forearm-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "hand-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "thigh-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "calf-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "boot-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "upper-arm-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "forearm-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "hand-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "thigh-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "calf-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "boot-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "vest-front",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "vest-back",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "molle-front-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "molle-back-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "molle-front-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "molle-back-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "molle-front-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "molle-back-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "molle-front-3",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "molle-back-3",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "mag-pouch-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pouch-flap-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pouch-tab-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "mag-pouch-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pouch-flap-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pouch-tab-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "mag-pouch-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pouch-flap-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pouch-tab-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "belt",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "belt-buckle",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "collar-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "strap-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "strap-accent-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "strap-buckle-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "side-strap-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "belt-accent-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "hip-pouch-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "sleeve-cuff-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "shoulder-patch-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "wrist-cuff-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "glove-plate-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "finger-l-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "finger-l-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "finger-l-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "finger-l-3",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "thumb-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "knee-pad-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "knee-shell-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "knee-strap-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "cargo-pocket-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "thigh-band-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "thigh-buckle-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "boot-sole-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "boot-upper-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lace-l-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lace-l-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lace-l-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lace-l-3",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "boot-accent-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "ear-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "eye-white-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "iris-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pupil-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "eye-glint-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "eyelid-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "brow-l",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "hair-side-l",
+    "nativeRecipe": "scalp-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "collar-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "strap-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "strap-accent-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "strap-buckle-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "side-strap-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "belt-accent-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "hip-pouch-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "sleeve-cuff-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "shoulder-patch-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "wrist-cuff-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "glove-plate-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "finger-r-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "finger-r-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "finger-r-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "finger-r-3",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "thumb-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "knee-pad-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "knee-shell-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "knee-strap-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "cargo-pocket-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "thigh-band-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "thigh-buckle-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "boot-sole-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "boot-upper-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lace-r-0",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lace-r-1",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lace-r-2",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lace-r-3",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "boot-accent-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "ear-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "eye-white-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "iris-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "pupil-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "eye-glint-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "eyelid-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "brow-r",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "hair-side-r",
+    "nativeRecipe": "scalp-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "nose",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "upper-lip",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "lower-lip",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "fringe-sweep",
+    "nativeRecipe": "scalp-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "fringe-side",
+    "nativeRecipe": "scalp-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "hair-tie",
+    "nativeRecipe": null,
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "tail-lock-0",
+    "nativeRecipe": "tail-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "tail-lock-1",
+    "nativeRecipe": "tail-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "tail-lock-2",
+    "nativeRecipe": "tail-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "fringe-layer-0",
+    "nativeRecipe": "scalp-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "fringe-layer-1",
+    "nativeRecipe": "scalp-lock",
+    "removedDegenerateTriangles": 0
+  },
+  {
+    "id": "fringe-layer-2",
+    "nativeRecipe": "scalp-lock",
+    "removedDegenerateTriangles": 0
+  }
+]

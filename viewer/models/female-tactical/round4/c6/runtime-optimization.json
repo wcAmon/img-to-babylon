@@ -1,0 +1,14 @@
+{
+  "nativeBufferDeduplication": "completed root generator; not overwritten",
+  "evidence": "docs/migration/native-payload-deduplication.md",
+  "rootMeasuredFrozenC4Bytes": {
+    "before": 16256265,
+    "after": 4185796
+  },
+  "actualC6FactoryBytes": 5212376,
+  "actualC6ProductionChunks": {
+    "viewer/dist/assets/createFemaleTacticalModel-DqrSwmSj.js": 4703439
+  },
+  "inspection": "actual C6 immutable sculptSpec/repeated create test passed",
+  "remaining": "Optional binary externalization; frame-time/network/GPU-memory performance not measured here. Preserve readable recipe and archival source."
+}

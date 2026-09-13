@@ -1,0 +1,54 @@
+{
+  "excludedFromClosedVolumeSelfTest": [
+    {
+      "id": "eye-white-l",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "iris-l",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "pupil-l",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "eyelid-l",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "brow-l",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "eye-white-r",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "iris-r",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "pupil-r",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "eyelid-r",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "brow-r",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "upper-lip",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    },
+    {
+      "id": "lower-lip",
+      "reason": "Actual finite open facial overlay (geometry.kind=patch), no back face or enclosed volume. Inside/outside parity self-test is not defined for this surface. Triangle validity still checked; visibility/contact must be GPU-reviewed."
+    }
+  ],
+  "retainedRawFailure": "audit/audit.json: upper-lip insideVertexCount=1",
+  "noVisualPass": true
+}

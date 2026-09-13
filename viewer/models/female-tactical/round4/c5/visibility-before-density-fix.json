@@ -1,0 +1,294 @@
+{
+  "actualNativeGeometry": true,
+  "features": [
+    {
+      "id": "eye-white-l",
+      "support": "head",
+      "samples": 1488,
+      "missingSupport": 0,
+      "minClearance": 0.0007998431188531024,
+      "maxClearance": 0.002985639529773182,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "iris-l",
+      "support": "eye-white-l",
+      "samples": 1488,
+      "missingSupport": 0,
+      "minClearance": 0.00039606272055392466,
+      "maxClearance": 0.0005631731882614899,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "pupil-l",
+      "support": "iris-l",
+      "samples": 1488,
+      "missingSupport": 0,
+      "minClearance": 0.00033997360398246856,
+      "maxClearance": 0.00045178029918332974,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "eye-glint-l",
+      "support": "pupil-l",
+      "samples": 780,
+      "missingSupport": 708,
+      "minClearance": 0.0002982965799807613,
+      "maxClearance": 0.00031484266426619334,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "eyelid-l",
+      "support": "head",
+      "samples": 1536,
+      "missingSupport": 0,
+      "minClearance": 0.0012659217803056705,
+      "maxClearance": 0.001446276036397548,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "brow-l",
+      "support": "head",
+      "samples": 1536,
+      "missingSupport": 0,
+      "minClearance": 0.0008760036306970226,
+      "maxClearance": 0.0011543071207295308,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "eye-white-r",
+      "support": "head",
+      "samples": 1488,
+      "missingSupport": 0,
+      "minClearance": 0.0008017805150855595,
+      "maxClearance": 0.003004660001101722,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "iris-r",
+      "support": "eye-white-r",
+      "samples": 1488,
+      "missingSupport": 0,
+      "minClearance": 0.00040285601793615955,
+      "maxClearance": 0.0005491675513930455,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "pupil-r",
+      "support": "iris-r",
+      "samples": 1488,
+      "missingSupport": 0,
+      "minClearance": 0.0003483754109324666,
+      "maxClearance": 0.00045170169386005155,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "eye-glint-r",
+      "support": "pupil-r",
+      "samples": 778,
+      "missingSupport": 710,
+      "minClearance": 0.0002983198893840022,
+      "maxClearance": 0.0003132494230024402,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "eyelid-r",
+      "support": "head",
+      "samples": 1536,
+      "missingSupport": 0,
+      "minClearance": 0.0012387911768538817,
+      "maxClearance": 0.0014682476151938184,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "brow-r",
+      "support": "head",
+      "samples": 1536,
+      "missingSupport": 0,
+      "minClearance": 0.0008806987513165776,
+      "maxClearance": 0.0011433114060104277,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "upper-lip",
+      "support": "head",
+      "samples": 1488,
+      "missingSupport": 0,
+      "minClearance": 0.0007322726434072224,
+      "maxClearance": 0.0019763410037835494,
+      "interiorOccludedSamples": 0
+    },
+    {
+      "id": "lower-lip",
+      "support": "head",
+      "samples": 1488,
+      "missingSupport": 0,
+      "minClearance": 0.0007322732409590083,
+      "maxClearance": 0.0019770764992438072,
+      "interiorOccludedSamples": 0
+    }
+  ],
+  "scleraVisibility": [
+    {
+      "side": "l",
+      "apertureFrontmostSampleCounts": {
+        "eye-white-l": 921,
+        "iris-l": 331,
+        "pupil-l": 98,
+        "eyelid-l": 38,
+        "eye-glint-l": 14,
+        "head": 0
+      }
+    },
+    {
+      "side": "r",
+      "apertureFrontmostSampleCounts": {
+        "eye-white-r": 921,
+        "iris-r": 331,
+        "pupil-r": 98,
+        "eyelid-r": 38,
+        "eye-glint-r": 14,
+        "head": 0
+      }
+    }
+  ],
+  "gearAttachments": [
+    {
+      "id": "molle-front-0",
+      "support": "vest-front",
+      "samples": 51,
+      "backSurfaceMinGap": -0.0004999972920976814,
+      "backSurfaceMaxGap": -0.0004999937743063732,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "molle-back-0",
+      "support": "vest-back",
+      "samples": 51,
+      "backSurfaceMinGap": -0.0005000047535925062,
+      "backSurfaceMaxGap": -0.0005000002147296512,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "molle-front-1",
+      "support": "vest-front",
+      "samples": 51,
+      "backSurfaceMinGap": -0.0004999975547674701,
+      "backSurfaceMaxGap": -0.0004999935570319386,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "molle-back-1",
+      "support": "vest-back",
+      "samples": 51,
+      "backSurfaceMinGap": -0.0005000044803789849,
+      "backSurfaceMaxGap": -0.0005000007902046244,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "molle-front-2",
+      "support": "vest-front",
+      "samples": 51,
+      "backSurfaceMinGap": -0.0004999973038259248,
+      "backSurfaceMaxGap": -0.0004999939385104263,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "molle-back-2",
+      "support": "vest-back",
+      "samples": 51,
+      "backSurfaceMinGap": -0.0005000043420984868,
+      "backSurfaceMaxGap": -0.0005000004659096446,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "molle-front-3",
+      "support": "vest-front",
+      "samples": 51,
+      "backSurfaceMinGap": -0.0004999976190658839,
+      "backSurfaceMaxGap": -0.0004999935865638017,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "molle-back-3",
+      "support": "vest-back",
+      "samples": 51,
+      "backSurfaceMinGap": -0.0005000043669869392,
+      "backSurfaceMaxGap": -0.000500000309869561,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "mag-pouch-0",
+      "support": "vest-front",
+      "samples": 45,
+      "backSurfaceMinGap": -0.0005000004359261012,
+      "backSurfaceMaxGap": -0.0004999935206255607,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "pouch-flap-0",
+      "support": "mag-pouch-0",
+      "samples": 45,
+      "backSurfaceMinGap": -0.0005000124667136063,
+      "backSurfaceMaxGap": -0.0005000085827747414,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "pouch-tab-0",
+      "support": "mag-pouch-0",
+      "samples": 45,
+      "backSurfaceMinGap": -0.0005000021498368645,
+      "backSurfaceMaxGap": -0.0004999983565074639,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "mag-pouch-1",
+      "support": "vest-front",
+      "samples": 45,
+      "backSurfaceMinGap": -0.000499998258284784,
+      "backSurfaceMaxGap": -0.000499994123540029,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "pouch-flap-1",
+      "support": "mag-pouch-1",
+      "samples": 45,
+      "backSurfaceMinGap": -0.000500011257827282,
+      "backSurfaceMaxGap": -0.0005000092368941944,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "pouch-tab-1",
+      "support": "mag-pouch-1",
+      "samples": 45,
+      "backSurfaceMinGap": -0.0005000022287915684,
+      "backSurfaceMaxGap": -0.0004999988057579063,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "mag-pouch-2",
+      "support": "vest-front",
+      "samples": 45,
+      "backSurfaceMinGap": -0.0005000007506170412,
+      "backSurfaceMaxGap": -0.0004999929251120749,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "pouch-flap-2",
+      "support": "mag-pouch-2",
+      "samples": 45,
+      "backSurfaceMinGap": -0.0005000122376475069,
+      "backSurfaceMaxGap": -0.0005000085095453188,
+      "intendedEmbed": -0.0005
+    },
+    {
+      "id": "pouch-tab-2",
+      "support": "mag-pouch-2",
+      "samples": 45,
+      "backSurfaceMinGap": -0.000500002085407264,
+      "backSurfaceMaxGap": -0.0004999984911622235,
+      "intendedEmbed": -0.0005
+    }
+  ],
+  "notVisualAcceptance": true
+}

@@ -1,0 +1,22 @@
+{
+  "spec.json": {
+    "frozenC5": "c3c8bb83a8a7e5bb7fd29b90cd7402b13dc962288234fdeb17670020bbb3820e",
+    "archivedSha256": "c3c8bb83a8a7e5bb7fd29b90cd7402b13dc962288234fdeb17670020bbb3820e",
+    "matches": true
+  },
+  "canonical-spec.json": {
+    "frozenC5": "5b576a07cd28e00da94e80dd2af3cfe587f783b4e8c6270b6dda3d9a4a7d9755",
+    "archivedSha256": "5b576a07cd28e00da94e80dd2af3cfe587f783b4e8c6270b6dda3d9a4a7d9755",
+    "matches": true
+  },
+  "createNativeFemaleTactical.ts": {
+    "frozenC5": "0a6f1cce085975bc836895bb08f9263585f22427495cc4bb27e01c845f63677d",
+    "archivedSha256": "0a6f1cce085975bc836895bb08f9263585f22427495cc4bb27e01c845f63677d",
+    "matches": true
+  },
+  "round4/compile_surfaces.py": {
+    "frozenC5": "6085aabd926817f3eb6544f2f74b25536a2bce81c03a73ce805d5be328b2d8c2",
+    "archivedSha256": "6085aabd926817f3eb6544f2f74b25536a2bce81c03a73ce805d5be328b2d8c2",
+    "matches": true
+  }
+}

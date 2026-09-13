@@ -1,0 +1,1 @@
+{"passed":true,"components":125,"totalVertices":25683,"totalTriangles":24638,"maxLocalError":0,"maxWorldError":0,"maxMatrixError":0,"evidenceBoundary":"procedural import and numeric roundtrip only; no intake, material rendering, physics or visual acceptance"}

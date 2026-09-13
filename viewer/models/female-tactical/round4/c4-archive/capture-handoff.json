@@ -1,0 +1,349 @@
+{
+  "modelId": "female-tactical",
+  "frozenAt": "2026-09-13T18:12:17.896846+00:00",
+  "round": 4,
+  "correction": 4,
+  "limit": 6,
+  "remaining": 2,
+  "lifetimeCorrections": 19,
+  "pass": "blockout",
+  "visualStatus": "unaccepted; awaiting C4 GPU",
+  "viewport": [
+    585,
+    1024
+  ],
+  "devicePixelRatio": 1,
+  "inputs": {
+    "spec.json": "b9e8bde813ed99160506e17b07b20dd420d20003cc21c6baeb13d7d39a5581e4",
+    "canonical-spec.json": "36dec7c24d80b882a9d4d2a9ca0bd09a4eeedacd1edf6790d31077f576f135bc",
+    "createNativeFemaleTactical.ts": "92b8fb534e1ec4ff03df4a97ab163436bd9b3a8810a09fa3e157261185822a01",
+    "createFemaleTacticalModel.ts": "7df31c9f78e6f9f863f739580d3b50ea8501c6846d4e4442e12eb337dcdfa3d5",
+    "round4/compile_surfaces.py": "d5c2848991bbe6fac2e29e79daa10f759d5cb647b1b933c18d16c255ccdebb0d",
+    "reference/female.png": "75e4fbe956035ef3df2a2cb372ff8d5f0e6ec5f1bc5e7eb42646f6527efe2fae"
+  },
+  "views": [
+    {
+      "id": "hero",
+      "path": "viewer/public/female-tactical-round4/c4-hero.json",
+      "sha256": "abdc299552501bdb89029d3a1b14fbebad11b707d15d19150e6a9f81ea1f8985",
+      "sameAsC3Sha256": "abdc299552501bdb89029d3a1b14fbebad11b707d15d19150e6a9f81ea1f8985",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          0.885,
+          0
+        ],
+        "azimuthDegrees": -12,
+        "elevationDegrees": 2,
+        "distance": 3.85,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-hero.json&reviewPass=beauty"
+    },
+    {
+      "id": "front",
+      "path": "viewer/public/female-tactical-round4/c4-front.json",
+      "sha256": "4a5f861a698d7a3593852802a39d9a9a299aef7a6eb788df82cd14c29b7aa966",
+      "sameAsC3Sha256": "4a5f861a698d7a3593852802a39d9a9a299aef7a6eb788df82cd14c29b7aa966",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          0.885,
+          0
+        ],
+        "azimuthDegrees": 0,
+        "elevationDegrees": 2,
+        "distance": 3.85,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-front.json&reviewPass=beauty"
+    },
+    {
+      "id": "right",
+      "path": "viewer/public/female-tactical-round4/c4-right.json",
+      "sha256": "ac59bc8b7f6f3650dfeb6811cce6573c8db11041dca9c53c5d47cfbdd7baba5b",
+      "sameAsC3Sha256": "ac59bc8b7f6f3650dfeb6811cce6573c8db11041dca9c53c5d47cfbdd7baba5b",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          0.885,
+          0
+        ],
+        "azimuthDegrees": 90,
+        "elevationDegrees": 2,
+        "distance": 3.85,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-right.json&reviewPass=beauty"
+    },
+    {
+      "id": "rear",
+      "path": "viewer/public/female-tactical-round4/c4-rear.json",
+      "sha256": "07827a1b05e1498d7cfcf5306556ed25e1c90415335ad06f0847281aedf4d089",
+      "sameAsC3Sha256": "07827a1b05e1498d7cfcf5306556ed25e1c90415335ad06f0847281aedf4d089",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          0.885,
+          0
+        ],
+        "azimuthDegrees": 180,
+        "elevationDegrees": 2,
+        "distance": 3.85,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-rear.json&reviewPass=beauty"
+    },
+    {
+      "id": "left",
+      "path": "viewer/public/female-tactical-round4/c4-left.json",
+      "sha256": "fbdd94b3889149d71a97d45b81b47167186930a1c9cf4c260bdc038b21d42f06",
+      "sameAsC3Sha256": "fbdd94b3889149d71a97d45b81b47167186930a1c9cf4c260bdc038b21d42f06",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          0.885,
+          0
+        ],
+        "azimuthDegrees": 270,
+        "elevationDegrees": 2,
+        "distance": 3.85,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-left.json&reviewPass=beauty"
+    },
+    {
+      "id": "face",
+      "path": "viewer/public/female-tactical-round4/c4-face.json",
+      "sha256": "a70a8b31fdc193fa984408cce4786ace2fa04dafe64ff525160e8f090233c779",
+      "sameAsC3Sha256": "a70a8b31fdc193fa984408cce4786ace2fa04dafe64ff525160e8f090233c779",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          1.605,
+          0
+        ],
+        "azimuthDegrees": 0,
+        "elevationDegrees": 0,
+        "distance": 0.79,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-face.json&reviewPass=beauty"
+    },
+    {
+      "id": "face-plus",
+      "path": "viewer/public/female-tactical-round4/c4-face-plus.json",
+      "sha256": "30f868e641ba958cd8837c55c9fadc9c7b849b50f6979f2b80a5332328e01e0f",
+      "sameAsC3Sha256": "30f868e641ba958cd8837c55c9fadc9c7b849b50f6979f2b80a5332328e01e0f",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          1.605,
+          0
+        ],
+        "azimuthDegrees": 35,
+        "elevationDegrees": 0,
+        "distance": 0.79,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-face-plus.json&reviewPass=beauty"
+    },
+    {
+      "id": "face-minus",
+      "path": "viewer/public/female-tactical-round4/c4-face-minus.json",
+      "sha256": "0176c8151e25e54a5d8513f32246a7cbdbbe38ebf3cde64f2cb8cdccb69c0b94",
+      "sameAsC3Sha256": "0176c8151e25e54a5d8513f32246a7cbdbbe38ebf3cde64f2cb8cdccb69c0b94",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          1.605,
+          0
+        ],
+        "azimuthDegrees": -35,
+        "elevationDegrees": 0,
+        "distance": 0.79,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-face-minus.json&reviewPass=beauty"
+    },
+    {
+      "id": "orbit-plus",
+      "path": "viewer/public/female-tactical-round4/c4-orbit-plus.json",
+      "sha256": "e491206773255ff5011b015e8b0d8b11247fee63c23980d70db8eabdd047c245",
+      "sameAsC3Sha256": "e491206773255ff5011b015e8b0d8b11247fee63c23980d70db8eabdd047c245",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          0.885,
+          0
+        ],
+        "azimuthDegrees": 35,
+        "elevationDegrees": 2,
+        "distance": 3.85,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-orbit-plus.json&reviewPass=beauty"
+    },
+    {
+      "id": "orbit-minus",
+      "path": "viewer/public/female-tactical-round4/c4-orbit-minus.json",
+      "sha256": "524c25e49c8f9da078ea8a5c0f08985a6025f769fcb5411dd1b103519635333d",
+      "sameAsC3Sha256": "524c25e49c8f9da078ea8a5c0f08985a6025f769fcb5411dd1b103519635333d",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          0.885,
+          0
+        ],
+        "azimuthDegrees": -35,
+        "elevationDegrees": 2,
+        "distance": 3.85,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-orbit-minus.json&reviewPass=beauty"
+    },
+    {
+      "id": "rear-quarter",
+      "path": "viewer/public/female-tactical-round4/c4-rear-quarter.json",
+      "sha256": "a22d676210585232a6abf013e09c8d229d32b0976e8a7852032e751217a7cd01",
+      "sameAsC3Sha256": "a22d676210585232a6abf013e09c8d229d32b0976e8a7852032e751217a7cd01",
+      "camera": {
+        "projection": "perspective",
+        "target": [
+          0,
+          0.885,
+          0
+        ],
+        "azimuthDegrees": 135,
+        "elevationDegrees": 2,
+        "distance": 3.85,
+        "fovDegrees": 28,
+        "near": 0.01,
+        "far": 100
+      },
+      "url": "http://127.0.0.1:5182/#model=female-tactical&physics=0&shot=1&exportPNG=1&reviewCamera=/female-tactical-round4/c4-rear-quarter.json&reviewPass=beauty"
+    }
+  ],
+  "changedPartIDs": [
+    "brow-l",
+    "brow-r",
+    "eye-white-l",
+    "eye-white-r",
+    "eyelid-l",
+    "eyelid-r",
+    "fringe-layer-0",
+    "fringe-layer-1",
+    "fringe-layer-2",
+    "fringe-side",
+    "fringe-sweep",
+    "hair-cap",
+    "hair-side-l",
+    "hair-side-r",
+    "head",
+    "lower-lip",
+    "nose",
+    "ponytail",
+    "tail-lock-0",
+    "tail-lock-1",
+    "tail-lock-2",
+    "upper-lip"
+  ],
+  "authoredPartIDs": [
+    "head",
+    "ponytail",
+    "eye-white-l",
+    "eyelid-l",
+    "brow-l",
+    "eye-white-r",
+    "eyelid-r",
+    "brow-r",
+    "nose",
+    "upper-lip",
+    "lower-lip",
+    "fringe-sweep",
+    "tail-lock-0",
+    "tail-lock-1",
+    "tail-lock-2",
+    "fringe-layer-0",
+    "fringe-layer-1",
+    "fringe-layer-2"
+  ],
+  "dependentGeometryChanges": [
+    "hair-cap",
+    "hair-side-l",
+    "hair-side-r",
+    "fringe-side"
+  ],
+  "parts": 125,
+  "triangles": 25770,
+  "checks": {
+    "strict": true,
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "Havok": "passed; same single 55kg compound body",
+    "nativeInspection": "passed NullEngine isolate/explode/reset/pick/disposal; not a new GPU visual test",
+    "zeroDegenerateTriangles": true,
+    "zeroNormalDisagreements": true,
+    "hairRoots": true,
+    "hairCoverage": {
+      "samples": 1473,
+      "exposure": 0.004258030351788138,
+      "hardMax": 0.05
+    },
+    "hairNonRootClearance": true,
+    "changedClosedSelfTest": {
+      "meshCount": 14,
+      "sampledVertexCount": 1246,
+      "insideVertexCount": 0,
+      "undecidedVertexCount": 15,
+      "selfIntersecting": false
+    }
+  },
+  "remainingGates": [
+    "Fresh C4 11-view GPU and diagnostic/map-stripped evidence; all visual gates unaccepted",
+    "C3 Tier1 remains failed: IoU .6101 < .85, aspect .1123 > .05, scale .1564 > .08, missing map-stripped evidence",
+    "15 undecided self-test samples; full assembly penetration NOT passed",
+    "Open facial overlays need actual image and surface review, not closed-volume parity",
+    "C5 pending: rear MOLLE floating behind vest in side view; C3 body preserved",
+    "Materials remain exact existing StandardMaterial semantics; any later PBR correction needs explicit provenance/consumed roughness",
+    "No new round: two corrections remain after C4"
+  ],
+  "captureInstructions": [
+    "Use exactly these C3-equivalent cameras at 585x1024 DPR1",
+    "Reload each URL and wait for actual ready render; record errors and current input hashes",
+    "Save .img2babylon/shots/round4-c4-<view>.png and read actual pixels back",
+    "Record SHA256 for each PNG and camera; no stale C3 image hash for C4",
+    "Capture required diagnostic/map-stripped evidence as well as beauty",
+    "Frozen: no model/compiler/factory edits until desktop resumes"
+  ]
+}

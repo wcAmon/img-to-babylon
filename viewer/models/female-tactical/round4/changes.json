@@ -1,0 +1,30 @@
+{
+  "round": 4,
+  "correction": 1,
+  "changedPartIDs": [
+    "torso",
+    "pelvis",
+    "head",
+    "hair-cap",
+    "upper-arm-l",
+    "thigh-l",
+    "calf-l",
+    "boot-l",
+    "upper-arm-r",
+    "thigh-r",
+    "calf-r",
+    "boot-r",
+    "eye-glint-l",
+    "fringe-sweep",
+    "fringe-side",
+    "fringe-layer-0",
+    "fringe-layer-1",
+    "fringe-layer-2"
+  ],
+  "newPartIDs": [],
+  "deletedPartIDs": [],
+  "source": "canonical extensions[babylon-sculpt-v1].source",
+  "recipes": "spec.json round4Recipe + component geometry",
+  "materialChanges": [],
+  "physicsChanges": []
+}

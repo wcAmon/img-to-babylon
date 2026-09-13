@@ -7,7 +7,7 @@ Status: the pinned source workflow and its executable WebGL reconstruction core 
 - All 322 source resources and all 126 non-test executable-language files are present with Apache-2.0 provenance. The read-only source checkout is unchanged. Source emitters remain numerical oracles; active routes use Babylon objects.
 - All 15 supported primitives, SDF/visual hull, subdivision/decimation, hair clearance/vertex color, PBR maps, hierarchy/instances, skeletons/morphs, camera/lights/environment helpers have native consumers and numerical tests.
 - Standalone rig emitter retains the original straight-chain milestone-zero scope. Full generator bone fixtures exercise 49 bones; neither is a claim of an animated female rig.
-- Legacy BabylonSculptSpec import uses explicit native buffers/quaternions/material semantics. All 125 female parts and 23,799 vertices roundtrip through generated Babylon factories in RH/LH; maximum vertex error 3.715e-9 m, world matrices exact. Production generation correctly refuses its still-unassessed canonical intake.
+- Legacy BabylonSculptSpec import uses explicit native buffers/quaternions/material semantics. All 125 female parts and 23,799 vertices roundtrip through generated Babylon factories in RH/LH; maximum vertex error 3.715e-9 m, world matrices exact. The original unassessed import fixture remains blocked; the current character now has separate canonical intake and native generation, with visual gates still unaccepted.
 - Native workflow gates require real files, preserve failed reviews and original cumulative15 corrections, and enforce six corrections per round. Ordered intake/build/review gates remain.
 - Capture supports native and GLB modes, exact source tone shaders including AgX, fitted camera yaw/pitch/roll, canonical normals, instance expansion, independent roughness channels and restoration/disposal. Actual GLB loader H_X was corrected to the pipeline H_Z convention.
 - Native geometry export and bounded character audit replace the unusable source showcase wrapper; report samples, skipped geometry and actual gate outcomes.
@@ -15,7 +15,7 @@ Status: the pinned source workflow and its executable WebGL reconstruction core 
 
 ## Final verification
 
-- Integrated Python suite: **1,129 tests**, success, **38 upstream optional/runtime skips**.
+- Integrated Python suite: **1,130 tests**, success, **38 upstream optional/runtime skips**.
 - Legacy repository: **134 tests**, success.
 - Viewer TypeScript and production build: success. Build retains the ordinary large-chunk advisory.
 - Native capture lifecycle, seven-case exporter conversion, Havok adapter and repeated resource ownership tests: success.
@@ -30,4 +30,4 @@ Original projection-bake scripts are descriptor producers, not a hidden working 
 
 ## Character handoff
 
-Proceed through the new character intake and native factory with Codex CLI. Preserve female-tactical identity, readable component recipes, source image, all prior records and the single compound body. New head/face/hair/body changes require their own true screenshot review. No migration test supplies a likeness pass.
+Codex CLI completed round 4 at six corrections, lifetime 21. The same 125 part IDs now run through the native factory with 29,776 triangles and a single 55 kg compound body. Desktop captured 11 views plus alpha/normal diagnostics, verified frozen hashes, and recorded a failed visual gate without a seventh correction. Independent clean-copy rebuilding reproduced identical executable model data. See [character review](../character-round4.md). No migration test supplies a likeness pass.

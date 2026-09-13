@@ -3,11 +3,10 @@
 Audited 2026-09-14 Asia/Taipei against pinned source
 `9fbd0ca5bbcc3b13bebe712745d6784d33db0b85`. This is a command reference,
 not permission to skip intake or evidence gates. Commands below were checked
-against CLI parsers/code. The native geometry followup executed numerical exporter
-regressions and real sample-crate/fixture geometry gates; capture and visual gates
-were not run. Native runtime and capture integration remain active
-work. See [route audit](../docs/migration/executable-route-audit.md) for precise
-boundaries and snapshot fingerprints.
+against CLI parsers/code. The accepted migration executed numerical exporter regressions, native runtime
+and capture checks, and six-pass GPU fixture verification. Character likeness
+requires its own review. See [acceptance](../docs/migration/acceptance.json) and
+[route audit](../docs/migration/executable-route-audit.md) for boundaries and evidence.
 
 ## Paths and interpreter
 
@@ -129,8 +128,8 @@ The numbers above are explicit starting guesses, not calibration. The solver
 CLI returns a nested `{referenceCamera: ...}` with `.value` and `.hint` fields.
 Its numerical correspondence fitter is the Python API
 `fit_camera_to_correspondences(correspondences, initial_camera)`; there is no
-`--correspondences` CLI flag. Do not pass either nested result straight into
-`setCamera`, `reviewCamera`, or the full render-profile validator.
+`--correspondences` CLI flag. `setCamera` and `reviewCamera` now recognize this nested solver descriptor and
+convert its source coordinate frame, including fitted roll. It is not a full render profile.
 
 Native `reviewCamera`/manifest camera records take a **flat** contract, e.g.:
 
@@ -153,8 +152,9 @@ orbit conversion is `alpha = pi/2 - azimuthDegrees*pi/180`,
 scaled by model physicsScale. Raw `alpha`/`beta` are radians; never mix them with
 degree fields. Explicit `position` plus `target` is an alternative to orbit
 fields, not an additional override. Orthographic records need ordered
-`left/right/top/bottom`. Current capture camera has no roll/up-vector field;
-nonzero fitted roll is not preserved by copying yaw/pitch into orbit angles.
+`left/right/top/bottom`. The capture camera supports explicit `up` and `rollDegrees`; solver descriptors
+use the source world-to-camera convention through `capture-solver.ts`. Copying
+fitted yaw/pitch directly into native orbit fields is not an equivalent conversion.
 
 A full profile is **not** this flat camera record: it contains renderer,
 environment, camera, background, six passes, regions and feedbackGroups. The

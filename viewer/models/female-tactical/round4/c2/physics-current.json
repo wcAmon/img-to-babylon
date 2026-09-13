@@ -1,0 +1,16 @@
+{
+  "model": "female-tactical",
+  "nudged": null,
+  "pass": true,
+  "bodies": [
+    {
+      "id": "torso",
+      "speed": 0,
+      "y": 1.22454,
+      "finite": true
+    }
+  ],
+  "constraints": [],
+  "roll": null,
+  "ragdoll": null
+}

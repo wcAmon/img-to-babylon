@@ -13,5 +13,16 @@
   "gpuPixelReport": "pixel-verification.json",
   "characterLikeness": "not-reviewed-by-migration",
   "cliVersion": "0.153.4",
-  "sourceCheckoutClean": true
+  "sourceCheckoutClean": true,
+  "postRefinementRegression": {
+    "pythonRun": 1130,
+    "skipped": 38,
+    "success": true,
+    "legacyTests": 134,
+    "typecheck": "pass",
+    "build": "pass",
+    "nativePayloadDeduplicated": true,
+    "isolatedModelRebuild": "identical executable model data",
+    "characterReview": "../../viewer/models/female-tactical/evidence/round4-final/review.json"
+  }
 }

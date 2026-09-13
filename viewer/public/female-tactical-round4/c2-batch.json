@@ -1,0 +1,59 @@
+{
+  "viewport": [
+    585,
+    1024
+  ],
+  "devicePixelRatio": 1,
+  "round": 4,
+  "correction": 2,
+  "views": [
+    {
+      "id": "hero",
+      "path": "viewer/public/female-tactical-round4/c2-hero.json",
+      "sha256": "abdc299552501bdb89029d3a1b14fbebad11b707d15d19150e6a9f81ea1f8985",
+      "url": "http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/female-tactical-round4/c2-hero.json&reviewPass=beauty"
+    },
+    {
+      "id": "front",
+      "path": "viewer/public/female-tactical-round4/c2-front.json",
+      "sha256": "4a5f861a698d7a3593852802a39d9a9a299aef7a6eb788df82cd14c29b7aa966",
+      "url": "http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/female-tactical-round4/c2-front.json&reviewPass=beauty"
+    },
+    {
+      "id": "right",
+      "path": "viewer/public/female-tactical-round4/c2-right.json",
+      "sha256": "ac59bc8b7f6f3650dfeb6811cce6573c8db11041dca9c53c5d47cfbdd7baba5b",
+      "url": "http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/female-tactical-round4/c2-right.json&reviewPass=beauty"
+    },
+    {
+      "id": "rear",
+      "path": "viewer/public/female-tactical-round4/c2-rear.json",
+      "sha256": "07827a1b05e1498d7cfcf5306556ed25e1c90415335ad06f0847281aedf4d089",
+      "url": "http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/female-tactical-round4/c2-rear.json&reviewPass=beauty"
+    },
+    {
+      "id": "left",
+      "path": "viewer/public/female-tactical-round4/c2-left.json",
+      "sha256": "fbdd94b3889149d71a97d45b81b47167186930a1c9cf4c260bdc038b21d42f06",
+      "url": "http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/female-tactical-round4/c2-left.json&reviewPass=beauty"
+    },
+    {
+      "id": "face",
+      "path": "viewer/public/female-tactical-round4/c2-face.json",
+      "sha256": "a70a8b31fdc193fa984408cce4786ace2fa04dafe64ff525160e8f090233c779",
+      "url": "http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/female-tactical-round4/c2-face.json&reviewPass=beauty"
+    },
+    {
+      "id": "face-plus",
+      "path": "viewer/public/female-tactical-round4/c2-face-plus.json",
+      "sha256": "30f868e641ba958cd8837c55c9fadc9c7b849b50f6979f2b80a5332328e01e0f",
+      "url": "http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/female-tactical-round4/c2-face-plus.json&reviewPass=beauty"
+    },
+    {
+      "id": "face-minus",
+      "path": "viewer/public/female-tactical-round4/c2-face-minus.json",
+      "sha256": "0176c8151e25e54a5d8513f32246a7cbdbbe38ebf3cde64f2cb8cdccb69c0b94",
+      "url": "http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/female-tactical-round4/c2-face-minus.json&reviewPass=beauty"
+    }
+  ]
+}

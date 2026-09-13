@@ -127,8 +127,24 @@ def generate(spec:dict[str,Any],pass_id:str,runtime_import:str='../../src/pipeli
     lines=['// Generated native Babylon factory. Dimensions are baked; pass/review gates remain mandatory.',"import { Scene, TransformNode, Camera, ArcRotateCamera } from '@babylonjs/core';",f"import {{createPipelineModel, createLookDevLights, createRoomEnvironment, frameCamera, createPresentationPipeline, configureRenderer, createInspectControls, type ModelOptions}} from {json.dumps(runtime_import+'/runtime')};"]
     for file,selected in [('nativeImport',[x for x in geometry_names if x=='nativeVertexGeometry']),('primitives',[x for x in geometry_names if x in primitive_names]),('geometryAlgorithms',[x for x in geometry_names if x not in primitive_names and x!='nativeVertexGeometry'])]:
         if selected:lines.append(f"import {{{', '.join(selected)}}} from {json.dumps(runtime_import+'/'+file)};")
-    lines += [f'export const sculptSpec: any = {json.dumps(spec,ensure_ascii=False)};',f'const payload: any = {json.dumps(payload,ensure_ascii=False)};', 'const builders = {']
-    lines.extend(f'  {json.dumps(k)}: () => {v},' for k,v in expressions.items());lines.append('};')
+    # Keep native arrays once in the authored spec. MeshData copies them into
+    # private buffers; payload/builders need references, not four serialized copies.
+    source_index={c['id']:i for i,c in enumerate(spec.get('componentTree',[]))}
+    component_index={c['id']:i for i,c in enumerate(payload['components'])}
+    header={k:v for k,v in payload.items() if k not in {'spec','components'}}
+    lines += [f'export const sculptSpec: any = {json.dumps(spec,ensure_ascii=False)};',
+              f'const payload: any = {{...{json.dumps(header,ensure_ascii=False)}, spec: sculptSpec, components: [']
+    for c in payload['components']:
+        if c['_babylon']['native']:
+            lines.append(f'  {{...sculptSpec.componentTree[{source_index[c["id"]]}], _babylon: {json.dumps(c["_babylon"])} }},')
+        else:
+            lines.append('  '+json.dumps(c,ensure_ascii=False)+',')
+    lines += [']};','const builders = {']
+    for key,expression in expressions.items():
+        if key in component_index and payload['components'][component_index[key]]['_babylon']['native']:
+            expression=f'nativeVertexGeometry(payload.components[{component_index[key]}])'
+        lines.append(f'  {json.dumps(key)}: () => {expression},')
+    lines.append('};')
     lines += [f'export function create{name}Model(scene: Scene, options: ModelOptions = {{}}): TransformNode {{ return createPipelineModel(scene,payload,builders,options); }}',f'export function create{name}LookDevLights(scene:Scene,mode:"neutral"|"grazing"|"reference"="neutral"){{return createLookDevLights(scene,mode,sculptSpec);}}',f'export const create{name}Environment = createRoomEnvironment;',f'export const frame{name}Camera = frameCamera;',f'export const create{name}PresentationComposer = createPresentationPipeline;',f'export const configure{name}Renderer = configureRenderer;',f'export const create{name}InspectControls = createInspectControls;', '']
     return '\n'.join(lines)
 

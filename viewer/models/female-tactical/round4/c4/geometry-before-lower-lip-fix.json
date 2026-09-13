@@ -1,0 +1,912 @@
+{
+  "partCount": 125,
+  "expectedPartCount": 125,
+  "noAddedOrDeletedIDs": true,
+  "checks": [
+    {
+      "id": "torso",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 120
+    },
+    {
+      "id": "pelvis",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 120
+    },
+    {
+      "id": "neck",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 728
+    },
+    {
+      "id": "head",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 6272
+    },
+    {
+      "id": "hair-cap",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 3456
+    },
+    {
+      "id": "ponytail",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 432
+    },
+    {
+      "id": "upper-arm-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 140
+    },
+    {
+      "id": "forearm-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 100
+    },
+    {
+      "id": "hand-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 80
+    },
+    {
+      "id": "thigh-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 168
+    },
+    {
+      "id": "calf-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 196
+    },
+    {
+      "id": "boot-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 120
+    },
+    {
+      "id": "upper-arm-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 140
+    },
+    {
+      "id": "forearm-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 100
+    },
+    {
+      "id": "hand-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 80
+    },
+    {
+      "id": "thigh-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 168
+    },
+    {
+      "id": "calf-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 196
+    },
+    {
+      "id": "boot-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 120
+    },
+    {
+      "id": "vest-front",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 360
+    },
+    {
+      "id": "vest-back",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 360
+    },
+    {
+      "id": "molle-front-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "molle-back-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "molle-front-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "molle-back-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "molle-front-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "molle-back-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "molle-front-3",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "molle-back-3",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "mag-pouch-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "pouch-flap-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "pouch-tab-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "mag-pouch-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "pouch-flap-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "pouch-tab-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "mag-pouch-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "pouch-flap-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "pouch-tab-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "belt",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 32
+    },
+    {
+      "id": "belt-buckle",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "collar-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "strap-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "strap-accent-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "strap-buckle-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "side-strap-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "belt-accent-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "hip-pouch-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "sleeve-cuff-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "shoulder-patch-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "wrist-cuff-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "glove-plate-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "finger-l-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "finger-l-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "finger-l-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "finger-l-3",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "thumb-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "knee-pad-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "knee-shell-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "knee-strap-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 32
+    },
+    {
+      "id": "cargo-pocket-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "thigh-band-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 32
+    },
+    {
+      "id": "thigh-buckle-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "boot-sole-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "boot-upper-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "lace-l-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "lace-l-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "lace-l-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "lace-l-3",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "boot-accent-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "ear-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 528
+    },
+    {
+      "id": "eye-white-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 81
+    },
+    {
+      "id": "iris-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 180
+    },
+    {
+      "id": "pupil-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 180
+    },
+    {
+      "id": "eye-glint-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 360
+    },
+    {
+      "id": "eyelid-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 99
+    },
+    {
+      "id": "brow-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 6
+    },
+    {
+      "id": "hair-side-l",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 336
+    },
+    {
+      "id": "collar-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "strap-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "strap-accent-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "strap-buckle-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "side-strap-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "belt-accent-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "hip-pouch-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "sleeve-cuff-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "shoulder-patch-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "wrist-cuff-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "glove-plate-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "finger-r-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "finger-r-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "finger-r-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "finger-r-3",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "thumb-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "knee-pad-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "knee-shell-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "knee-strap-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 32
+    },
+    {
+      "id": "cargo-pocket-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "thigh-band-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 32
+    },
+    {
+      "id": "thigh-buckle-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "boot-sole-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "boot-upper-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 64
+    },
+    {
+      "id": "lace-r-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "lace-r-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "lace-r-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "lace-r-3",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "boot-accent-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 12
+    },
+    {
+      "id": "ear-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 528
+    },
+    {
+      "id": "eye-white-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 81
+    },
+    {
+      "id": "iris-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 180
+    },
+    {
+      "id": "pupil-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 180
+    },
+    {
+      "id": "eye-glint-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 360
+    },
+    {
+      "id": "eyelid-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 99
+    },
+    {
+      "id": "brow-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 6
+    },
+    {
+      "id": "hair-side-r",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 336
+    },
+    {
+      "id": "nose",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 1848
+    },
+    {
+      "id": "upper-lip",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 90
+    },
+    {
+      "id": "lower-lip",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 8,
+      "triangles": 72
+    },
+    {
+      "id": "fringe-sweep",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 336
+    },
+    {
+      "id": "fringe-side",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 336
+    },
+    {
+      "id": "hair-tie",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 528
+    },
+    {
+      "id": "tail-lock-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 432
+    },
+    {
+      "id": "tail-lock-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 432
+    },
+    {
+      "id": "tail-lock-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 432
+    },
+    {
+      "id": "fringe-layer-0",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 336
+    },
+    {
+      "id": "fringe-layer-1",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 336
+    },
+    {
+      "id": "fringe-layer-2",
+      "degenerateTriangles": 0,
+      "normalDisagreements": 0,
+      "triangles": 336
+    }
+  ],
+  "hairClearance": [
+    {
+      "id": "hair-cap",
+      "minimumApproxSignedClearance": 0.0004985308012268146,
+      "insideSkullPointCount": 0,
+      "pointCount": 1730,
+      "rootBinding": null,
+      "capInsteadOfLock": true
+    },
+    {
+      "id": "ponytail",
+      "minimumApproxSignedClearance": -0.006072855483498369,
+      "insideSkullPointCount": 7,
+      "pointCount": 234,
+      "rootBinding": {
+        "u": 0.75,
+        "v": 0.84,
+        "consumedBy": "round4/compile_surfaces.py",
+        "note": "Head-rooted to posterior tie; hidden rear form inferred."
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "hair-side-l",
+      "minimumApproxSignedClearance": 0.0019780466368502464,
+      "insideSkullPointCount": 0,
+      "pointCount": 186,
+      "rootBinding": {
+        "u": 0.01,
+        "v": 0.79,
+        "consumedBy": "round4/compile_surfaces.py",
+        "coordinateSystem": "head-local LH, scalp azimuth u and height v"
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "hair-side-r",
+      "minimumApproxSignedClearance": 0.0019780466368502464,
+      "insideSkullPointCount": 0,
+      "pointCount": 186,
+      "rootBinding": {
+        "u": 0.49,
+        "v": 0.79,
+        "consumedBy": "round4/compile_surfaces.py",
+        "coordinateSystem": "head-local LH, scalp azimuth u and height v"
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "fringe-sweep",
+      "minimumApproxSignedClearance": 0.001977113678560095,
+      "insideSkullPointCount": 0,
+      "pointCount": 186,
+      "rootBinding": {
+        "u": 0.39,
+        "v": 0.89,
+        "consumedBy": "round4/compile_surfaces.py",
+        "coordinateSystem": "head-local LH, scalp azimuth u and height v"
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "fringe-side",
+      "minimumApproxSignedClearance": 0.001977548254186576,
+      "insideSkullPointCount": 0,
+      "pointCount": 186,
+      "rootBinding": {
+        "u": 0.48,
+        "v": 0.81,
+        "consumedBy": "round4/compile_surfaces.py",
+        "coordinateSystem": "head-local LH, scalp azimuth u and height v"
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "tail-lock-0",
+      "minimumApproxSignedClearance": -0.004375607098942694,
+      "insideSkullPointCount": 8,
+      "pointCount": 234,
+      "rootBinding": {
+        "u": 0.75,
+        "v": 0.84,
+        "consumedBy": "round4/compile_surfaces.py",
+        "note": "Head-rooted to posterior tie; hidden rear form inferred."
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "tail-lock-1",
+      "minimumApproxSignedClearance": -0.0031014709075112114,
+      "insideSkullPointCount": 6,
+      "pointCount": 234,
+      "rootBinding": {
+        "u": 0.75,
+        "v": 0.84,
+        "consumedBy": "round4/compile_surfaces.py",
+        "note": "Head-rooted to posterior tie; hidden rear form inferred."
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "tail-lock-2",
+      "minimumApproxSignedClearance": -0.0047019284567069415,
+      "insideSkullPointCount": 8,
+      "pointCount": 234,
+      "rootBinding": {
+        "u": 0.75,
+        "v": 0.84,
+        "consumedBy": "round4/compile_surfaces.py",
+        "note": "Head-rooted to posterior tie; hidden rear form inferred."
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "fringe-layer-0",
+      "minimumApproxSignedClearance": 0.0019913040100752607,
+      "insideSkullPointCount": 0,
+      "pointCount": 186,
+      "rootBinding": {
+        "u": 0.43,
+        "v": 0.91,
+        "consumedBy": "round4/compile_surfaces.py",
+        "coordinateSystem": "head-local LH, scalp azimuth u and height v"
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "fringe-layer-1",
+      "minimumApproxSignedClearance": 0.0020653792145166536,
+      "insideSkullPointCount": 0,
+      "pointCount": 186,
+      "rootBinding": {
+        "u": 0.39,
+        "v": 0.95,
+        "consumedBy": "round4/compile_surfaces.py",
+        "coordinateSystem": "head-local LH, scalp azimuth u and height v"
+      },
+      "capInsteadOfLock": false
+    },
+    {
+      "id": "fringe-layer-2",
+      "minimumApproxSignedClearance": 0.0025664480555190766,
+      "insideSkullPointCount": 0,
+      "pointCount": 186,
+      "rootBinding": {
+        "u": 0.32,
+        "v": 0.97,
+        "consumedBy": "round4/compile_surfaces.py",
+        "coordinateSystem": "head-local LH, scalp azimuth u and height v"
+      },
+      "capInsteadOfLock": false
+    }
+  ],
+  "scalpExposure": 0.014711,
+  "visualAcceptance": false
+}

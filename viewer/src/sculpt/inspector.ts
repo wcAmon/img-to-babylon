@@ -11,7 +11,8 @@ export function installSculptInspector(model: BuiltModel, camera: ArcRotateCamer
   panel.className = 'sculpt-panel';
   panel.setAttribute('aria-label', '模型零件檢查');
   const title = document.createElement('h2'); title.textContent = '女性戰術角色'; panel.append(title);
-  const subtitle = document.createElement('p'); subtitle.textContent = `${spec.targetName} · ${spec.buildStage} · r${String(model.root.metadata?.iteration?.revision ?? 1).padStart(3,'0')}`; panel.append(subtitle);
+  const iteration = model.root.metadata?.iteration;
+  const subtitle = document.createElement('p'); subtitle.textContent = `${spec.targetName} · ${iteration?.nativePass ?? spec.buildStage} · r${String(iteration?.revision ?? 1).padStart(3,'0')}${iteration?.nativeRound ? ` · 第 ${iteration.nativeRound} 輪` : ''}`; panel.append(subtitle);
   const stats = document.createElement('p'); const metrics = state.metrics();
   stats.textContent = `${metrics.components} 零件 · ${metrics.triangles.toLocaleString()} 三角面`; panel.append(stats);
   if (model.root.metadata?.iteration?.status === 'visual-review-required') {

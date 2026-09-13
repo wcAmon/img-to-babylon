@@ -1,0 +1,299 @@
+{
+  "actualNativeGeometry": true,
+  "coverageDomain": "Full variable hairline: front .72, sides .49, rear .23; crown disc included. Inferred rear coverage, not reference likeness.",
+  "sampleCount": 1473,
+  "exposedAreaFraction": 0.004258030351788138,
+  "hardMax": 0.05,
+  "coveragePass": true,
+  "rootContacts": [
+    {
+      "id": "ponytail",
+      "actualRootCenter": [
+        0.0,
+        0.08207739283144466,
+        -0.08157996362447739
+      ],
+      "distanceToActualCapTriangles": 0.0007764228110137976,
+      "rootHalfThickness": 0.0162,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "hair-side-l",
+      "actualRootCenter": [
+        0.08282069489359856,
+        0.07207749363780014,
+        0.005565796685317765
+      ],
+      "distanceToActualCapTriangles": 0.0019461434088626456,
+      "rootHalfThickness": 0.00324,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "hair-side-r",
+      "actualRootCenter": [
+        -0.08282069489359856,
+        0.07207749363780014,
+        0.005565796685317765
+      ],
+      "distanceToActualCapTriangles": 0.0019574398638848743,
+      "rootHalfThickness": 0.00324,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "fringe-sweep",
+      "actualRootCenter": [
+        -0.05370382033288479,
+        0.09676653750985853,
+        0.04912119783088565
+      ],
+      "distanceToActualCapTriangles": 0.002845828108665297,
+      "rootHalfThickness": 0.00405,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "fringe-side",
+      "actualRootCenter": [
+        -0.07993213273584843,
+        0.07670403224229805,
+        0.010897749272175131
+      ],
+      "distanceToActualCapTriangles": 0.0011170950880637935,
+      "rootHalfThickness": 0.00252,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "tail-lock-0",
+      "actualRootCenter": [
+        0.0,
+        0.08207739283144466,
+        -0.08157996176183224
+      ],
+      "distanceToActualCapTriangles": 0.00077642119927152,
+      "rootHalfThickness": 0.00864,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "tail-lock-1",
+      "actualRootCenter": [
+        0.0,
+        0.08207739096879951,
+        -0.08157996362447739
+      ],
+      "distanceToActualCapTriangles": 0.0007764218773469349,
+      "rootHalfThickness": 0.00864,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "tail-lock-2",
+      "actualRootCenter": [
+        0.0,
+        0.08207739190012209,
+        -0.08157996362447739
+      ],
+      "distanceToActualCapTriangles": 0.0007764223441803698,
+      "rootHalfThickness": 0.00864,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "fringe-layer-0",
+      "actualRootCenter": [
+        -0.05786822224035859,
+        0.10104477264732115,
+        0.030320350831374524
+      ],
+      "distanceToActualCapTriangles": 0.0019213003492643617,
+      "rootHalfThickness": 0.00315,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "fringe-layer-1",
+      "actualRootCenter": [
+        -0.03971631545573473,
+        0.11100428969413034,
+        0.03695602161437273
+      ],
+      "distanceToActualCapTriangles": 0.0021743457109005787,
+      "rootHalfThickness": 0.0036,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    },
+    {
+      "id": "fringe-layer-2",
+      "actualRootCenter": [
+        -0.017125470330938697,
+        0.11606177639961235,
+        0.04147456777840853
+      ],
+      "distanceToActualCapTriangles": 0.0022227877113486405,
+      "rootHalfThickness": 0.0036,
+      "rootEnvelopeGap": 0,
+      "attachedWithin2mm": true
+    }
+  ],
+  "rootPass": true,
+  "intrusions": [
+    {
+      "id": "ponytail",
+      "embeddedRootPoints": 7,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "hair-side-l",
+      "embeddedRootPoints": 0,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "hair-side-r",
+      "embeddedRootPoints": 0,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "fringe-sweep",
+      "embeddedRootPoints": 0,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "fringe-side",
+      "embeddedRootPoints": 0,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "tail-lock-0",
+      "embeddedRootPoints": 8,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "tail-lock-1",
+      "embeddedRootPoints": 6,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "tail-lock-2",
+      "embeddedRootPoints": 8,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "fringe-layer-0",
+      "embeddedRootPoints": 0,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "fringe-layer-1",
+      "embeddedRootPoints": 0,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    },
+    {
+      "id": "fringe-layer-2",
+      "embeddedRootPoints": 0,
+      "nonRootInsideSkullPoints": [],
+      "rootException": "Only first two authored root rings + duplicated root cap; posterior root seating or scalp lock embedding; no whole-hair exemption."
+    }
+  ],
+  "clearancePass": true,
+  "exposedSamples": [
+    {
+      "u": 0.6666666666666666,
+      "v": 0.9875
+    },
+    {
+      "u": 0.6875,
+      "v": 0.9875
+    },
+    {
+      "u": 0.7083333333333334,
+      "v": 0.9875
+    },
+    {
+      "u": 0.7291666666666666,
+      "v": 0.9875
+    },
+    {
+      "u": 0.75,
+      "v": 0.9875
+    },
+    {
+      "u": 0.7708333333333334,
+      "v": 0.9875
+    },
+    {
+      "u": 0.7916666666666666,
+      "v": 0.9875
+    },
+    {
+      "u": 0.8125,
+      "v": 0.9875
+    },
+    {
+      "u": 0.8333333333333334,
+      "v": 0.9875
+    },
+    {
+      "u": 0.3541666666666667,
+      "v": 1.0
+    },
+    {
+      "u": 0.6458333333333334,
+      "v": 1.0
+    },
+    {
+      "u": 0.6666666666666666,
+      "v": 1.0
+    },
+    {
+      "u": 0.6875,
+      "v": 1.0
+    },
+    {
+      "u": 0.7083333333333334,
+      "v": 1.0
+    },
+    {
+      "u": 0.7291666666666666,
+      "v": 1.0
+    },
+    {
+      "u": 0.75,
+      "v": 1.0
+    },
+    {
+      "u": 0.7708333333333334,
+      "v": 1.0
+    },
+    {
+      "u": 0.7916666666666666,
+      "v": 1.0
+    },
+    {
+      "u": 0.8125,
+      "v": 1.0
+    },
+    {
+      "u": 0.8333333333333334,
+      "v": 1.0
+    },
+    {
+      "u": 0.8541666666666666,
+      "v": 1.0
+    }
+  ],
+  "visualAcceptance": false
+}

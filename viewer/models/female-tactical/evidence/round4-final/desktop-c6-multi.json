@@ -1,0 +1,20 @@
+{
+  "referenceAreaFraction": 0.34091379540598293,
+  "angles": [
+    {
+      "path": ".img2babylon/shots/round4-c6-orbit-plus.png",
+      "areaFraction": 0.32762586805555555,
+      "ratio": 0.9610226176544037,
+      "degenerate": false
+    },
+    {
+      "path": ".img2babylon/shots/round4-c6-orbit-minus.png",
+      "areaFraction": 0.333203125,
+      "ratio": 0.9773823455961923,
+      "degenerate": false
+    }
+  ],
+  "degenerate": false,
+  "collapseRatio": 0.15,
+  "note": "deterministic; zero token; a flat-plane-faking-a-volume collapses in silhouette area when orbited"
+}

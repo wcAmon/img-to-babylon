@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "modelId": "female-tactical",
-  "revision": 1,
+  "revision": 6,
   "status": "visual-review-required",
-  "sourceOfTruth": "spec.json",
+  "sourceOfTruth": "canonical-spec.json#/extensions/babylon-sculpt-v1/source",
   "factory": "createFemaleTacticalModel.ts",
-  "construction": "Procedural ring lofts, boxes and ellipsoids; no runtime external mesh or image textures.",
+  "construction": "Native compiled procedural lofts, scalp-bound clumps, surface-conforming facial layers, mounted gear and boot cross-lace tubes; same125IDs.",
   "units": "m",
   "seed": 913,
   "reference": {
@@ -244,13 +244,11 @@
       "groups": [
         "face"
       ],
-      "status": "open",
+      "status": "visual-review-required",
       "edit": [
-        "head.geometry.rings",
-        "eye-white-l/r dimensions/transform",
-        "brow-l/r transform",
-        "nose.geometry.rings",
-        "upper-lip/lower-lip dimensions"
+        "head.geometry.relief",
+        "eye-white/iris/pupil/brow/eyelid nativeRecipe",
+        "upper-lip/lower-lip nativeRecipe"
       ],
       "acceptance": "同一鏡位臉部近照對照；眼白不浮凸，側面鼻唇可讀；保留原始相似度分數。",
       "dependsOn": []
@@ -262,11 +260,10 @@
       "groups": [
         "hair"
       ],
-      "status": "open",
+      "status": "visual-review-required",
       "edit": [
-        "fringe-sweep.geometry.rings",
-        "ponytail.geometry.rings",
-        "tail-lock-*.transform"
+        "hair-cap/scalp-lock/tail-lock nativeRecipe in spec.json",
+        "round4/compile_surfaces.py"
       ],
       "acceptance": "正面、側面、背面無頭皮穿插；髮束方向符合已核准概念。背面細節目前屬推測。",
       "dependsOn": [
@@ -306,16 +303,17 @@
         "legs",
         "boots"
       ],
-      "status": "open",
+      "status": "partial; runtime frame-time not measured",
       "edit": [
-        "src/sculpt/buildSculpt.ts optional render batching",
-        "component visibility map"
+        "Native generator shared buffer payload",
+        "Optional future model-specific binary externalization; preserve IDs/source"
       ],
       "acceptance": "相同相機與裝置比較前後 draw calls/影格耗時；零件隔離與銷毀測試仍通過。不得用隱藏零件偽裝效能提升。",
       "dependsOn": [
         "face-likeness",
         "garment-transitions"
-      ]
+      ],
+      "payloadDeduplication": "completed docs/migration/native-payload-deduplication.md; actual C6 inspection verifies immutable buffers"
     },
     {
       "id": "articulation",
@@ -338,6 +336,19 @@
       "dependsOn": [
         "garment-transitions"
       ]
+    },
+    {
+      "id": "boot-likeness",
+      "status": "visual-review-required",
+      "groups": [
+        "boots"
+      ],
+      "edit": [
+        "boot/sole geometry.rings",
+        "boot-upper nativeRecipe",
+        "lace nativeRecipe"
+      ],
+      "acceptance": "C6 actual front/profile toe/shaft/laces; approximate sole collider overshoot1mm recorded. No additional correction authorized."
     }
   ],
   "physicsStatus": {
@@ -349,12 +360,12 @@
     ]
   },
   "workflow": {
-    "resume": "python3 forge/next_pass.py --model female-tactical status",
-    "newRevision": "python3 forge/next_pass.py --model female-tactical revise --from-pass structure --reason \"Describe the approved change\"",
-    "limits": "Up to 6 corrections per iteration round; seventh is blocked. Lifetime/per-pass counts are historical only.",
-    "edit": "Keep modelId and component IDs. Edit spec recipes, revalidate, rebuild, compare saved screenshots, update affected tickets and reviewHistory.",
-    "snapshot": "revisions/rNNN/model stores all model source files before beginning a new completed-cycle revision.",
-    "newRound": "python3 forge/next_pass.py --model female-tactical iterate --reason \"Describe the authorized round goal\""
+    "resume": "python3.11 pipeline/forge/babylon.py next --state .img2babylon/female-tactical/pipeline/workflow.json",
+    "state": ".img2babylon/female-tactical/pipeline/workflow.json",
+    "status": "stopped max-round-correction-loops-reached:4:6/6",
+    "rebuild": "round4/c6/rebuild.sh",
+    "limits": "Round4 exhausted; diagnostics allowed, model changes stopped. Never automatically start another round.",
+    "authority": "Exact source recipes archived in canonical extension; native generator consumes model-specific compiled nativeVertexData; no legacy buildSculpt runtime."
   },
   "evidence": [
     "evidence/polish-sheet.png",
@@ -370,16 +381,15 @@
     "evidence/face-round3.png",
     "evidence/face-round3-side.png",
     "evidence/face-round3-compare.png",
-    "evidence/round3-verification.json"
+    "evidence/round3-verification.json",
+    "round4/c6/strict.json",
+    "round4/c6/visibility.json",
+    "round4/c6/boot-attachments.json",
+    "round4/c6/physics.json",
+    "round4/c6/inspection.log",
+    "round4/c6/triangle-budget.json",
+    "round4/c6/runtime-optimization.json"
   ],
-  "review": {
-    "likeness": 5.5,
-    "target": 7,
-    "automaticVerdict": "reject",
-    "correctionLimitReached": false,
-    "nextAction": "Review round 3 front/profile. Continue head relief and hair strand recipes with stable IDs.",
-    "scoreScope": "Historical round 1 overall review; no new whole-character acceptance claimed."
-  },
   "faceRounds": [
     {
       "round": 2,
@@ -424,5 +434,31 @@
       "evidence": "evidence/face-round3-compare.png",
       "verdict": "refinement checkpoint; not final acceptance"
     }
-  ]
+  ],
+  "round": 4,
+  "corrections": 6,
+  "correctionLimit": 6,
+  "lifetimeCorrections": 21,
+  "remainingCorrections": 0,
+  "hardStop": true,
+  "triangleCount": 29776,
+  "partCount": 125,
+  "authoringSource": "spec.json",
+  "nativeFactory": "createNativeFemaleTactical.ts",
+  "compiler": "round4/compile_surfaces.py",
+  "historicalReview": {
+    "likeness": 5.5,
+    "target": 7,
+    "automaticVerdict": "reject",
+    "correctionLimitReached": false,
+    "nextAction": "Review round 3 front/profile. Continue head relief and hair strand recipes with stable IDs.",
+    "scoreScope": "Historical round 1 overall review; no new whole-character acceptance claimed."
+  },
+  "review": {
+    "visualStatus": "unaccepted",
+    "correctionLimitReached": true,
+    "nextAction": "Desktop may capture and record C6 diagnostics only; no seventh correction or automatic new round.",
+    "latestActualGPU": "round4/c5-archive/actual-review.json",
+    "pendingGPU": "round4/c6/capture-handoff.json"
+  }
 }

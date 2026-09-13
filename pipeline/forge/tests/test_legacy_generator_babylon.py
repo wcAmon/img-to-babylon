@@ -36,6 +36,12 @@ class LegacyGeneratorTests(unittest.TestCase):
   self.assertEqual([c['id'] for c in payload['components']],[c['id'] for c in spec['componentTree']])
   self.assertTrue(all(c['_babylon']['scale']==[1,1,1] for c in payload['components']))
   self.assertTrue(all(e.startswith('nativeVertexGeometry(') for e in expressions.values()))
+ def test_native_buffers_serialized_once(self):
+  with patch.object(generator.oracle,'validate_spec',return_value=([],[])):
+   output=generator.generate(self.spec,'form-refinement','..')
+  # Large numeric payloads must occur once, regardless of runtime builder count.
+  positions=json.dumps(self.spec['componentTree'][0]['geometryDescriptor']['nativeVertexData']['positions'])
+  self.assertEqual(output.count(positions),1)
  def test_125_components_through_real_emitter(self):
   immutable=[CANONICAL,ROOT/'viewer/models/female-tactical/spec.json']
   hashes=[hashlib.sha256(p.read_bytes()).hexdigest() for p in immutable]

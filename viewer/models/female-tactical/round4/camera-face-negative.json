@@ -1,0 +1,14 @@
+{
+  "projection": "perspective",
+  "target": [
+    0,
+    1.588,
+    0
+  ],
+  "azimuthDegrees": -35,
+  "elevationDegrees": 0,
+  "distance": 0.78,
+  "fovDegrees": 28,
+  "near": 0.01,
+  "far": 100
+}

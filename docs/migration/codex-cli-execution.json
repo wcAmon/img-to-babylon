@@ -1,0 +1,31 @@
+{
+  "source": {
+    "path": "../reference/img2threejs",
+    "commit": "9fbd0ca5bbcc3b13bebe712745d6784d33db0b85",
+    "readOnly": true
+  },
+  "migrationCommit": "d6638a2",
+  "cli": {
+    "executable": "/Applications/ChatGPT.app/Contents/Resources/codex",
+    "version": "0.153.4",
+    "model": "configured default; no override",
+    "nativeRuntimeSession": "01a09ba2-02a2-7331-bbeb-020f76161bb3",
+    "nativeCaptureSession": "01a09ba4-d0a5-7bc0-b0e1-66b6417a7ed7",
+    "nativeAuditSession": "01a09ba3-d0e8-7910-95b9-5aeae059768d",
+    "characterSession": "01a09bd4-a7bd-7ea2-adc9-b9b0ea09f220"
+  },
+  "sequence": "Migration accepted and committed before character CLI dispatch. Desktop captured actual Babylon PNGs and resumed character CLI with images and concrete defects. No autonomous pass acceptance.",
+  "character": {
+    "id": "female-tactical",
+    "round": 4,
+    "maxCorrections": 6,
+    "baselineLifetimeCorrections": 15,
+    "status": "round-4-complete-at-six-correction-limit; visual acceptance failed",
+    "promptsAndEvents": ".img2babylon/cli/character-*.{md,jsonl}",
+    "evidence": ".img2babylon/shots/round4-*.png",
+    "nativeWorkflow": ".img2babylon/female-tactical/pipeline/workflow.json",
+    "corrections": 6,
+    "lifetimeCorrections": 21,
+    "review": "viewer/models/female-tactical/evidence/round4-final/review.json"
+  }
+}

@@ -1,0 +1,20 @@
+from pathlib import Path
+import json, hashlib
+D=Path(__file__).resolve().parent
+
+def save(n,v):
+ p=D/n;p.write_text(json.dumps(v,indent=2,ensure_ascii=False)+'\n');return hashlib.sha256(p.read_bytes()).hexdigest()
+base={'projection':'perspective','target':[0,.88,0],'azimuthDegrees':-12,'elevationDegrees':2,'distance':3.8,'fovDegrees':28,'near':.01,'far':100}
+views={}
+for name,yaw in [('fixed',-12),('orbit-positive',35),('orbit-negative',-35),('front',0),('right',90),('rear',180),('left',270)]:views[name]={**base,'azimuthDegrees':yaw}
+for name,yaw in [('face',0),('face-positive',35),('face-negative',-35)]:views[name]={**base,'target':[0,1.588,0],'distance':.78,'azimuthDegrees':yaw,'elevationDegrees':0}
+entries=[]
+for name,camera in views.items():
+ file=f'camera-{name}.json';sha=save(file,camera)
+ entries.append({'id':name,'camera':file,'sha256':sha,'url':f'http://127.0.0.1:5173/#model=female-tactical&reviewCamera=/models/female-tactical/round4/{file}&reviewPass=beauty'})
+changes=json.loads((D/'changes.json').read_text()); geometry=json.loads((D/'geometry-check.json').read_text())
+mesh=json.loads((D/'native-meshes.json').read_text())
+save('parts.json',{'model':'female-tactical','source':'actual native factory NullEngine export','parts':[{'name':m['componentId'],'kind':'part','module':m['componentId'],'triangles':len(m['indices'])//3} for m in mesh['meshes']],'unnamedMeshes':0,'integralMeshes':0,'limitation':'Numeric part identity only; browser picking/explode not visually verified.'})
+save('parameter-registry.json',{'modelId':'female-tactical','authority':'canonical-spec.json#/extensions/babylon-sculpt-v1/source','compileChain':['round4/prepare.py refine (first correction only; replay from snapshot)','spec.json','viewer/scripts/export_legacy_pipeline.ts','pipeline/forge/stage2_spec/import_babylon_sculpt.py','round4/prepare.py canonical','pipeline/forge/stage3_build/generate_babylon_factory.py --pass-id blockout','createNativeFemaleTactical.ts','createFemaleTacticalModel.ts → adaptPipelineModel'],'parameters':[{'id':cid,'recipePath':f'canonical-spec.json#/extensions/babylon-sculpt-v1/source/componentTree[id={cid}]/geometry','optimizationPath':f'spec.json:componentTree[id={cid}].optimization'} for cid in changes['changedPartIDs']],'pending':['Complete side/ponytail scalp bindings','head sockets/lids/nostrils/lip volume in feature-placement','sleeve/hip/knee/boot silhouette GPU comparison','glove fingers and boot construction in feature-placement','PBR provenance and consumed roughness at material-pass','Bounded geometry audit defects and authored UV acceptance']})
+save('capture-handoff.json',{'modelId':'female-tactical','round':4,'corrections':1,'limit':6,'remainingCorrections':5,'lifetimeCorrections':16,'pass':'blockout','viewport':{'width':585,'height':1024,'devicePixelRatio':1},'cameraCalibration':'candidate framing, not solved; compare approved reference before using IoU','captures':entries,'changedPartIDs':changes['changedPartIDs'],'newPartIDs':[],'gpuCapturePerformed':False,'geometryAudit':'failed; retain native-audit/audit.json','nextAction':'desktop diagnostic GPU capture then resume; no continue or likeness scoring until deterministic gates resolved','requiredDiagnostics':['beauty','alpha-silhouette','semantic-id','depth','normal','roughness-material-id'],'lighting':'Existing host lighting retained; record actual capture renderer/environment/exposure; do not claim reference-matched profile. Materials remain legacy StandardMaterial.','persistDirectory':'.img2babylon/shots/female-tactical-round4-c1','provenanceRequired':['browser/version','URL','viewport/DPR','observed document.documentElement.dataset.reviewReady','console errors','screenshot SHA256','camera SHA256','actual light/exposure settings'],'assets':{name:hashlib.sha256((D.parent/name).read_bytes()).hexdigest() for name in ['canonical-spec.json','spec.json','createNativeFemaleTactical.ts','createFemaleTacticalModel.ts','reference/female.png']}})
+print(entries[0]['url']);print('camera SHA256',entries[0]['sha256'])

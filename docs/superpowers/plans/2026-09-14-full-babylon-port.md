@@ -14,5 +14,5 @@ Constraints: Python stdlib only; source reference checkout read-only; no credent
 - [x] Adapt state/gates/render bridge so Babylon is the rendering authority and evidence is required for progress. Keep upstream fixtures as provenance; add Babylon tests.
 - [x] Run complete fork tests, native generator smoke/geometry tests, existing viewer/physics regressions. Record skips/failures without relabeling them as passes.
 - [x] Replace root routing documentation with the full workflow and an explicit compatibility/transition map.
-- [ ] Dispatch Codex CLI character refinement only after migration gates are satisfied. Feed approved image, same model identity, anatomy/landmark evidence, hair contracts and local state gate; require full head/body updates and genuine screenshots.
-- [ ] Desktop review: matched reference camera, face/hair/body detail evidence and Havok checks; preserve failed reviews, archive source before refinement rounds, and deliver verified output with limitations.
+- [x] Dispatch Codex CLI character refinement only after migration gates are satisfied. Feed approved image, same model identity, anatomy/landmark evidence, hair contracts and local state gate; require full head/body updates and genuine screenshots.
+- [x] Desktop review: matched reference camera, face/hair/body detail evidence and Havok checks; preserve failed reviews, archive source before refinement rounds, and deliver verified output with limitations.
