@@ -20,7 +20,7 @@ function banner(msg: string): void {
 
 async function boot(): Promise<void> {
   const canvas = document.getElementById("app") as HTMLCanvasElement;
-  const engine = new Engine(canvas, true, { preserveDrawingBuffer: true });
+  const engine = new Engine(canvas, true, { preserveDrawingBuffer: true, useExactSrgbConversions: true });
   const scene = new Scene(engine);
   const camera = new ArcRotateCamera(
     "cam", Math.PI / 3, Math.PI / 3, 1.0, new Vector3(0, 0.1, 0), scene,
@@ -89,6 +89,13 @@ async function boot(): Promise<void> {
   if (params.get('shot') === '1') document.querySelectorAll('.harness-bar, .actuator-panel, .sculpt-panel').forEach(el => (el as HTMLElement).style.display = 'none');
 
   engine.runRenderLoop(() => scene.render());
+  if ([...params.keys()].some(key => key.startsWith('review'))) {
+    try {
+      await scene.whenReadyAsync();
+      const { applyReviewRoute } = await import('./reviewRoute');
+      await applyReviewRoute(params, window.__IMG2BABYLON_CAPTURE__!, scene);
+    } catch (error) { banner(`檢視流程失敗：${String(error)}`); }
+  }
   window.addEventListener("resize", () => engine.resize());
 }
 

@@ -1,0 +1,350 @@
+{
+  "schemaVersion": "render-profile.v2",
+  "kind": "threejs-render-profile",
+  "authority": "browser-threejs",
+  "renderer": {
+    "backend": "WebGLRenderer",
+    "colorManagementEnabled": true,
+    "workingColorSpace": "Linear-sRGB",
+    "outputColorSpace": "SRGBColorSpace",
+    "toneMapping": "NoToneMapping",
+    "toneMappingExposure": 1.0,
+    "viewport": [
+      1280,
+      720
+    ],
+    "devicePixelRatio": 1.0,
+    "antialias": true,
+    "alpha": false,
+    "shadowMap": {
+      "enabled": true,
+      "type": "PCFSoftShadowMap"
+    }
+  },
+  "environment": {
+    "kind": "none",
+    "source": "",
+    "intensity": 0
+  },
+  "camera": {
+    "projection": "perspective",
+    "position": [
+      0.1,
+      1.649,
+      0.59
+    ],
+    "target": [
+      0,
+      1.595,
+      0
+    ],
+    "near": 0.01,
+    "far": 10,
+    "fovDegrees": 45.8
+  },
+  "background": {
+    "kind": "solid",
+    "color": "#eef2ff",
+    "alpha": 1
+  },
+  "passes": [
+    {
+      "id": "beauty",
+      "required": true,
+      "colorSpace": "SRGBColorSpace",
+      "toneMapped": true
+    },
+    {
+      "id": "alpha-silhouette",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false
+    },
+    {
+      "id": "semantic-id",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false,
+      "encoding": "region-id-rgb"
+    },
+    {
+      "id": "depth",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false,
+      "encoding": "linear-depth"
+    },
+    {
+      "id": "normal",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false,
+      "encoding": "view-space-xyz-remapped"
+    },
+    {
+      "id": "roughness-material-id",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false,
+      "encoding": "roughness-plus-region-id"
+    }
+  ],
+  "regions": [
+    {
+      "id": "arms",
+      "criticality": "important",
+      "idColor": [
+        255,
+        0,
+        0
+      ],
+      "meshNames": [
+        "upper-arm-l",
+        "forearm-l",
+        "upper-arm-r",
+        "forearm-r",
+        "sleeve-cuff-l",
+        "sleeve-cuff-r"
+      ]
+    },
+    {
+      "id": "boots",
+      "criticality": "important",
+      "idColor": [
+        0,
+        255,
+        0
+      ],
+      "meshNames": [
+        "boot-l",
+        "boot-r",
+        "boot-sole-l",
+        "boot-upper-l",
+        "lace-l-0",
+        "lace-l-1",
+        "lace-l-2",
+        "lace-l-3",
+        "boot-accent-l",
+        "boot-sole-r",
+        "boot-upper-r",
+        "lace-r-0",
+        "lace-r-1",
+        "lace-r-2",
+        "lace-r-3",
+        "boot-accent-r"
+      ]
+    },
+    {
+      "id": "equipment",
+      "criticality": "important",
+      "idColor": [
+        0,
+        0,
+        255
+      ],
+      "meshNames": [
+        "vest-front",
+        "vest-back",
+        "molle-front-0",
+        "molle-back-0",
+        "molle-front-1",
+        "molle-back-1",
+        "molle-front-2",
+        "molle-back-2",
+        "molle-front-3",
+        "molle-back-3",
+        "mag-pouch-0",
+        "pouch-flap-0",
+        "pouch-tab-0",
+        "mag-pouch-1",
+        "pouch-flap-1",
+        "pouch-tab-1",
+        "mag-pouch-2",
+        "pouch-flap-2",
+        "pouch-tab-2",
+        "belt",
+        "belt-buckle",
+        "strap-l",
+        "strap-accent-l",
+        "strap-buckle-l",
+        "side-strap-l",
+        "belt-accent-l",
+        "hip-pouch-l",
+        "shoulder-patch-l",
+        "knee-pad-l",
+        "knee-shell-l",
+        "knee-strap-l",
+        "cargo-pocket-l",
+        "thigh-band-l",
+        "thigh-buckle-l",
+        "strap-r",
+        "strap-accent-r",
+        "strap-buckle-r",
+        "side-strap-r",
+        "belt-accent-r",
+        "hip-pouch-r",
+        "shoulder-patch-r",
+        "knee-pad-r",
+        "knee-shell-r",
+        "knee-strap-r",
+        "cargo-pocket-r",
+        "thigh-band-r",
+        "thigh-buckle-r"
+      ]
+    },
+    {
+      "id": "face",
+      "criticality": "critical",
+      "idColor": [
+        255,
+        255,
+        0
+      ],
+      "meshNames": [
+        "neck",
+        "head",
+        "ear-l",
+        "eye-white-l",
+        "iris-l",
+        "pupil-l",
+        "eye-glint-l",
+        "eyelid-l",
+        "brow-l",
+        "ear-r",
+        "eye-white-r",
+        "iris-r",
+        "pupil-r",
+        "eye-glint-r",
+        "eyelid-r",
+        "brow-r",
+        "nose",
+        "upper-lip",
+        "lower-lip"
+      ]
+    },
+    {
+      "id": "hair",
+      "criticality": "critical",
+      "idColor": [
+        0,
+        255,
+        255
+      ],
+      "meshNames": [
+        "hair-cap",
+        "ponytail",
+        "hair-side-l",
+        "hair-side-r",
+        "fringe-sweep",
+        "fringe-side",
+        "hair-tie",
+        "tail-lock-0",
+        "tail-lock-1",
+        "tail-lock-2",
+        "fringe-layer-0",
+        "fringe-layer-1",
+        "fringe-layer-2"
+      ]
+    },
+    {
+      "id": "hands",
+      "criticality": "important",
+      "idColor": [
+        255,
+        0,
+        255
+      ],
+      "meshNames": [
+        "hand-l",
+        "hand-r",
+        "wrist-cuff-l",
+        "glove-plate-l",
+        "finger-l-0",
+        "finger-l-1",
+        "finger-l-2",
+        "finger-l-3",
+        "thumb-l",
+        "wrist-cuff-r",
+        "glove-plate-r",
+        "finger-r-0",
+        "finger-r-1",
+        "finger-r-2",
+        "finger-r-3",
+        "thumb-r"
+      ]
+    },
+    {
+      "id": "legs",
+      "criticality": "important",
+      "idColor": [
+        128,
+        64,
+        255
+      ],
+      "meshNames": [
+        "pelvis",
+        "thigh-l",
+        "calf-l",
+        "thigh-r",
+        "calf-r"
+      ]
+    },
+    {
+      "id": "torso",
+      "criticality": "important",
+      "idColor": [
+        255,
+        128,
+        64
+      ],
+      "meshNames": [
+        "torso",
+        "collar-l",
+        "collar-r"
+      ]
+    }
+  ],
+  "feedbackGroups": [
+    {
+      "id": "camera",
+      "order": 1
+    },
+    {
+      "id": "silhouette",
+      "order": 2
+    },
+    {
+      "id": "face",
+      "order": 3
+    },
+    {
+      "id": "clothing",
+      "order": 4
+    },
+    {
+      "id": "accessory",
+      "order": 5
+    },
+    {
+      "id": "materials",
+      "order": 6
+    },
+    {
+      "id": "lighting",
+      "order": 7
+    }
+  ],
+  "extensions": {
+    "requiredSemanticRegions": [
+      "arms",
+      "boots",
+      "equipment",
+      "face",
+      "hair",
+      "hands",
+      "legs",
+      "torso"
+    ],
+    "evidencePurpose": "Migration capture smoke only, not a likeness acceptance"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "status": "accepted-core-migration",
+  "date": "2026-09-13T17:32:51.297083+00:00",
+  "sourceCommit": "9fbd0ca5bbcc3b13bebe712745d6784d33db0b85",
+  "python": {
+    "run": 1129,
+    "skipped": 38,
+    "passed": true
+  },
+  "legacyTests": 134,
+  "typecheck": "pass",
+  "build": "pass",
+  "gpuPixelReport": "pixel-verification.json",
+  "characterLikeness": "not-reviewed-by-migration",
+  "cliVersion": "0.153.4",
+  "sourceCheckoutClean": true
+}

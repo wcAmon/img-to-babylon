@@ -1,0 +1,117 @@
+{
+  "status": "PASS",
+  "scope": "Actual persisted browser canvas PNGs; no likeness score",
+  "browser": "Codex in-app browser / WebGL2 / exact sRGB",
+  "checks": [
+    "AgX bypass for exact solid background",
+    "transparent diagnostic background",
+    "semantic RGB",
+    "canonical front-facing normals",
+    "linear camera depth",
+    "roughness and ID byte encoding",
+    "independent roughness-map variation on posed native mesh"
+  ],
+  "nativeBeamRoughnessBytes": {
+    "min": 90,
+    "max": 123,
+    "sampledPixels": 13953
+  },
+  "captures": [
+    {
+      "path": ".img2babylon/shots/migration-glb-raw-beauty.png",
+      "sha256": "f6e8820e74e39ef5e2dfba7806e34f8a9cc67b8f85874094fb1e9cb216cbfe8a",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-glb-raw-beauty.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-glb-raw-alpha-silhouette.png",
+      "sha256": "2a951d814c9b2347b38c3400b07df6e2ea1ae08e3088502b3e6bec2d7d240b89",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-glb-raw-alpha-silhouette.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-glb-raw-semantic-id.png",
+      "sha256": "c940010704366e04df1d66b82190aa192ea119ab499d753dfc71938ceef22db7",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-glb-raw-semantic-id.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-glb-raw-depth.png",
+      "sha256": "f849be261c350168d25fd3c498361029fadf4ddc647c21068958fc57a76a7006",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-glb-raw-depth.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-glb-raw-normal.png",
+      "sha256": "1b5b2d6395a2a3dc7b93773736371c35188862e2f9816fd5570369a32e317090",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-glb-raw-normal.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-glb-raw-roughness-material-id.png",
+      "sha256": "e9ccaa6cc7a193bc72c10ddf454ea4e72cc94a1be3fa6a6f6b4ae7b76e922de0",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-glb-raw-roughness-material-id.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-native-raw-beauty.png",
+      "sha256": "881d09d976fb6f03b303f8485e72143cdbb16076b10605856377b52ea594c154",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-native-raw-beauty.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-native-raw-alpha-silhouette.png",
+      "sha256": "6c23c1791542e9aaec3df619533de848641b0d9bf4240834138d7ba0c1fa6229",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-native-raw-alpha-silhouette.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-native-raw-semantic-id.png",
+      "sha256": "fc81ad1b6a1c8db41a8979c8b400bd4476d43c11b7b3895f3a2b505731fd0fef",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-native-raw-semantic-id.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-native-raw-depth.png",
+      "sha256": "e89b6bc93df7338f94303158f9043f576f3dd5f28d2e6a268b480e9791a0f890",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-native-raw-depth.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-native-raw-normal.png",
+      "sha256": "2d075018f1b27aa4f19d782c1ed63a66e73009c2eccc5cdb455904d3c27237fa",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-native-raw-normal.png"
+    },
+    {
+      "path": ".img2babylon/shots/migration-native-raw-roughness-material-id.png",
+      "sha256": "b5b6bf86ef2dbe9d5e32057b7dfaf00375dac4e2242c4c3c63aaa5e77848f0c1",
+      "width": 1280,
+      "height": 720,
+      "warnings": [],
+      "archivedPath": "docs/migration/evidence/migration-native-raw-roughness-material-id.png"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+import assert from 'node:assert/strict';
+import { NullEngine, Scene, Mesh, TransformNode, Quaternion, Vector3, Matrix, Bone, Skeleton, VertexBuffer, FreeCamera, Material } from '@babylonjs/core';
+import * as P from '../src/pipeline/primitives';
+import * as A from '../src/pipeline/geometryAlgorithms';
+import { Attribute, MeshData, applyMeshData, quaternionXYZ, convertVector } from '../src/pipeline/meshData';
+import { createSculptMaterial } from '../src/pipeline/materials';
+import { makeTexturePixels } from '../src/pipeline/materialMath';
+import { bindRig, skinPosition } from '../src/pipeline/rig';
+import { configureCamera, createLookDevLights } from '../src/pipeline/scene';
+import { convertThreeObject, readGeometry } from '../src/pipeline/objectConversion';
+import { applyMorphSet } from '../src/pipeline/morphs';
+import { standProud, paintGeometry } from '../src/pipeline/surface';
+const close = (a: number, b: number, e = 1e-5) => assert(Math.abs(a - b) <= e, `${a} != ${b}`);
+const engine = new NullEngine({ renderWidth: 512, renderHeight: 512, textureSize: 512, deterministicLockstep: true, lockstepMaxSteps: 1 });
+function signedVolume(g: MeshData) { const p = g.attributes.position.array, ix = g.indices ?? Array.from({ length: p.length / 3 }, (_, i) => i); let v = 0; for (let i = 0; i < ix.length; i += 3) {
+    const a = Vector3.FromArray(p, ix[i] * 3), b = Vector3.FromArray(p, ix[i + 1] * 3), c = Vector3.FromArray(p, ix[i + 2] * 3);
+    v += Vector3.Dot(a, Vector3.Cross(b, c)) / 6;
+} return v; }
+const primitives = { box: P.boxGeometry(1, 1, 1, 2, 2, 2), sphere: P.sphereGeometry(.5, 24, 16), cylinder: P.cylinderGeometry(.5, .4, 1, 24, 3), cone: P.coneGeometry(.5, 1, 24, 2), torus: P.torusGeometry(.45, .08, 12, 32), capsule: A.buildWatertightCapsule(.35, .7, 8, 16, 1), taper: A.buildTaperedSweepGeometry({ stations: [{ position: [0, 0, 0], rx: .1, rz: .1 }, { position: [.2, .6, .1], rx: 0, rz: 0 }], radialSegments: 12 }), extrude: P.buildExtrudeGeometry({ points: [[-1, -1], [1, -1], [1, 1], [-1, 1]], depth: .5, holes: [[[-.3, -.3], [-.3, .3], [.3, .3], [.3, -.3]]] }), sdf: A.polygonizeSdf({ primitives: [{ id: 'sphere', type: 'sphere', radius: .5 }], resolution: 16, bounds: { min: [-.7, -.7, -.7], max: [.7, .7, .7] } }), hull: A.buildVisualHullGeometry({ projection: 'orthographic', boundsSpace: 'component-local', bounds: { min: [-.5, -.5, -.5], max: [.5, .5, .5] }, resolution: 4, triangleBudget: 1000, views: [{ axis: 'front', confidence: 1, mask: ['1111', '1111', '1111', '1111'] }, { axis: 'side', confidence: 1, mask: ['1111', '1111', '1111', '1111'] }] }) };
+for (const [name, g] of Object.entries(primitives)) {
+    assert(signedVolume(g) > 0, `${name}: inverted faces`);
+    for (const a of Object.values(g.attributes))
+        assert(Array.from(a.array).every(Number.isFinite), `${name}: invalid attribute`);
+}
+close(signedVolume(primitives.box), 1);
+close(signedVolume(primitives.extrude), (4 - .36) * .5);
+const mirrored = primitives.box.clone().scale(-2, 3, 4);
+close(signedVolume(mirrored), 24);
+const subdivision = A.subdivideCatmullClark(P.boxGeometry(), 2);
+assert(subdivision.attributes.position.count > 8);
+assert(subdivision.userData.subdivision.quadFaceCount === 96);
+const decimated = A.decimateGeometry(primitives.sdf, .5);
+assert(decimated.indices!.length < primitives.sdf.indices!.length);
+const texturesA = makeTexturePixels('seed', { baseColor: '#203040' }, 32), texturesB = makeTexturePixels('seed', { baseColor: '#203040' }, 32);
+assert.deepEqual(texturesA.images, texturesB.images);
+assert.notDeepEqual(texturesA.images.normal.data, texturesA.images.roughness.data);
+for (const rh of [true, false]) {
+    const scene = new Scene(engine);
+    scene.useRightHandedSystem = rh;
+    const mesh = new Mesh('triangle', scene), g = new MeshData().setAttribute('position', new Attribute([0, 0, 1, 1, 0, 1, 0, 1, 1], 3)).setAttribute('normal', new Attribute([0, 0, 1, 0, 0, 1, 0, 0, 1], 3)).setIndex([0, 1, 2]);
+    g.groups = [{ start: 0, count: 3, materialIndex: 2 }];
+    g.morphTargetsRelative = true;
+    g.morphAttributes.position = [new Attribute([0, 0, .5, 0, 0, .5, 0, 0, .5], 3)];
+    applyMeshData(g, mesh);
+    const pos = mesh.getVerticesData('position')!;
+    close(pos[2], rh ? 1 : -1);
+    assert.deepEqual(Array.from(mesh.getIndices()!), rh ? [0, 1, 2] : [0, 2, 1]);
+    assert.equal(mesh.subMeshes[0].materialIndex, 2);
+    close(mesh.morphTargetManager!.getTarget(0).getPositions()![2], rh ? 1.5 : -1.5);
+    assert.equal(mesh.sideOrientation, rh ? Material.CounterClockWiseSideOrientation : Material.ClockWiseSideOrientation);
+    const morphSet = applyMorphSet(mesh, { vertexCount: 3, morphTargetsRelative: true, targets: [{ name: 'blink', deltas: [[0, 0, .2], [0, 0, 0], [0, 0, 0]], influence: .4 }] });
+    close(morphSet.getTarget(0).getPositions()![2], rh ? 1.2 : -1.2);
+    close(morphSet.getTarget(0).influence, .4);
+    const camera = new FreeCamera('camera', Vector3.Zero(), scene);
+    configureCamera(camera, { fov: 60, position: [1, 2, 3], target: [0, 0, 0] });
+    close(camera.fov, Math.PI / 3);
+    close(camera.position.z, rh ? 3 : -3);
+    const material = createSculptMaterial('flat', { baseColor: '#808080', roughness: .32, metalness: 1, textureless: { declared: true }, clearcoat: .4, sheen: .2, anisotropy: { amount: .3, rotation: .7 } }, scene);
+    close(material.albedoColor.r, .2158605, 1e-6);
+    close(material.roughness!, .32);
+    close(material.anisotropy.angle, .7);
+    assert.equal(material.metallic, 1);
+    const root = new TransformNode('rig', scene);
+    root.metadata = {};
+    const node = new TransformNode('arm pivot', scene);
+    node.parent = root;
+    const arm = new Mesh('arm', scene);
+    arm.parent = node;
+    arm.position = convertVector([0, 1, 0], scene);
+    const dg = new MeshData().setAttribute('position', new Attribute([0, 1, 0, .1, 1, 0, 0, .9, .1], 3)).setIndex([0, 1, 2]).computeVertexNormals();
+    applyMeshData(dg, arm);
+    const rig = bindRig(root, [{ id: 'upper', component: 'arm', jointPos: [0, 1, 0], tipPos: [0, 2, 0], envelope: .5 }], [{ id: 'arm' }], { arm: node }, { arm }, { arm: dg });
+    assert(rig.bound);
+    let v = skinPosition(arm, 0);
+    close(v.y, 2);
+    close(v.z, 0);
+    rig.bones.upper.setRotationQuaternion(rh ? quaternionXYZ([Math.PI / 2, 0, 0]) : new Quaternion(-Math.SQRT1_2, 0, 0, Math.SQRT1_2));
+    v = skinPosition(arm, 0);
+    close(v.y, 1);
+    close(v.z, rh ? 1 : -1);
+    const target = new TransformNode('skull', scene), hair = new Mesh('hair', scene), hairData = new MeshData().setAttribute('position', new Attribute([.08, 0, 0, .08, .01, 0, .08, 0, .01], 3)).setIndex([0, 1, 2]);
+    const report = standProud(hairData, hair, target, [[-.2, .1, .1, 0], [.2, .1, .1, 0]], .01, .1);
+    assert.equal(report.unresolved, 0);
+    assert(hairData.attributes.position.getX(0) > .11);
+    scene.dispose();
+}
+// XYZ order must differ from Babylon's default YXZ for a non-commuting rotation.
+const xyz = quaternionXYZ([.3, .7, -.2]);
+assert(Math.abs(xyz.z - Quaternion.RotationYawPitchRoll(.7, .3, -.2).z) > .01);
+engine.dispose();
+console.log(JSON.stringify({ status: 'PASS', primitiveVolumes: Object.fromEntries(Object.entries(primitives).map(([k, g]) => [k, signedVolume(g)])), checks: ['RH/LH positions/winding/normals', 'UV geometry', 'hole volume', 'subdivision', 'decimation', 'deterministic PBR maps', 'linear albedo', 'native morph and submeshes', 'degree FOV', 'XYZ rotation', 'native rest and posed skinning', 'hair clearance'] }));

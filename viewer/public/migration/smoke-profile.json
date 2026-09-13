@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "render-profile.v2",
+  "kind": "threejs-render-profile",
+  "authority": "browser-threejs",
+  "renderer": {
+    "backend": "WebGLRenderer",
+    "colorManagementEnabled": true,
+    "workingColorSpace": "Linear-sRGB",
+    "outputColorSpace": "SRGBColorSpace",
+    "toneMapping": "AgXToneMapping",
+    "toneMappingExposure": 1.0,
+    "viewport": [
+      1280,
+      720
+    ],
+    "devicePixelRatio": 1.0,
+    "antialias": true,
+    "alpha": false,
+    "shadowMap": {
+      "enabled": true,
+      "type": "PCFSoftShadowMap"
+    }
+  },
+  "environment": {
+    "kind": "none",
+    "source": "",
+    "intensity": 0
+  },
+  "camera": {
+    "coordinateFrame": "source-rh",
+    "projection": "perspective",
+    "position": [
+      1,
+      1.1,
+      2.5
+    ],
+    "target": [
+      0,
+      0.5,
+      0
+    ],
+    "near": 0.01,
+    "far": 10,
+    "fovDegrees": 40
+  },
+  "background": {
+    "kind": "solid",
+    "color": "#eef2ff",
+    "alpha": 1
+  },
+  "passes": [
+    {
+      "id": "beauty",
+      "required": true,
+      "colorSpace": "SRGBColorSpace",
+      "toneMapped": true
+    },
+    {
+      "id": "alpha-silhouette",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false
+    },
+    {
+      "id": "semantic-id",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false,
+      "encoding": "region-id-rgb"
+    },
+    {
+      "id": "depth",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false,
+      "encoding": "linear-depth"
+    },
+    {
+      "id": "normal",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false,
+      "encoding": "view-space-xyz-remapped"
+    },
+    {
+      "id": "roughness-material-id",
+      "required": true,
+      "colorSpace": "NoColorSpace",
+      "toneMapped": false,
+      "encoding": "roughness-plus-region-id"
+    }
+  ],
+  "regions": [
+    {
+      "id": "pedestal",
+      "criticality": "important",
+      "idColor": [
+        255,
+        0,
+        0
+      ],
+      "meshNames": [
+        "pedestal"
+      ]
+    },
+    {
+      "id": "beam",
+      "criticality": "important",
+      "idColor": [
+        0,
+        255,
+        0
+      ],
+      "meshNames": [
+        "beam"
+      ]
+    },
+    {
+      "id": "witness",
+      "criticality": "important",
+      "idColor": [
+        0,
+        0,
+        255
+      ],
+      "meshNames": [
+        "witness"
+      ]
+    }
+  ],
+  "feedbackGroups": [
+    {
+      "id": "camera",
+      "order": 1
+    },
+    {
+      "id": "silhouette",
+      "order": 2
+    },
+    {
+      "id": "face",
+      "order": 3
+    },
+    {
+      "id": "clothing",
+      "order": 4
+    },
+    {
+      "id": "accessory",
+      "order": 5
+    },
+    {
+      "id": "materials",
+      "order": 6
+    },
+    {
+      "id": "lighting",
+      "order": 7
+    }
+  ],
+  "extensions": {
+    "requiredSemanticRegions": [
+      "pedestal",
+      "beam",
+      "witness"
+    ],
+    "evidencePurpose": "Migration capture smoke only, not a likeness acceptance"
+  }
+}
