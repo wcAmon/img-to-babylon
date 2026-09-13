@@ -20,3 +20,15 @@
 | `npx tsx scripts/physics_test.ts <name> --spec models/<name>/spec.json [--nudge <bodyId>]` | 動態物理 gate（有 hinge 時 `--spec` 才會查約束是否被扯開） |
 | `npm run dev` | 開 viewer（http://localhost:5173/#model=<name>&physics=1） |
 | `python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'` | forge 全測試 |
+# 每個模型獨立迭代（2026-09-13）
+
+舊指令不變。全域位置加入 `--model NAME` 可使用獨立狀態，保留舊 `.img2babylon/state.json`：
+
+```sh
+python3 forge/next_pass.py --model female-tactical status
+python3 forge/model_report.py viewer/models/female-tactical --write
+```
+
+新模型初始化：`python3 forge/next_pass.py --model NAME init --model NAME`。
+受版本管理的 `viewer/models/NAME/iteration-state.json` 是本機 state 不存在時的恢復來源。
+`revise --from-pass structure --reason '...'` 僅允許已完成 cycle；會先快照 model/runtime，再更新 metadata，不能繞過未完成 cycle 的修正上限。

@@ -1,9 +1,11 @@
 import {
   ArcRotateCamera,
+  DirectionalLight,
   Engine,
   HavokPlugin,
   HemisphericLight,
   Scene,
+  ShadowGenerator,
   Vector3,
 } from "@babylonjs/core";
 import HavokPhysics from "@babylonjs/havok";
@@ -26,7 +28,7 @@ async function boot(): Promise<void> {
   camera.wheelDeltaPercentage = 0.01;
   camera.minZ = 0.01;
   camera.attachControl(canvas, true);
-  new HemisphericLight("light", new Vector3(0.3, 1, 0.2), scene);
+  const light = new HemisphericLight("light", new Vector3(0.3, 1, 0.2), scene);
 
   try {
     const havok = await HavokPhysics();
@@ -53,7 +55,7 @@ async function boot(): Promise<void> {
     ? requestedScale : undefined;
   const factory = (await load()).default;
   const model = factory(scene, {
-    physics: params.get("physics") !== "0",
+    physics: params.has('physics') ? params.get("physics") !== "0" : undefined,
     physicsScale,
   });
   camera.radius *= model.physicsScale;
@@ -63,6 +65,28 @@ async function boot(): Promise<void> {
   const { installCapture } = await import("./capture");
   installCapture(scene, camera, model);
   installHarness(scene, model, name);
+  if (model.root.metadata?.sculptSpec) {
+    light.direction.set(-.4, .9, 1);
+    light.intensity = .65;
+    light.groundColor.set(.40, .43, .48);
+    const key = new DirectionalLight('sculpt-key', new Vector3(.45, -1, -.85), scene);
+    key.position.set(-3,6,4); key.intensity=.8;
+    const shadows = new ShadowGenerator(2048,key);
+    shadows.useBlurExponentialShadowMap=true; shadows.blurKernel=24;
+    shadows.setDarkness(.65);
+    Object.values(model.meshes).forEach(mesh=>shadows.addShadowCaster(mesh));
+    const ground=scene.getMeshByName('ground'); if(ground) ground.receiveShadows=true;
+    // Match the uniform lit floor so the horizon does not contaminate silhouette comparison.
+    scene.clearColor.set(240/255,244/255,1,1);
+    camera.setTarget(new Vector3(0, .9, 0).scale(model.physicsScale));
+    camera.radius = 2.65 * model.physicsScale;
+    camera.alpha = 1.22;
+    camera.beta = 1.48;
+  }
+  const { installSculptInspector } = await import('./sculpt/inspector');
+  installSculptInspector(model, camera);
+  if (params.get('wire') === '1') window.__IMG2BABYLON_CAPTURE__?.togglePhysicsViewer(true);
+  if (params.get('shot') === '1') document.querySelectorAll('.harness-bar, .actuator-panel, .sculpt-panel').forEach(el => (el as HTMLElement).style.display = 'none');
 
   engine.runRenderLoop(() => scene.render());
   window.addEventListener("resize", () => engine.resize());

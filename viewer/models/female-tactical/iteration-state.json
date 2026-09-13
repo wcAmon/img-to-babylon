@@ -1,0 +1,22 @@
+{
+  "model": "female-tactical",
+  "revision": 1,
+  "passOrder": [
+    "blockout",
+    "structure",
+    "material",
+    "physics",
+    "polish"
+  ],
+  "currentIndex": 4,
+  "corrections": {
+    "perPass": {
+      "blockout": 2,
+      "material": 1,
+      "physics": 1,
+      "polish": 1
+    },
+    "total": 5
+  },
+  "blockedReason": "Correction attempt 6 blocked. Visual likeness 5.5/10 below 7; request user direction."
+}
