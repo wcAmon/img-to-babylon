@@ -34,7 +34,11 @@ def validate(spec, manifest):
             if group not in group_ids: errors.append(f'unknown optimisation group: {group}')
     for cid,c in components.items():
         geo=c.get('geometry',{})
-        if geo.get('kind') not in ('box','ellipsoid','loft'): errors.append(f'unknown geometry recipe: {cid}')
+        if geo.get('kind') not in ('box','ellipsoid','loft','patch'): errors.append(f'unknown geometry recipe: {cid}')
+        if geo.get('kind') == 'patch':
+            points=geo.get('outline',[])
+            if len(points)<3 or any(len(p)!=3 or not all(isinstance(x,(int,float)) and math.isfinite(x) for x in p) for p in points):
+                errors.append(f'invalid patch outline: {cid}')
         if not c.get('optimization',{}).get('parameterPath'): errors.append(f'missing edit locator: {cid}')
         if c['transform']['scale'] != [1,1,1]: errors.append(f'non-unit component scale: {cid}')
         if geo.get('kind') == 'loft':

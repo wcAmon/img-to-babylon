@@ -4,6 +4,21 @@ import { PhysicsShapeContainer, VertexBuffer } from '@babylonjs/core';
 import { createHeadlessScene } from '../src/headless';
 import { registry } from '../src/registry';
 import { SculptInspection } from '../src/sculpt/inspection';
+import { triangulateOutline } from '../src/sculpt/geometry';
+
+// A concave L must retain its empty notch, in either input winding.
+for(const outline of [[[0,0],[2,0],[2,1],[1,1],[1,2],[0,2]],[[0,2],[1,2],[1,1],[2,1],[2,0],[0,0]]]) {
+  const indices=triangulateOutline(outline);
+  let area=0;
+  assert.equal(indices.length,12);
+  for(let i=0;i<indices.length;i+=3) {
+    const [a,b,c]=indices.slice(i,i+3).map(j=>outline[j]);
+    const signed=((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]))/2;
+    assert.ok(signed<0,'Patch winding faces outward in Babylon');area-=signed;
+    assert.ok((a[0]+b[0]+c[0])/3<=1||(a[1]+b[1]+c[1])/3<=1,'No triangle fills the notch');
+  }
+  assert.equal(area,3);
+}
 
 assert.ok(registry['female-tactical'], 'Female character must be registered');
 const ctx = await createHeadlessScene();

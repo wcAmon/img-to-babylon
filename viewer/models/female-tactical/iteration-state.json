@@ -14,9 +14,25 @@
       "blockout": 2,
       "material": 1,
       "physics": 1,
-      "polish": 1
+      "polish": 6
     },
-    "total": 5
+    "total": 10
   },
-  "blockedReason": "Correction attempt 6 blocked. Visual likeness 5.5/10 below 7; request user direction."
+  "roundHistory": [
+    {
+      "index": 1,
+      "corrections": 5,
+      "limit": 6,
+      "reason": "User authorized per-round limits and face-only refinement",
+      "snapshot": ".img2babylon/female-tactical/rounds/r001-round001",
+      "endedAt": "2026-09-13T15:40:30.139289+00:00",
+      "passAtEnd": "polish"
+    }
+  ],
+  "iterationRound": {
+    "index": 2,
+    "corrections": 5,
+    "limit": 6,
+    "reason": "User authorized per-round limits and face-only refinement"
+  }
 }

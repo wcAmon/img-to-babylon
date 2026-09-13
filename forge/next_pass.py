@@ -12,8 +12,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 PASS_ORDER = ["blockout", "structure", "material", "physics", "polish"]
-PER_PASS_LIMIT = 3
-TOTAL_LIMIT = 6
+ROUND_LIMIT = 6
 STATE_REL = os.path.join(".img2babylon", "state.json")
 
 
@@ -58,6 +57,7 @@ def cmd_init(root, model, force):
         "passOrder": PASS_ORDER,
         "currentIndex": 0,
         "corrections": {"perPass": {}, "total": 0},
+        "iterationRound": {"index": 1, "corrections": 0, "limit": ROUND_LIMIT},
     })
     print(json.dumps({"model": model, "currentPass": PASS_ORDER[0]}))
     return 0
@@ -73,6 +73,7 @@ def cmd_status(root):
         "revision": state.get('revision', 1),
         "correctionsThisPass": state["corrections"]["perPass"].get(cur or "", 0),
         "totalCorrections": state["corrections"]["total"],
+        "iterationRound": iteration_round(state),
     }, ensure_ascii=False))
     return 0
 
@@ -97,17 +98,49 @@ def cmd_correction(root):
         return 2
     per = state["corrections"]["perPass"].get(cur, 0) + 1
     total = state["corrections"]["total"] + 1
-    # 刻意不對稱：per-pass 用 >（3 次以內都放行，第 4 次擋）；
-    # total 用 >=（累計到 5 次都放行，第 6 次擋）。兩式皆已由 gate 測試鎖定，勿「修齊」成同一種比較。
-    if per > PER_PASS_LIMIT or total >= TOTAL_LIMIT:
-        print(f"修正上限已到（pass {cur}: {per}/{PER_PASS_LIMIT}, 總計: {total}/{TOTAL_LIMIT}）"
+    round_state = iteration_round(state)
+    count = round_state['corrections'] + 1
+    if count > round_state['limit']:
+        print(f"本輪修正上限已到（第 {round_state['index']} 輪：{count}/{round_state['limit']}）"
               "——停止並 request-input", file=sys.stderr)
         return 3
     state["corrections"]["perPass"][cur] = per
     state["corrections"]["total"] = total
+    state['iterationRound'] = dict(round_state, corrections=count)
     save_state(root, state)
     print(json.dumps({"pass": cur, "corrections": per, "total": total}))
     return 0
+
+
+def iteration_round(state):
+    # Legacy counts remain historical evidence; no automatic reset on migration.
+    return state.get('iterationRound', {'index':1, 'corrections':state['corrections']['total'], 'limit':ROUND_LIMIT})
+
+
+def cmd_iterate(root, reason, limit=ROUND_LIMIT):
+    if not isinstance(root,tuple) or limit < 1 or not reason.strip():
+        print('iterate 需要 --model、非空原因與正數上限',file=sys.stderr)
+        return 2
+    state=load_state(root)
+    if current_pass(state) is None:
+        print('所有 pass 已完成，請使用 revise 開始新的版本',file=sys.stderr)
+        return 2
+    base,model=root
+    previous=iteration_round(state)
+    source=Path(base,'viewer/models',model)
+    dest=Path(base,'.img2babylon',model,'rounds',f'r{state.get("revision",1):03d}-round{previous["index"]:03d}')
+    if not source.is_dir() or dest.exists():
+        print('來源不存在或本輪快照已存在；不覆寫',file=sys.stderr)
+        return 2
+    shutil.copytree(source,dest/'model')
+    runtime=Path(base,'viewer/src/sculpt')
+    if runtime.is_dir(): shutil.copytree(runtime,dest/'runtime')
+    (dest/'state.json').write_text(json.dumps(state,ensure_ascii=False,indent=2)+'\n')
+    state.setdefault('roundHistory',[]).append(dict(previous,reason=reason,snapshot=str(dest),endedAt=datetime.now(timezone.utc).isoformat(),passAtEnd=current_pass(state)))
+    state['iterationRound']={'index':previous['index']+1,'corrections':0,'limit':limit,'reason':reason}
+    state.pop('blockedReason',None)
+    save_state(root,state)
+    return cmd_status(root)
 
 
 def cmd_revise(root, from_pass, reason):
@@ -133,7 +166,8 @@ def cmd_revise(root, from_pass, reason):
     if runtime.is_dir(): shutil.copytree(runtime,dest/'runtime')
     (dest / 'state.json').write_text(json.dumps(state,indent=2,ensure_ascii=False)+'\n')
     state.update(revision=revision + 1, currentIndex=PASS_ORDER.index(from_pass),
-                 corrections={'perPass': {}, 'total': 0})
+                 corrections={'perPass': {}, 'total': state['corrections']['total']},
+                 iterationRound={'index':iteration_round(state)['index']+1,'corrections':0,'limit':ROUND_LIMIT})
     state.setdefault('history', []).append({
         'revision': revision, 'reason': reason, 'snapshot': str(dest),
         'completedAt': datetime.now(timezone.utc).isoformat(),
@@ -162,6 +196,9 @@ def main(argv=None):
     sub.add_parser("status")
     sub.add_parser("done")
     sub.add_parser("correction")
+    p_iter=sub.add_parser('iterate')
+    p_iter.add_argument('--reason',required=True)
+    p_iter.add_argument('--limit',type=int,default=ROUND_LIMIT)
     p_rev = sub.add_parser('revise')
     p_rev.add_argument('--from-pass', choices=PASS_ORDER, required=True)
     p_rev.add_argument('--reason', required=True)
@@ -176,6 +213,8 @@ def main(argv=None):
         return cmd_init(root, args.model, args.force)
     if args.cmd == 'revise':
         return cmd_revise(root, args.from_pass, args.reason)
+    if args.cmd == 'iterate':
+        return cmd_iterate(root,args.reason,args.limit)
     return {"status": cmd_status, "done": cmd_done, "correction": cmd_correction}[args.cmd](root)
 
 

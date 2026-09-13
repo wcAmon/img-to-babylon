@@ -32,3 +32,13 @@ python3 forge/model_report.py viewer/models/female-tactical --write
 新模型初始化：`python3 forge/next_pass.py --model NAME init --model NAME`。
 受版本管理的 `viewer/models/NAME/iteration-state.json` 是本機 state 不存在時的恢復來源。
 `revise --from-pass structure --reason '...'` 僅允許已完成 cycle；會先快照 model/runtime，再更新 metadata，不能繞過未完成 cycle 的修正上限。
+
+## 每輪修正上限（使用者更新）
+
+每輪允許 6 次修正，第 7 次 exit 3；全程與各 pass 累計僅供追蹤。新輪指令：
+
+```sh
+python3 forge/next_pass.py --model female-tactical iterate --reason "本輪臉部目標"
+```
+
+工具先保存 `rounds/rNNN-roundNNN/model`、共用 runtime 與 state，再開始新輪；保留未完成的 pass、失敗審查與全程計數。不可在額度耗盡時自動換輪規避上限。

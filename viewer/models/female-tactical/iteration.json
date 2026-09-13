@@ -348,9 +348,10 @@
   "workflow": {
     "resume": "python3 forge/next_pass.py --model female-tactical status",
     "newRevision": "python3 forge/next_pass.py --model female-tactical revise --from-pass structure --reason \"Describe the approved change\"",
-    "limits": "Per-pass fourth correction and cycle sixth correction are blocked; revise requires completed cycle.",
+    "limits": "Up to 6 corrections per iteration round; seventh is blocked. Lifetime/per-pass counts are historical only.",
     "edit": "Keep modelId and component IDs. Edit spec recipes, revalidate, rebuild, compare saved screenshots, update affected tickets and reviewHistory.",
-    "snapshot": "revisions/rNNN/model stores all model source files before beginning a new completed-cycle revision."
+    "snapshot": "revisions/rNNN/model stores all model source files before beginning a new completed-cycle revision.",
+    "newRound": "python3 forge/next_pass.py --model female-tactical iterate --reason \"Describe the authorized round goal\""
   },
   "evidence": [
     "evidence/polish-sheet.png",
@@ -360,13 +361,37 @@
     "evidence/face.png",
     "evidence/rear.png",
     "evidence/exploded.png",
-    "evidence/workbench.png"
+    "evidence/workbench.png",
+    "evidence/face-round2.png",
+    "evidence/face-round2-compare.png"
   ],
   "review": {
     "likeness": 5.5,
     "target": 7,
     "automaticVerdict": "reject",
-    "correctionLimitReached": true,
-    "nextAction": "User decision required before additional geometry corrections; do not reset counters or call revise on this incomplete cycle."
-  }
+    "correctionLimitReached": false,
+    "nextAction": "Review round 2 face comparison; continue same component IDs. Hair and body remain pending.",
+    "scoreScope": "Historical round 1 overall review; no new whole-character acceptance claimed."
+  },
+  "faceRounds": [
+    {
+      "round": 2,
+      "corrections": 5,
+      "limit": 6,
+      "scope": "face only",
+      "changes": [
+        "almond eye patches and thinner lids",
+        "concave eyebrow/eyelid triangulation",
+        "smaller smoothly attached nose",
+        "closed cupid lips",
+        "jaw contour"
+      ],
+      "remaining": [
+        "facial anatomical likeness and cheek transitions",
+        "hair remains coarse and outside this round"
+      ],
+      "evidence": "evidence/face-round2-compare.png",
+      "verdict": "improved prototype; no final likeness acceptance"
+    }
+  ]
 }

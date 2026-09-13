@@ -30,20 +30,22 @@ class NextPassTest(unittest.TestCase):
         state = next_pass.load_state(self.root)
         self.assertEqual(state["currentIndex"], len(next_pass.PASS_ORDER))
 
-    def test_correction_limits(self):
+    def test_round_allows_six_then_blocks_without_mutation(self):
         next_pass.cmd_init(self.root, "x", force=False)
-        for _ in range(3):
+        for _ in range(6):
             self.assertEqual(next_pass.cmd_correction(self.root), 0)
-        self.assertEqual(next_pass.cmd_correction(self.root), 3)  # 第 4 次超出每 pass 上限
+        before=next_pass.load_state(self.root)
+        self.assertEqual(next_pass.cmd_correction(self.root), 3)
+        self.assertEqual(next_pass.load_state(self.root), before)
 
-    def test_total_correction_limit(self):
+    def test_history_does_not_limit_new_round(self):
         next_pass.cmd_init(self.root, "x", force=False)
-        for _ in range(3):
-            next_pass.cmd_correction(self.root)
-        next_pass.cmd_done(self.root)
-        for _ in range(3):
-            code = next_pass.cmd_correction(self.root)
-        self.assertEqual(code, 3)  # 總數第 7 次前，總上限 6 已在第 6 次後觸發
+        state=next_pass.load_state(self.root)
+        state['corrections']['total']=60
+        state['iterationRound']={'index':4,'corrections':0,'limit':6}
+        next_pass.save_state(self.root,state)
+        self.assertEqual(next_pass.cmd_correction(self.root),0)
+        self.assertEqual(next_pass.load_state(self.root)['corrections']['total'],61)
 
 
 if __name__ == "__main__":

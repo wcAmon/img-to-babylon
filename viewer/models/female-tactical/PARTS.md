@@ -13,22 +13,22 @@
 | `neck` | 頸部 | ellipsoid | 90.0 × 105.0 × 85.0 | root |
 | `head` | 頭部與下顎 | loft | 172.0 × 235.0 × 174.0 | root |
 | `ear-l` | 耳朵 l | ellipsoid | 23.0 × 43.0 × 25.0 | head |
-| `eye-white-l` | 眼白 l | ellipsoid | 39.0 × 17.0 × 8.0 | head |
-| `iris-l` | 虹膜 l | ellipsoid | 12.0 × 12.0 × 4.0 | head |
-| `pupil-l` | 瞳孔 l | ellipsoid | 5.5 × 9.0 × 3.0 | head |
-| `eye-glint-l` | 眼睛反光 l | ellipsoid | 3.5 × 4.0 × 3.0 | head |
-| `eyelid-l` | 上眼線 l | loft | 36.0 × 3.5 × 7.0 | head |
-| `brow-l` | 眉毛 l | loft | 44.0 × 5.0 × 10.0 | head |
+| `eye-white-l` | 眼白 l | patch | 42.0 × 17.0 × 5.0 | head |
+| `iris-l` | 虹膜 l | patch | 15.0 × 15.0 × 1.0 | head |
+| `pupil-l` | 瞳孔 l | patch | 7.0 × 10.0 × 1.0 | head |
+| `eye-glint-l` | 眼睛反光 l | ellipsoid | 2.8 × 3.2 × 1.2 | head |
+| `eyelid-l` | 上眼線 l | patch | 44.0 × 17.0 × 1.0 | head |
+| `brow-l` | 眉毛 l | patch | 45.0 × 13.0 × 1.5 | head |
 | `ear-r` | 耳朵 r | ellipsoid | 23.0 × 43.0 × 25.0 | head |
-| `eye-white-r` | 眼白 r | ellipsoid | 39.0 × 17.0 × 8.0 | head |
-| `iris-r` | 虹膜 r | ellipsoid | 12.0 × 12.0 × 4.0 | head |
-| `pupil-r` | 瞳孔 r | ellipsoid | 5.5 × 9.0 × 3.0 | head |
-| `eye-glint-r` | 眼睛反光 r | ellipsoid | 3.5 × 4.0 × 3.0 | head |
-| `eyelid-r` | 上眼線 r | loft | 36.0 × 3.5 × 7.0 | head |
-| `brow-r` | 眉毛 r | loft | 44.0 × 5.0 × 10.0 | head |
-| `nose` | 鼻樑與鼻尖 | loft | 23.0 × 48.0 × 35.0 | head |
-| `upper-lip` | 上唇 | ellipsoid | 35.0 × 9.0 × 12.0 | head |
-| `lower-lip` | 下唇 | ellipsoid | 29.0 × 9.0 × 12.0 | head |
+| `eye-white-r` | 眼白 r | patch | 42.0 × 17.0 × 5.0 | head |
+| `iris-r` | 虹膜 r | patch | 15.0 × 15.0 × 1.0 | head |
+| `pupil-r` | 瞳孔 r | patch | 7.0 × 10.0 × 1.0 | head |
+| `eye-glint-r` | 眼睛反光 r | ellipsoid | 2.8 × 3.2 × 1.2 | head |
+| `eyelid-r` | 上眼線 r | patch | 44.0 × 17.0 × 1.0 | head |
+| `brow-r` | 眉毛 r | patch | 45.0 × 13.0 × 1.5 | head |
+| `nose` | 鼻樑與鼻尖 | patch | 38.0 × 53.0 × 14.0 | head |
+| `upper-lip` | 上唇 | patch | 34.0 × 8.0 × 5.0 | head |
+| `lower-lip` | 下唇 | patch | 33.0 × 8.0 × 4.0 | head |
 
 ### 髮型與馬尾
 
@@ -223,4 +223,4 @@ python3 forge/next_pass.py --model female-tactical status
 python3 forge/next_pass.py --model female-tactical revise --from-pass structure --reason "Describe the approved change"
 ```
 
-Per-pass fourth correction and cycle sixth correction are blocked; revise requires completed cycle.
+Up to 6 corrections per iteration round; seventh is blocked. Lifetime/per-pass counts are historical only.

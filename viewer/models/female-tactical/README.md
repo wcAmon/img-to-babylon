@@ -1,6 +1,6 @@
 # Female tactical — 可持續迭代的女性角色
 
-**目前是可運作初版；外觀尚未通過最終驗收。** 參考圖是使用者核准的橘衣女性角色，程式模型的臉部、頭髮和人體過渡仍過於簡化。polish 目視相似度 5.5/10（目標 7）；第 6 次修正已被專案上限擋下，保持 `request-input`，未假裝完成或重設計數器。
+**目前為可持續迭代的原型，尚未通過整體外觀驗收。** 本次第 2 輪集中修正臉部：杏仁形眼面、薄眼皮、眉形、接合鼻樑及閉合唇形。身體、頭髮、裝備與物理定義保持原樣。此前 5.5/10 是第 1 輪整體評分，不代表本次臉部的新評分。
 
 ## 開啟
 
@@ -30,7 +30,7 @@
 ## 續作步驟
 
 1. `python3 forge/next_pass.py --model female-tactical status` 讀取目前進度。
-2. 本輪仍在 polish 且觸及修正上限：先取得使用者對下一輪造型修正及額外修正額度的明確指示。**不要**用 `--force` 或 `revise` 繞過它。
+2. 每輪最多 6 次修正，第 7 次停止；累計總次數不限。開始已授權的新輪時執行 `python3 forge/next_pass.py --model female-tactical iterate --reason "本輪目標"`，先快照後歸零本輪計數，保留所有歷史。不要在達上限時自動換輪規避它。
 3. 獲得指示後以既有 component ID 修改 spec；按 `iteration.json` 的 P0/P1 清單一次處理一個目標，保留前後畫面與評分。
 4. 一個 cycle 完整驗收通過後，才使用 `python3 forge/next_pass.py --model female-tactical revise --from-pass structure --reason '具體改動原因'`。工具先保存模型來源與共用 builder 快照、保留歷史，再更新版本／階段；不改模型 ID。
 5. `python3 forge/model_report.py viewer/models/female-tactical --write` 重新檢查拆件覆蓋與優化引用，產生 PARTS.md。
