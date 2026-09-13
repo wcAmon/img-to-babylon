@@ -1,0 +1,874 @@
+{
+  "headVsC1": {
+    "vertices": true,
+    "positions": true,
+    "normals": true,
+    "worldNormals": true,
+    "indices": true,
+    "worldMatrix": true
+  },
+  "hairVsC2": {
+    "hair-cap": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "ponytail": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "hair-side-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "hair-side-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "fringe-sweep": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "fringe-side": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "hair-tie": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "tail-lock-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "tail-lock-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "tail-lock-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "fringe-layer-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "fringe-layer-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "fringe-layer-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    }
+  },
+  "browRecipes": "C2 authored brow geometry retained; projected surface necessarily follows restored C1 head",
+  "all125IDs": true,
+  "bodyVsC3": {
+    "torso": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "pelvis": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "neck": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "upper-arm-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "forearm-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "hand-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "thigh-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "calf-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "boot-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "upper-arm-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "forearm-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "hand-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "thigh-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "calf-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "boot-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "vest-front": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "vest-back": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "molle-front-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "molle-back-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "molle-front-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "molle-back-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "molle-front-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "molle-back-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "molle-front-3": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "molle-back-3": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "mag-pouch-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "pouch-flap-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "pouch-tab-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "mag-pouch-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "pouch-flap-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "pouch-tab-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "mag-pouch-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "pouch-flap-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "pouch-tab-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "belt": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "belt-buckle": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "collar-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "strap-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "strap-accent-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "strap-buckle-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "side-strap-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "belt-accent-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "hip-pouch-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "sleeve-cuff-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "shoulder-patch-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "wrist-cuff-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "glove-plate-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "finger-l-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "finger-l-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "finger-l-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "finger-l-3": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "thumb-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "knee-pad-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "knee-shell-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "knee-strap-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "cargo-pocket-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "thigh-band-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "thigh-buckle-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "boot-sole-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "boot-upper-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "lace-l-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "lace-l-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "lace-l-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "lace-l-3": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "boot-accent-l": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "collar-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "strap-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "strap-accent-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "strap-buckle-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "side-strap-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "belt-accent-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "hip-pouch-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "sleeve-cuff-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "shoulder-patch-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "wrist-cuff-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "glove-plate-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "finger-r-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "finger-r-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "finger-r-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "finger-r-3": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "thumb-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "knee-pad-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "knee-shell-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "knee-strap-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "cargo-pocket-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "thigh-band-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "thigh-buckle-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "boot-sole-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "boot-upper-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "lace-r-0": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "lace-r-1": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "lace-r-2": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "lace-r-3": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    },
+    "boot-accent-r": {
+      "vertices": true,
+      "positions": true,
+      "normals": true,
+      "worldNormals": true,
+      "indices": true,
+      "worldMatrix": true
+    }
+  },
+  "exactHeadPass": true,
+  "exactHairPass": true
+}

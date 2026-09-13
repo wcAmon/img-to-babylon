@@ -1,0 +1,464 @@
+{
+  "schemaVersion": 1,
+  "modelId": "female-tactical",
+  "revision": 6,
+  "status": "visual-review-required",
+  "sourceOfTruth": "canonical-spec.json#/extensions/babylon-sculpt-v1/source",
+  "factory": "createFemaleTacticalModel.ts",
+  "construction": "Native compiled procedural lofts, scalp-bound clumps, surface-conforming facial layers, mounted gear and boot cross-lace tubes; same125IDs.",
+  "units": "m",
+  "seed": 913,
+  "reference": {
+    "image": "reference/female.png",
+    "approvedOriginal": "reference/approved-duo.png",
+    "derivedFrom": "User-approved imagegen concept; crop only, no generated replacement.",
+    "backViewConfidence": "low; inferred, not user-approved reference"
+  },
+  "groups": [
+    {
+      "id": "face",
+      "name": "頭部與五官",
+      "componentIds": [
+        "neck",
+        "head",
+        "ear-l",
+        "eye-white-l",
+        "iris-l",
+        "pupil-l",
+        "eye-glint-l",
+        "eyelid-l",
+        "brow-l",
+        "ear-r",
+        "eye-white-r",
+        "iris-r",
+        "pupil-r",
+        "eye-glint-r",
+        "eyelid-r",
+        "brow-r",
+        "nose",
+        "upper-lip",
+        "lower-lip"
+      ],
+      "anchors": [
+        "head",
+        "neck"
+      ],
+      "editSource": "spec.json componentTree entries selected by stable id"
+    },
+    {
+      "id": "hair",
+      "name": "髮型與馬尾",
+      "componentIds": [
+        "hair-cap",
+        "ponytail",
+        "hair-side-l",
+        "hair-side-r",
+        "fringe-sweep",
+        "fringe-side",
+        "hair-tie",
+        "tail-lock-0",
+        "tail-lock-1",
+        "tail-lock-2",
+        "fringe-layer-0",
+        "fringe-layer-1",
+        "fringe-layer-2"
+      ],
+      "anchors": [
+        "head"
+      ],
+      "editSource": "spec.json componentTree entries selected by stable id"
+    },
+    {
+      "id": "torso",
+      "name": "上衣與立領",
+      "componentIds": [
+        "torso",
+        "collar-l",
+        "collar-r"
+      ],
+      "anchors": [
+        "torso"
+      ],
+      "editSource": "spec.json componentTree entries selected by stable id"
+    },
+    {
+      "id": "equipment",
+      "name": "戰術背心與裝備",
+      "componentIds": [
+        "vest-front",
+        "vest-back",
+        "molle-front-0",
+        "molle-back-0",
+        "molle-front-1",
+        "molle-back-1",
+        "molle-front-2",
+        "molle-back-2",
+        "molle-front-3",
+        "molle-back-3",
+        "mag-pouch-0",
+        "pouch-flap-0",
+        "pouch-tab-0",
+        "mag-pouch-1",
+        "pouch-flap-1",
+        "pouch-tab-1",
+        "mag-pouch-2",
+        "pouch-flap-2",
+        "pouch-tab-2",
+        "belt",
+        "belt-buckle",
+        "strap-l",
+        "strap-accent-l",
+        "strap-buckle-l",
+        "side-strap-l",
+        "belt-accent-l",
+        "hip-pouch-l",
+        "shoulder-patch-l",
+        "knee-pad-l",
+        "knee-shell-l",
+        "knee-strap-l",
+        "cargo-pocket-l",
+        "thigh-band-l",
+        "thigh-buckle-l",
+        "strap-r",
+        "strap-accent-r",
+        "strap-buckle-r",
+        "side-strap-r",
+        "belt-accent-r",
+        "hip-pouch-r",
+        "shoulder-patch-r",
+        "knee-pad-r",
+        "knee-shell-r",
+        "knee-strap-r",
+        "cargo-pocket-r",
+        "thigh-band-r",
+        "thigh-buckle-r"
+      ],
+      "anchors": [
+        "torso",
+        "pelvis",
+        "thigh-l",
+        "thigh-r",
+        "calf-l",
+        "calf-r"
+      ],
+      "editSource": "spec.json componentTree entries selected by stable id"
+    },
+    {
+      "id": "arms",
+      "name": "左右手臂",
+      "componentIds": [
+        "upper-arm-l",
+        "forearm-l",
+        "upper-arm-r",
+        "forearm-r",
+        "sleeve-cuff-l",
+        "sleeve-cuff-r"
+      ],
+      "anchors": [
+        "upper-arm-l",
+        "upper-arm-r",
+        "forearm-l",
+        "forearm-r"
+      ],
+      "editSource": "spec.json componentTree entries selected by stable id"
+    },
+    {
+      "id": "hands",
+      "name": "手套與手指",
+      "componentIds": [
+        "hand-l",
+        "hand-r",
+        "wrist-cuff-l",
+        "glove-plate-l",
+        "finger-l-0",
+        "finger-l-1",
+        "finger-l-2",
+        "finger-l-3",
+        "thumb-l",
+        "wrist-cuff-r",
+        "glove-plate-r",
+        "finger-r-0",
+        "finger-r-1",
+        "finger-r-2",
+        "finger-r-3",
+        "thumb-r"
+      ],
+      "anchors": [
+        "hand-l",
+        "hand-r"
+      ],
+      "editSource": "spec.json componentTree entries selected by stable id"
+    },
+    {
+      "id": "legs",
+      "name": "褲子與腿部",
+      "componentIds": [
+        "pelvis",
+        "thigh-l",
+        "calf-l",
+        "thigh-r",
+        "calf-r"
+      ],
+      "anchors": [
+        "pelvis",
+        "thigh-l",
+        "thigh-r",
+        "calf-l",
+        "calf-r"
+      ],
+      "editSource": "spec.json componentTree entries selected by stable id"
+    },
+    {
+      "id": "boots",
+      "name": "靴子與鞋帶",
+      "componentIds": [
+        "boot-l",
+        "boot-r",
+        "boot-sole-l",
+        "boot-upper-l",
+        "lace-l-0",
+        "lace-l-1",
+        "lace-l-2",
+        "lace-l-3",
+        "boot-accent-l",
+        "boot-sole-r",
+        "boot-upper-r",
+        "lace-r-0",
+        "lace-r-1",
+        "lace-r-2",
+        "lace-r-3",
+        "boot-accent-r"
+      ],
+      "anchors": [
+        "boot-l",
+        "boot-r"
+      ],
+      "editSource": "spec.json componentTree entries selected by stable id"
+    }
+  ],
+  "optimizationPath": [
+    {
+      "id": "face-likeness",
+      "priority": "P0",
+      "title": "改善臉部神韻：眼眶、顴骨、下顎與嘴角",
+      "groups": [
+        "face"
+      ],
+      "status": "visual-review-required",
+      "edit": [
+        "head.geometry.relief",
+        "eye-white/iris/pupil/brow/eyelid nativeRecipe",
+        "upper-lip/lower-lip nativeRecipe"
+      ],
+      "acceptance": "同一鏡位臉部近照對照；眼白不浮凸，側面鼻唇可讀；保留原始相似度分數。",
+      "dependsOn": []
+    },
+    {
+      "id": "hair-silhouette",
+      "priority": "P1",
+      "title": "改善側分瀏海與馬尾弧線",
+      "groups": [
+        "hair"
+      ],
+      "status": "visual-review-required",
+      "edit": [
+        "hair-cap/scalp-lock/tail-lock nativeRecipe in spec.json",
+        "round4/compile_surfaces.py"
+      ],
+      "acceptance": "正面、側面、背面無頭皮穿插；髮束方向符合已核准概念。背面細節目前屬推測。",
+      "dependsOn": [
+        "face-likeness"
+      ]
+    },
+    {
+      "id": "garment-transitions",
+      "priority": "P1",
+      "title": "修順肩頸、袖口與褲襠接合",
+      "groups": [
+        "torso",
+        "arms",
+        "legs"
+      ],
+      "status": "open",
+      "edit": [
+        "torso.geometry.rings",
+        "upper-arm-*.geometry.rings",
+        "pelvis.geometry.rings",
+        "thigh-*.transform"
+      ],
+      "acceptance": "四視角不見空縫；保留腰身、腿部量感與低多邊形切面。改碰撞外形後重跑物理。",
+      "dependsOn": []
+    },
+    {
+      "id": "render-budget",
+      "priority": "P2",
+      "title": "在保留零件 ID 的前提下降低 draw calls",
+      "groups": [
+        "face",
+        "hair",
+        "torso",
+        "equipment",
+        "arms",
+        "hands",
+        "legs",
+        "boots"
+      ],
+      "status": "partial; runtime frame-time not measured",
+      "edit": [
+        "Native generator shared buffer payload",
+        "Optional future model-specific binary externalization; preserve IDs/source"
+      ],
+      "acceptance": "相同相機與裝置比較前後 draw calls/影格耗時；零件隔離與銷毀測試仍通過。不得用隱藏零件偽裝效能提升。",
+      "dependsOn": [
+        "face-likeness",
+        "garment-transitions"
+      ],
+      "payloadDeduplication": "completed docs/migration/native-payload-deduplication.md; actual C6 inspection verifies immutable buffers"
+    },
+    {
+      "id": "articulation",
+      "priority": "P2",
+      "title": "以保留的肢段拆分加入關節和動作綁定",
+      "groups": [
+        "arms",
+        "hands",
+        "legs",
+        "boots",
+        "face"
+      ],
+      "status": "not-started",
+      "edit": [
+        "physics.bodies",
+        "physics.constraints",
+        "attachment sockets"
+      ],
+      "acceptance": "需新增真正多剛體 joint/hinge builder，通過 ragdoll/限位/動作測試後才宣稱可動。",
+      "dependsOn": [
+        "garment-transitions"
+      ]
+    },
+    {
+      "id": "boot-likeness",
+      "status": "visual-review-required",
+      "groups": [
+        "boots"
+      ],
+      "edit": [
+        "boot/sole geometry.rings",
+        "boot-upper nativeRecipe",
+        "lace nativeRecipe"
+      ],
+      "acceptance": "C6 actual front/profile toe/shaft/laces; approximate sole collider overshoot1mm recorded. No additional correction authorized."
+    }
+  ],
+  "physicsStatus": {
+    "implemented": "single compound rigid body",
+    "notImplemented": [
+      "articulated ragdoll",
+      "animation skeleton",
+      "individually colliding fingers and hair tips"
+    ]
+  },
+  "workflow": {
+    "resume": "python3.11 pipeline/forge/babylon.py next --state .img2babylon/female-tactical/pipeline/workflow.json",
+    "state": ".img2babylon/female-tactical/pipeline/workflow.json",
+    "status": "stopped max-round-correction-loops-reached:4:6/6",
+    "rebuild": "round4/c6/rebuild.sh",
+    "limits": "Round4 exhausted; diagnostics allowed, model changes stopped. Never automatically start another round.",
+    "authority": "Exact source recipes archived in canonical extension; native generator consumes model-specific compiled nativeVertexData; no legacy buildSculpt runtime."
+  },
+  "evidence": [
+    "evidence/polish-sheet.png",
+    "evidence/physics-result.json",
+    "evidence/polish-eye.json",
+    "evidence/collider.png",
+    "evidence/face.png",
+    "evidence/rear.png",
+    "evidence/exploded.png",
+    "evidence/workbench.png",
+    "evidence/face-round2.png",
+    "evidence/face-round2-compare.png",
+    "evidence/face-round3.png",
+    "evidence/face-round3-side.png",
+    "evidence/face-round3-compare.png",
+    "evidence/round3-verification.json",
+    "round4/c6/strict.json",
+    "round4/c6/visibility.json",
+    "round4/c6/boot-attachments.json",
+    "round4/c6/physics.json",
+    "round4/c6/inspection.log",
+    "round4/c6/triangle-budget.json",
+    "round4/c6/runtime-optimization.json"
+  ],
+  "faceRounds": [
+    {
+      "round": 2,
+      "corrections": 5,
+      "limit": 6,
+      "scope": "face only",
+      "changes": [
+        "almond eye patches and thinner lids",
+        "concave eyebrow/eyelid triangulation",
+        "smaller smoothly attached nose",
+        "closed cupid lips",
+        "jaw contour"
+      ],
+      "remaining": [
+        "facial anatomical likeness and cheek transitions",
+        "hair remains coarse and outside this round"
+      ],
+      "evidence": "evidence/face-round2-compare.png",
+      "verdict": "improved prototype; no final likeness acceptance"
+    },
+    {
+      "round": 3,
+      "corrections": 5,
+      "limit": 6,
+      "scope": "face and hair",
+      "addedParts": [
+        "fringe-layer-0",
+        "fringe-layer-1",
+        "fringe-layer-2"
+      ],
+      "changes": [
+        "continuous nose/cheek relief in head mesh",
+        "smooth jaw ring interpolation",
+        "side swept layered fringe",
+        "shorter side locks and connected ponytail",
+        "warmer lip colour"
+      ],
+      "remaining": [
+        "nose and orbital anatomy still soft",
+        "hair roots and strand silhouette need further refinement"
+      ],
+      "evidence": "evidence/face-round3-compare.png",
+      "verdict": "refinement checkpoint; not final acceptance"
+    }
+  ],
+  "round": 4,
+  "corrections": 6,
+  "correctionLimit": 6,
+  "lifetimeCorrections": 21,
+  "remainingCorrections": 0,
+  "hardStop": true,
+  "triangleCount": 29776,
+  "partCount": 125,
+  "authoringSource": "spec.json",
+  "nativeFactory": "createNativeFemaleTactical.ts",
+  "compiler": "round4/compile_surfaces.py",
+  "historicalReview": {
+    "likeness": 5.5,
+    "target": 7,
+    "automaticVerdict": "reject",
+    "correctionLimitReached": false,
+    "nextAction": "Review round 3 front/profile. Continue head relief and hair strand recipes with stable IDs.",
+    "scoreScope": "Historical round 1 overall review; no new whole-character acceptance claimed."
+  },
+  "review": {
+    "visualStatus": "unaccepted",
+    "correctionLimitReached": true,
+    "nextAction": "Desktop may capture and record C6 diagnostics only; no seventh correction or automatic new round.",
+    "latestActualGPU": "round4/c5-archive/actual-review.json",
+    "pendingGPU": "round4/c6/capture-handoff.json"
+  }
+}

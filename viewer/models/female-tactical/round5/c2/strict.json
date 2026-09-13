@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "missing terminologyProfile; descriptions may drift into vague non-3D language",
+    "missing scores block; image validation evidence will be weaker",
+    "missing actionReadiness; generated model may not be ready for animation/transformation/destruction",
+    "missing viewEvidence; local visual claims cannot be traced back to image regions"
+  ],
+  "summary": {
+    "targetName": "female-tactical",
+    "suitability": "conditional",
+    "components": 125,
+    "materials": 13
+  }
+}

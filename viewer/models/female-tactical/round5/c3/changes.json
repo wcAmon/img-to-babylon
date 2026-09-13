@@ -1,0 +1,252 @@
+{
+  "round": 5,
+  "correction": 3,
+  "authoredPartIDs": [
+    "head"
+  ],
+  "changedPartIDs": [
+    "head",
+    "eye-white-l",
+    "iris-l",
+    "pupil-l",
+    "eye-glint-l",
+    "eyelid-l",
+    "brow-l",
+    "eye-white-r",
+    "iris-r",
+    "pupil-r",
+    "eye-glint-r",
+    "eyelid-r",
+    "brow-r",
+    "upper-lip",
+    "lower-lip"
+  ],
+  "newPartIDs": [],
+  "removedPartIDs": [],
+  "retained": "C2 head rings/sampling, cheek/orbit, brows, eye/lip size and surface layers, all hair/body/materials",
+  "removedNasalRelief": [
+    {
+      "center": [
+        -0.025,
+        -0.229
+      ],
+      "radius": [
+        0.016,
+        0.04
+      ],
+      "depth": 0.014
+    },
+    {
+      "center": [
+        0.025,
+        -0.229
+      ],
+      "radius": [
+        0.016,
+        0.04
+      ],
+      "depth": 0.014
+    },
+    {
+      "center": [
+        0,
+        -0.01
+      ],
+      "radius": [
+        0.034,
+        0.103
+      ],
+      "depth": 0.063
+    },
+    {
+      "center": [
+        0,
+        -0.12
+      ],
+      "radius": [
+        0.062,
+        0.044
+      ],
+      "depth": 0.11
+    },
+    {
+      "center": [
+        0,
+        -0.171
+      ],
+      "radius": [
+        0.025,
+        0.024
+      ],
+      "depth": 0.018
+    },
+    {
+      "center": [
+        0,
+        -0.224
+      ],
+      "radius": [
+        0.025,
+        0.036
+      ],
+      "depth": -0.002
+    },
+    {
+      "center": [
+        -0.067,
+        -0.151
+      ],
+      "radius": [
+        0.032,
+        0.03
+      ],
+      "depth": 0.06
+    },
+    {
+      "center": [
+        -0.064,
+        -0.179
+      ],
+      "radius": [
+        0.021,
+        0.012
+      ],
+      "depth": -0.014
+    },
+    {
+      "center": [
+        -0.1,
+        -0.148
+      ],
+      "radius": [
+        0.025,
+        0.048
+      ],
+      "depth": -0.008
+    },
+    {
+      "center": [
+        0.067,
+        -0.151
+      ],
+      "radius": [
+        0.032,
+        0.03
+      ],
+      "depth": 0.06
+    },
+    {
+      "center": [
+        0.064,
+        -0.179
+      ],
+      "radius": [
+        0.021,
+        0.012
+      ],
+      "depth": -0.014
+    },
+    {
+      "center": [
+        0.1,
+        -0.148
+      ],
+      "radius": [
+        0.025,
+        0.048
+      ],
+      "depth": -0.008
+    }
+  ],
+  "addedNasalRelief": [
+    {
+      "center": [
+        0,
+        -0.02
+      ],
+      "radius": [
+        0.043,
+        0.135
+      ],
+      "depth": 0.042
+    },
+    {
+      "center": [
+        0,
+        -0.132
+      ],
+      "radius": [
+        0.066,
+        0.086
+      ],
+      "depth": 0.041
+    },
+    {
+      "center": [
+        0,
+        -0.213
+      ],
+      "radius": [
+        0.095,
+        0.07
+      ],
+      "depth": 0.012
+    },
+    {
+      "center": [
+        -0.06,
+        -0.153
+      ],
+      "radius": [
+        0.052,
+        0.063
+      ],
+      "depth": 0.011
+    },
+    {
+      "center": [
+        0.06,
+        -0.153
+      ],
+      "radius": [
+        0.052,
+        0.063
+      ],
+      "depth": 0.011
+    }
+  ],
+  "actualGeometryChangedPartIDs": [
+    "head",
+    "eye-white-l",
+    "iris-l",
+    "pupil-l",
+    "eye-glint-l",
+    "eyelid-l",
+    "brow-l",
+    "eye-white-r",
+    "iris-r",
+    "pupil-r",
+    "eye-glint-r",
+    "eyelid-r",
+    "brow-r",
+    "upper-lip",
+    "lower-lip"
+  ],
+  "dependentGeometryChanges": [
+    "eye-white-l",
+    "iris-l",
+    "pupil-l",
+    "eye-glint-l",
+    "eyelid-l",
+    "brow-l",
+    "eye-white-r",
+    "iris-r",
+    "pupil-r",
+    "eye-glint-r",
+    "eyelid-r",
+    "brow-r",
+    "upper-lip",
+    "lower-lip"
+  ],
+  "actualUnchangedMeshCount": 110
+}

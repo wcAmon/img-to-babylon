@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "modelId": "female-tactical",
-  "revision": 6,
+  "revision": 10,
   "status": "visual-review-required",
   "sourceOfTruth": "canonical-spec.json#/extensions/babylon-sculpt-v1/source",
   "factory": "createFemaleTacticalModel.ts",
@@ -251,7 +251,9 @@
         "upper-lip/lower-lip nativeRecipe"
       ],
       "acceptance": "同一鏡位臉部近照對照；眼白不浮凸，側面鼻唇可讀；保留原始相似度分數。",
-      "dependsOn": []
+      "dependsOn": [],
+      "currentEvidence": "round5/c4/parity.json; round5/c4/visibility.json; failed C2/C3 GPU retained",
+      "nativeCompiler": "round5/compile_surfaces.py"
     },
     {
       "id": "hair-silhouette",
@@ -268,7 +270,9 @@
       "acceptance": "正面、側面、背面無頭皮穿插；髮束方向符合已核准概念。背面細節目前屬推測。",
       "dependsOn": [
         "face-likeness"
-      ]
+      ],
+      "currentEvidence": "round5/c2/measurements.json; round5/c2/visibility.json; round5/c2/fringe-boundary.json",
+      "nativeCompiler": "round5/compile_surfaces.py"
     },
     {
       "id": "garment-transitions",
@@ -362,9 +366,9 @@
   "workflow": {
     "resume": "python3.11 pipeline/forge/babylon.py next --state .img2babylon/female-tactical/pipeline/workflow.json",
     "state": ".img2babylon/female-tactical/pipeline/workflow.json",
-    "status": "stopped max-round-correction-loops-reached:4:6/6",
-    "rebuild": "round4/c6/rebuild.sh",
-    "limits": "Round4 exhausted; diagnostics allowed, model changes stopped. Never automatically start another round.",
+    "status": "active blockout render-capture",
+    "rebuild": "round5/c4/rebuild.sh",
+    "limits": "Round5 4/6,total25; frozen until desktop review; no automatic new round",
     "authority": "Exact source recipes archived in canonical extension; native generator consumes model-specific compiled nativeVertexData; no legacy buildSculpt runtime."
   },
   "evidence": [
@@ -388,7 +392,25 @@
     "round4/c6/physics.json",
     "round4/c6/inspection.log",
     "round4/c6/triangle-budget.json",
-    "round4/c6/runtime-optimization.json"
+    "round4/c6/runtime-optimization.json",
+    "round5/c1/strict.json",
+    "round5/c1/visibility.json",
+    "round5/c1/attachments.json",
+    "round5/c1/self-intersection.json",
+    "round5/c1/physics.json",
+    "round5/c2/strict.json",
+    "round5/c2/visibility.json",
+    "round5/c2/attachments.json",
+    "round5/c2/self-intersection.json",
+    "round5/c2/physics.json",
+    "round5/c3/strict.json",
+    "round5/c3/nose-profile.json",
+    "round5/c3/visibility.json",
+    "round5/c3/self-intersection.json",
+    "round5/c4/parity.json",
+    "round5/c4/strict.json",
+    "round5/c4/visibility.json",
+    "round5/c4/self-intersection.json"
   ],
   "faceRounds": [
     {
@@ -435,17 +457,17 @@
       "verdict": "refinement checkpoint; not final acceptance"
     }
   ],
-  "round": 4,
-  "corrections": 6,
+  "round": 5,
+  "corrections": 4,
   "correctionLimit": 6,
-  "lifetimeCorrections": 21,
-  "remainingCorrections": 0,
-  "hardStop": true,
-  "triangleCount": 29776,
+  "lifetimeCorrections": 25,
+  "remainingCorrections": 2,
+  "hardStop": false,
+  "triangleCount": 29644,
   "partCount": 125,
   "authoringSource": "spec.json",
   "nativeFactory": "createNativeFemaleTactical.ts",
-  "compiler": "round4/compile_surfaces.py",
+  "compiler": "round5/compile_surfaces.py",
   "historicalReview": {
     "likeness": 5.5,
     "target": 7,
@@ -456,9 +478,9 @@
   },
   "review": {
     "visualStatus": "unaccepted",
-    "correctionLimitReached": true,
-    "nextAction": "Desktop may capture and record C6 diagnostics only; no seventh correction or automatic new round.",
-    "latestActualGPU": "round4/c5-archive/actual-review.json",
-    "pendingGPU": "round4/c6/capture-handoff.json"
+    "correctionLimitReached": false,
+    "nextAction": "Await frozen C4 GPU: exact C1 head plus C2 hair/brow recipes; no fifth correction authorized",
+    "latestActualGPU": "round5/c3-archive/review.json",
+    "pendingGPU": "round5/c4/capture-handoff.json"
   }
 }

@@ -1,0 +1,631 @@
+{
+  "totalTriangles": 32492,
+  "max": 35000,
+  "parts": [
+    {
+      "id": "torso",
+      "triangles": 120,
+      "optimizationPath": "spec.json#/componentTree/torso/optimization"
+    },
+    {
+      "id": "pelvis",
+      "triangles": 120,
+      "optimizationPath": "spec.json#/componentTree/pelvis/optimization"
+    },
+    {
+      "id": "neck",
+      "triangles": 728,
+      "optimizationPath": "spec.json#/componentTree/neck/optimization"
+    },
+    {
+      "id": "head",
+      "triangles": 9120,
+      "optimizationPath": "spec.json#/componentTree/head/optimization"
+    },
+    {
+      "id": "hair-cap",
+      "triangles": 3456,
+      "optimizationPath": "spec.json#/componentTree/hair-cap/optimization"
+    },
+    {
+      "id": "ponytail",
+      "triangles": 432,
+      "optimizationPath": "spec.json#/componentTree/ponytail/optimization"
+    },
+    {
+      "id": "upper-arm-l",
+      "triangles": 140,
+      "optimizationPath": "spec.json#/componentTree/upper-arm-l/optimization"
+    },
+    {
+      "id": "forearm-l",
+      "triangles": 100,
+      "optimizationPath": "spec.json#/componentTree/forearm-l/optimization"
+    },
+    {
+      "id": "hand-l",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/hand-l/optimization"
+    },
+    {
+      "id": "thigh-l",
+      "triangles": 168,
+      "optimizationPath": "spec.json#/componentTree/thigh-l/optimization"
+    },
+    {
+      "id": "calf-l",
+      "triangles": 196,
+      "optimizationPath": "spec.json#/componentTree/calf-l/optimization"
+    },
+    {
+      "id": "boot-l",
+      "triangles": 168,
+      "optimizationPath": "spec.json#/componentTree/boot-l/optimization"
+    },
+    {
+      "id": "upper-arm-r",
+      "triangles": 140,
+      "optimizationPath": "spec.json#/componentTree/upper-arm-r/optimization"
+    },
+    {
+      "id": "forearm-r",
+      "triangles": 100,
+      "optimizationPath": "spec.json#/componentTree/forearm-r/optimization"
+    },
+    {
+      "id": "hand-r",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/hand-r/optimization"
+    },
+    {
+      "id": "thigh-r",
+      "triangles": 168,
+      "optimizationPath": "spec.json#/componentTree/thigh-r/optimization"
+    },
+    {
+      "id": "calf-r",
+      "triangles": 196,
+      "optimizationPath": "spec.json#/componentTree/calf-r/optimization"
+    },
+    {
+      "id": "boot-r",
+      "triangles": 168,
+      "optimizationPath": "spec.json#/componentTree/boot-r/optimization"
+    },
+    {
+      "id": "vest-front",
+      "triangles": 360,
+      "optimizationPath": "spec.json#/componentTree/vest-front/optimization"
+    },
+    {
+      "id": "vest-back",
+      "triangles": 360,
+      "optimizationPath": "spec.json#/componentTree/vest-back/optimization"
+    },
+    {
+      "id": "molle-front-0",
+      "triangles": 200,
+      "optimizationPath": "spec.json#/componentTree/molle-front-0/optimization"
+    },
+    {
+      "id": "molle-back-0",
+      "triangles": 200,
+      "optimizationPath": "spec.json#/componentTree/molle-back-0/optimization"
+    },
+    {
+      "id": "molle-front-1",
+      "triangles": 200,
+      "optimizationPath": "spec.json#/componentTree/molle-front-1/optimization"
+    },
+    {
+      "id": "molle-back-1",
+      "triangles": 200,
+      "optimizationPath": "spec.json#/componentTree/molle-back-1/optimization"
+    },
+    {
+      "id": "molle-front-2",
+      "triangles": 200,
+      "optimizationPath": "spec.json#/componentTree/molle-front-2/optimization"
+    },
+    {
+      "id": "molle-back-2",
+      "triangles": 200,
+      "optimizationPath": "spec.json#/componentTree/molle-back-2/optimization"
+    },
+    {
+      "id": "molle-front-3",
+      "triangles": 200,
+      "optimizationPath": "spec.json#/componentTree/molle-front-3/optimization"
+    },
+    {
+      "id": "molle-back-3",
+      "triangles": 200,
+      "optimizationPath": "spec.json#/componentTree/molle-back-3/optimization"
+    },
+    {
+      "id": "mag-pouch-0",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/mag-pouch-0/optimization"
+    },
+    {
+      "id": "pouch-flap-0",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/pouch-flap-0/optimization"
+    },
+    {
+      "id": "pouch-tab-0",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/pouch-tab-0/optimization"
+    },
+    {
+      "id": "mag-pouch-1",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/mag-pouch-1/optimization"
+    },
+    {
+      "id": "pouch-flap-1",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/pouch-flap-1/optimization"
+    },
+    {
+      "id": "pouch-tab-1",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/pouch-tab-1/optimization"
+    },
+    {
+      "id": "mag-pouch-2",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/mag-pouch-2/optimization"
+    },
+    {
+      "id": "pouch-flap-2",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/pouch-flap-2/optimization"
+    },
+    {
+      "id": "pouch-tab-2",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/pouch-tab-2/optimization"
+    },
+    {
+      "id": "belt",
+      "triangles": 32,
+      "optimizationPath": "spec.json#/componentTree/belt/optimization"
+    },
+    {
+      "id": "belt-buckle",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/belt-buckle/optimization"
+    },
+    {
+      "id": "collar-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/collar-l/optimization"
+    },
+    {
+      "id": "strap-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/strap-l/optimization"
+    },
+    {
+      "id": "strap-accent-l",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/strap-accent-l/optimization"
+    },
+    {
+      "id": "strap-buckle-l",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/strap-buckle-l/optimization"
+    },
+    {
+      "id": "side-strap-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/side-strap-l/optimization"
+    },
+    {
+      "id": "belt-accent-l",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/belt-accent-l/optimization"
+    },
+    {
+      "id": "hip-pouch-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/hip-pouch-l/optimization"
+    },
+    {
+      "id": "sleeve-cuff-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/sleeve-cuff-l/optimization"
+    },
+    {
+      "id": "shoulder-patch-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/shoulder-patch-l/optimization"
+    },
+    {
+      "id": "wrist-cuff-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/wrist-cuff-l/optimization"
+    },
+    {
+      "id": "glove-plate-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/glove-plate-l/optimization"
+    },
+    {
+      "id": "finger-l-0",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/finger-l-0/optimization"
+    },
+    {
+      "id": "finger-l-1",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/finger-l-1/optimization"
+    },
+    {
+      "id": "finger-l-2",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/finger-l-2/optimization"
+    },
+    {
+      "id": "finger-l-3",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/finger-l-3/optimization"
+    },
+    {
+      "id": "thumb-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/thumb-l/optimization"
+    },
+    {
+      "id": "knee-pad-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/knee-pad-l/optimization"
+    },
+    {
+      "id": "knee-shell-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/knee-shell-l/optimization"
+    },
+    {
+      "id": "knee-strap-l",
+      "triangles": 32,
+      "optimizationPath": "spec.json#/componentTree/knee-strap-l/optimization"
+    },
+    {
+      "id": "cargo-pocket-l",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/cargo-pocket-l/optimization"
+    },
+    {
+      "id": "thigh-band-l",
+      "triangles": 32,
+      "optimizationPath": "spec.json#/componentTree/thigh-band-l/optimization"
+    },
+    {
+      "id": "thigh-buckle-l",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/thigh-buckle-l/optimization"
+    },
+    {
+      "id": "boot-sole-l",
+      "triangles": 96,
+      "optimizationPath": "spec.json#/componentTree/boot-sole-l/optimization"
+    },
+    {
+      "id": "boot-upper-l",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/boot-upper-l/optimization"
+    },
+    {
+      "id": "lace-l-0",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/lace-l-0/optimization"
+    },
+    {
+      "id": "lace-l-1",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/lace-l-1/optimization"
+    },
+    {
+      "id": "lace-l-2",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/lace-l-2/optimization"
+    },
+    {
+      "id": "lace-l-3",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/lace-l-3/optimization"
+    },
+    {
+      "id": "boot-accent-l",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/boot-accent-l/optimization"
+    },
+    {
+      "id": "ear-l",
+      "triangles": 528,
+      "optimizationPath": "spec.json#/componentTree/ear-l/optimization"
+    },
+    {
+      "id": "eye-white-l",
+      "triangles": 372,
+      "optimizationPath": "spec.json#/componentTree/eye-white-l/optimization"
+    },
+    {
+      "id": "iris-l",
+      "triangles": 114,
+      "optimizationPath": "spec.json#/componentTree/iris-l/optimization"
+    },
+    {
+      "id": "pupil-l",
+      "triangles": 66,
+      "optimizationPath": "spec.json#/componentTree/pupil-l/optimization"
+    },
+    {
+      "id": "eye-glint-l",
+      "triangles": 28,
+      "optimizationPath": "spec.json#/componentTree/eye-glint-l/optimization"
+    },
+    {
+      "id": "eyelid-l",
+      "triangles": 160,
+      "optimizationPath": "spec.json#/componentTree/eyelid-l/optimization"
+    },
+    {
+      "id": "brow-l",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/brow-l/optimization"
+    },
+    {
+      "id": "hair-side-l",
+      "triangles": 336,
+      "optimizationPath": "spec.json#/componentTree/hair-side-l/optimization"
+    },
+    {
+      "id": "collar-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/collar-r/optimization"
+    },
+    {
+      "id": "strap-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/strap-r/optimization"
+    },
+    {
+      "id": "strap-accent-r",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/strap-accent-r/optimization"
+    },
+    {
+      "id": "strap-buckle-r",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/strap-buckle-r/optimization"
+    },
+    {
+      "id": "side-strap-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/side-strap-r/optimization"
+    },
+    {
+      "id": "belt-accent-r",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/belt-accent-r/optimization"
+    },
+    {
+      "id": "hip-pouch-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/hip-pouch-r/optimization"
+    },
+    {
+      "id": "sleeve-cuff-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/sleeve-cuff-r/optimization"
+    },
+    {
+      "id": "shoulder-patch-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/shoulder-patch-r/optimization"
+    },
+    {
+      "id": "wrist-cuff-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/wrist-cuff-r/optimization"
+    },
+    {
+      "id": "glove-plate-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/glove-plate-r/optimization"
+    },
+    {
+      "id": "finger-r-0",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/finger-r-0/optimization"
+    },
+    {
+      "id": "finger-r-1",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/finger-r-1/optimization"
+    },
+    {
+      "id": "finger-r-2",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/finger-r-2/optimization"
+    },
+    {
+      "id": "finger-r-3",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/finger-r-3/optimization"
+    },
+    {
+      "id": "thumb-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/thumb-r/optimization"
+    },
+    {
+      "id": "knee-pad-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/knee-pad-r/optimization"
+    },
+    {
+      "id": "knee-shell-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/knee-shell-r/optimization"
+    },
+    {
+      "id": "knee-strap-r",
+      "triangles": 32,
+      "optimizationPath": "spec.json#/componentTree/knee-strap-r/optimization"
+    },
+    {
+      "id": "cargo-pocket-r",
+      "triangles": 64,
+      "optimizationPath": "spec.json#/componentTree/cargo-pocket-r/optimization"
+    },
+    {
+      "id": "thigh-band-r",
+      "triangles": 32,
+      "optimizationPath": "spec.json#/componentTree/thigh-band-r/optimization"
+    },
+    {
+      "id": "thigh-buckle-r",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/thigh-buckle-r/optimization"
+    },
+    {
+      "id": "boot-sole-r",
+      "triangles": 96,
+      "optimizationPath": "spec.json#/componentTree/boot-sole-r/optimization"
+    },
+    {
+      "id": "boot-upper-r",
+      "triangles": 176,
+      "optimizationPath": "spec.json#/componentTree/boot-upper-r/optimization"
+    },
+    {
+      "id": "lace-r-0",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/lace-r-0/optimization"
+    },
+    {
+      "id": "lace-r-1",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/lace-r-1/optimization"
+    },
+    {
+      "id": "lace-r-2",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/lace-r-2/optimization"
+    },
+    {
+      "id": "lace-r-3",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/lace-r-3/optimization"
+    },
+    {
+      "id": "boot-accent-r",
+      "triangles": 12,
+      "optimizationPath": "spec.json#/componentTree/boot-accent-r/optimization"
+    },
+    {
+      "id": "ear-r",
+      "triangles": 528,
+      "optimizationPath": "spec.json#/componentTree/ear-r/optimization"
+    },
+    {
+      "id": "eye-white-r",
+      "triangles": 372,
+      "optimizationPath": "spec.json#/componentTree/eye-white-r/optimization"
+    },
+    {
+      "id": "iris-r",
+      "triangles": 114,
+      "optimizationPath": "spec.json#/componentTree/iris-r/optimization"
+    },
+    {
+      "id": "pupil-r",
+      "triangles": 66,
+      "optimizationPath": "spec.json#/componentTree/pupil-r/optimization"
+    },
+    {
+      "id": "eye-glint-r",
+      "triangles": 28,
+      "optimizationPath": "spec.json#/componentTree/eye-glint-r/optimization"
+    },
+    {
+      "id": "eyelid-r",
+      "triangles": 160,
+      "optimizationPath": "spec.json#/componentTree/eyelid-r/optimization"
+    },
+    {
+      "id": "brow-r",
+      "triangles": 80,
+      "optimizationPath": "spec.json#/componentTree/brow-r/optimization"
+    },
+    {
+      "id": "hair-side-r",
+      "triangles": 336,
+      "optimizationPath": "spec.json#/componentTree/hair-side-r/optimization"
+    },
+    {
+      "id": "nose",
+      "triangles": 1848,
+      "optimizationPath": "spec.json#/componentTree/nose/optimization"
+    },
+    {
+      "id": "upper-lip",
+      "triangles": 372,
+      "optimizationPath": "spec.json#/componentTree/upper-lip/optimization"
+    },
+    {
+      "id": "lower-lip",
+      "triangles": 372,
+      "optimizationPath": "spec.json#/componentTree/lower-lip/optimization"
+    },
+    {
+      "id": "fringe-sweep",
+      "triangles": 348,
+      "optimizationPath": "spec.json#/componentTree/fringe-sweep/optimization"
+    },
+    {
+      "id": "fringe-side",
+      "triangles": 300,
+      "optimizationPath": "spec.json#/componentTree/fringe-side/optimization"
+    },
+    {
+      "id": "hair-tie",
+      "triangles": 528,
+      "optimizationPath": "spec.json#/componentTree/hair-tie/optimization"
+    },
+    {
+      "id": "tail-lock-0",
+      "triangles": 432,
+      "optimizationPath": "spec.json#/componentTree/tail-lock-0/optimization"
+    },
+    {
+      "id": "tail-lock-1",
+      "triangles": 432,
+      "optimizationPath": "spec.json#/componentTree/tail-lock-1/optimization"
+    },
+    {
+      "id": "tail-lock-2",
+      "triangles": 432,
+      "optimizationPath": "spec.json#/componentTree/tail-lock-2/optimization"
+    },
+    {
+      "id": "fringe-layer-0",
+      "triangles": 300,
+      "optimizationPath": "spec.json#/componentTree/fringe-layer-0/optimization"
+    },
+    {
+      "id": "fringe-layer-1",
+      "triangles": 300,
+      "optimizationPath": "spec.json#/componentTree/fringe-layer-1/optimization"
+    },
+    {
+      "id": "fringe-layer-2",
+      "triangles": 300,
+      "optimizationPath": "spec.json#/componentTree/fringe-layer-2/optimization"
+    }
+  ]
+}

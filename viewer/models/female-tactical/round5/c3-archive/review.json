@@ -1,0 +1,44 @@
+{
+  "passId": "blockout",
+  "round": 5,
+  "action": "refine-spec",
+  "summary": "C3 GPU nose REJECTED: stripe removed but tip erased and ridge blurry. Normal count alone did not demonstrate likeness improvement. User selects exact C1 head plus C2 hair/brows; no speculative tuning.",
+  "evidence": [
+    ".img2babylon/shots/round5-c3-rear.png",
+    ".img2babylon/shots/round5-c3-left.png",
+    ".img2babylon/shots/round5-c3-right.png",
+    ".img2babylon/shots/round5-c3-front.png",
+    ".img2babylon/shots/round5-c3-rear-quarter.png",
+    ".img2babylon/shots/round5-c3-orbit-plus.png",
+    ".img2babylon/shots/round5-c3-hero.png",
+    ".img2babylon/shots/round5-c3-orbit-minus.png",
+    ".img2babylon/shots/round5-c3-face-minus.png",
+    ".img2babylon/shots/round5-c3-face-plus.png",
+    ".img2babylon/shots/round5-c3-face.png",
+    ".img2babylon/cli/round5-c3-rebuild-check.json",
+    "viewer/models/female-tactical/round5/c3/capture-handoff.json"
+  ],
+  "evidenceHashes": {
+    ".img2babylon/shots/round5-c3-rear.png": "82c159065bc9937a75488a987f3d253fd265b71462f2375ce4d73f10e340f05e",
+    ".img2babylon/shots/round5-c3-left.png": "8652aeebfcf5ed3ae536a2c88160dea4bb956c3ac73bb9149b57e0d5be736a34",
+    ".img2babylon/shots/round5-c3-right.png": "4da47dfe7769fe91cc65edf7287f49e9d3f5eb106d4885125dd26d5049b23a95",
+    ".img2babylon/shots/round5-c3-front.png": "bf628ec7a774cd1529436cc567d9281bff17ca9f34beacaf2a291c5bceb1a2d4",
+    ".img2babylon/shots/round5-c3-rear-quarter.png": "e7ab2d6ac2dbf30ccabf82ac3ea092250c80df133e724d9846e558b2ce95071e",
+    ".img2babylon/shots/round5-c3-orbit-plus.png": "5a9f85ce055c558fe1a535a1a5e619d19eb5e398effd83054cfd44070a9cafa3",
+    ".img2babylon/shots/round5-c3-hero.png": "cd7ebb7ae3068af92fde7cb933175ab7ec5c7dfdcca0fd29fc261af760e763de",
+    ".img2babylon/shots/round5-c3-orbit-minus.png": "17193f5c9aab91cabf8a66d8f5514a726e7de924c5de115ab2e33b99709897fa",
+    ".img2babylon/shots/round5-c3-face-minus.png": "e4deb88b6d99adc9c4f82f196cbf8f9ca69d686abb78fcc699ab66a90e711942",
+    ".img2babylon/shots/round5-c3-face-plus.png": "2f604adf35d6f1e5aabbea8abc051d95627d7e33a1dc278cb6900b4f35dfb84f",
+    ".img2babylon/shots/round5-c3-face.png": "9de1c7a4361badeed71ab8954b6815907b5e4d66855f613877035f93a3f02ddb",
+    ".img2babylon/cli/round5-c3-rebuild-check.json": "2edaea988eaa1c1aac90740f6820453aff194dca6d3fc67d893c3a770c885360",
+    "viewer/models/female-tactical/round5/c3/capture-handoff.json": "778d3f02e17fed6b2a9bcfc0056690dd8e9a7f594c6df961c5d68ad7548f9450"
+  },
+  "desktopReported": {
+    "views": 11,
+    "viewport": [
+      585,
+      1024
+    ],
+    "errors": 0
+  }
+}

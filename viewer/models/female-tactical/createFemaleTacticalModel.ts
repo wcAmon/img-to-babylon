@@ -13,6 +13,6 @@ export default function createFemaleTacticalModel(scene: Scene, opts: ModelOptio
     physics: opts.physics,
     physicsSpec: spec as unknown as SculptSpec,
     inspectorSpec: spec as unknown as SculptSpec,
-    iteration: { ...iteration, nativeRound: 4, nativePass: 'blockout', visualStatus: 'awaiting-desktop-capture' },
+    iteration: { ...iteration, nativeRound: iteration.round, nativePass: 'blockout', visualStatus: iteration.status },
   });
 }

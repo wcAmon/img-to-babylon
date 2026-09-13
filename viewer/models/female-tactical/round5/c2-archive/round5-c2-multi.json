@@ -1,0 +1,20 @@
+{
+  "referenceAreaFraction": 0.3409571981837607,
+  "angles": [
+    {
+      "path": ".img2babylon/shots/round5-c2-orbit-plus.png",
+      "areaFraction": 0.32897469284188036,
+      "ratio": 0.9648562769587803,
+      "degenerate": false
+    },
+    {
+      "path": ".img2babylon/shots/round5-c2-orbit-minus.png",
+      "areaFraction": 0.33460036057692305,
+      "ratio": 0.981355907308308,
+      "degenerate": false
+    }
+  ],
+  "degenerate": false,
+  "collapseRatio": 0.15,
+  "note": "deterministic; zero token; a flat-plane-faking-a-volume collapses in silhouette area when orbited"
+}

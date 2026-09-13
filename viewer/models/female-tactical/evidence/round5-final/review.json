@@ -1,0 +1,732 @@
+{
+  "model": "female-tactical",
+  "round": 5,
+  "corrections": 4,
+  "limit": 6,
+  "remaining": 2,
+  "lifetimeCorrections": 25,
+  "action": "stop",
+  "reason": "Deliver inspected stable combination after nose refinement oscillation; keep remaining budget, no new round.",
+  "visualAccepted": false,
+  "parts": 125,
+  "triangles": 29644,
+  "sourceHashesVerified": {
+    "spec.json": true,
+    "canonical-spec.json": true,
+    "createNativeFemaleTactical.ts": true,
+    "createFemaleTacticalModel.ts": true,
+    "round5/compile_surfaces.py": true,
+    "iteration.json": true,
+    "reference/female.png": true,
+    "round5/c4/author.py": true,
+    "round5/c4/rebuild.sh": true,
+    "round4/prepare.py": true
+  },
+  "sourceHashes": {
+    "spec.json": "f9827cf12b0c6d0b30c195e0ba1de05f844651a9e64c07b7ca3fa087c3e7e59d",
+    "canonical-spec.json": "0a18b09644baf4c799bb26bb0b4e16385e244e3ae85d8ea42013e47998d64c43",
+    "createNativeFemaleTactical.ts": "49574194828fa469feaffe2face7a6aa43b0542eada4fa943cdbd10bcb8ded49",
+    "createFemaleTacticalModel.ts": "7df31c9f78e6f9f863f739580d3b50ea8501c6846d4e4442e12eb337dcdfa3d5",
+    "round5/compile_surfaces.py": "7965635cac8a4ae183258f1c3e07c69bd269b046fed925de54f421cc1aa2b740",
+    "iteration.json": "77947444d748bd2183cbabf2ad1a96158afb5c458d050f929c4a43e5f9186e15",
+    "reference/female.png": "75e4fbe956035ef3df2a2cb372ff8d5f0e6ec5f1bc5e7eb42646f6527efe2fae",
+    "round5/c4/author.py": "5e7fe2de201304420ca2eecf1e7a4551eb5bdcc57b08d5600adb71a414b28741",
+    "round5/c4/rebuild.sh": "a91ab1d61b17cb8d0f6fe34b73fee5173b9bd86c6425cb7f92ff648c015505f6",
+    "round4/prepare.py": "427f6a5ba909dd264e515d6268c5a8640c2987266a73225578537f84749e3bd8"
+  },
+  "capture": {
+    "browser": "Codex in-app Chromium",
+    "renderer": "Babylon WebGL2",
+    "viewport": [
+      585,
+      1024
+    ],
+    "DPR": 1,
+    "method": "actual canvas PNG through review export button",
+    "consoleErrors": [],
+    "views": 11,
+    "additionalPasses": [
+      "alpha-silhouette",
+      "normal"
+    ],
+    "cameras": "viewer/public/female-tactical-round5/c4-batch.json"
+  },
+  "images": [
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-alpha-silhouette.png",
+      "sha256": "54c3ba5e768d1add34e11a5f243466f0e6b66fdb38c30c67285f42f06537b5fe",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-comparison.png",
+      "sha256": "30df8124c21c68b903a1639674b6c520a5427eff1272b4c514f067d466153ae9",
+      "width": 1242,
+      "height": 1100
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-face-minus.png",
+      "sha256": "36320c4a4731f8be7cb48789b0232f4ae3c66fddf73c923468f166dcc4258c9b",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-face-plus.png",
+      "sha256": "e9fb8939e2f35830aa02d072d9ea934bb10af85d255ffbfa4a514203c927ed94",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-face.png",
+      "sha256": "0de5a5c622595cbe78667cbf608635c33f843b7c253d7c5cf8bb1c6376c2e659",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-front.png",
+      "sha256": "dafa6cc56210c8f8f373875f8a440a7d05fec65ab6cb8627bd6bcedbf4d716b8",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-hero.png",
+      "sha256": "4c2f1451e1731cb2397e868c7eb8dea7b89c860a6e837b8f94b26ea3681b29c4",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-left.png",
+      "sha256": "9fa505e9c305b44e37b21cb452f37b8a0722f61b7ae96180dfb426b7be52beea",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-normal.png",
+      "sha256": "61d4fb7d65de07d200c4b2e4fb821778f7becf99b345b649aba84a5fedd893ce",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-orbit-minus.png",
+      "sha256": "96fa0c2e5e858c9411e82c658c8dd8b99be082823e017ce8ae331cdfd5d577bc",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-orbit-plus.png",
+      "sha256": "3bf56008bbeb887324b26c37c8026d543d24ed29c670f1aa0b436fe1ffb48b81",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-rear-quarter.png",
+      "sha256": "473c60822dc65da552d1c3534f42831eaaa6d273f4358ee899cd12cbca504bf7",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-rear.png",
+      "sha256": "3e33259d07b92844d72da3e074059fefa39adcac1d1910a36f260b8341cead96",
+      "width": 585,
+      "height": 1024
+    },
+    {
+      "path": "viewer/models/female-tactical/evidence/round5-final/round5-c4-right.png",
+      "sha256": "f6421b32329088657343060b5b05d70ffcf03cab1e8da9a69a8f6892b0f6627f",
+      "width": 585,
+      "height": 1024
+    }
+  ],
+  "tier1": {
+    "passed": false,
+    "checks": {
+      "silhouetteIoU": 0.6095,
+      "aspectRatioDelta": 0.1231,
+      "scaleDelta": 0.1453,
+      "bilateralSymmetryError": 0.0782,
+      "colorDelta": {
+        "checked": 125,
+        "maxDeltaE": 37.61,
+        "perComponent": [
+          {
+            "componentId": null,
+            "deltaE": 26.32
+          },
+          {
+            "componentId": null,
+            "deltaE": 5.98
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.08
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.08
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.32
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.08
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 5.98
+          },
+          {
+            "componentId": null,
+            "deltaE": 5.98
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.32
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.08
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 5.98
+          },
+          {
+            "componentId": null,
+            "deltaE": 5.98
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.32
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.32
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 5.98
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.08
+          },
+          {
+            "componentId": null,
+            "deltaE": 14.39
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.55
+          },
+          {
+            "componentId": null,
+            "deltaE": 14.85
+          },
+          {
+            "componentId": null,
+            "deltaE": 14.39
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.32
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.32
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 5.98
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 3.34
+          },
+          {
+            "componentId": null,
+            "deltaE": 6.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 8.52
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.08
+          },
+          {
+            "componentId": null,
+            "deltaE": 14.39
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.55
+          },
+          {
+            "componentId": null,
+            "deltaE": 14.85
+          },
+          {
+            "componentId": null,
+            "deltaE": 14.39
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 26.08
+          },
+          {
+            "componentId": null,
+            "deltaE": 37.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 37.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 23.94
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 16.44
+          },
+          {
+            "componentId": null,
+            "deltaE": 13.61
+          },
+          {
+            "componentId": null,
+            "deltaE": 16.44
+          }
+        ],
+        "gated": false
+      }
+    },
+    "failures": [
+      "silhouette IoU 0.610 is below threshold 0.85",
+      "aspect-ratio delta 0.123 exceeds threshold 0.05",
+      "scale delta 0.145 exceeds threshold 0.08"
+    ],
+    "maskWarnings": [],
+    "renderHash": "4c2f1451e1731cb2",
+    "passId": "blockout",
+    "mapStrippedRender": ".img2babylon/shots/round5-c4-hero.png"
+  },
+  "multiAngle": {
+    "referenceAreaFraction": 0.3409588675213675,
+    "angles": [
+      {
+        "path": ".img2babylon/shots/round5-c4-orbit-plus.png",
+        "areaFraction": 0.32897803151709404,
+        "ratio": 0.9648613450315304,
+        "degenerate": false
+      },
+      {
+        "path": ".img2babylon/shots/round5-c4-orbit-minus.png",
+        "areaFraction": 0.33459869123931624,
+        "ratio": 0.9813462065724022,
+        "degenerate": false
+      }
+    ],
+    "degenerate": false,
+    "collapseRatio": 0.15,
+    "note": "deterministic; zero token; a flat-plane-faking-a-volume collapses in silhouette area when orbited"
+  },
+  "rebuild": {
+    "exitStatus": 0,
+    "scope": "isolated temporary copy; live source unchanged",
+    "stdoutTail": "BJS - [07:28:16]: Babylon.js v8.56.2 - Null engine\nExported 125 procedural components\nImported bridge; production remains blocked pending canonical intake and strict gates.\nCompiled native surfaces; removed 368 zero-area source triangles\n{\n  \"ok\": true,\n  \"errors\": [],\n  \"warnings\": [\n    \"missing terminologyProfile; descriptions may drift into vague non-3D language\",\n    \"missing scores block; image validation evidence will be weaker\",\n    \"missing actionReadiness; generated model may not be ready for animation/transformation/destruction\",\n    \"missing viewEvidence; local visual claims cannot be traced back to image regions\"\n  ],\n  \"summary\": {\n    \"targetName\": \"female-tactical\",\n    \"suitability\": \"conditional\",\n    \"components\": 125,\n    \"materials\": 13\n  }\n}\nviewer/models/female-tactical/createNativeFemaleTactical.ts\n",
+    "stderrTail": "",
+    "sameExecutableModelData": true,
+    "expectedHash": "c5af6ffae0a335532e4efd9568bdbf7fb2711c68d8e773e7348dc1e719b95182",
+    "rebuiltHash": "c5af6ffae0a335532e4efd9568bdbf7fb2711c68d8e773e7348dc1e719b95182"
+  },
+  "visualReview": {
+    "improved": [
+      "larger almond eye and mouth proportions",
+      "shorter lower face and neck integration",
+      "tapered brows and diagonal forehead locks crossing cap boundary",
+      "higher fuller ponytail"
+    ],
+    "rejected": [
+      "C2 wide dark nose band",
+      "C3 flattened nose tip"
+    ],
+    "selected": "C1 actual head geometry plus C2 actual hair and brow recipes, independently parity-tested",
+    "remaining": [
+      "Generic simplified face; weak eye-socket/cheek/nose anatomical transitions and expression",
+      "Cap remains too prominent and hair tips too regular relative to reference",
+      "Clothing/armor/body unchanged and visibly blocky",
+      "Whole-reference silhouette gate fails; same camera retained, not a solved source camera",
+      "No completed PBR material pass, skin textures, facial rig or animation",
+      "Single-image rear design inferred; whole assembly penetration not fully accepted; final head sample audit has 1 undecided of 96 points"
+    ]
+  },
+  "notes": [
+    "Diagnostic stop does not mark visual gates passed or consume a fifth correction.",
+    "Before/after sheet left is previous round4-c6 actual render, right is selected round5-c4 actual render.",
+    "Materials match prior map-free StandardMaterial set; map-stripped diagnostic uses actual beauty PNG."
+  ],
+  "postCaptureUiFix": {
+    "file": "createFemaleTacticalModel.ts",
+    "previousSha256": "7df31c9f78e6f9f863f739580d3b50ea8501c6846d4e4442e12eb337dcdfa3d5",
+    "currentSha256": "2bd7f23245d66cfefd952dfc4081439c5df53cea5f516786e4d5581dadc1994c",
+    "change": "Read iteration.round and iteration.status instead of hardcoded round4/capture status; no model geometry or camera change.",
+    "actualPngByteParity": {
+      "hero": true,
+      "face-plus": true
+    },
+    "uiObserved": "female-tactical · blockout · r010 · 第 5 輪",
+    "validation": "typecheck/build passed after UI fix"
+  }
+}

@@ -221,8 +221,8 @@
       "level": "macro",
       "primitive": "sphere",
       "dimensions": {
-        "w": 0.09,
-        "h": 0.105,
+        "w": 0.0846,
+        "h": 0.097,
         "d": 0.085,
         "units": "m",
         "confidence": 0.8
@@ -259,13 +259,13 @@
         "priority": "silhouette",
         "confidence": 0.8,
         "next": "Compare front, side and rear before increasing topology.",
-        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       },
       "collider": {
         "type": "box",
         "size": [
-          0.09,
-          0.105,
+          0.0846,
+          0.097,
           0.085
         ],
         "offset": [
@@ -291,7 +291,7 @@
       "transform": {
         "position": [
           0,
-          1.588,
+          1.574,
           0.006
         ],
         "rotation": [
@@ -316,84 +316,84 @@
         "segments": 64,
         "rings": [
           [
-            -0.453,
+            -0.41000000000000003,
             0.12671648786652526,
             0.19,
             0.0,
             0.030149119417896802
           ],
           [
-            -0.4384677854938272,
+            -0.4014039265002886,
             0.15696204464576088,
             0.21982918117643876,
             0.0,
             0.028747074248898493
           ],
           [
-            -0.42348225308641974,
+            -0.3920781432597934,
             0.1863267310781015,
             0.25013288251808663,
             0.0,
             0.02766845784422404
           ],
           [
-            -0.4080434027777778,
+            -0.3819801195642105,
             0.21028125286614527,
             0.27695676931486873,
             0.0,
             0.026748138928158714
           ],
           [
-            -0.39215123456790124,
+            -0.37106603812938843,
             0.22669395051234756,
             0.29812485962991786,
             0.0,
             0.02593906299541028
           ],
           [
-            -0.3758057484567901,
+            -0.35929079510132783,
             0.24041104490642268,
             0.31773382533047123,
             0.0,
             0.025617327909505685
           ],
           [
-            -0.3590069444444444,
+            -0.3466080000561819,
             0.25299598322196365,
             0.33612142474341844,
             0.0,
             0.026092725336473516
           ],
           [
-            -0.34175482253086414,
+            -0.33296997600025613,
             0.2655902018131533,
             0.3531450679510156,
             0.0,
             0.02733179969023788
           ],
           [
-            -0.32404938271604944,
+            -0.31832775937000846,
             0.2791837092086619,
             0.3686621650355187,
             0.0,
             0.028906148389462365
           ],
           [
-            -0.305890625,
+            -0.3026311000320489,
             0.29444101687559376,
             0.3825301260791842,
             0.0,
             0.030117972747553467
           ],
           [
-            -0.287278549382716,
+            -0.28582846128314016,
             0.3116323944097538,
             0.3946741692519991,
             0.0,
             0.030259123760686537
           ],
           [
-            -0.2682131558641976,
+            -0.2678670198501972,
             0.3306685494467563,
             0.4056521726215352,
             0.0,
@@ -921,7 +921,7 @@
         "priority": "silhouette",
         "confidence": 0.8,
         "next": "Adjust geometry.relief for nose bridge/cheeks; retain smooth ring transitions and verify profile.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C4 exact C1 geometry restored by explicit GPU-based user selection; C2 hair/brows retained"
       },
       "collider": {
         "type": "box",
@@ -1129,7 +1129,7 @@
         "nativeRecipe": {
           "kind": "scalp-cap",
           "hairline": {
-            "frontV": 0.72,
+            "frontV": 0.8,
             "sideV": 0.49,
             "rearV": 0.23
           },
@@ -1144,7 +1144,7 @@
         "priority": "detail",
         "confidence": 0.8,
         "next": "Compare front, side and rear before increasing topology.",
-        "lastChange": "round4 c3: measured pose continuity, rooted clumps, nose/eye form and polygon budget"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -1237,27 +1237,27 @@
             ],
             [
               0,
-              0.108,
-              -0.105
+              0.139,
+              -0.115
             ],
             [
-              -0.012,
-              0.089,
-              -0.151
+              -0.015,
+              0.119,
+              -0.167
             ],
             [
-              -0.024,
-              0.006,
-              -0.173
+              -0.025,
+              0.022,
+              -0.184
             ],
             [
-              -0.008,
-              -0.102,
-              -0.151
+              -0.005,
+              -0.104,
+              -0.153
             ]
           ],
-          "width": 0.072,
-          "thickness": 0.045,
+          "width": 0.08351999999999998,
+          "thickness": 0.0495,
           "samples": 26,
           "radialSegments": 8,
           "tipRatio": 0.1,
@@ -1287,7 +1287,8 @@
               1,
               0.09
             ]
-          ]
+          ],
+          "curvatureLimit": 0.28
         }
       },
       "optimization": {
@@ -1295,12 +1296,12 @@
         "priority": "detail",
         "confidence": 0.8,
         "next": "Compare front, side and rear before increasing topology.",
-        "lastChange": "C4 continuous facial anatomy / sustained ponytail volume; density preserved"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       },
       "hairRootBinding": {
         "u": 0.75,
         "v": 0.84,
-        "consumedBy": "round4/compile_surfaces.py",
+        "consumedBy": "round5/compile_surfaces.py",
         "note": "Head-rooted to posterior tie; hidden rear form inferred."
       }
     },
@@ -6068,13 +6069,13 @@
           "feature": "sclera",
           "side": 1,
           "center": [
-            0.034,
-            0.01
+            0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 32,
@@ -6087,7 +6088,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -6236,19 +6237,19 @@
           "feature": "iris",
           "side": 1,
           "center": [
-            0.034,
-            0.01
+            0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 20,
           "vSegments": 3,
           "expressionRevision": "C6 reference lower angular brows / iris dominance; preserve surface hierarchy",
-          "irisRadius": 0.0069
+          "irisRadius": 0.0073
         }
       },
       "optimization": {
@@ -6256,7 +6257,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -6405,13 +6406,13 @@
           "feature": "pupil",
           "side": 1,
           "center": [
-            0.034,
-            0.01
+            0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 12,
@@ -6424,7 +6425,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -6472,13 +6473,13 @@
           "feature": "glint",
           "side": 1,
           "center": [
-            0.034,
-            0.01
+            0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 8,
@@ -6491,7 +6492,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -6595,13 +6596,13 @@
           "feature": "lid",
           "side": 1,
           "center": [
-            0.034,
-            0.01
+            0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 20,
@@ -6615,7 +6616,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -6704,21 +6705,23 @@
           "feature": "brow",
           "side": 1,
           "center": [
-            0.034,
-            0.01
+            0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 20,
           "vSegments": 2,
           "expressionRevision": "C6 reference lower angular brows / iris dominance; preserve surface hierarchy",
-          "browBase": 0.023,
-          "browThickness": 0.004,
-          "browArch": 0.0025
+          "browBase": 0.019,
+          "browThickness": 0.0048,
+          "browArch": 0.0032,
+          "browApex": 0.34,
+          "browTailTaper": 0.85
         }
       },
       "optimization": {
@@ -6726,7 +6729,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C2 connected nasal wings/tip and temple-crossing fringe controls"
       }
     },
     {
@@ -6835,7 +6838,7 @@
       "hairRootBinding": {
         "u": 0.01,
         "v": 0.79,
-        "consumedBy": "round4/compile_surfaces.py",
+        "consumedBy": "round5/compile_surfaces.py",
         "coordinateSystem": "head-local LH, scalp azimuth u and height v"
       }
     },
@@ -8859,13 +8862,13 @@
           "feature": "sclera",
           "side": -1,
           "center": [
-            -0.034,
-            0.01
+            -0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 32,
@@ -8878,7 +8881,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -9027,19 +9030,19 @@
           "feature": "iris",
           "side": -1,
           "center": [
-            -0.034,
-            0.01
+            -0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 20,
           "vSegments": 3,
           "expressionRevision": "C6 reference lower angular brows / iris dominance; preserve surface hierarchy",
-          "irisRadius": 0.0069
+          "irisRadius": 0.0073
         }
       },
       "optimization": {
@@ -9047,7 +9050,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -9196,13 +9199,13 @@
           "feature": "pupil",
           "side": -1,
           "center": [
-            -0.034,
-            0.01
+            -0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 12,
@@ -9215,7 +9218,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -9263,13 +9266,13 @@
           "feature": "glint",
           "side": -1,
           "center": [
-            -0.034,
-            0.01
+            -0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 8,
@@ -9282,7 +9285,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -9386,13 +9389,13 @@
           "feature": "lid",
           "side": -1,
           "center": [
-            -0.034,
-            0.01
+            -0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 20,
@@ -9406,7 +9409,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -9495,21 +9498,23 @@
           "feature": "brow",
           "side": -1,
           "center": [
-            -0.034,
-            0.01
+            -0.033,
+            0.006
           ],
           "support": "head",
-          "width": 0.041,
-          "upperHeight": 0.0065,
-          "lowerHeight": 0.0048,
+          "width": 0.048,
+          "upperHeight": 0.0078,
+          "lowerHeight": 0.0053,
           "bulge": 0.0022,
           "edgeClearance": 0.0008,
           "uSegments": 20,
           "vSegments": 2,
           "expressionRevision": "C6 reference lower angular brows / iris dominance; preserve surface hierarchy",
-          "browBase": 0.023,
-          "browThickness": 0.004,
-          "browArch": 0.0025
+          "browBase": 0.019,
+          "browThickness": 0.0048,
+          "browArch": 0.0032,
+          "browApex": 0.34,
+          "browTailTaper": 0.85
         }
       },
       "optimization": {
@@ -9517,7 +9522,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C2 connected nasal wings/tip and temple-crossing fringe controls"
       }
     },
     {
@@ -9626,7 +9631,7 @@
       "hairRootBinding": {
         "u": 0.49,
         "v": 0.79,
-        "consumedBy": "round4/compile_surfaces.py",
+        "consumedBy": "round5/compile_surfaces.py",
         "coordinateSystem": "head-local LH, scalp azimuth u and height v"
       }
     },
@@ -9771,14 +9776,15 @@
           "kind": "surface-feature",
           "feature": "upper-lip",
           "support": "head",
-          "width": 0.037,
+          "width": 0.044,
           "seamY": -0.0675,
-          "height": 0.0032,
+          "height": 0.0035,
           "bulge": 0.0013,
           "edgeClearance": 0.0007,
           "uSegments": 32,
           "vSegments": 6,
-          "expressionRevision": "C6 reference lower angular brows / iris dominance; preserve surface hierarchy"
+          "expressionRevision": "C6 reference lower angular brows / iris dominance; preserve surface hierarchy",
+          "cornerLift": 0.00085
         }
       },
       "optimization": {
@@ -9786,7 +9792,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -9874,14 +9880,15 @@
           "kind": "surface-feature",
           "feature": "lower-lip",
           "support": "head",
-          "width": 0.037,
+          "width": 0.044,
           "seamY": -0.0675,
-          "height": 0.0032,
+          "height": 0.0035,
           "bulge": 0.0013,
           "edgeClearance": 0.0007,
           "uSegments": 32,
           "vSegments": 6,
-          "expressionRevision": "C6 reference lower angular brows / iris dominance; preserve surface hierarchy"
+          "expressionRevision": "C6 reference lower angular brows / iris dominance; preserve surface hierarchy",
+          "cornerLift": 0.00085
         }
       },
       "optimization": {
@@ -9889,7 +9896,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C6 final authorized correction; reference expression and lace-up boot recipe"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       }
     },
     {
@@ -10028,30 +10035,31 @@
           "kind": "scalp-lock",
           "uvControls": [
             [
-              0.39,
-              0.89
+              0.38,
+              0.92
             ],
             [
-              0.31,
-              0.86
+              0.29,
+              0.91
             ],
             [
-              0.2,
-              0.78
+              0.19,
+              0.76
             ],
             [
-              0.08,
-              0.6
+              0.085,
+              0.49
             ]
           ],
-          "width": 0.0352,
-          "thickness": 0.01125,
+          "width": 0.043,
+          "thickness": 0.019,
           "clearance": 0.004,
-          "samples": 20,
-          "radialSegments": 8,
-          "tipRatio": 0.04,
+          "samples": 28,
+          "radialSegments": 6,
+          "tipRatio": 0.025,
           "capClearance": 0.0035,
-          "rootEmbed": 0.0015
+          "rootEmbed": 0.0015,
+          "flattenedFacet": true
         }
       },
       "optimization": {
@@ -10059,12 +10067,12 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C4 continuous facial anatomy / sustained ponytail volume; density preserved"
+        "lastChange": "R5 C2 connected nasal wings/tip and temple-crossing fringe controls"
       },
       "hairRootBinding": {
-        "u": 0.39,
-        "v": 0.89,
-        "consumedBy": "round4/compile_surfaces.py",
+        "u": 0.38,
+        "v": 0.92,
+        "consumedBy": "round5/compile_surfaces.py",
         "coordinateSystem": "head-local LH, scalp azimuth u and height v"
       }
     },
@@ -10204,30 +10212,31 @@
           "kind": "scalp-lock",
           "uvControls": [
             [
-              0.48,
-              0.81
+              0.47,
+              0.82
             ],
             [
               0.49,
-              0.71
+              0.72
             ],
             [
               0.5,
-              0.6
+              0.59
             ],
             [
-              0.51,
-              0.54
+              0.52,
+              0.465
             ]
           ],
-          "width": 0.0187,
+          "width": 0.014,
           "thickness": 0.007,
           "clearance": 0.004,
-          "samples": 20,
-          "radialSegments": 8,
-          "tipRatio": 0.16,
+          "samples": 24,
+          "radialSegments": 6,
+          "tipRatio": 0.045,
           "capClearance": 0.0035,
-          "rootEmbed": 0.0015
+          "rootEmbed": 0.0015,
+          "flattenedFacet": true
         }
       },
       "optimization": {
@@ -10235,12 +10244,12 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round4 c3: measured pose continuity, rooted clumps, nose/eye form and polygon budget"
+        "lastChange": "R5 C2 connected nasal wings/tip and temple-crossing fringe controls"
       },
       "hairRootBinding": {
-        "u": 0.48,
-        "v": 0.81,
-        "consumedBy": "round4/compile_surfaces.py",
+        "u": 0.47,
+        "v": 0.82,
+        "consumedBy": "round5/compile_surfaces.py",
         "coordinateSystem": "head-local LH, scalp azimuth u and height v"
       }
     },
@@ -10383,27 +10392,27 @@
             ],
             [
               -0.018,
-              0.108,
-              -0.105
+              0.139,
+              -0.115
             ],
             [
-              -0.03,
-              0.089,
-              -0.151
+              -0.033,
+              0.119,
+              -0.167
             ],
             [
-              -0.041999999999999996,
-              0.006,
-              -0.173
+              -0.043,
+              0.022,
+              -0.184
             ],
             [
-              -0.026,
-              -0.102,
-              -0.151
+              -0.023,
+              -0.104,
+              -0.153
             ]
           ],
-          "width": 0.031,
-          "thickness": 0.024,
+          "width": 0.03596,
+          "thickness": 0.026400000000000003,
           "samples": 26,
           "radialSegments": 8,
           "tipRatio": 0.1,
@@ -10441,12 +10450,12 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C4 continuous facial anatomy / sustained ponytail volume; density preserved"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       },
       "hairRootBinding": {
         "u": 0.75,
         "v": 0.84,
-        "consumedBy": "round4/compile_surfaces.py",
+        "consumedBy": "round5/compile_surfaces.py",
         "note": "Head-rooted to posterior tie; hidden rear form inferred."
       }
     },
@@ -10540,27 +10549,27 @@
             ],
             [
               0.0,
-              0.108,
-              -0.105
+              0.139,
+              -0.115
             ],
             [
-              -0.012,
-              0.089,
-              -0.151
+              -0.015,
+              0.119,
+              -0.167
             ],
             [
-              -0.024,
-              0.006,
-              -0.173
+              -0.025,
+              0.022,
+              -0.184
             ],
             [
-              -0.008,
-              -0.102,
-              -0.151
+              -0.005,
+              -0.104,
+              -0.153
             ]
           ],
-          "width": 0.031,
-          "thickness": 0.024,
+          "width": 0.03596,
+          "thickness": 0.026400000000000003,
           "samples": 26,
           "radialSegments": 8,
           "tipRatio": 0.1,
@@ -10598,12 +10607,12 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C4 continuous facial anatomy / sustained ponytail volume; density preserved"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       },
       "hairRootBinding": {
         "u": 0.75,
         "v": 0.84,
-        "consumedBy": "round4/compile_surfaces.py",
+        "consumedBy": "round5/compile_surfaces.py",
         "note": "Head-rooted to posterior tie; hidden rear form inferred."
       }
     },
@@ -10697,27 +10706,27 @@
             ],
             [
               0.018,
-              0.108,
-              -0.105
+              0.139,
+              -0.115
             ],
             [
-              0.005999999999999998,
-              0.089,
-              -0.151
+              0.002999999999999999,
+              0.119,
+              -0.167
             ],
             [
-              -0.006000000000000002,
-              0.006,
-              -0.173
+              -0.007000000000000003,
+              0.022,
+              -0.184
             ],
             [
-              0.009999999999999998,
-              -0.102,
-              -0.151
+              0.012999999999999998,
+              -0.104,
+              -0.153
             ]
           ],
-          "width": 0.031,
-          "thickness": 0.024,
+          "width": 0.03596,
+          "thickness": 0.026400000000000003,
           "samples": 26,
           "radialSegments": 8,
           "tipRatio": 0.1,
@@ -10755,12 +10764,12 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C4 continuous facial anatomy / sustained ponytail volume; density preserved"
+        "lastChange": "R5 C1 measured face span, lower jaw/neck integration and asymmetric scalp-rooted clumps"
       },
       "hairRootBinding": {
         "u": 0.75,
         "v": 0.84,
-        "consumedBy": "round4/compile_surfaces.py",
+        "consumedBy": "round5/compile_surfaces.py",
         "note": "Head-rooted to posterior tie; hidden rear form inferred."
       }
     },
@@ -10901,29 +10910,30 @@
           "uvControls": [
             [
               0.43,
-              0.91
+              0.94
             ],
             [
               0.34,
-              0.9
+              0.94
             ],
             [
               0.23,
-              0.86
+              0.82
             ],
             [
-              0.1,
-              0.7
+              0.095,
+              0.565
             ]
           ],
-          "width": 0.025300000000000003,
-          "thickness": 0.00875,
+          "width": 0.027324000000000005,
+          "thickness": 0.013,
           "clearance": 0.004,
-          "samples": 20,
-          "radialSegments": 8,
-          "tipRatio": 0.04,
+          "samples": 24,
+          "radialSegments": 6,
+          "tipRatio": 0.045,
           "capClearance": 0.0035,
-          "rootEmbed": 0.0015
+          "rootEmbed": 0.0015,
+          "flattenedFacet": true
         }
       },
       "optimization": {
@@ -10931,12 +10941,12 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C4 continuous facial anatomy / sustained ponytail volume; density preserved"
+        "lastChange": "R5 C2 connected nasal wings/tip and temple-crossing fringe controls"
       },
       "hairRootBinding": {
         "u": 0.43,
-        "v": 0.91,
-        "consumedBy": "round4/compile_surfaces.py",
+        "v": 0.94,
+        "consumedBy": "round5/compile_surfaces.py",
         "coordinateSystem": "head-local LH, scalp azimuth u and height v"
       }
     },
@@ -11076,30 +11086,31 @@
           "kind": "scalp-lock",
           "uvControls": [
             [
-              0.39,
-              0.95
+              0.38,
+              0.965
             ],
             [
               0.29,
-              0.94
+              0.97
             ],
             [
-              0.18,
-              0.9
+              0.16,
+              0.88
             ],
             [
-              0.05,
-              0.8
+              0.025,
+              0.67
             ]
           ],
-          "width": 0.026400000000000003,
-          "thickness": 0.01,
+          "width": 0.028512000000000006,
+          "thickness": 0.013,
           "clearance": 0.004,
-          "samples": 20,
-          "radialSegments": 8,
-          "tipRatio": 0.04,
+          "samples": 24,
+          "radialSegments": 6,
+          "tipRatio": 0.045,
           "capClearance": 0.0035,
-          "rootEmbed": 0.0015
+          "rootEmbed": 0.0015,
+          "flattenedFacet": true
         }
       },
       "optimization": {
@@ -11107,12 +11118,12 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C4 continuous facial anatomy / sustained ponytail volume; density preserved"
+        "lastChange": "R5 C2 connected nasal wings/tip and temple-crossing fringe controls"
       },
       "hairRootBinding": {
-        "u": 0.39,
-        "v": 0.95,
-        "consumedBy": "round4/compile_surfaces.py",
+        "u": 0.38,
+        "v": 0.965,
+        "consumedBy": "round5/compile_surfaces.py",
         "coordinateSystem": "head-local LH, scalp azimuth u and height v"
       }
     },
@@ -11252,30 +11263,31 @@
           "kind": "scalp-lock",
           "uvControls": [
             [
-              0.32,
+              0.31,
               0.97
             ],
             [
-              0.22,
-              0.97
+              0.2,
+              0.975
             ],
             [
-              0.12,
-              0.94
+              0.08,
+              0.93
             ],
             [
-              0.01,
-              0.87
+              -0.045,
+              0.78
             ]
           ],
-          "width": 0.025300000000000003,
-          "thickness": 0.01,
+          "width": 0.027324000000000005,
+          "thickness": 0.013,
           "clearance": 0.004,
-          "samples": 20,
-          "radialSegments": 8,
-          "tipRatio": 0.04,
+          "samples": 24,
+          "radialSegments": 6,
+          "tipRatio": 0.045,
           "capClearance": 0.0035,
-          "rootEmbed": 0.0015
+          "rootEmbed": 0.0015,
+          "flattenedFacet": true
         }
       },
       "optimization": {
@@ -11283,12 +11295,12 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "C4 continuous facial anatomy / sustained ponytail volume; density preserved"
+        "lastChange": "R5 C2 connected nasal wings/tip and temple-crossing fringe controls"
       },
       "hairRootBinding": {
-        "u": 0.32,
+        "u": 0.31,
         "v": 0.97,
-        "consumedBy": "round4/compile_surfaces.py",
+        "consumedBy": "round5/compile_surfaces.py",
         "coordinateSystem": "head-local LH, scalp azimuth u and height v"
       }
     }
@@ -11972,6 +11984,172 @@
         ],
         "errors": 0
       }
+    },
+    {
+      "passId": "blockout",
+      "round": 5,
+      "action": "refine-spec",
+      "summary": "Round4 final GPU remains unaccepted likeness: small button eyes, long generic lower face, exposed cylindrical neck, helmet-like hair. Round5 C1 authorized head/neck/hair only.",
+      "evidence": [
+        "evidence/round4-final/round4-c6-face.png",
+        "evidence/round4-final/reference-comparison.png"
+      ],
+      "evidenceHashes": {
+        "evidence/round4-final/reference-comparison.png": "92a1802f4b0a01f54077192e7d652f2014982361c31925310a84a47350c11b79",
+        "evidence/round4-final/round4-c6-right.png": "f78c4221d1579672da6bfa22f9f72de05a7c2309a058117db1d9f89feb95ffce",
+        "evidence/round4-final/round4-c6-front.png": "aaad706ef8e1df653b136bf6d0fdec2847cbe1dafa99f2daf78b5d248b5f5e7c",
+        "evidence/round4-final/round4-c6-face-plus.png": "123f853a3fb965315faff24cee514be93ea4e12412d5549ad2985a498fd0be43",
+        "evidence/round4-final/round4-c6-alpha-silhouette.png": "6f96537c78a97bd02f8e0c0b03a123c6cfe007d385a40e6973248ee06e5b168f",
+        "evidence/round4-final/round4-c6-rear.png": "be6a82c4c320b2571fa3ed549038cdab90f2a44efab7545c2cd16a2360e6963f",
+        "evidence/round4-final/round4-c6-left.png": "5700ed48a35c2ec139d2a1b50c4aa3a2f165394c7de10cd1b253446034f8994a",
+        "evidence/round4-final/round4-c6-face.png": "e08f16ff68559d75073f4733055a802d88b6146c6c341e37d0200f2d3dda0ccc",
+        "evidence/round4-final/round4-c6-normal.png": "f1704322040d362b37d2f7acfe64c61854e32d86044b8ea0c75809026295d512",
+        "evidence/round4-final/round4-c6-face-minus.png": "6dbf5296eb6a73c9b3f06576ac68e7a63ed4fd3190473166dbb153fa4dfee787",
+        "evidence/round4-final/round4-c6-orbit-minus.png": "6f99902b446b41b1ce35ab2ff55f54ac170497e80165b621c2519fbd3674533a",
+        "evidence/round4-final/round4-c6-orbit-plus.png": "a05d306e276b0ee082e6b50092841334da558e2751d12d12267c79dcda316240",
+        "evidence/round4-final/round4-c6-hero.png": "1f18f5f66720dfceb3f025aeabc5d29c7226c193731459956f30b0744e750e4e",
+        "evidence/round4-final/round4-c6-rear-quarter.png": "779918967cc2dc708c5b55a8d5f291fee696561354ecdac96928b25ab49604ba"
+      }
+    },
+    {
+      "passId": "blockout",
+      "round": 5,
+      "action": "refine-spec",
+      "summary": "C1 actual GPU modest proportions improvement, readable features retained; NOT accepted likeness. Undefined nasal wings/tip, masked orbit and smooth cap/fringe remain. C2 head anatomy/frontal hair only.",
+      "evidence": [
+        ".img2babylon/shots/round5-c1-right.png",
+        ".img2babylon/shots/round5-c1-hero.png",
+        ".img2babylon/shots/round5-c1-front.png",
+        ".img2babylon/shots/round5-c1-rear-quarter.png",
+        ".img2babylon/shots/round5-c1-orbit-minus.png",
+        ".img2babylon/shots/round5-c1-face-plus.png",
+        ".img2babylon/shots/round5-c1-face.png",
+        ".img2babylon/shots/round5-c1-comparison.png",
+        ".img2babylon/shots/round5-c1-face-minus.png",
+        ".img2babylon/shots/round5-c1-left.png",
+        ".img2babylon/shots/round5-c1-rear.png",
+        ".img2babylon/shots/round5-c1-orbit-plus.png",
+        ".img2babylon/cli/round5-c1-multi.json",
+        ".img2babylon/cli/round5-c1-tier1.json",
+        "viewer/models/female-tactical/round5/c1/capture-handoff.json"
+      ],
+      "evidenceHashes": {
+        ".img2babylon/shots/round5-c1-right.png": "6b98d4284b4c94f29a6cdfce48f2e716986d0ff9efe30b1595d667039a82fef3",
+        ".img2babylon/shots/round5-c1-hero.png": "e353ae29f9981c663e97bf311f57809b7c55e24cd0343be30bdd104b492b3923",
+        ".img2babylon/shots/round5-c1-front.png": "cce6f5d19ba68363803d3bcfcde2e890b1453fa9f0d993bdefa20dafe0dc2e31",
+        ".img2babylon/shots/round5-c1-rear-quarter.png": "623e73cd0c4c257b38603e3ec0a8776c7fa0d8b1cb05cd87886a6066c4090065",
+        ".img2babylon/shots/round5-c1-orbit-minus.png": "38f1f0603aed86b43f71fc2152ba68b3922cb39cc4b975568d2146bba6d1021e",
+        ".img2babylon/shots/round5-c1-face-plus.png": "a22e6f3cc98c3b03de70bae4016549d9efa6c0187e32450f07d3deb1dacd898a",
+        ".img2babylon/shots/round5-c1-face.png": "51eacdb8bc1c6dfccb6ba3df79876de257f7d02d7d7ccda132e4c960c0e69352",
+        ".img2babylon/shots/round5-c1-comparison.png": "ffb18f097388a73011b86ac92eeb9130afe464d50f99d048faa131587cd25bb7",
+        ".img2babylon/shots/round5-c1-face-minus.png": "9f30f66fdd2e39eff0b31d67459269840cff10a55f36e17e114aa4a46348af02",
+        ".img2babylon/shots/round5-c1-left.png": "e8faf4f3fc8c3ad8c8120206f3550801ec9123740936737fc901a0145fc81678",
+        ".img2babylon/shots/round5-c1-rear.png": "c68206122c5ae8b3d7246a4568932597585c33275c916bd5dd200a095eb556d1",
+        ".img2babylon/shots/round5-c1-orbit-plus.png": "9adf56c0ce74d33c166702d004e4ab3261a18b0ec7207e4b988d1b188ed83fb4",
+        ".img2babylon/cli/round5-c1-multi.json": "12e445ebb195863e148a2668a15e41f637a664cc30ee7bed6755a7aabeadabe0",
+        ".img2babylon/cli/round5-c1-tier1.json": "76ac62e3911db33bacb481428f1e48726c65bed2848c4b1c26fadbdbb269b77f",
+        "viewer/models/female-tactical/round5/c1/capture-handoff.json": "bdfad43c9d746cdc54c14f2794bcc5adc507f31edd0704f5b63c205702020e3f"
+      },
+      "desktopReported": {
+        "views": 11,
+        "viewport": [
+          585,
+          1024
+        ],
+        "errors": 0
+      }
+    },
+    {
+      "passId": "blockout",
+      "round": 5,
+      "action": "refine-spec",
+      "summary": "C2 nose visually REJECTED: broad moustache-like dark shelf and sharp ridge in actual front/3q GPU. C3 nose-only correction; preserve C2 hair and brows. No passing visual score.",
+      "evidence": [
+        ".img2babylon/shots/round5-c2-rear.png",
+        ".img2babylon/shots/round5-c2-face-plus.png",
+        ".img2babylon/shots/round5-c2-left.png",
+        ".img2babylon/shots/round5-c2-hero.png",
+        ".img2babylon/shots/round5-c2-orbit-plus.png",
+        ".img2babylon/shots/round5-c2-orbit-minus.png",
+        ".img2babylon/shots/round5-c2-rear-quarter.png",
+        ".img2babylon/shots/round5-c2-front.png",
+        ".img2babylon/shots/round5-c2-right.png",
+        ".img2babylon/shots/round5-c2-face-minus.png",
+        ".img2babylon/shots/round5-c2-face.png",
+        ".img2babylon/cli/round5-c2-rebuild-check.json",
+        ".img2babylon/cli/round5-c2-tier1.json",
+        ".img2babylon/cli/round5-c2-multi.json",
+        "viewer/models/female-tactical/round5/c2/capture-handoff.json"
+      ],
+      "evidenceHashes": {
+        ".img2babylon/shots/round5-c2-rear.png": "82c159065bc9937a75488a987f3d253fd265b71462f2375ce4d73f10e340f05e",
+        ".img2babylon/shots/round5-c2-face-plus.png": "832aaa12b144ddf71f1605d1dcd7b61bba9de4bfca04d44124542d2c508b6862",
+        ".img2babylon/shots/round5-c2-left.png": "031a508b9320e8c14e2a1be0a3c15c0489bc8ca28e9c529fec88675f3805f40d",
+        ".img2babylon/shots/round5-c2-hero.png": "7ffdce492a197aeda9c9250da9ff6b51b62b7928e8b6904ee48ff1a06d915500",
+        ".img2babylon/shots/round5-c2-orbit-plus.png": "70485385830eecc49e5455e34c64357e066cd3acf53b6d6ef490e8dc105cf2b6",
+        ".img2babylon/shots/round5-c2-orbit-minus.png": "c16e76279728e01b88ceffb7a3c4790ef93a3bffece4d95da8dc79348f7e748c",
+        ".img2babylon/shots/round5-c2-rear-quarter.png": "e7ab2d6ac2dbf30ccabf82ac3ea092250c80df133e724d9846e558b2ce95071e",
+        ".img2babylon/shots/round5-c2-front.png": "da48602026ed3dfe28876b9d66e899e12b2bbda0bcbdb68cf186d335f1d13af9",
+        ".img2babylon/shots/round5-c2-right.png": "d61959db8f904c314c2d025c79a3c07adaeda25f35ef5d17e9ea82ccb6a9dc10",
+        ".img2babylon/shots/round5-c2-face-minus.png": "7b5f5aaaa6af7f37d6ecee20f40ffeb3c1613ee54f10ab348eddda1a78a37358",
+        ".img2babylon/shots/round5-c2-face.png": "aa081a956e541d3d2a3ef2f727e9ff88beb07ec2ec37cb7d0d1b4238cdaa94aa",
+        ".img2babylon/cli/round5-c2-rebuild-check.json": "d09ae196b5e5df014a2474c4e29707a8111a41bffe5ed16278b0a9948b35c084",
+        ".img2babylon/cli/round5-c2-tier1.json": "b7c3218235e2f36db41e4703ac631a67a9cfc6003e6b1cf4d02798ab0104c93f",
+        ".img2babylon/cli/round5-c2-multi.json": "f0e421bc29c7adf33e09bbb7c8c5b1e67991382f239eae0cecc7aa6d75bf6551",
+        "viewer/models/female-tactical/round5/c2/capture-handoff.json": "14066b3c8f82acd14a6a28ae10a8613f5b2827dc0738050eff035584281df29b"
+      },
+      "desktopReported": {
+        "views": 11,
+        "viewport": [
+          585,
+          1024
+        ],
+        "errors": 0
+      }
+    },
+    {
+      "passId": "blockout",
+      "round": 5,
+      "action": "refine-spec",
+      "summary": "C3 GPU nose REJECTED: stripe removed but tip erased and ridge blurry. Normal count alone did not demonstrate likeness improvement. User selects exact C1 head plus C2 hair/brows; no speculative tuning.",
+      "evidence": [
+        ".img2babylon/shots/round5-c3-rear.png",
+        ".img2babylon/shots/round5-c3-left.png",
+        ".img2babylon/shots/round5-c3-right.png",
+        ".img2babylon/shots/round5-c3-front.png",
+        ".img2babylon/shots/round5-c3-rear-quarter.png",
+        ".img2babylon/shots/round5-c3-orbit-plus.png",
+        ".img2babylon/shots/round5-c3-hero.png",
+        ".img2babylon/shots/round5-c3-orbit-minus.png",
+        ".img2babylon/shots/round5-c3-face-minus.png",
+        ".img2babylon/shots/round5-c3-face-plus.png",
+        ".img2babylon/shots/round5-c3-face.png",
+        ".img2babylon/cli/round5-c3-rebuild-check.json",
+        "viewer/models/female-tactical/round5/c3/capture-handoff.json"
+      ],
+      "evidenceHashes": {
+        ".img2babylon/shots/round5-c3-rear.png": "82c159065bc9937a75488a987f3d253fd265b71462f2375ce4d73f10e340f05e",
+        ".img2babylon/shots/round5-c3-left.png": "8652aeebfcf5ed3ae536a2c88160dea4bb956c3ac73bb9149b57e0d5be736a34",
+        ".img2babylon/shots/round5-c3-right.png": "4da47dfe7769fe91cc65edf7287f49e9d3f5eb106d4885125dd26d5049b23a95",
+        ".img2babylon/shots/round5-c3-front.png": "bf628ec7a774cd1529436cc567d9281bff17ca9f34beacaf2a291c5bceb1a2d4",
+        ".img2babylon/shots/round5-c3-rear-quarter.png": "e7ab2d6ac2dbf30ccabf82ac3ea092250c80df133e724d9846e558b2ce95071e",
+        ".img2babylon/shots/round5-c3-orbit-plus.png": "5a9f85ce055c558fe1a535a1a5e619d19eb5e398effd83054cfd44070a9cafa3",
+        ".img2babylon/shots/round5-c3-hero.png": "cd7ebb7ae3068af92fde7cb933175ab7ec5c7dfdcca0fd29fc261af760e763de",
+        ".img2babylon/shots/round5-c3-orbit-minus.png": "17193f5c9aab91cabf8a66d8f5514a726e7de924c5de115ab2e33b99709897fa",
+        ".img2babylon/shots/round5-c3-face-minus.png": "e4deb88b6d99adc9c4f82f196cbf8f9ca69d686abb78fcc699ab66a90e711942",
+        ".img2babylon/shots/round5-c3-face-plus.png": "2f604adf35d6f1e5aabbea8abc051d95627d7e33a1dc278cb6900b4f35dfb84f",
+        ".img2babylon/shots/round5-c3-face.png": "9de1c7a4361badeed71ab8954b6815907b5e4d66855f613877035f93a3f02ddb",
+        ".img2babylon/cli/round5-c3-rebuild-check.json": "2edaea988eaa1c1aac90740f6820453aff194dca6d3fc67d893c3a770c885360",
+        "viewer/models/female-tactical/round5/c3/capture-handoff.json": "778d3f02e17fed6b2a9bcfc0056690dd8e9a7f594c6df961c5d68ad7548f9450"
+      },
+      "desktopReported": {
+        "views": 11,
+        "viewport": [
+          585,
+          1024
+        ],
+        "errors": 0
+      }
     }
   ],
   "round4Recipe": {
@@ -12306,5 +12484,29 @@
       "evidence": "docs/migration/native-payload-deduplication.md",
       "remaining": "Optional binary externalization; no new service/hidden renderer"
     }
+  },
+  "round5Correction1": {
+    "scope": "head/neck/face/hair only",
+    "compiler": "round5/compile_surfaces.py",
+    "visualAcceptance": false,
+    "measurementEvidence": "round5/c1/measurements.json"
+  },
+  "round5Correction2": {
+    "scope": "continuous nasal/orbital anatomy and scalp-rooted asymmetric frontal silhouette",
+    "triangleBudget": 35000,
+    "unchanged": "eye/lip dimensions, jaw silhouette, neck, ponytail, body, materials",
+    "visualAcceptance": false
+  },
+  "round5Correction3": {
+    "scope": "nose relief only; no hair/body/camera/material/eye/lip edits",
+    "visualAcceptance": false,
+    "baseline": "C1 softer profile principle; exact C2 nasal lobes removed, remaining C2 recipe unchanged"
+  },
+  "round5Correction4": {
+    "scope": "exact C1 head recipe restore; no tuning",
+    "headAuthority": "round5/c1-archive/spec.json.snapshot",
+    "hairBrowAuthority": "round5/c2/native-meshes.json and archived C2 source",
+    "visualAcceptance": false,
+    "reason": "C2 oversculpted nasal stripe, C3 flattened tip; actual C1 GPU selected as best stable nose"
   }
 }

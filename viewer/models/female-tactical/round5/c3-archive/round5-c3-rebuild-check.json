@@ -1,0 +1,9 @@
+{
+  "exitStatus": 0,
+  "scope": "isolated temporary copy; live source unchanged",
+  "stdoutTail": "BJS - [07:23:29]: Babylon.js v8.56.2 - Null engine\nExported 125 procedural components\nImported bridge; production remains blocked pending canonical intake and strict gates.\nCompiled native surfaces; removed 368 zero-area source triangles\n{\n  \"ok\": true,\n  \"errors\": [],\n  \"warnings\": [\n    \"missing terminologyProfile; descriptions may drift into vague non-3D language\",\n    \"missing scores block; image validation evidence will be weaker\",\n    \"missing actionReadiness; generated model may not be ready for animation/transformation/destruction\",\n    \"missing viewEvidence; local visual claims cannot be traced back to image regions\"\n  ],\n  \"summary\": {\n    \"targetName\": \"female-tactical\",\n    \"suitability\": \"conditional\",\n    \"components\": 125,\n    \"materials\": 13\n  }\n}\nviewer/models/female-tactical/createNativeFemaleTactical.ts\n",
+  "stderrTail": "",
+  "sameExecutableModelData": true,
+  "expectedHash": "943be1922fdbec73241dc2ed4d7c9a25d8c5ca4f984cc176af3bda09361170f7",
+  "rebuiltHash": "943be1922fdbec73241dc2ed4d7c9a25d8c5ca4f984cc176af3bda09361170f7"
+}

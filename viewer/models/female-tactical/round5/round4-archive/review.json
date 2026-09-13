@@ -1,0 +1,26 @@
+{
+  "passId": "blockout",
+  "round": 5,
+  "action": "refine-spec",
+  "summary": "Round4 final GPU remains unaccepted likeness: small button eyes, long generic lower face, exposed cylindrical neck, helmet-like hair. Round5 C1 authorized head/neck/hair only.",
+  "evidence": [
+    "evidence/round4-final/round4-c6-face.png",
+    "evidence/round4-final/reference-comparison.png"
+  ],
+  "evidenceHashes": {
+    "evidence/round4-final/reference-comparison.png": "92a1802f4b0a01f54077192e7d652f2014982361c31925310a84a47350c11b79",
+    "evidence/round4-final/round4-c6-right.png": "f78c4221d1579672da6bfa22f9f72de05a7c2309a058117db1d9f89feb95ffce",
+    "evidence/round4-final/round4-c6-front.png": "aaad706ef8e1df653b136bf6d0fdec2847cbe1dafa99f2daf78b5d248b5f5e7c",
+    "evidence/round4-final/round4-c6-face-plus.png": "123f853a3fb965315faff24cee514be93ea4e12412d5549ad2985a498fd0be43",
+    "evidence/round4-final/round4-c6-alpha-silhouette.png": "6f96537c78a97bd02f8e0c0b03a123c6cfe007d385a40e6973248ee06e5b168f",
+    "evidence/round4-final/round4-c6-rear.png": "be6a82c4c320b2571fa3ed549038cdab90f2a44efab7545c2cd16a2360e6963f",
+    "evidence/round4-final/round4-c6-left.png": "5700ed48a35c2ec139d2a1b50c4aa3a2f165394c7de10cd1b253446034f8994a",
+    "evidence/round4-final/round4-c6-face.png": "e08f16ff68559d75073f4733055a802d88b6146c6c341e37d0200f2d3dda0ccc",
+    "evidence/round4-final/round4-c6-normal.png": "f1704322040d362b37d2f7acfe64c61854e32d86044b8ea0c75809026295d512",
+    "evidence/round4-final/round4-c6-face-minus.png": "6dbf5296eb6a73c9b3f06576ac68e7a63ed4fd3190473166dbb153fa4dfee787",
+    "evidence/round4-final/round4-c6-orbit-minus.png": "6f99902b446b41b1ce35ab2ff55f54ac170497e80165b621c2519fbd3674533a",
+    "evidence/round4-final/round4-c6-orbit-plus.png": "a05d306e276b0ee082e6b50092841334da558e2751d12d12267c79dcda316240",
+    "evidence/round4-final/round4-c6-hero.png": "1f18f5f66720dfceb3f025aeabc5d29c7226c193731459956f30b0744e750e4e",
+    "evidence/round4-final/round4-c6-rear-quarter.png": "779918967cc2dc708c5b55a8d5f291fee696561354ecdac96928b25ab49604ba"
+  }
+}

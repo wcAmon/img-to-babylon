@@ -1,0 +1,68 @@
+{
+  "referenceImage": [
+    585,
+    1024
+  ],
+  "method": "manual visible landmarks from original; image yaw/occlusion prevents direct symmetric metric reconstruction",
+  "referencePixels": {
+    "visibleFaceTop": [
+      286,
+      101
+    ],
+    "chin": [
+      296,
+      193
+    ],
+    "nearEyeCorners": [
+      [
+        276,
+        128
+      ],
+      [
+        299,
+        137
+      ]
+    ],
+    "farEyeCorners": [
+      [
+        315,
+        135
+      ],
+      [
+        334,
+        144
+      ]
+    ],
+    "mouthCorners": [
+      [
+        285,
+        165
+      ],
+      [
+        313,
+        176
+      ]
+    ],
+    "hairTop": [
+      276,
+      46
+    ]
+  },
+  "confidence": {
+    "eyeAndMouth": 0.65,
+    "jaw": 0.65,
+    "hiddenScalpAndBack": 0.3
+  },
+  "currentRecipeRatios": {
+    "eyeWidthToHeadWidth": 0.23837209302325585,
+    "lipWidthToHeadWidth": 0.21511627906976744
+  },
+  "authoredTargets": {
+    "eyeWidthToHeadWidth": 0.2790697674418605,
+    "lipWidthToHeadWidth": 0.2558139534883721,
+    "eyeDownMetres": 0.004,
+    "shortenLowerFaceMetres": 0.01,
+    "headLowerMetres": 0.014
+  },
+  "interpretation": "Reference adult eye opening and mouth span larger relative visible face; front/back inferred geometry needs unchanged-camera GPU review."
+}

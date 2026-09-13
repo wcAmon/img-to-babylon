@@ -1,0 +1,291 @@
+"""Compile readable nativeRecipe controls into canonical nativeVertexData.
+One model-specific compiler, no renderer, no external meshes. Legacy base recipes remain archived.
+"""
+import json, math, hashlib, sys
+from pathlib import Path
+D=Path(__file__).resolve().parent; M=D.parent; ROOT=M.parents[2]
+sys.path.insert(0,str(ROOT/'pipeline/forge/_shared'))
+from scalp_field import ScalpField
+s=json.loads((M/'canonical-spec.json').read_text()); source=s['extensions']['babylon-sculpt-v1']['source']; by={c['id']:c for c in source['componentTree']}; head=by['head']; dim=head['dimensions']
+field=ScalpField([[r[0]*dim['h'],r[1]*dim['w'],r[2]*dim['d'],r[4]*dim['d']] for r in head['geometry']['rings']])
+def add(a,b):return [x+y for x,y in zip(a,b)]
+def sub(a,b):return [x-y for x,y in zip(a,b)]
+def mul(a,s):return [x*s for x in a]
+def dot(a,b):return sum(x*y for x,y in zip(a,b))
+def cross(a,b):return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]
+def unit(a):return mul(a,1/max(math.sqrt(dot(a,a)),1e-20))
+def curve(points,t):
+ z=t*(len(points)-1);i=min(len(points)-2,int(z));f=z-i
+ p0=points[max(0,i-1)];p1=points[i];p2=points[i+1];p3=points[min(len(points)-1,i+2)]
+ return [.5*((2*b)+(-a+c)*f+(2*a-5*b+4*c-d)*f*f+(-a+3*b-3*c+d)*f**3) for a,b,c,d in zip(p0,p1,p2,p3)]
+def cap(r):
+ n=r['uSegments']; rows=r['vSegments']; verts=[];faces=[]
+ for inner in [False,True]:
+  offset=r['clearance']-(r['thickness'] if inner else 0)
+  for j in range(rows):
+   for i in range(n):
+    u=i/n;front=max(0,math.sin(2*math.pi*u));back=max(0,-math.sin(2*math.pi*u))
+    low=r['hairline']['sideV']+(r['hairline']['frontV']-r['hairline']['sideV'])*front**2+(r['hairline']['rearV']-r['hairline']['sideV'])*back**2
+    # Curved, slight asymmetric part-line rise; no horizontal cap border.
+    low+=.025*front*math.cos(2*math.pi*u)
+    v=low+(1-low)*j/rows
+    verts.append(add(field.sample(u,v),mul(field.normal(u,v),offset)))
+  verts.append([0,field.y_max+.007+offset,0])
+  start=int(inner)*(rows*n+1)
+  for j in range(rows-1):
+   for i in range(n):
+    a=start+j*n+i;b=start+j*n+(i+1)%n;c=a+n;d=b+n
+    faces.extend([[a,b,c],[b,d,c]] if not inner else [[a,c,b],[b,c,d]])
+  for i in range(n):
+   a=start+(rows-1)*n+i;b=start+(rows-1)*n+(i+1)%n;top=start+rows*n
+   faces.append([a,b,top] if not inner else [a,top,b])
+ size=rows*n+1
+ for i in range(n):
+  a=i;b=(i+1)%n;faces.extend([[a,a+size,b],[b,a+size,b+size]])
+ # Parametric orientation is LH here; normals are computed after canonical reflection below.
+ return verts,faces
+
+def lock(r):
+ count=r['samples'];n=r['radialSegments']; centers=[]; normals=[]
+ for j in range(count+1):
+  t=j/count
+  if r['kind']=='scalp-lock':
+   u,v=curve(r['uvControls'],t);v=max(.01,min(.997,v));normal=list(field.normal(u%1,v));p=add(field.sample(u%1,v),mul(normal,r.get('capClearance',.006)+r['thickness']*.5*((.72+.28*math.sin(math.pi*min(1,t*1.5)))*(1-t)**.7+r['tipRatio']*t)-r.get('rootEmbed',0)))
+  else:
+   points=[list(p) for p in r['controls']];u,v=r['rootUV'];points[0]=add(field.sample(u,v),mul(field.normal(u,v),r.get('rootClearance',.006)))
+   p=curve(points,t);normal=[0,0,-1]
+  centers.append(p);normals.append(normal)
+ verts=[];faces=[];previousNormal=normals[0];previousSide=None
+ for j,p in enumerate(centers):
+  t=j/count;tangent=unit(sub(centers[min(count,j+1)],centers[max(0,j-1)]));guide=previousNormal if r['kind']=='tail-lock' else normals[j];side=unit(cross(tangent,guide))
+  if previousSide is not None and dot(side,previousSide)<0:side=mul(side,-1)
+  normal=unit(cross(side,tangent))
+  previousSide=side;previousNormal=normal
+  taper=(.72+.28*math.sin(math.pi*min(1,t*1.5)))*(1-t)**.7+r['tipRatio']*t
+  if r.get('volumeProfile'):
+   profile=r['volumeProfile'];k=next((k for k in range(len(profile)-1) if t<=profile[k+1][0]),len(profile)-2)
+   a,b=profile[k:k+2];f=(t-a[0])/(b[0]-a[0]);f=f*f*(3-2*f);taper=a[1]+(b[1]-a[1])*f
+  halfThickness=r['thickness']*.5*taper
+  if r['kind']=='tail-lock' and 0<j<count:
+   u=sub(centers[j],centers[j-1]);v=sub(centers[j+1],centers[j]);w=sub(centers[j+1],centers[j-1]);area=math.sqrt(dot(cross(u,v),cross(u,v)))
+   radius=math.sqrt(dot(u,u)*dot(v,v)*dot(w,w))/max(2*area,1e-20)
+   halfThickness=min(halfThickness,r.get('curvatureLimit',.40)*radius)
+  for i in range(n):
+   a=i*2*math.pi/n;verts.append(add(p,add(mul(side,math.cos(a)*r['width']*.5*taper),mul(normal,math.sin(a)*halfThickness))))
+ for j in range(count):
+  for i in range(n):
+   a=j*n+i;b=j*n+(i+1)%n;c=a+n;d=b+n;faces.extend([[a,b,c],[b,d,c]])
+ for j in [0,count]:
+  start=len(verts);verts.extend([list(v) for v in verts[j*n:(j+1)*n]]);ci=len(verts);verts.append(centers[j])
+  for i in range(n):faces.append([ci,start+(i+1)%n,start+i] if j==0 else [ci,start+i,start+(i+1)%n])
+ # Choose global orientation using an exterior cross section normal.
+ a,b,c=faces[n];out=sub(verts[a],centers[a//n]);
+ if dot(cross(sub(verts[b],verts[a]),sub(verts[c],verts[a])),out)<0:faces=[list(reversed(f)) for f in faces]
+ return verts,faces
+
+def facial_overlay(r,comp):
+ # Evaluate actual compiled head triangles at each authored patch XY. No free-floating lip plate.
+ data=next(c for c in s['componentTree'] if c['id']=='head')['geometryDescriptor']['nativeVertexData']
+ hv=[data['positions'][i:i+3] for i in range(0,len(data['positions']),3)]
+ def front(x,y):
+  hits=[]
+  for j in range(0,len(data['indices']),3):
+   a,b,c=[hv[k] for k in data['indices'][j:j+3]]
+   den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
+   if abs(den)<1e-15:continue
+   u=((b[1]-c[1])*(x-c[0])+(c[0]-b[0])*(y-c[1]))/den
+   v=((c[1]-a[1])*(x-c[0])+(a[0]-c[0])*(y-c[1]))/den
+   if u>=-1e-8 and v>=-1e-8 and u+v<=1+1e-8:hits.append(-(u*a[2]+v*b[2]+(1-u-v)*c[2]))
+  if not hits:raise ValueError('Facial patch outside head projection')
+  return max(hits)
+ pos=comp['transform']['position'];dim=comp['dimensions'];outline=comp['geometry']['outline'];n=len(outline)
+ def point(x,y,f):return [x,y,front(x+pos[0],y+pos[1])-pos[2]+r['edgeClearance']+r['centralVolume']*(1-f*f)**2]
+ verts=[point(0,0,0)];faces=[]
+ for f in [.2,.4,.6,.8,1]:
+  for x,y,z in outline:verts.append(point(x*dim['w']*f,y*dim['h']*f,f))
+ for i in range(n):
+  a=1+i;b=1+(i+1)%n;faces.append([0,a,b])
+  for j in range(4):
+   u=a+j*n;v=b+j*n;faces.extend([[u,u+n,v],[v,u+n,v+n]])
+ if cross(sub(verts[faces[0][1]],verts[0]),sub(verts[faces[0][2]],verts[0]))[2]<0:faces=[list(reversed(f)) for f in faces]
+ return verts,faces
+
+def cloth(r,comp):
+ dim=comp['dimensions'];rows=comp['geometry']['rings'];n=comp['geometry'].get('segments',12);verts=[];faces=[]
+ for j,ring in enumerate(rows):
+  y,rx,rz=ring[:3];cx=ring[3] if len(ring)>3 else 0;cz=ring[4] if len(ring)>4 else 0
+  envelope=math.sin(math.pi*j/(len(rows)-1))
+  for i in range(n):
+   a=2*math.pi*i/n+r['ringTwist']*math.sin(j*1.9)*envelope
+   fold=1+r['foldAmplitude']*math.sin(3*a+j*1.7)*envelope
+   verts.append([(cx+math.sin(a)*rx*fold)*dim['w'],y*dim['h'],(cz+math.cos(a)*rz*fold)*dim['d']])
+ for j in range(len(rows)-1):
+  for i in range(n):
+   a=j*n+i;b=j*n+(i+1)%n;c=a+n;d=b+n;faces.extend([[a,c,b],[b,c,d]])
+ for j in [0,len(rows)-1]:
+  center=len(verts);verts.append([sum(verts[j*n+i][k] for i in range(n))/n for k in range(3)])
+  for i in range(n):faces.append([center,j*n+i,j*n+(i+1)%n] if j==0 else [center,j*n+(i+1)%n,j*n+i])
+ faces=[list(reversed(f)) for f in faces]
+ if comp['id'].endswith('-r'):
+  verts=[[-x,y,z] for x,y,z in verts];faces=[list(reversed(f)) for f in faces]
+ return verts,faces
+
+def vest(r):
+ n=r['uSegments'];rows=r['vSegments'];verts=[];faces=[];sign=r['direction']
+ for layer in [0,1]:
+  for j in range(rows+1):
+   t=j/rows;y=(t-.5)*r['height'];width=r['width']*(.83+.17*math.sin(math.pi*t))
+   for i in range(n+1):
+    x=(i/n-.5)*width;z=r['depthRadius']*math.sqrt(max(.1,1-(x/r['bodyRadius'])**2))+.009-r['offset']-layer*r['thickness']
+    verts.append([x,y,sign*z])
+ stride=n+1;size=(rows+1)*stride
+ for j in range(rows):
+  for i in range(n):
+   a=j*stride+i;b=a+1;c=a+stride;d=c+1;faces.extend([[a,b,c],[b,d,c],[a+size,c+size,b+size],[b+size,c+size,d+size]])
+ boundary=list(range(n+1))+[j*stride+n for j in range(1,rows+1)]+[rows*stride+i for i in range(n-1,-1,-1)]+[j*stride for j in range(rows-1,0,-1)]
+ for i,a in enumerate(boundary):
+  b=boundary[(i+1)%len(boundary)];faces.extend([[a,a+size,b],[b,a+size,b+size]])
+ if sign<0:faces=[list(reversed(f)) for f in faces]
+ return verts,faces
+
+_surface_cache={}
+def support_surface(cid):
+ if cid in _surface_cache:return _surface_cache[cid]
+ comp=next(c for c in s['componentTree'] if c['id']==cid);d=comp['geometryDescriptor']['nativeVertexData'];p=by[cid]['transform']['position'];vs=[[d['positions'][i]+p[0],d['positions'][i+1]+p[1],-d['positions'][i+2]+p[2]] for i in range(0,len(d['positions']),3)];grid={};cell=.006
+ for j in range(0,len(d['indices']),3):
+  tri=[vs[k] for k in d['indices'][j:j+3]];a,b,c=tri;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
+  if abs(den)<1e-15:continue
+  for ix in range(math.floor(min(v[0] for v in tri)/cell),math.floor(max(v[0] for v in tri)/cell)+1):
+   for iy in range(math.floor(min(v[1] for v in tri)/cell),math.floor(max(v[1] for v in tri)/cell)+1):grid.setdefault((ix,iy),[]).append((tri,den))
+ def sample(x,y,sign=1):
+  hits=[]
+  for (a,b,c),den in grid.get((math.floor(x/cell),math.floor(y/cell)),[]):
+   u=((b[1]-c[1])*(x-c[0])+(c[0]-b[0])*(y-c[1]))/den;v=((c[1]-a[1])*(x-c[0])+(a[0]-c[0])*(y-c[1]))/den
+   if u>=-1e-7 and v>=-1e-7 and u+v<=1+1e-7:hits.append(u*a[2]+v*b[2]+(1-u-v)*c[2])
+  if not hits:raise ValueError(f'{cid}: no support at {x},{y}')
+  return max(hits) if sign>0 else min(hits)
+ _surface_cache[cid]=sample;return sample
+
+def feature(r,comp):
+ # All vertices in head XY; actual triangle ray intersections supply Z, with shared layer functions.
+ headSample=support_surface('head');hp=by['head']['transform']['position'];f=r['feature'];n=r['uSegments'];rows=r['vSegments'];sign=r.get('side',1);verts=[];faces=[]
+ def headz(x,y):return headSample(x+hp[0],y+hp[1])-hp[2]
+ def aperture(u):
+  e=max(0,1-u*u)**.72;return -r.get('lowerHeight',.0048)*e+.001*u,r.get('upperHeight',.0065)*e+.001*u
+ def eyez(x,y,layer=0):
+  u=(x-r['center'][0])*sign/(r['width']*.5);lo,hi=aperture(u);v=(y-r['center'][1]-lo)/max(hi-lo,1e-8)
+  bulge=r['bulge']*max(0,1-u*u)*max(0,4*v*(1-v))
+  return headz(x,y)+r['edgeClearance']+bulge+layer
+ for i in range(n+1):
+  u=-1+2*i/n
+  for j in range(rows+1):
+   v=j/rows
+   if f in ['upper-lip','lower-lip']:
+    x=u*r['width']*.5;e=max(0,1-u*u);seam=r['seamY']+r.get('cornerLift',.00045)*u*u
+    height=r['height']*e*(1+.15*math.exp(-((abs(u)-.25)/.16)**2))
+    y=seam+(height*v if f=='upper-lip' else -height*v)
+    z=headz(x,y)+r['edgeClearance']+r['bulge']*e*(.35+.65*math.sin(math.pi*v))
+   elif f=='brow':
+    x=r['center'][0]+sign*u*.020;y=r.get('browBase',.028)+r.get('browArch',.0035)*(1-abs(u-r.get('browApex',.20))/(1+r.get('browApex',.20)))+.0012*u+(v-.5)*r.get('browThickness',.0022)*(.90-r.get('browTailTaper',.50)*max(0,u))
+    z=headz(x,y)+.0009+.00025*math.sin(math.pi*v)
+   elif f in ['iris','pupil','glint']:
+    radius={'iris':r.get('irisRadius',.006),'pupil':.0028,'glint':.0010}[f];cx=r['center'][0]+(sign*.0008 if f=='glint' else 0);cy=r['center'][1]+(.0008 if f=='glint' else 0)
+    x=cx+u*radius;half=radius*math.sqrt(max(0,1-u*u));au=(x-r['center'][0])*sign/(r['width']*.5);lo,hi=aperture(au)
+    low=max(cy-half,r['center'][1]+lo+.00018);high=min(cy+half,r['center'][1]+hi-.00018)
+    y=low+(high-low)*v;z=eyez(x,y,{'iris':.00045,'pupil':.00085,'glint':.00115}[f])
+   else:
+    # Endpoints are shared; lid is only a narrow upper strip, never a centre-fan polygon.
+    x=r['center'][0]+sign*u*r['width']*.5;lo,hi=aperture(u)
+    if f=='lid':y=r['center'][1]+hi+(v-.20)*r.get('rimWidth',.0011);z=eyez(x,y,.0005)
+    else:y=r['center'][1]+lo+(hi-lo)*v;z=eyez(x,y)
+   verts.append([x,y,z])
+ stride=rows+1
+ for i in range(n):
+  for j in range(rows):
+   a=i*stride+j;b=a+stride;c=a+1;d=b+1;faces.extend([[a,b,c],[b,d,c]])
+ # XY orientation fixed for both mirrored sides and both lips.
+ faces=[face if cross(sub(verts[face[1]],verts[face[0]]),sub(verts[face[2]],verts[face[0]]))[2]>=0 else list(reversed(face)) for face in faces]
+ return verts,faces
+
+def mounted_gear(r,comp):
+ surface=support_surface(r['support']);pos=comp['transform']['position'];dim=comp['dimensions'];n=r['widthSegments'];rows=r['heightSegments'];sign=r['direction'];verts=[];faces=[]
+ for layer in [0,1]:
+  for j in range(rows+1):
+   y=(j/rows-.5)*dim['h']
+   for i in range(n+1):
+    x=(i/n-.5)*dim['w'];z=surface(x+pos[0],y+pos[1],sign)+sign*(r['clearance']+(dim['d'] if layer==0 else 0))-pos[2];verts.append([x,y,z])
+ stride=n+1;size=stride*(rows+1)
+ for j in range(rows):
+  for i in range(n):
+   a=j*stride+i;b=a+1;c=a+stride;d=c+1;faces.extend([[a,b,c],[b,d,c],[a+size,c+size,b+size],[b+size,c+size,d+size]])
+ boundary=list(range(n+1))+[j*stride+n for j in range(1,rows+1)]+[rows*stride+i for i in range(n-1,-1,-1)]+[j*stride for j in range(rows-1,0,-1)]
+ for i,a in enumerate(boundary):
+  b=boundary[(i+1)%len(boundary)];faces.extend([[a,a+size,b],[b,a+size,b+size]])
+ if sign<0:faces=[list(reversed(f)) for f in faces]
+ return verts,faces
+
+def boot_panel(r,comp):
+ sample=support_surface(r['support']);origin=by[r['support']]['transform']['position'];n=r['segments'];rows=r['rows'];verts=[];faces=[]
+ for layer in [0,1]:
+  for j in range(rows+1):
+   y=r['bottom']+(r['top']-r['bottom'])*j/rows
+   for i in range(n+1):
+    x=(i/n-.5)*r['width'];z=sample(x+origin[0],y+origin[1])-origin[2]+(r['thickness'] if layer==0 else -.0005);verts.append([x,y,z])
+ stride=n+1;size=stride*(rows+1)
+ for j in range(rows):
+  for i in range(n):
+   a=j*stride+i;b=a+1;c=a+stride;d=c+1;faces.extend([[a,b,c],[b,d,c],[a+size,c+size,b+size],[b+size,c+size,d+size]])
+ boundary=list(range(n+1))+[j*stride+n for j in range(1,rows+1)]+[rows*stride+i for i in range(n-1,-1,-1)]+[j*stride for j in range(rows-1,0,-1)]
+ for i,a in enumerate(boundary):
+  b=boundary[(i+1)%len(boundary)];faces.extend([[a,a+size,b],[b,a+size,b+size]])
+ return verts,faces
+
+def cross_laces(r,comp):
+ sample=support_surface(r['support']);verts=[];faces=[];n=r['sides'];count=r['segments']
+ for line in [-1,1]:
+  start=len(verts);centers=[]
+  for j in range(count+1):
+   t=j/count;x=(t-.5)*r['width'];y=r['centerY']+line*(t-.5)*r['rise'];z=sample(x,y)+r['radius']*.65+(0.0038 if line==1 else 0)*math.sin(math.pi*t);centers.append([x,y,z])
+  for j,p in enumerate(centers):
+   tangent=unit(sub(centers[min(count,j+1)],centers[max(0,j-1)]));side=unit(cross(tangent,[0,0,1]));normal=unit(cross(side,tangent))
+   for i in range(n):
+    a=2*math.pi*i/n;verts.append(add(p,add(mul(side,r['radius']*math.cos(a)),mul(normal,r['radius']*math.sin(a)))))
+  for j in range(count):
+   for i in range(n):
+    a=start+j*n+i;b=start+j*n+(i+1)%n;c=a+n;d=b+n;faces.extend([[a,c,b],[b,c,d]])
+  for j in [0,count]:
+   k=len(verts);verts.append(centers[j])
+   for i in range(n):faces.append([k,start+j*n+i,start+j*n+(i+1)%n] if j==0 else [k,start+j*n+(i+1)%n,start+j*n+i])
+ return verts,faces
+
+reports=[]
+for c in s['componentTree']:
+ data=c['geometryDescriptor']['nativeVertexData']; recipe=by[c['id']]['geometry'].get('nativeRecipe');removed=[]
+ if recipe:
+  vs,fs=boot_panel(recipe,by[c['id']]) if recipe['kind']=='boot-panel' else cross_laces(recipe,by[c['id']]) if recipe['kind']=='cross-laces' else feature(recipe,by[c['id']]) if recipe['kind']=='surface-feature' else mounted_gear(recipe,by[c['id']]) if recipe['kind']=='mounted-gear' else facial_overlay(recipe,by[c['id']]) if recipe['kind']=='facial-overlay' else cap(recipe) if recipe['kind']=='scalp-cap' else cloth(recipe,by[c['id']]) if recipe['kind']=='faceted-cloth' else vest(recipe) if recipe['kind']=='vest-wrap' else lock(recipe)
+  # cap construction outward orientation agrees with the u/v parameter surface.
+  if recipe['kind']=='scalp-cap':
+   a,b,k=fs[0];u=unit([vs[a][0],0,vs[a][2]])
+   if dot(cross(sub(vs[b],vs[a]),sub(vs[k],vs[a])),u)<0:fs=[list(reversed(f)) for f in fs]
+  # LH authored positions to RH; reflection requires winding reversal for RH cross normals.
+  vs=[[x,y,-z] for x,y,z in vs];fs=[list(reversed(f)) for f in fs]
+  if recipe.get('flatNormals') or recipe.get('flattenedFacet'):
+   vs=[list(vs[i]) for f in fs for i in f];fs=[[i,i+1,i+2] for i in range(0,len(vs),3)]
+  ns=[[0.,0.,0.] for _ in vs]
+  for a,b,k in fs:
+   normal=cross(sub(vs[b],vs[a]),sub(vs[k],vs[a]))
+   for i in [a,b,k]:ns[i]=add(ns[i],normal)
+  data.update(positions=[q for v in vs for q in v],normals=[q for v in ns for q in unit(v)],indices=[q for f in fs for q in f],uvs=[],windingFlippedTriangles=[])
+  data['provenance']={'compiler':'round5/compile_surfaces.py','compilerSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'recipe':recipe,'sourceAuthority':'extensions[babylon-sculpt-v1].source','coordinateConversion':'LH recipe reflected Z with reversed winding to canonical RH','legacyBaseExportIsNotFinalGeometry':True}
+ # Exact zero-area pole triangles are removed by a repeatable compiler rule, never hand edited.
+ vs=[data['positions'][i:i+3] for i in range(0,len(data['positions']),3)];kept=[]
+ for i in range(0,len(data['indices']),3):
+  f=data['indices'][i:i+3];a,b,k=[vs[j] for j in f];n=cross(sub(b,a),sub(k,a))
+  if dot(n,n)<1e-24:removed.append(i//3)
+  else:kept.extend(f)
+ if removed:
+  data['indices']=kept;data['windingFlippedTriangles']=[];data['provenance']['degenerateCleanup']={'rule':'crossSquared < 1e-24 m^4','removedTriangleCount':len(removed),'originalTriangleIDs':removed}
+ reports.append({'id':c['id'],'nativeRecipe':recipe['kind'] if recipe else None,'removedDegenerateTriangles':len(removed)})
+(M/'canonical-spec.json').write_text(json.dumps(s,indent=2,ensure_ascii=False)+'\n')
+(D/(sys.argv[1] if len(sys.argv)>1 else 'c3')/'compiler-report.json').write_text(json.dumps(reports,indent=2)+'\n')
+print('Compiled native surfaces; removed',sum(r['removedDegenerateTriangles'] for r in reports),'zero-area source triangles')

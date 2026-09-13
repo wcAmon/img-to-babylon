@@ -1,0 +1,30 @@
+{
+  "selfIntersecting": false,
+  "meshCount": 1,
+  "insideVertexCount": 0,
+  "undecidedVertexCount": 1,
+  "sampledVertexCount": 96,
+  "totalVertexCount": 4562,
+  "meshes": [
+    {
+      "name": "head",
+      "analyzed": true,
+      "error": null,
+      "selfIntersecting": false,
+      "insideVertexCount": 0,
+      "undecidedVertexCount": 1,
+      "outsideVertexCount": 95,
+      "sampledVertexCount": 96,
+      "totalVertexCount": 4562,
+      "samplingStride": 48,
+      "triangleCount": 9120,
+      "degenerateTriangleCount": 0,
+      "worstRegions": [],
+      "normalSource": "vertexNormals",
+      "normalFallbackCount": 0,
+      "epsilon": 0.00032651293751963955,
+      "rayDirectionCount": 3
+    }
+  ],
+  "errors": []
+}
