@@ -58,7 +58,10 @@
         "hair-tie",
         "tail-lock-0",
         "tail-lock-1",
-        "tail-lock-2"
+        "tail-lock-2",
+        "fringe-layer-0",
+        "fringe-layer-1",
+        "fringe-layer-2"
       ],
       "anchors": [
         "head"
@@ -363,14 +366,18 @@
     "evidence/exploded.png",
     "evidence/workbench.png",
     "evidence/face-round2.png",
-    "evidence/face-round2-compare.png"
+    "evidence/face-round2-compare.png",
+    "evidence/face-round3.png",
+    "evidence/face-round3-side.png",
+    "evidence/face-round3-compare.png",
+    "evidence/round3-verification.json"
   ],
   "review": {
     "likeness": 5.5,
     "target": 7,
     "automaticVerdict": "reject",
     "correctionLimitReached": false,
-    "nextAction": "Review round 2 face comparison; continue same component IDs. Hair and body remain pending.",
+    "nextAction": "Review round 3 front/profile. Continue head relief and hair strand recipes with stable IDs.",
     "scoreScope": "Historical round 1 overall review; no new whole-character acceptance claimed."
   },
   "faceRounds": [
@@ -392,6 +399,30 @@
       ],
       "evidence": "evidence/face-round2-compare.png",
       "verdict": "improved prototype; no final likeness acceptance"
+    },
+    {
+      "round": 3,
+      "corrections": 5,
+      "limit": 6,
+      "scope": "face and hair",
+      "addedParts": [
+        "fringe-layer-0",
+        "fringe-layer-1",
+        "fringe-layer-2"
+      ],
+      "changes": [
+        "continuous nose/cheek relief in head mesh",
+        "smooth jaw ring interpolation",
+        "side swept layered fringe",
+        "shorter side locks and connected ponytail",
+        "warmer lip colour"
+      ],
+      "remaining": [
+        "nose and orbital anatomy still soft",
+        "hair roots and strand silhouette need further refinement"
+      ],
+      "evidence": "evidence/face-round3-compare.png",
+      "verdict": "refinement checkpoint; not final acceptance"
     }
   ]
 }

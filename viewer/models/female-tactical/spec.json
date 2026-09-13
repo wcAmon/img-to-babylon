@@ -245,7 +245,7 @@
         "priority": "silhouette",
         "confidence": 0.8,
         "next": "Compare front, side and rear before increasing topology.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       },
       "collider": {
         "type": "box",
@@ -299,68 +299,406 @@
       "group": "face",
       "geometry": {
         "kind": "loft",
-        "segments": 32,
+        "segments": 64,
         "rings": [
           [
             -0.5,
             0.12,
             0.2,
-            0,
+            0.0,
             0.03
           ],
           [
-            -0.43,
+            -0.4791666666666667,
+            0.1612773048337965,
+            0.2385958163549463,
+            0.0,
+            0.033598339137242195
+          ],
+          [
+            -0.4583333333333333,
+            0.2033438116265721,
+            0.27807074375280605,
+            0.0,
+            0.03738648634056797
+          ],
+          [
+            -0.4375,
+            0.23962283738683443,
+            0.3110988568359675,
+            0.0,
+            0.039782707725947525
+          ],
+          [
+            -0.4166666666666667,
+            0.2661529452345999,
+            0.3331501135096543,
+            0.0,
+            0.0398521566834324
+          ],
+          [
+            -0.3958333333333333,
+            0.2888581046360096,
+            0.3505554585722351,
+            0.0,
+            0.03906047647200313
+          ],
+          [
+            -0.375,
+            0.30891595428579166,
+            0.36491793236950404,
+            0.0,
+            0.037646444187242806
+          ],
+          [
+            -0.35416666666666663,
+            0.3268295755743544,
+            0.37713353387415877,
+            0.0,
+            0.03567983024095983
+          ],
+          [
+            -0.33333333333333337,
+            0.34310204989210563,
+            0.3880982620588967,
+            0.0,
+            0.03323040504496266
+          ],
+          [
+            -0.3125,
+            0.35823645862945364,
+            0.39870811589641547,
+            0.0,
+            0.03036793901105967
+          ],
+          [
+            -0.29166666666666663,
+            0.37234511561475186,
+            0.4092232142523514,
+            0.0,
+            0.02686274609004331
+          ],
+          [
+            -0.27083333333333337,
+            0.3851494919453171,
+            0.419029762815218,
+            0.0,
+            0.02249540421527994
+          ],
+          [
+            -0.25,
+            0.39685677419354837,
+            0.42813935483870974,
+            0.0,
+            0.01763354838709677
+          ],
+          [
+            -0.22916666666666669,
+            0.407680720895959,
+            0.4365733085596216,
+            0.0,
+            0.012651112002251823
+          ],
+          [
+            -0.20833333333333331,
+            0.41783509058906243,
+            0.44435294221474897,
+            0.0,
+            0.007922028457503035
+          ],
+          [
+            -0.1875,
+            0.4275336418093721,
+            0.4514995740408868,
+            0.0,
+            0.003820231149608386
+          ],
+          [
+            -0.16666666666666669,
+            0.4369901330934014,
+            0.45803452227483027,
+            0.0,
+            0.0007196534753258555
+          ],
+          [
+            -0.14583333333333331,
+            0.44641423470372943,
+            0.464004520034942,
+            0.0,
+            -0.0011389400796651
+          ],
+          [
+            -0.125,
+            0.4558083811113911,
+            0.46948178527175743,
+            0.0,
+            -0.0020673198084677417
+          ],
+          [
+            -0.10416666666666669,
+            0.46497036422310195,
+            0.4744347916955922,
+            0.0,
+            -0.0022901856343806003
+          ],
+          [
+            -0.08333333333333331,
+            0.4736916746005078,
+            0.4788253695458732,
+            0.0,
+            -0.0020126288082437274
+          ],
+          [
+            -0.0625,
+            0.4817638028052545,
+            0.4826153490620274,
+            0.0,
+            -0.0014397405808971775
+          ],
+          [
+            -0.041666666666666685,
+            0.4889782393989882,
+            0.48576656048348205,
+            0.0,
+            -0.0007766122031810052
+          ],
+          [
+            -0.020833333333333315,
+            0.4951264749433547,
+            0.48824083404966384,
+            0.0,
+            -0.00022833492593525922
+          ],
+          [
+            0.0,
+            0.5,
+            0.49,
+            0.0,
+            0.0
+          ],
+          [
+            0.02083333333333337,
+            0.5032918405628535,
+            0.4904078623843717,
+            0.0,
+            0.0
+          ],
+          [
+            0.04166666666666663,
+            0.5050122012406495,
+            0.48924031782024974,
+            0.0,
+            0.0
+          ],
+          [
+            0.0625,
+            0.5054283405172413,
+            0.487077335398445,
+            0.0,
+            0.0
+          ],
+          [
+            0.08333333333333337,
+            0.5048075168764824,
+            0.4844988842097685,
+            0.0,
+            0.0
+          ],
+          [
+            0.10416666666666663,
+            0.503416988802226,
+            0.4820849333450311,
+            0.0,
+            0.0
+          ],
+          [
+            0.125,
+            0.5015240147783251,
+            0.4804154518950437,
+            0.0,
+            0.0
+          ],
+          [
+            0.14583333333333337,
+            0.49941900658081456,
+            0.48010648834019204,
+            0.0,
+            0.0
+          ],
+          [
+            0.16666666666666663,
+            0.4975766822761459,
+            0.48194947285910245,
+            0.0,
+            0.0
+          ],
+          [
+            0.1875,
+            0.49572504549808427,
+            0.48530994708994707,
+            0.0,
+            0.0
+          ],
+          [
+            0.20833333333333337,
+            0.4933735284518235,
+            0.48917747599451306,
+            0.0,
+            0.0
+          ],
+          [
+            0.22916666666666663,
+            0.4900315633425571,
+            0.4925416245345875,
+            0.0,
+            0.0
+          ],
+          [
             0.25,
-            0.32,
-            0,
-            0.04
+            0.4852085823754789,
+            0.49439195767195765,
+            0.0,
+            0.0
           ],
           [
-            -0.31,
-            0.36,
-            0.4,
-            0,
-            0.03
+            0.27083333333333337,
+            0.4784140177557826,
+            0.4937180403684107,
+            0.0,
+            0.0
           ],
           [
-            -0.16,
-            0.44,
-            0.46
+            0.29166666666666663,
+            0.46916927614536097,
+            0.4895270978382419,
+            0.0,
+            0.0
           ],
           [
-            0,
-            0.5,
-            0.49
+            0.3125,
+            0.45892954170459715,
+            0.4838163953280447,
+            0.0,
+            0.0
           ],
           [
-            0.14,
-            0.5,
-            0.48
+            0.33333333333333337,
+            0.44790123456790115,
+            0.4772134038800705,
+            0.0,
+            0.0
           ],
           [
-            0.29,
-            0.47,
-            0.49
+            0.35416666666666663,
+            0.4345615368986609,
+            0.467895445774822,
+            0.0,
+            0.0
           ],
           [
-            0.42,
-            0.36,
-            0.4
+            0.375,
+            0.4173876308602639,
+            0.45403984329280184,
+            0.0,
+            0.0
+          ],
+          [
+            0.39583333333333337,
+            0.3948566986160982,
+            0.43382391871451287,
+            0.0,
+            0.0
+          ],
+          [
+            0.41666666666666663,
+            0.3654459223295516,
+            0.4054249943204579,
+            0.0,
+            0.0
+          ],
+          [
+            0.4375,
+            0.32174153645833325,
+            0.36003682454427083,
+            0.0,
+            0.0
+          ],
+          [
+            0.45833333333333337,
+            0.2588647762345678,
+            0.29188108844521593,
+            0.0,
+            0.0
+          ],
+          [
+            0.47916666666666663,
+            0.18784999517746925,
+            0.2140614526065781,
+            0.0,
+            0.0
           ],
           [
             0.5,
             0.12,
-            0.14
+            0.14,
+            0.0,
+            0.0
           ]
         ],
-        "smooth": true
+        "smooth": true,
+        "relief": [
+          {
+            "center": [
+              0,
+              -0.07
+            ],
+            "radius": [
+              0.065,
+              0.115
+            ],
+            "depth": 0.045
+          },
+          {
+            "center": [
+              0,
+              -0.145
+            ],
+            "radius": [
+              0.09,
+              0.075
+            ],
+            "depth": 0.035
+          },
+          {
+            "center": [
+              -0.23,
+              -0.07
+            ],
+            "radius": [
+              0.13,
+              0.12
+            ],
+            "depth": 0.02
+          },
+          {
+            "center": [
+              0.23,
+              -0.07
+            ],
+            "radius": [
+              0.13,
+              0.12
+            ],
+            "depth": 0.02
+          }
+        ]
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=head]",
         "priority": "silhouette",
         "confidence": 0.8,
-        "next": "Compare front, side and rear before increasing topology.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "next": "Adjust geometry.relief for nose bridge/cheeks; retain smooth ring transitions and verify profile.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       },
       "collider": {
         "type": "box",
@@ -383,17 +721,17 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.184,
-        "h": 0.14,
-        "d": 0.174,
+        "w": 0.183,
+        "h": 0.105,
+        "d": 0.19,
         "units": "m",
         "confidence": 0.55
       },
       "transform": {
         "position": [
           0,
-          0.078,
-          -0.026
+          0.079,
+          -0.018
         ],
         "rotation": [
           0,
@@ -414,12 +752,17 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 12,
+        "segments": 64,
         "rings": [
           [
             -0.5,
-            0.49,
-            0.46
+            0.45,
+            0.36
+          ],
+          [
+            -0.28,
+            0.5,
+            0.45
           ],
           [
             0,
@@ -427,22 +770,29 @@
             0.5
           ],
           [
-            0.35,
-            0.39,
-            0.42
+            0.23,
+            0.46,
+            0.46
+          ],
+          [
+            0.4,
+            0.33,
+            0.34
           ],
           [
             0.5,
-            0.15,
-            0.18
+            0.06,
+            0.07
           ]
-        ]
+        ],
+        "smooth": true
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=hair-cap]",
         "priority": "detail",
         "confidence": 0.8,
-        "next": "Compare front, side and rear before increasing topology."
+        "next": "Compare front, side and rear before increasing topology.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -451,22 +801,22 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.12,
-        "h": 0.27,
-        "d": 0.13,
+        "w": 0.083,
+        "h": 0.213,
+        "d": 0.078,
         "units": "m",
         "confidence": 0.55
       },
       "transform": {
         "position": [
-          -0.035,
-          0.033,
-          -0.139
+          0.0,
+          0.025,
+          -0.131
         ],
         "rotation": [
-          -0.42,
           0,
-          -0.25
+          0,
+          0
         ],
         "scale": [
           1,
@@ -482,48 +832,52 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 8,
+        "segments": 14,
         "rings": [
           [
             -0.5,
-            0.015,
+            0.01,
             0.02,
-            -0.18,
-            0.28
+            -0.22,
+            -0.15
           ],
           [
-            -0.3,
+            -0.28,
             0.27,
-            0.26,
-            -0.18,
-            0.2
+            0.24,
+            -0.19,
+            -0.15
           ],
           [
-            0.05,
-            0.5,
-            0.44,
             0,
-            0.05
+            0.44,
+            0.45,
+            0,
+            -0.2
           ],
           [
-            0.35,
-            0.37,
+            0.26,
+            0.46,
             0.5,
-            0.05,
-            -0.08
+            0.1,
+            0.0
           ],
           [
             0.5,
-            0.18,
-            0.22
+            0.2,
+            0.25,
+            0.08,
+            0.35
           ]
-        ]
+        ],
+        "smooth": true
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=ponytail]",
         "priority": "detail",
         "confidence": 0.8,
-        "next": "Compare front, side and rear before increasing topology."
+        "next": "Compare front, side and rear before increasing topology.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -4720,7 +5074,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -4815,7 +5169,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -4965,7 +5319,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -5115,7 +5469,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -5164,7 +5518,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -5269,7 +5623,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -5359,7 +5713,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -5368,22 +5722,22 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.036,
-        "h": 0.145,
-        "d": 0.059,
+        "w": 0.026,
+        "h": 0.113,
+        "d": 0.062,
         "units": "m",
         "confidence": 0.75
       },
       "transform": {
         "position": [
           0.08,
-          0.035,
-          -0.008
+          0.032,
+          -0.021
         ],
         "rotation": [
           0,
           0,
-          -0.12
+          0
         ],
         "scale": [
           1,
@@ -5399,37 +5753,42 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 8,
-        "smooth": false,
-        "power": 1,
+        "segments": 14,
         "rings": [
           [
             -0.5,
-            0.09,
-            0.1
+            0.02,
+            0.04
           ],
           [
-            -0.15,
-            0.32,
-            0.36
-          ],
-          [
-            0.25,
-            0.5,
-            0.5
-          ],
-          [
-            0.5,
-            0.25,
+            -0.27,
+            0.34,
             0.32
+          ],
+          [
+            0.12,
+            0.5,
+            0.45
+          ],
+          [
+            0.35,
+            0.43,
+            0.45
+          ],
+          [
+            0.5,
+            0.13,
+            0.16
           ]
-        ]
+        ],
+        "smooth": true
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=hair-side-l]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons."
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -7290,7 +7649,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -7385,7 +7744,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -7535,7 +7894,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -7685,7 +8044,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -7734,7 +8093,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -7839,7 +8198,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -7929,7 +8288,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -7938,22 +8297,22 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.036,
-        "h": 0.145,
-        "d": 0.059,
+        "w": 0.026,
+        "h": 0.113,
+        "d": 0.062,
         "units": "m",
         "confidence": 0.75
       },
       "transform": {
         "position": [
           -0.08,
-          0.035,
-          -0.008
+          0.032,
+          -0.021
         ],
         "rotation": [
           0,
           0,
-          0.12
+          0
         ],
         "scale": [
           1,
@@ -7969,54 +8328,59 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 8,
-        "smooth": false,
-        "power": 1,
+        "segments": 14,
         "rings": [
           [
             -0.5,
-            0.09,
-            0.1
+            0.02,
+            0.04
           ],
           [
-            -0.15,
-            0.32,
-            0.36
-          ],
-          [
-            0.25,
-            0.5,
-            0.5
-          ],
-          [
-            0.5,
-            0.25,
+            -0.27,
+            0.34,
             0.32
+          ],
+          [
+            0.12,
+            0.5,
+            0.45
+          ],
+          [
+            0.35,
+            0.43,
+            0.45
+          ],
+          [
+            0.5,
+            0.13,
+            0.16
           ]
-        ]
+        ],
+        "smooth": true
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=hair-side-r]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons."
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
       "id": "nose",
       "name": "鼻樑與鼻尖",
       "level": "meso",
-      "primitive": "extrude",
+      "primitive": "sphere",
       "dimensions": {
-        "w": 0.038,
-        "h": 0.053,
-        "d": 0.014
+        "w": 0.016,
+        "h": 0.013,
+        "d": 0.012
       },
       "transform": {
         "position": [
           0,
-          -0.022,
-          0.078
+          -0.028,
+          0.086
         ],
         "rotation": [
           0,
@@ -8036,68 +8400,16 @@
       "material": "skin",
       "group": "face",
       "geometry": {
-        "kind": "patch",
-        "outline": [
-          [
-            -0.38,
-            -0.24,
-            0
-          ],
-          [
-            -0.26,
-            0.05,
-            0
-          ],
-          [
-            -0.15,
-            0.35,
-            0
-          ],
-          [
-            0,
-            0.5,
-            0
-          ],
-          [
-            0.15,
-            0.35,
-            0
-          ],
-          [
-            0.26,
-            0.05,
-            0
-          ],
-          [
-            0.38,
-            -0.24,
-            0
-          ],
-          [
-            0.25,
-            -0.4,
-            0
-          ],
-          [
-            0,
-            -0.46,
-            0
-          ],
-          [
-            -0.25,
-            -0.4,
-            0
-          ]
-        ],
-        "dome": 0.8,
+        "kind": "ellipsoid",
+        "segments": 20,
         "smooth": true
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=nose]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "next": "Nasal surface is coupled: head.geometry.relief controls bridge and bulk; nose transform/dimensions control the embedded tip. Review together to avoid floating tip.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -8197,7 +8509,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -8287,7 +8599,7 @@
         "priority": "detail",
         "confidence": 0.75,
         "next": "Review close-up and compare feature silhouette before adding polygons.",
-        "lastChange": "round 2: facial proportions and custom almond-eye/cupid-lip patches"
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -8296,22 +8608,22 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.086,
-        "h": 0.139,
-        "d": 0.043,
+        "w": 0.088,
+        "h": 0.092,
+        "d": 0.053,
         "units": "m",
         "confidence": 0.75
       },
       "transform": {
         "position": [
-          0.006,
-          0.052,
-          0.067
+          0.014,
+          0.078,
+          0.058
         ],
         "rotation": [
-          0.12,
           0,
-          -0.72
+          0,
+          0
         ],
         "scale": [
           1,
@@ -8327,42 +8639,59 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 8,
-        "smooth": false,
-        "power": 1,
+        "segments": 24,
         "rings": [
           [
             -0.5,
-            0.03,
-            0.07
+            0.01,
+            0.02,
+            0.59,
+            -0.1
           ],
           [
-            -0.16,
+            -0.35,
+            0.19,
+            0.14,
+            0.49,
+            0.11
+          ],
+          [
+            -0.12,
             0.34,
-            0.34
+            0.29,
+            0.22,
+            0.16
           ],
           [
-            0.18,
-            0.5,
-            0.5
-          ],
-          [
-            0.39,
-            0.4,
-            0.45
-          ],
-          [
-            0.5,
             0.12,
-            0.18
+            0.46,
+            0.4,
+            -0.05,
+            0.05
+          ],
+          [
+            0.32,
+            0.39,
+            0.42,
+            -0.34,
+            -0.22
+          ],
+          [
+            0.5,
+            0.04,
+            0.06,
+            -0.46,
+            -0.53
           ]
-        ]
+        ],
+        "smooth": true
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=fringe-sweep]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons."
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -8371,22 +8700,22 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.049,
-        "h": 0.143,
-        "d": 0.043,
+        "w": 0.027,
+        "h": 0.111,
+        "d": 0.042,
         "units": "m",
         "confidence": 0.75
       },
       "transform": {
         "position": [
-          -0.069,
-          0.021,
-          0.057
+          -0.072,
+          0.035,
+          0.044
         ],
         "rotation": [
-          -0.06,
           0,
-          -0.24
+          0,
+          0
         ],
         "scale": [
           1,
@@ -8402,37 +8731,52 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 8,
-        "smooth": false,
-        "power": 1,
+        "segments": 14,
         "rings": [
           [
             -0.5,
             0.02,
-            0.04
+            0.01,
+            -0.18,
+            0.18
           ],
           [
+            -0.3,
+            0.24,
+            0.16,
+            -0.3,
+            0.19
+          ],
+          [
+            0,
+            0.47,
+            0.39,
             -0.2,
-            0.29,
-            0.3
+            0.09
           ],
           [
-            0.2,
-            0.5,
-            0.5
+            0.25,
+            0.47,
+            0.45,
+            0.06,
+            -0.09
           ],
           [
             0.5,
-            0.15,
-            0.16
+            0.08,
+            0.1,
+            0.32,
+            -0.35
           ]
-        ]
+        ],
+        "smooth": true
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=fringe-side]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons."
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -8450,8 +8794,8 @@
       "transform": {
         "position": [
           0.008,
-          0.132,
-          -0.082
+          0.111,
+          -0.091
         ],
         "rotation": [
           0,
@@ -8480,7 +8824,8 @@
         "parameterPath": "spec.json:componentTree[id=hair-tie]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons."
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -8489,22 +8834,22 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.054,
-        "h": 0.226,
-        "d": 0.054,
+        "w": 0.035,
+        "h": 0.197,
+        "d": 0.045,
         "units": "m",
         "confidence": 0.75
       },
       "transform": {
         "position": [
-          -0.035,
-          0.009000000000000005,
-          -0.135
+          -0.025,
+          0.014,
+          -0.143
         ],
         "rotation": [
-          -0.5,
           0,
-          -0.21
+          0,
+          0
         ],
         "scale": [
           1,
@@ -8520,39 +8865,52 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 7,
-        "smooth": false,
-        "power": 1,
+        "segments": 10,
         "rings": [
           [
             -0.5,
-            0.015,
-            0.02,
-            0.15,
-            0.25
+            0.01,
+            0.01,
+            -0.3,
+            -0.25
           ],
           [
-            -0.25,
+            -0.28,
+            0.28,
+            0.25,
+            -0.2,
+            -0.2
+          ],
+          [
+            0,
+            0.47,
+            0.5,
+            0,
+            0
+          ],
+          [
             0.3,
-            0.3
-          ],
-          [
-            0.2,
-            0.5,
-            0.5
-          ],
-          [
-            0.5,
-            0.2,
+            0.4,
+            0.44,
+            0,
             0.2
+          ],
+          [
+            0.5,
+            0.14,
+            0.18,
+            0,
+            0.35
           ]
-        ]
+        ],
+        "smooth": false
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=tail-lock-0]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons."
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -8561,22 +8919,22 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.054,
-        "h": 0.226,
-        "d": 0.054,
+        "w": 0.035,
+        "h": 0.197,
+        "d": 0.045,
         "units": "m",
         "confidence": 0.75
       },
       "transform": {
         "position": [
           0.0,
-          0.009000000000000005,
-          -0.14500000000000002
+          0.014,
+          -0.147
         ],
         "rotation": [
-          -0.5,
           0,
-          0.0
+          0,
+          0
         ],
         "scale": [
           1,
@@ -8592,39 +8950,52 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 7,
-        "smooth": false,
-        "power": 1,
+        "segments": 10,
         "rings": [
           [
             -0.5,
-            0.015,
-            0.02,
-            0.15,
-            0.25
+            0.01,
+            0.01,
+            0.0,
+            -0.25
           ],
           [
-            -0.25,
+            -0.28,
+            0.28,
+            0.25,
+            0.0,
+            -0.2
+          ],
+          [
+            0,
+            0.47,
+            0.5,
+            0,
+            0
+          ],
+          [
             0.3,
-            0.3
-          ],
-          [
-            0.2,
-            0.5,
-            0.5
-          ],
-          [
-            0.5,
-            0.2,
+            0.4,
+            0.44,
+            0,
             0.2
+          ],
+          [
+            0.5,
+            0.14,
+            0.18,
+            0,
+            0.35
           ]
-        ]
+        ],
+        "smooth": false
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=tail-lock-1]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons."
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     },
     {
@@ -8633,22 +9004,22 @@
       "level": "meso",
       "primitive": "extrude",
       "dimensions": {
-        "w": 0.054,
-        "h": 0.226,
-        "d": 0.054,
+        "w": 0.035,
+        "h": 0.197,
+        "d": 0.045,
         "units": "m",
         "confidence": 0.75
       },
       "transform": {
         "position": [
-          0.035,
-          0.009000000000000005,
-          -0.155
+          0.025,
+          0.014,
+          -0.151
         ],
         "rotation": [
-          -0.5,
           0,
-          0.21
+          0,
+          0
         ],
         "scale": [
           1,
@@ -8664,39 +9035,328 @@
       "group": "hair",
       "geometry": {
         "kind": "loft",
-        "segments": 7,
-        "smooth": false,
-        "power": 1,
+        "segments": 10,
         "rings": [
           [
             -0.5,
-            0.015,
-            0.02,
-            0.15,
-            0.25
-          ],
-          [
-            -0.25,
+            0.01,
+            0.01,
             0.3,
-            0.3
+            -0.25
           ],
           [
+            -0.28,
+            0.28,
+            0.25,
             0.2,
-            0.5,
-            0.5
+            -0.2
           ],
           [
+            0,
+            0.47,
             0.5,
-            0.2,
+            0,
+            0
+          ],
+          [
+            0.3,
+            0.4,
+            0.44,
+            0,
             0.2
+          ],
+          [
+            0.5,
+            0.14,
+            0.18,
+            0,
+            0.35
           ]
-        ]
+        ],
+        "smooth": false
       },
       "optimization": {
         "parameterPath": "spec.json:componentTree[id=tail-lock-2]",
         "priority": "detail",
         "confidence": 0.75,
-        "next": "Review close-up and compare feature silhouette before adding polygons."
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
+      }
+    },
+    {
+      "id": "fringe-layer-0",
+      "name": "側分層次髮束 1",
+      "level": "meso",
+      "primitive": "extrude",
+      "dimensions": {
+        "w": 0.022,
+        "h": 0.092,
+        "d": 0.02,
+        "units": "m",
+        "confidence": 0.75
+      },
+      "transform": {
+        "position": [
+          -0.0009999999999999992,
+          0.06799999999999999,
+          0.07
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "head",
+      "attachment": {
+        "type": "fixed"
+      },
+      "material": "hair-ridge",
+      "group": "hair",
+      "geometry": {
+        "kind": "loft",
+        "segments": 8,
+        "rings": [
+          [
+            -0.5,
+            0.01,
+            0.02,
+            2.36,
+            -0.265
+          ],
+          [
+            -0.35,
+            0.19,
+            0.14,
+            1.96,
+            0.2915
+          ],
+          [
+            -0.12,
+            0.34,
+            0.29,
+            0.88,
+            0.424
+          ],
+          [
+            0.12,
+            0.46,
+            0.4,
+            -0.2,
+            0.1325
+          ],
+          [
+            0.32,
+            0.39,
+            0.42,
+            -1.36,
+            -0.583
+          ],
+          [
+            0.5,
+            0.04,
+            0.06,
+            -1.84,
+            -1.4045
+          ]
+        ],
+        "smooth": false
+      },
+      "optimization": {
+        "parameterPath": "spec.json:componentTree[id=fringe-layer-0]",
+        "priority": "detail",
+        "confidence": 0.75,
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
+      }
+    },
+    {
+      "id": "fringe-layer-1",
+      "name": "側分層次髮束 2",
+      "level": "meso",
+      "primitive": "extrude",
+      "dimensions": {
+        "w": 0.022,
+        "h": 0.092,
+        "d": 0.02,
+        "units": "m",
+        "confidence": 0.75
+      },
+      "transform": {
+        "position": [
+          0.014,
+          0.071,
+          0.07
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "head",
+      "attachment": {
+        "type": "fixed"
+      },
+      "material": "hair",
+      "group": "hair",
+      "geometry": {
+        "kind": "loft",
+        "segments": 8,
+        "rings": [
+          [
+            -0.5,
+            0.01,
+            0.02,
+            2.36,
+            -0.265
+          ],
+          [
+            -0.35,
+            0.19,
+            0.14,
+            1.96,
+            0.2915
+          ],
+          [
+            -0.12,
+            0.34,
+            0.29,
+            0.88,
+            0.424
+          ],
+          [
+            0.12,
+            0.46,
+            0.4,
+            -0.2,
+            0.1325
+          ],
+          [
+            0.32,
+            0.39,
+            0.42,
+            -1.36,
+            -0.583
+          ],
+          [
+            0.5,
+            0.04,
+            0.06,
+            -1.84,
+            -1.4045
+          ]
+        ],
+        "smooth": false
+      },
+      "optimization": {
+        "parameterPath": "spec.json:componentTree[id=fringe-layer-1]",
+        "priority": "detail",
+        "confidence": 0.75,
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
+      }
+    },
+    {
+      "id": "fringe-layer-2",
+      "name": "側分層次髮束 3",
+      "level": "meso",
+      "primitive": "extrude",
+      "dimensions": {
+        "w": 0.022,
+        "h": 0.092,
+        "d": 0.02,
+        "units": "m",
+        "confidence": 0.75
+      },
+      "transform": {
+        "position": [
+          0.028999999999999998,
+          0.074,
+          0.07
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "parent": "head",
+      "attachment": {
+        "type": "fixed"
+      },
+      "material": "hair-ridge",
+      "group": "hair",
+      "geometry": {
+        "kind": "loft",
+        "segments": 8,
+        "rings": [
+          [
+            -0.5,
+            0.01,
+            0.02,
+            2.36,
+            -0.265
+          ],
+          [
+            -0.35,
+            0.19,
+            0.14,
+            1.96,
+            0.2915
+          ],
+          [
+            -0.12,
+            0.34,
+            0.29,
+            0.88,
+            0.424
+          ],
+          [
+            0.12,
+            0.46,
+            0.4,
+            -0.2,
+            0.1325
+          ],
+          [
+            0.32,
+            0.39,
+            0.42,
+            -1.36,
+            -0.583
+          ],
+          [
+            0.5,
+            0.04,
+            0.06,
+            -1.84,
+            -1.4045
+          ]
+        ],
+        "smooth": false
+      },
+      "optimization": {
+        "parameterPath": "spec.json:componentTree[id=fringe-layer-2]",
+        "priority": "detail",
+        "confidence": 0.75,
+        "next": "Review close-up and compare feature silhouette before adding polygons.",
+        "lastChange": "round 3: integrated facial relief and swept layered hair recipes"
       }
     }
   ],
@@ -8816,8 +9476,18 @@
       "kind": "procedural",
       "baseColor": [
         0.48,
-        0.105,
-        0.085
+        0.2,
+        0.16
+      ],
+      "roughness": 0.8
+    },
+    {
+      "id": "hair-ridge",
+      "kind": "procedural",
+      "baseColor": [
+        0.205,
+        0.125,
+        0.101
       ],
       "roughness": 0.8
     }
@@ -8949,7 +9619,10 @@
           "hair-tie",
           "tail-lock-0",
           "tail-lock-1",
-          "tail-lock-2"
+          "tail-lock-2",
+          "fringe-layer-0",
+          "fringe-layer-1",
+          "fringe-layer-2"
         ],
         "mass": 55,
         "friction": 0.7,
@@ -9165,6 +9838,13 @@
         "evidence/physics-result.json",
         "evidence/polish-eye.json"
       ]
+    },
+    {
+      "pass": "polish",
+      "round": 3,
+      "action": "refine-spec",
+      "notes": "Face/hair refinement checkpoint: continuous nose/cheek relief, smooth jaw rings, swept fringe with three editable strands and connected ponytail. Visual anatomy remains simplified; no final concept likeness acceptance. Body/equipment/colliders unchanged.",
+      "evidence": "evidence/face-round3-compare.png"
     }
   ]
 }

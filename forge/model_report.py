@@ -34,6 +34,11 @@ def validate(spec, manifest):
             if group not in group_ids: errors.append(f'unknown optimisation group: {group}')
     for cid,c in components.items():
         geo=c.get('geometry',{})
+        for relief in geo.get('relief',[]):
+            if (len(relief.get('center',[]))!=2 or len(relief.get('radius',[]))!=2
+                or not all(isinstance(v,(int,float)) and math.isfinite(v) for v in relief.get('center',[])+relief.get('radius',[])+[relief.get('depth')])
+                or any(v<=0 for v in relief.get('radius',[]))):
+                errors.append(f'invalid surface relief: {cid}')
         if geo.get('kind') not in ('box','ellipsoid','loft','patch'): errors.append(f'unknown geometry recipe: {cid}')
         if geo.get('kind') == 'patch':
             points=geo.get('outline',[])

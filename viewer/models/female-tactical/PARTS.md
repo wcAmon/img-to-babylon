@@ -1,6 +1,6 @@
 # female-tactical — 零件與優化路徑
 
-版本：1 · 狀態：visual-review-required · 122 個零件
+版本：1 · 狀態：visual-review-required · 125 個零件
 
 尺寸、位置和幾何配方以 `spec.json` 為準；用穩定 id 尋找元件。此表由 `forge/model_report.py` 產生。
 
@@ -26,7 +26,7 @@
 | `eye-glint-r` | 眼睛反光 r | ellipsoid | 2.8 × 3.2 × 1.2 | head |
 | `eyelid-r` | 上眼線 r | patch | 44.0 × 17.0 × 1.0 | head |
 | `brow-r` | 眉毛 r | patch | 45.0 × 13.0 × 1.5 | head |
-| `nose` | 鼻樑與鼻尖 | patch | 38.0 × 53.0 × 14.0 | head |
+| `nose` | 鼻樑與鼻尖 | ellipsoid | 16.0 × 13.0 × 12.0 | head |
 | `upper-lip` | 上唇 | patch | 34.0 × 8.0 × 5.0 | head |
 | `lower-lip` | 下唇 | patch | 33.0 × 8.0 × 4.0 | head |
 
@@ -34,16 +34,19 @@
 
 | ID | 零件 | 配方 | 尺寸（mm） | 接合父節點 |
 |---|---|---|---|---|
-| `hair-cap` | 後腦髮塊 | loft | 184.0 × 140.0 × 174.0 | head |
-| `ponytail` | 高馬尾 | loft | 120.0 × 270.0 × 130.0 | head |
-| `hair-side-l` | 鬢角 l | loft | 36.0 × 145.0 × 59.0 | head |
-| `hair-side-r` | 鬢角 r | loft | 36.0 × 145.0 × 59.0 | head |
-| `fringe-sweep` | 側分斜瀏海 | loft | 86.0 × 139.0 × 43.0 | head |
-| `fringe-side` | 額側髮束 | loft | 49.0 × 143.0 × 43.0 | head |
+| `hair-cap` | 後腦髮塊 | loft | 183.0 × 105.0 × 190.0 | head |
+| `ponytail` | 高馬尾 | loft | 83.0 × 213.0 × 78.0 | head |
+| `hair-side-l` | 鬢角 l | loft | 26.0 × 113.0 × 62.0 | head |
+| `hair-side-r` | 鬢角 r | loft | 26.0 × 113.0 × 62.0 | head |
+| `fringe-sweep` | 側分斜瀏海 | loft | 88.0 × 92.0 × 53.0 | head |
+| `fringe-side` | 額側髮束 | loft | 27.0 × 111.0 × 42.0 | head |
 | `hair-tie` | 馬尾青綠髮束 | ellipsoid | 53.0 × 31.0 × 56.0 | head |
-| `tail-lock-0` | 馬尾分束 0 | loft | 54.0 × 226.0 × 54.0 | head |
-| `tail-lock-1` | 馬尾分束 1 | loft | 54.0 × 226.0 × 54.0 | head |
-| `tail-lock-2` | 馬尾分束 2 | loft | 54.0 × 226.0 × 54.0 | head |
+| `tail-lock-0` | 馬尾分束 0 | loft | 35.0 × 197.0 × 45.0 | head |
+| `tail-lock-1` | 馬尾分束 1 | loft | 35.0 × 197.0 × 45.0 | head |
+| `tail-lock-2` | 馬尾分束 2 | loft | 35.0 × 197.0 × 45.0 | head |
+| `fringe-layer-0` | 側分層次髮束 1 | loft | 22.0 × 92.0 × 20.0 | head |
+| `fringe-layer-1` | 側分層次髮束 2 | loft | 22.0 × 92.0 × 20.0 | head |
+| `fringe-layer-2` | 側分層次髮束 3 | loft | 22.0 × 92.0 × 20.0 | head |
 
 ### 上衣與立領
 

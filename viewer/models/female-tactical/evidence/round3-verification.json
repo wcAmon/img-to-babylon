@@ -1,0 +1,14 @@
+{
+  "round": 3,
+  "corrections": 5,
+  "limit": 6,
+  "components": 125,
+  "pythonTests": 134,
+  "typecheck": "pass",
+  "headlessGeometryAndHavok": "pass",
+  "productionBuild": "pass; existing Babylon large bundle warning",
+  "staticColliders": "pass",
+  "physicsDrop": "pass",
+  "scopeCheck": "non-face/hair components unchanged; all existing colliders unchanged",
+  "visual": "front and profile inspected; no final likeness acceptance"
+}

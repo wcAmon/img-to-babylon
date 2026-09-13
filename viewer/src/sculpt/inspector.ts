@@ -26,6 +26,7 @@ export function installSculptInspector(model: BuiltModel, camera: ArcRotateCamer
     camera.alpha = alpha; camera.beta = 1.48; camera.radius = radius * model.physicsScale;
   };
   button('正面', () => setView(Math.PI / 2)); button('三分之四', () => setView(1.22));
+  button('頭部側面', () => setView(.45, 1.595, .60));
   button('背面', () => setView(-Math.PI / 2)); button('臉部', () => setView(1.4, 1.595, .60));
   const label = document.createElement('label'); label.textContent = '查看零件'; panel.append(label);
   const select = document.createElement('select'); select.setAttribute('aria-label', '查看零件'); panel.append(select);
@@ -65,5 +66,5 @@ export function installSculptInspector(model: BuiltModel, camera: ArcRotateCamer
   }
   const css=document.createElement('style'); css.textContent=`.sculpt-panel{position:fixed;right:18px;top:18px;width:240px;padding:18px;border:1px solid #ffffff66;border-radius:16px;background:#f8faf9ee;color:#253244;font:13px/1.5 system-ui;max-height:calc(100vh - 74px);overflow:auto;box-shadow:0 12px 40px #21304618}.sculpt-panel h2{font-size:19px;margin:0}.sculpt-panel p{margin:8px 0;color:#526174}.sculpt-actions{display:flex;flex-wrap:wrap;gap:5px}.sculpt-panel button{border:1px solid #d0d8df;border-radius:7px;background:white;padding:6px 9px;color:#253244;cursor:pointer;margin:3px 0}.sculpt-panel label{display:block;margin-top:12px;font-weight:600}.sculpt-panel select,.sculpt-panel input{width:100%;box-sizing:border-box;margin-top:5px}.sculpt-panel select{padding:7px;border:1px solid #ccd7dd;border-radius:7px}.sculpt-detail{overflow-wrap:anywhere}.sculpt-panel summary{cursor:pointer}@media(max-width:760px){.sculpt-panel{top:auto;bottom:10px;right:10px;width:200px;max-height:30vh;font-size:11px;padding:10px}.sculpt-panel h2{font-size:14px}}`; document.head.append(css);
   const view = new URLSearchParams(location.hash.slice(1)).get('view');
-  if (view === 'rear') setView(-Math.PI/2); else if (view === 'face') setView(1.4,1.595,.6); else if (view === 'front') setView(Math.PI/2);
+  if (view === 'face-side') setView(.45,1.595,.6); else if (view === 'rear') setView(-Math.PI/2); else if (view === 'face') setView(1.4,1.595,.6); else if (view === 'front') setView(Math.PI/2);
 }

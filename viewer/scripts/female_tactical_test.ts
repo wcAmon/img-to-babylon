@@ -4,7 +4,7 @@ import { PhysicsShapeContainer, VertexBuffer } from '@babylonjs/core';
 import { createHeadlessScene } from '../src/headless';
 import { registry } from '../src/registry';
 import { SculptInspection } from '../src/sculpt/inspection';
-import { triangulateOutline } from '../src/sculpt/geometry';
+import { createGeometry, triangulateOutline } from '../src/sculpt/geometry';
 
 // A concave L must retain its empty notch, in either input winding.
 for(const outline of [[[0,0],[2,0],[2,1],[1,1],[1,2],[0,2]],[[0,2],[1,2],[1,1],[2,1],[2,0],[0,0]]]) {
@@ -23,6 +23,20 @@ for(const outline of [[[0,0],[2,0],[2,1],[1,1],[1,2],[0,2]],[[0,2],[1,2],[1,1],[
 assert.ok(registry['female-tactical'], 'Female character must be registered');
 const ctx = await createHeadlessScene();
 const spec = JSON.parse(readFileSync(new URL('../models/female-tactical/spec.json', import.meta.url), 'utf8'));
+const headRecipe=structuredClone(spec.componentTree.find((c:any)=>c.id==='head'));
+const detailedHead=createGeometry(headRecipe,ctx.scene,1);
+delete headRecipe.geometry.relief;
+const plainHead=createGeometry(headRecipe,ctx.scene,1);
+const detailed=detailedHead.getVerticesData(VertexBuffer.PositionKind)!;
+const plain=plainHead.getVerticesData(VertexBuffer.PositionKind)!;
+let raised=0;
+for(let i=0;i<plain.length;i+=3) {
+  assert.equal(detailed[i],plain[i]);assert.equal(detailed[i+1],plain[i+1]);
+  if(plain[i+2]<0) assert.equal(detailed[i+2],plain[i+2],'Face relief cannot deform rear skull');
+  if(detailed[i+2]>plain[i+2]+.001) raised++;
+}
+assert.ok(raised>0,'Facial relief must affect the actual mesh');
+detailedHead.dispose();plainHead.dispose();
 const factory = (await registry['female-tactical']()).default;
 const before = { meshes: ctx.scene.meshes.length, materials: ctx.scene.materials.length, nodes: ctx.scene.transformNodes.length };
 const a = factory(ctx.scene, { physics: false });

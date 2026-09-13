@@ -67,7 +67,9 @@ export function createGeometry(c: SculptComponent, scene: Scene, scale: number):
     for (let i = 0; i < n; i++) {
       const a = i * Math.PI * 2 / n;
       const curve = (v: number) => Math.sign(v) * Math.pow(Math.abs(v), c.geometry.power ?? 1);
-      positions.push((cx + curve(Math.sin(a)) * rx) * w * scale, y * h * scale, (cz + curve(Math.cos(a)) * rz) * d * scale);
+      const x=cx + curve(Math.sin(a)) * rx;
+      const relief=(c.geometry.relief ?? []).reduce((sum,r)=>sum+r.depth*Math.exp(-Math.pow((x-r.center[0])/r.radius[0],2)-Math.pow((y-r.center[1])/r.radius[1],2)),0)*Math.pow(Math.max(0,Math.cos(a)),8);
+      positions.push(x * w * scale, y * h * scale, (cz + curve(Math.cos(a)) * rz + relief) * d * scale);
     }
   }
   for (let r = 0; r < rings.length - 1; r++) for (let i = 0; i < n; i++) {
