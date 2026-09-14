@@ -1,0 +1,88 @@
+{
+  "candidates": [
+    {
+      "endpoint": "tripo",
+      "glb": ".img2babylon/female-tactical/generative/tripo/model.glb",
+      "sha256": "11df0be6fe8949ee7db05555408d73e218d52af7716cf9c3cface34e3483a142",
+      "bytes": 5419244,
+      "requestId": "01a09ebb-2b58-7a72-9cd7-59908216380a",
+      "meshCount": 1,
+      "materialCount": 1,
+      "textureCount": 0,
+      "bounds": {
+        "space": "mesh-local-untransformed",
+        "min": [
+          -0.10089613497257233,
+          -0.5001095533370972,
+          -0.1881018579006195
+        ],
+        "max": [
+          0.10087815672159195,
+          0.5000035166740417,
+          0.18817462027072906
+        ],
+        "size": [
+          0.20177429169416428,
+          1.000113070011139,
+          0.37627647817134857
+        ],
+        "center": [
+          -8.989125490188599e-06,
+          -5.301833152770996e-05,
+          3.638118505477905e-05
+        ]
+      },
+      "probe": {
+        "schemaVersion": 1,
+        "kind": "glb-reference",
+        "path": "/Users/wake/Desktop/local_three/img-to-babylon/.img2babylon/female-tactical/generative/tripo/model.glb",
+        "sha256": "11df0be6fe8949ee7db05555408d73e218d52af7716cf9c3cface34e3483a142",
+        "bytes": 5419244,
+        "referenceReadiness": "pass",
+        "note": "Metadata only. Render the GLB through the target Three.js route before using it as a visual baseline; do not copy its topology into a procedural factory."
+      }
+    },
+    {
+      "endpoint": "rodin",
+      "glb": ".img2babylon/female-tactical/generative/rodin/model.glb",
+      "sha256": "edbd3c0c560fb7e7252d9c562b300fdaad03c6f72e91f2b4204ab4d73777eb90",
+      "bytes": 13792764,
+      "requestId": "01a09eb6-072f-7fd2-a385-c82044e45ed4",
+      "meshCount": 1,
+      "materialCount": 1,
+      "textureCount": 0,
+      "bounds": {
+        "space": "mesh-local-untransformed",
+        "min": [
+          -0.5721610188484192,
+          -0.9501789808273315,
+          -0.2229890376329422
+        ],
+        "max": [
+          0.5727120041847229,
+          0.9501979947090149,
+          0.2248079776763916
+        ],
+        "size": [
+          1.144873023033142,
+          1.9003769755363464,
+          0.4477970153093338
+        ],
+        "center": [
+          0.00027549266815185547,
+          9.506940841674805e-06,
+          0.0009094700217247009
+        ]
+      },
+      "probe": {
+        "schemaVersion": 1,
+        "kind": "glb-reference",
+        "path": "/Users/wake/Desktop/local_three/img-to-babylon/.img2babylon/female-tactical/generative/rodin/model.glb",
+        "sha256": "edbd3c0c560fb7e7252d9c562b300fdaad03c6f72e91f2b4204ab4d73777eb90",
+        "bytes": 13792764,
+        "referenceReadiness": "pass",
+        "note": "Metadata only. Render the GLB through the target Three.js route before using it as a visual baseline; do not copy its topology into a procedural factory."
+      }
+    }
+  ]
+}
