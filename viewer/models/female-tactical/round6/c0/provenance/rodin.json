@@ -1,0 +1,49 @@
+{
+  "endpoint": "rodin",
+  "endpointId": "fal-ai/hyper3d/rodin",
+  "requestId": "01a09eb6-072f-7fd2-a385-c82044e45ed4",
+  "seed": 913,
+  "parameters": {
+    "input_image_urls": [
+      "<data-uri 662786 chars>",
+      "<data-uri 466442 chars>",
+      "<data-uri 478706 chars>"
+    ],
+    "condition_mode": "concat",
+    "quality": "high",
+    "material": "PBR",
+    "TAPose": true,
+    "geometry_file_format": "glb",
+    "seed": 913
+  },
+  "inputImages": [
+    {
+      "role": "front",
+      "path": ".img2babylon/female-tactical/generative/views/front.png",
+      "sha256": "9e220216b5f7ca6b5059188706d526f5fff6d88e37aa7987868b7b07b214c871"
+    },
+    {
+      "role": "left",
+      "path": ".img2babylon/female-tactical/generative/views/left.png",
+      "sha256": "b872db8cf2ccb260bc99fc6031e0c6d25e2edb17c2a021fcbed8d177ae352c2d"
+    },
+    {
+      "role": "right",
+      "path": ".img2babylon/female-tactical/generative/views/right.png",
+      "sha256": "73cb565d9e3f3fe1210628d3ef23a2773f95a0efb56f67cd80954ba95101c9bd"
+    }
+  ],
+  "inputHash": "52e78e7081d70837e4d4d17bc4350b6f30142dfb9d1f64a8b7abb6b40d5448f5",
+  "outputs": [
+    {
+      "path": ".img2babylon/female-tactical/generative/rodin/model.glb",
+      "sha256": "edbd3c0c560fb7e7252d9c562b300fdaad03c6f72e91f2b4204ab4d73777eb90",
+      "bytes": 13792764,
+      "url": "https://v3b.fal.media/files/b/0aaa5c5c/m849TNDkF2AufDHQrGZ_2_base_basic_pbr.glb"
+    }
+  ],
+  "resultSeed": 913,
+  "startedAt": "2026-09-14T06:58:42.978568+00:00",
+  "finishedAt": "2026-09-14T07:01:02.017287+00:00",
+  "paid": true
+}
