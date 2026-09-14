@@ -35,11 +35,55 @@
       "probe": {
         "schemaVersion": 1,
         "kind": "glb-reference",
-        "path": "/Users/wake/Desktop/local_three/img-to-babylon/.img2babylon/female-tactical/generative/tripo/model.glb",
         "sha256": "11df0be6fe8949ee7db05555408d73e218d52af7716cf9c3cface34e3483a142",
         "bytes": 5419244,
         "referenceReadiness": "pass",
         "note": "Metadata only. Render the GLB through the target Three.js route before using it as a visual baseline; do not copy its topology into a procedural factory."
+      },
+      "viewerAzimuthOffsetDegrees": 90,
+      "captureCamera": {
+        "front": {
+          "projection": "perspective",
+          "fovDegrees": 28,
+          "near": 0.01,
+          "far": 100,
+          "target": [
+            0,
+            -9.277159483289665e-05,
+            0
+          ],
+          "azimuthDegrees": 90,
+          "elevationDegrees": 2,
+          "distance": 3.8062501782335816
+        },
+        "left": {
+          "projection": "perspective",
+          "fovDegrees": 28,
+          "near": 0.01,
+          "far": 100,
+          "target": [
+            0,
+            -9.277159483289665e-05,
+            0
+          ],
+          "azimuthDegrees": 0,
+          "elevationDegrees": 2,
+          "distance": 3.8062501782335816
+        },
+        "face": {
+          "projection": "perspective",
+          "fovDegrees": 28,
+          "near": 0.01,
+          "far": 100,
+          "target": [
+            0,
+            0.7121572617573821,
+            0
+          ],
+          "azimuthDegrees": 90,
+          "elevationDegrees": 0,
+          "distance": 0.7805000365481276
+        }
       }
     },
     {
@@ -77,11 +121,55 @@
       "probe": {
         "schemaVersion": 1,
         "kind": "glb-reference",
-        "path": "/Users/wake/Desktop/local_three/img-to-babylon/.img2babylon/female-tactical/generative/rodin/model.glb",
         "sha256": "edbd3c0c560fb7e7252d9c562b300fdaad03c6f72e91f2b4204ab4d73777eb90",
         "bytes": 13792764,
         "referenceReadiness": "pass",
         "note": "Metadata only. Render the GLB through the target Three.js route before using it as a visual baseline; do not copy its topology into a procedural factory."
+      },
+      "viewerAzimuthOffsetDegrees": 180,
+      "captureCamera": {
+        "front": {
+          "projection": "perspective",
+          "fovDegrees": 28,
+          "near": 0.01,
+          "far": 100,
+          "target": [
+            0,
+            9.506940841674805e-06,
+            0
+          ],
+          "azimuthDegrees": 180,
+          "elevationDegrees": 2,
+          "distance": 4.1333199217915535
+        },
+        "left": {
+          "projection": "perspective",
+          "fovDegrees": 28,
+          "near": 0.01,
+          "far": 100,
+          "target": [
+            0,
+            9.506940841674805e-06,
+            0
+          ],
+          "azimuthDegrees": 90,
+          "elevationDegrees": 2,
+          "distance": 4.1333199217915535
+        },
+        "face": {
+          "projection": "perspective",
+          "fovDegrees": 28,
+          "near": 0.01,
+          "far": 100,
+          "target": [
+            0,
+            0.7734629359841346,
+            0
+          ],
+          "azimuthDegrees": 180,
+          "elevationDegrees": 0,
+          "distance": 0.8475681310892105
+        }
       }
     }
   ]
