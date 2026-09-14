@@ -8,7 +8,8 @@
       "requestId": "01a09ebb-2b58-7a72-9cd7-59908216380a",
       "meshCount": 1,
       "materialCount": 1,
-      "textureCount": 0,
+      "separateTextureFiles": 0,
+      "textureCount": 3,
       "bounds": {
         "space": "mesh-local-untransformed",
         "min": [
@@ -40,6 +41,68 @@
         "referenceReadiness": "pass",
         "note": "Metadata only. Render the GLB through the target Three.js route before using it as a visual baseline; do not copy its topology into a procedural factory."
       },
+      "triangleCount": 120564,
+      "vertexCount": 69691,
+      "embeddedTextures": [
+        {
+          "index": 0,
+          "usedBy": [
+            "materials[0].baseColorTexture"
+          ],
+          "mimeType": "image/jpeg",
+          "bytes": 793302,
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "index": 1,
+          "usedBy": [
+            "materials[0].metallicRoughnessTexture"
+          ],
+          "mimeType": "image/jpeg",
+          "bytes": 441851,
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "index": 2,
+          "usedBy": [
+            "materials[0].normalTexture"
+          ],
+          "mimeType": "image/jpeg",
+          "bytes": 504881,
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "worldBounds": {
+        "min": [
+          -0.17912083287135927,
+          -0.8750928125680701,
+          -0.330513221639793
+        ],
+        "max": [
+          0.17908837861887647,
+          0.8749072693784044,
+          0.3306402911948641
+        ],
+        "size": [
+          0.35820921149023577,
+          1.7500000819464745,
+          0.6611535128346571
+        ],
+        "center": [
+          -1.622712624139988e-05,
+          -9.277159483289665e-05,
+          6.353477753553993e-05
+        ],
+        "space": "world-untransformed-by-viewer"
+      },
+      "nodeScale": 1.749802223259893,
+      "warnings": [
+        "GLB contains no skin; this is acceptable for static reference geometry but not animation evidence",
+        "GLB metadata has no reliable semantic part boundaries; request multipart GLB or capture ID masks"
+      ],
       "viewerAzimuthOffsetDegrees": 90,
       "captureCamera": {
         "front": {
@@ -94,7 +157,8 @@
       "requestId": "01a09eb6-072f-7fd2-a385-c82044e45ed4",
       "meshCount": 1,
       "materialCount": 1,
-      "textureCount": 0,
+      "separateTextureFiles": 0,
+      "textureCount": 3,
       "bounds": {
         "space": "mesh-local-untransformed",
         "min": [
@@ -126,6 +190,68 @@
         "referenceReadiness": "pass",
         "note": "Metadata only. Render the GLB through the target Three.js route before using it as a visual baseline; do not copy its topology into a procedural factory."
       },
+      "triangleCount": 93163,
+      "vertexCount": 56119,
+      "embeddedTextures": [
+        {
+          "index": 0,
+          "usedBy": [
+            "materials[0].normalTexture"
+          ],
+          "mimeType": "image/png",
+          "bytes": 3500763,
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "index": 1,
+          "usedBy": [
+            "materials[0].baseColorTexture"
+          ],
+          "mimeType": "image/png",
+          "bytes": 4005413,
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "index": 2,
+          "usedBy": [
+            "materials[0].metallicRoughnessTexture"
+          ],
+          "mimeType": "image/png",
+          "bytes": 3930046,
+          "width": 2048,
+          "height": 2048
+        }
+      ],
+      "worldBounds": {
+        "min": [
+          -0.5721610188484192,
+          -0.9501789808273315,
+          -0.2229890376329422
+        ],
+        "max": [
+          0.5727120041847229,
+          0.9501979947090149,
+          0.2248079776763916
+        ],
+        "size": [
+          1.144873023033142,
+          1.9003769755363464,
+          0.4477970153093338
+        ],
+        "center": [
+          0.00027549266815185547,
+          9.506940841674805e-06,
+          0.0009094700217247009
+        ],
+        "space": "world-untransformed-by-viewer"
+      },
+      "nodeScale": 1.0,
+      "warnings": [
+        "GLB contains no skin; this is acceptable for static reference geometry but not animation evidence",
+        "GLB metadata has no reliable semantic part boundaries; request multipart GLB or capture ID masks"
+      ],
       "viewerAzimuthOffsetDegrees": 180,
       "captureCamera": {
         "front": {
