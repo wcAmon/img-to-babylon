@@ -44,6 +44,9 @@
    - 失敗 → 胸像方案：只送原始三視圖，生成頭、髮、外套、背心；褲、靴、手沿用 yui 現有程序化零件改黑色戰術配色，腰帶遮接縫。
      骨架與物理仍照 §6／§7 做，下半身零件以既有 ID 綁骨。
 
+5. **使用者目視關卡（必經）**：不論 gate 通過與否，把原圖、三張延伸圖與漂移 gate 數字合成一張 `round6/c0/figure-sheet.png`，
+   用 SendUserFile 或對話附圖交給使用者看過並明確同意，才進 §3 花錢生成。使用者不滿意時可改提示或 seed 重跑延伸（本機免費，不計修正次數）。
+
 兩條分岔的下游介面相同：`generative/selected.glb` 加 `generative/parts.json`（§4）。
 
 ## 3. fal.ai 生成（`pipeline/integrations/mesh3d/fal_generate.py`）
@@ -61,7 +64,7 @@
 - `provenance.json`：端點、完整參數（不含金鑰）、request_id、seed、輸入圖 SHA-256、輸出檔 SHA-256 與大小、時間、fal 回報費用若有。
 - 費用控制：CLI 需 `--confirm-paid`，沒有旗標只印 dry-run payload；同一輸入雜湊已有輸出時拒絕重跑，除非 `--force`。
 - 選型：兩份結果各以 §5 的匯入路線做一次乾跑（不寫 spec），輸出 `candidates.json`（三角形數、材質數、貼圖解析度、AABB、與三視圖輪廓 IoU）與並排截圖，
-  由使用者挑選；選定寫進 `generative/selected.json`。
+  並排截圖同樣先交給使用者看過，由使用者挑選；選定寫進 `generative/selected.json`。
 
 ## 4. GLB 匯入與分區（`pipeline/forge/stage3_build/import_generative_mesh.py`）
 
