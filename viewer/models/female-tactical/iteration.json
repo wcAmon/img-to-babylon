@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "modelId": "female-tactical",
+  "displayName": "yui",
   "revision": 10,
   "status": "visual-review-required",
   "sourceOfTruth": "canonical-spec.json#/extensions/babylon-sculpt-v1/source",
@@ -368,7 +369,7 @@
     "state": ".img2babylon/female-tactical/pipeline/workflow.json",
     "status": "active blockout render-capture",
     "rebuild": "round5/c4/rebuild.sh",
-    "limits": "Round5 4/6,total25; frozen until desktop review; no automatic new round",
+    "limits": "Round6 0/6; plan A (reference+generation) done; next plan B import",
     "authority": "Exact source recipes archived in canonical extension; native generator consumes model-specific compiled nativeVertexData; no legacy buildSculpt runtime."
   },
   "evidence": [
@@ -479,7 +480,7 @@
   "review": {
     "visualStatus": "unaccepted",
     "correctionLimitReached": false,
-    "nextAction": "Await frozen C4 GPU: exact C1 head plus C2 hair/brow recipes; no fifth correction authorized",
+    "nextAction": "Plan B: import selected generative GLB into nativeVertexData with textures",
     "latestActualGPU": "round5/c3-archive/review.json",
     "pendingGPU": "round5/c4/capture-handoff.json"
   }

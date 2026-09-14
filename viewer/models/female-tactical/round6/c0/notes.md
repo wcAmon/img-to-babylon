@@ -19,3 +19,13 @@
     因驗證失敗未寫入 `provenance.json`，因此去重機制沒有擋下重試，也沒有額外真正計費的生成運算
     （fal 對輸入驗證失敗的請求不會跑 GPU）。未縮圖、未動 `views/half/`——這次的 422 與畫面尺寸
     無關，是 URL scheme 不支援。
+
+
+## Plan A 結案
+
+- 選定端點：`tripo`（`.img2babylon/female-tactical/generative/tripo/model.glb`，sha256
+  `11df0be6fe8949ee7db05555408d73e218d52af7716cf9c3cface34e3483a142`）。使用者 16:14
+  「兩個都留 你先用tripo 走後續流程」；Rodin GLB 保留為備選（T-pose），詳見
+  `selected.json`、`candidates.json`。
+- 下一步：計畫 B——從選定 GLB 開始切零件、減面、貼圖與 nativeVertexData 匯入，
+  在 viewer 顯示（spec §4、§5）。
