@@ -34,10 +34,14 @@ class FaceDrift(unittest.TestCase):
         r = run_gate(self.manifest(self.root / 'out.png'), self.root / 'gate.json')
         self.assertTrue(r['pass']); self.assertGreaterEqual(r['views'][0]['headIoU'], 0.92)
 
-    def test_shifted_head_fails(self):
+    def test_shifted_head_fails_via_pixel_diff_not_iou(self):
+        """Head IoU is bbox-aligned, so translation alone does not lower it; the gate relies on
+        the pixel-diff signal to catch positional drift."""
         bust_image(self.root / 'in.png'); bust_image(self.root / 'out.png', shift=12)
         r = run_gate(self.manifest(self.root / 'out.png'), self.root / 'gate.json')
         self.assertFalse(r['pass'])
+        self.assertGreaterEqual(r['views'][0]['headIoU'], 0.92)
+        self.assertGreater(r['views'][0]['meanAbsDiff'], 6.0)
         self.assertTrue((self.root / 'gate.json').is_file())
 
     def test_recoloured_face_fails_on_mean_diff(self):
