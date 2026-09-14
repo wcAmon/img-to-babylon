@@ -3,7 +3,11 @@
 
 This is the escape hatch described in pipeline/docs/UPGRADE_PLAN.md 5.9 and the R6 spec: never a
 default, always paid on explicit `--confirm-paid`, deduplicated by input hash, and the key lives only
-in memory. Images travel as data URIs so nothing is uploaded to a public bucket.
+in memory. Rodin (fal-ai/hyper3d/rodin) receives images inline as data URIs. Tripo
+(tripo3d/tripo/v2.5/multiview-to-3d) rejects data URIs for its *_image_url inputs, so its three
+views are uploaded to fal's own storage (an unauthenticated, unguessable URL) for the paid
+submission only; dry-run output, input_hash, and provenance["parameters"] all stay data-URI based
+regardless of endpoint.
 """
 from __future__ import annotations
 import argparse, base64, hashlib, json, os, sys, time, urllib.error, urllib.request
@@ -129,6 +133,8 @@ def upload_to_fal_storage(path: Path, key: str, opener) -> str:
     except urllib.error.HTTPError as e:
         body = e.read().decode(errors="replace")[:2000]
         raise RuntimeError(f"fal storage initiate failed: HTTP {e.code} {e.reason}: {body}") from None
+    if not init.get("upload_url") or not init.get("file_url"):
+        raise RuntimeError(f"fal storage initiate response missing upload_url/file_url: {sorted(init.keys())}")
     put_req = urllib.request.Request(init["upload_url"], data=data, headers={"Content-Type": "image/png"}, method="PUT")
     try:
         with opener.open(put_req, timeout=120): pass

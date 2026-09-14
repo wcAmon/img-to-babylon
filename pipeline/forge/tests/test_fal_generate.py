@@ -1,6 +1,6 @@
 """fal client: key never leaks, dry-run by default, dedupe by input hash, queue polling."""
 from __future__ import annotations
-import io, json, os, tempfile, unittest
+import io, json, os, tempfile, unittest, urllib.error
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'integrations' / 'mesh3d'))
@@ -14,17 +14,26 @@ class FakeResponse(io.BytesIO):
 
 
 class FakeOpener:
-    def __init__(self):
-        self.calls = []; self.status_polls = 0
+    def __init__(self, storage_response=None):
+        self.calls = []; self.status_polls = 0; self.puts = []; self.tripo_post_body = None
+        self.storage_response = {'upload_url': 'https://u/x', 'file_url': 'https://cdn/x.png'} if storage_response is None else storage_response
     def open(self, req, timeout=0):
         url = req.full_url; self.calls.append((url, dict(req.header_items())))
+        if req.get_method() == 'PUT':
+            self.puts.append({'url': url, 'headers': dict(req.header_items()), 'data': req.data})
+            return FakeResponse(b'')
+        if url == 'https://rest.alpha.fal.ai/storage/upload/initiate':
+            return FakeResponse(json.dumps(self.storage_response).encode())
         if url == 'https://queue.fal.run/fal-ai/hyper3d/rodin':
             return FakeResponse(json.dumps({'request_id': 'r1', 'status_url': 'https://q/status', 'response_url': 'https://q/result'}).encode())
+        if url == 'https://queue.fal.run/tripo3d/tripo/v2.5/multiview-to-3d':
+            self.tripo_post_body = json.loads(req.data.decode())
+            return FakeResponse(json.dumps({'request_id': 't1', 'status_url': 'https://q/status', 'response_url': 'https://q/result'}).encode())
         if url == 'https://q/status':
             self.status_polls += 1
             return FakeResponse(json.dumps({'status': 'IN_PROGRESS' if self.status_polls < 3 else 'COMPLETED'}).encode())
         if url == 'https://q/result':
-            return FakeResponse(json.dumps({'model_mesh': {'url': 'https://cdn/m.glb', 'file_name': 'm.glb'},
+            return FakeResponse(json.dumps({'model_mesh': {'url': 'https://cdn/m.glb', 'file_name': 'm.glb'}, 'pbr_model': {'url': 'https://cdn/m.glb'},
                                             'textures': [{'url': 'https://cdn/t.png', 'file_name': 't.png'}], 'seed': 5}).encode())
         if url == 'https://cdn/m.glb': return FakeResponse(b'glTF-bytes')
         if url == 'https://cdn/t.png': return FakeResponse(b'\x89PNG-bytes')
@@ -70,6 +79,45 @@ class FalGenerate(unittest.TestCase):
         prov = json.loads((out / 'rodin' / 'provenance.json').read_text())
         self.assertNotIn('secret123', json.dumps(prov)); self.assertEqual(prov['paid'], True)
         with self.assertRaises(RuntimeError): fg.generate('rodin', self.views, 9, out, key='k', opener=opener, confirm_paid=True, force=False, sleep=lambda s: None)
+
+    def test_upload_to_fal_storage_initiates_then_puts(self):
+        opener = FakeOpener()
+        url = fg.upload_to_fal_storage(self.views['front'], 'abc:secret123', opener)
+        self.assertEqual(url, 'https://cdn/x.png')
+        self.assertEqual(len(opener.puts), 1)
+        put = opener.puts[0]
+        self.assertEqual(put['url'], 'https://u/x')
+        self.assertEqual(put['headers'].get('Content-type'), 'image/png')
+        self.assertEqual(put['data'], self.views['front'].read_bytes())
+
+    def test_upload_to_fal_storage_rejects_malformed_initiate(self):
+        opener = FakeOpener(storage_response={})
+        with self.assertRaises(RuntimeError) as cm:
+            fg.upload_to_fal_storage(self.views['front'], 'abc:secret123', opener)
+        self.assertIn('file_url', str(cm.exception))
+
+    def test_tripo_paid_submission_uses_uploaded_urls_but_provenance_keeps_data_uris(self):
+        out = self.root / 'gen'; opener = FakeOpener()
+        res = fg.generate('tripo', self.views, 9, out, key='abc:secret123', opener=opener, confirm_paid=True, force=False, sleep=lambda s: None)
+        self.assertIsNotNone(opener.tripo_post_body)
+        for field in ('front_image_url', 'left_image_url', 'right_image_url'):
+            self.assertEqual(opener.tripo_post_body[field], 'https://cdn/x.png')
+            self.assertFalse(opener.tripo_post_body[field].startswith('data:'))
+        prov = json.loads((out / 'tripo' / 'provenance.json').read_text())
+        text = json.dumps(prov)
+        self.assertNotIn('base64,', text)
+        for field in ('front_image_url', 'left_image_url', 'right_image_url'):
+            self.assertTrue(prov['parameters'][field].startswith('<data-uri '))
+
+    def test_http_error_body_is_surfaced_without_headers(self):
+        class RaisingOpener:
+            def open(self, req, timeout=0):
+                raise urllib.error.HTTPError(req.full_url, 422, 'Unprocessable Entity', {}, io.BytesIO(b'{"detail":"boom"}'))
+        opener = RaisingOpener()
+        with self.assertRaises(RuntimeError) as cm:
+            fg.run_job('fal-ai/hyper3d/rodin', {'seed': 1}, 'SECRET-KEY-VALUE', opener, sleep=lambda s: None)
+        msg = str(cm.exception)
+        self.assertIn('422', msg); self.assertIn('boom', msg); self.assertNotIn('SECRET-KEY-VALUE', msg)
 
 
 if __name__ == '__main__':
