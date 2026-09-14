@@ -2,7 +2,7 @@
 from __future__ import annotations
 import json, tempfile, unittest
 from pathlib import Path
-from forge._shared.png import write_rgba, read_rgba
+from forge._shared.png import write_rgba, write_rgb, read_rgba
 from forge.stage1_intake.split_views import find_view_columns, split_views, pad_for_full_body
 
 
@@ -75,6 +75,36 @@ class SplitViews(unittest.TestCase):
             self.assertEqual((w, h), (100, 300))
             px = ((4 + 16) * 100 + 50) * 4
             self.assertNotEqual(bytes(rgba[px:px + 3]), b'\xff\xff\xff')
+
+    def test_color_mask_finds_columns_on_opaque_grey_background(self):
+        w, h = 300, 100
+        rgb = bytearray(w * h * 3)
+        for y in range(h):
+            bg = bytes([120 + y // 10, 120 + y // 10, 122 + y // 10])
+            for x in range(w):
+                rgb[(y * w + x) * 3:(y * w + x) * 3 + 3] = bg
+        for x0, x1 in ((10, 80), (110, 190), (220, 290)):
+            for y in range(h):
+                for x in range(x0, x1 + 1):
+                    rgb[(y * w + x) * 3:(y * w + x) * 3 + 3] = bytes([30, 30, 30])
+        for y in range(90, h):
+            for x in range(w):
+                rgb[(y * w + x) * 3:(y * w + x) * 3 + 3] = bytes([100, 100, 100])
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'ref.png'; write_rgb(p, w, h, bytes(rgb))
+            w2, h2, rgba2 = read_rgba(p)
+            self.assertEqual(find_view_columns(w2, h2, rgba2), [(10, 80), (110, 190), (220, 290)])
+            out = Path(d) / 'views'
+            meta = split_views(p, out)
+        self.assertEqual(meta['maskMode'], 'color')
+
+    def test_alpha_mask_still_preferred_when_alpha_present(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'ref.png'; synthetic_three_view(p)
+            out = Path(d) / 'views'
+            meta = split_views(p, out)
+        self.assertEqual(meta['maskMode'], 'alpha')
+        self.assertEqual([v['box'] for v in meta['views']], [[10, 20, 80, 89], [110, 20, 190, 89], [220, 20, 290, 89]])
 
 
 if __name__ == '__main__':
