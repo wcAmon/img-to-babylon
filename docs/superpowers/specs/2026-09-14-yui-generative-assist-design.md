@@ -30,6 +30,10 @@
 
 ## 2. 參考圖前處理（tomato，本機免費）
 
+**2026-09-14 14:45 修訂**：使用者改提供**全身**三視圖（同檔名 `reference/female_reference.png`，1672×941 RGB、灰色漸層背景），並指示舊的上半身圖不再使用。
+因此本節第 2～4 點（tomato 延伸與臉部漂移 gate）對本輪不再執行，程式碼與測試保留為工具；切圖改為支援不透明背景（逐列邊緣中位色當背景、色差 > 22 為前景、欄掃描只看前 85% 列）。
+第 5 點使用者目視關卡照舊，圖表改為三張全身裁切。舊路線證據移到 `round6/c0/superseded-bust-route/`。
+
 `forge/tomato.py edit` 只能維持來源尺寸，輸出長邊上限 2048。流程：
 
 1. `pipeline/forge/stage1_intake/split_views.py`（新，stdlib）：把三視圖依白底連通塊切成 `left.png`、`front.png`、`right.png`，
