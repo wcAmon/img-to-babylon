@@ -55,7 +55,7 @@ def extend_views(views_dir: Path, out_dir: Path, seed: int, opener=None, base: s
         dst = out_dir / f"{v['role']}.png"; dst.write_bytes(png)
         w, h, _ = read_rgba(dst)
         rows.append({"role": v["role"], "input": str(src), "output": str(dst), "jobId": job.get("job_id"),
-                     "width": w, "height": h, "sha256": hashlib.sha256(png).hexdigest(), "bustBox": v.get("bustBox")})
+                     "width": w, "height": h, "sha256": hashlib.sha256(png).hexdigest(), "bustBox": v["bustBox"]})
     result = {"prompt": EXTEND_PROMPT, "seed": seed, "base": base, "views": rows}
     (out_dir / "extend.json").write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n")
     return result
