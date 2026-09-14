@@ -17,3 +17,6 @@ test-results/
 playwright-report/
 *.log
 .playwright-mcp/
+
+# yui R6 generative candidates are served to the dev server through a symlink; never committed
+viewer/public/generative
