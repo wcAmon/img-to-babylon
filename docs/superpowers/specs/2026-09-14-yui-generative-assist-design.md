@@ -155,3 +155,11 @@ RightShoulder, RightArm, RightForeArm, RightHand, RightHandThumbEnd, RightHandMi
 - Tripo 垂臂姿勢使腋下與軀幹黏連、權重難分 → 優先選 Rodin T-pose 結果；若選 Tripo，分區前先以骨段平面切開腋下。
 - 純 Python 減面與 geodesic 在 6 萬頂點的耗時 → 記錄時間；超時退回策略已寫在 §4／§6.2，並在 provenance 標明。
 - fal 費用 → `--confirm-paid` 與雜湊去重；本輪預算兩次生成。
+
+## 修訂 2026-09-14 16:30（計畫 A 最終審查後）
+
+- **選定候選的實際貼圖格式**：使用者選定的 Tripo GLB 內嵌 3 張 4096×4096 **JPEG**（Color／ORM／NormalGL），非 §4 假設的 PNG；Rodin 內嵌 3 張 2048×2048 PNG。§4 匯入器改為：內嵌影像**原樣穿透**（不解碼、不轉檔），材質貼圖路徑允許 `.jpg`；`pipeline/` 仍為 stdlib（stdlib 無 JPEG 解碼器，故不做重採樣）。若需要 PNG（例如臉部 canvas 修補），由 viewer 端以瀏覽器 canvas 轉換，不在 pipeline 做。
+- **ORM 打包**：Tripo 的 ORM 是 glTF 標準 `metallicRoughnessTexture`（G＝roughness、B＝metallic）＋ occlusion 在 R。§5 的 `referencePbr.maps.roughness` 允許指向該 ORM 貼圖並加 `channel: "G"` 註記；Babylon PBR 原生支援此打包，viewer 不需拆通道。
+- **三角形數與尺度**：Tripo 120,564 三角形（69,691 頂點）、世界高度約 1.75 m（mesh-local 1.0001 × 節點縮放 1.74975）；Rodin 93,163 三角形、1.90 m。§4「≤ 60,000 三角形」對 Tripo 是約 2× 減面；§4 的頭頂校正比例以**世界空間**高度計算（1.69／1.75），不可用 mesh-local bounds。`candidates.json` 需同時提供 `bounds`（mesh-local）與 `worldBounds`。
+- **選型準則落差**：§3 的三角形數與剪影 IoU 準則本輪未用（使用者以視覺比較表選定 Tripo，Rodin 保留備選）；§9 的 IoU ≥ 0.85 目標改由計畫 B 匯入後對三視圖驗證。
+- **綁定姿勢**：Tripo 為 A-pose（手臂貼近軀幹），計畫 C 依 §6.2 `bindPose: "a-pose"`，分區前依 §10 先以骨段平面切開腋下。
