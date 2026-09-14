@@ -1,6 +1,6 @@
 """RGBA PNG round trip and compositing, stdlib only."""
 from __future__ import annotations
-import tempfile, unittest
+import tempfile, unittest, struct, zlib
 from pathlib import Path
 from forge._shared.png import read_rgba, write_rgba, write_rgb, composite_on_white, scale_nearest, blit
 
@@ -35,6 +35,26 @@ class PngIo(unittest.TestCase):
         dst = bytearray(b'\xff' * (4 * 2 * 3))
         blit(4, 2, dst, 2, 1, small, 1, 1)
         self.assertEqual(bytes(dst[(1 * 4 + 1) * 3:(1 * 4 + 3) * 3]), small)
+
+    def test_rejects_non_8bit_png(self):
+        def chunk(typ: bytes, payload: bytes) -> bytes:
+            return struct.pack(">I", len(payload)) + typ + payload + struct.pack(">I", zlib.crc32(typ + payload) & 0xFFFFFFFF)
+        w, h = 2, 1
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'c.png'
+            sig = b"\x89PNG\r\n\x1a\n"
+            ihdr = chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 16, 2, 0, 0, 0))
+            idat = chunk(b"IDAT", zlib.compress(b'\x00' + b'\x00' * (w * 3)))
+            iend = chunk(b"IEND", b"")
+            Path(p).write_bytes(sig + ihdr + idat + iend)
+            with self.assertRaises(ValueError):
+                read_rgba(p)
+
+    def test_write_rejects_size_mismatch(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'd.png'
+            with self.assertRaises(ValueError):
+                write_rgb(p, 2, 2, b'\x00' * 3)
 
 
 if __name__ == '__main__':
