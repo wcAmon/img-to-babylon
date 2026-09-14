@@ -106,6 +106,28 @@ class SplitViews(unittest.TestCase):
         self.assertEqual(meta['maskMode'], 'alpha')
         self.assertEqual([v['box'] for v in meta['views']], [[10, 20, 80, 89], [110, 20, 190, 89], [220, 20, 290, 89]])
 
+    def test_row_fraction_excludes_partial_width_floor_shadow(self):
+        w, h = 300, 100
+        rgb = bytearray(w * h * 3)
+        for y in range(h):
+            bg = bytes([120 + y // 10, 120 + y // 10, 122 + y // 10])
+            for x in range(w):
+                rgb[(y * w + x) * 3:(y * w + x) * 3 + 3] = bg
+        for x0, x1 in ((10, 80), (110, 190), (220, 290)):
+            for y in range(20, 90):
+                for x in range(x0, x1 + 1):
+                    rgb[(y * w + x) * 3:(y * w + x) * 3 + 3] = bytes([30, 30, 30])
+        # Floor shadow spans only part of the width (60..240), leaving the edges background so the
+        # per-row median still reads correctly, but bridging the gaps between figures if included.
+        for y in range(90, h):
+            for x in range(60, 241):
+                rgb[(y * w + x) * 3:(y * w + x) * 3 + 3] = bytes([40, 40, 40])
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'ref.png'; write_rgb(p, w, h, bytes(rgb))
+            w2, h2, rgba2 = read_rgba(p)
+        self.assertEqual(find_view_columns(w2, h2, rgba2), [(10, 80), (110, 190), (220, 290)])
+        self.assertEqual(find_view_columns(w2, h2, rgba2, row_fraction=1.0), [(10, 290)])
+
 
 if __name__ == '__main__':
     unittest.main()
