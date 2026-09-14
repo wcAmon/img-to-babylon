@@ -153,25 +153,36 @@ def generate(endpoint: str, views: dict[str, Path], seed: int, out_root: Path, k
     endpoint_id = ENDPOINTS[endpoint]; payload = build_payload(endpoint, views, seed); h = input_hash(payload)
     out_dir = out_root / endpoint; out_dir.mkdir(parents=True, exist_ok=True)
     prov_path = out_dir / "provenance.json"
-    if prov_path.is_file() and not force:
-        old = json.loads(prov_path.read_text())
-        if old.get("inputHash") == h: raise RuntimeError(f"already generated for this input (request {old.get('requestId')}); pass --force to pay again")
     inputs = [{"role": r, "path": str(p), "sha256": hashlib.sha256(Path(p).read_bytes()).hexdigest()} for r, p in views.items()]
     if not confirm_paid:
         (out_dir / "dry-run.json").write_text(json.dumps({"endpoint": endpoint, "endpointId": endpoint_id, "parameters": _redacted(payload), "inputImages": inputs, "inputHash": h}, indent=2) + "\n")
         return {"dryRun": True, "endpointId": endpoint_id, "inputHash": h}
+    # Dedupe only guards paid submissions: a dry run must never raise just because a previous
+    # paid run (or another dry run) already wrote provenance.json for this exact input.
+    if prov_path.is_file() and not force:
+        old = json.loads(prov_path.read_text())
+        if old.get("inputHash") == h: raise RuntimeError(f"already generated for this input (request {old.get('requestId')}); pass --force to pay again")
     submit_payload = payload
+    submitted_via = "data-uri"
     if endpoint == "tripo":
         submit_payload = dict(payload)
+        submitted_via = "fal-storage"
         for role, field in _URL_FIELDS.items():
             if field in submit_payload:
                 submit_payload[field] = upload_to_fal_storage(views[role], key, opener)
     started = datetime.now(timezone.utc).isoformat()
     output = run_job(endpoint_id, submit_payload, key, opener, sleep=sleep)
+    # Write a partial record as soon as the job is accepted (requestId known, paid) so a
+    # download failure below still leaves an audit trail of what was actually submitted and
+    # paid for, instead of silently losing the requestId.
+    partial_prov = {"endpoint": endpoint, "endpointId": endpoint_id, "requestId": output.get("_requestId"),
+                     "inputHash": h, "seed": seed, "startedAt": started, "paid": True, "status": "submitted"}
+    prov_path.write_text(json.dumps(partial_prov, indent=2) + "\n")
     files = download_outputs(endpoint, output, out_dir, opener)
     prov = {"endpoint": endpoint, "endpointId": endpoint_id, "requestId": output.get("_requestId"), "seed": seed,
             "parameters": _redacted(payload), "inputImages": inputs, "inputHash": h, "outputs": files["files"],
-            "resultSeed": output.get("seed"), "startedAt": started, "finishedAt": datetime.now(timezone.utc).isoformat(), "paid": True}
+            "resultSeed": output.get("seed"), "startedAt": started, "finishedAt": datetime.now(timezone.utc).isoformat(),
+            "paid": True, "status": "complete", "submittedVia": submitted_via}
     prov_path.write_text(json.dumps(prov, indent=2) + "\n")
     return prov
 

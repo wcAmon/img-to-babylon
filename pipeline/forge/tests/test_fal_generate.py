@@ -40,6 +40,16 @@ class FakeOpener:
         raise AssertionError(url)
 
 
+class DownloadFailsOpener(FakeOpener):
+    """Like FakeOpener, but the model download itself fails (HTTP 500) after the job
+    completes and the request_id is known -- exercises the partial-provenance path."""
+    def open(self, req, timeout=0):
+        url = req.full_url if hasattr(req, 'full_url') else req
+        if url == 'https://cdn/m.glb':
+            raise urllib.error.HTTPError(url, 500, 'download boom', {}, None)
+        return super().open(req, timeout)
+
+
 class FalGenerate(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.root = Path(self.tmp.name)
@@ -69,6 +79,18 @@ class FalGenerate(unittest.TestCase):
         text = (out / 'rodin' / 'dry-run.json').read_text()
         self.assertNotIn('secret123', text); self.assertNotIn('base64,', text)
 
+    def test_dedupe_check_does_not_apply_to_dry_runs(self):
+        """A pre-existing provenance.json for the same input must not make a dry run raise;
+        the dedupe guard only protects paid submissions."""
+        out = self.root / 'gen'
+        payload = fg.build_payload('rodin', self.views, 9)
+        h = fg.input_hash(payload)
+        prov_dir = out / 'rodin'; prov_dir.mkdir(parents=True)
+        (prov_dir / 'provenance.json').write_text(json.dumps({'inputHash': h, 'requestId': 'old-request'}))
+        res = fg.generate('rodin', self.views, 9, out, key='abc:secret123', opener=FakeOpener(), confirm_paid=False, force=False, sleep=lambda s: None)
+        self.assertTrue(res['dryRun'])
+        self.assertTrue((prov_dir / 'dry-run.json').is_file())
+
     def test_paid_run_polls_downloads_and_dedupes(self):
         out = self.root / 'gen'; opener = FakeOpener()
         res = fg.generate('rodin', self.views, 9, out, key='abc:secret123', opener=opener, confirm_paid=True, force=False, sleep=lambda s: None)
@@ -78,7 +100,18 @@ class FalGenerate(unittest.TestCase):
         self.assertTrue((out / 'rodin' / 'textures' / 't.png').is_file())
         prov = json.loads((out / 'rodin' / 'provenance.json').read_text())
         self.assertNotIn('secret123', json.dumps(prov)); self.assertEqual(prov['paid'], True)
+        self.assertEqual(prov['status'], 'complete'); self.assertEqual(prov['submittedVia'], 'data-uri')
         with self.assertRaises(RuntimeError): fg.generate('rodin', self.views, 9, out, key='k', opener=opener, confirm_paid=True, force=False, sleep=lambda s: None)
+
+    def test_partial_provenance_written_before_download_survives_download_failure(self):
+        out = self.root / 'gen'; opener = DownloadFailsOpener(b'unused')
+        with self.assertRaises(urllib.error.HTTPError):
+            fg.generate('rodin', self.views, 9, out, key='abc:secret123', opener=opener, confirm_paid=True, force=False, sleep=lambda s: None)
+        prov = json.loads((out / 'rodin' / 'provenance.json').read_text())
+        self.assertEqual(prov['requestId'], 'r1')
+        self.assertEqual(prov['status'], 'submitted')
+        self.assertEqual(prov['paid'], True)
+        self.assertNotIn('outputs', prov)
 
     def test_upload_to_fal_storage_initiates_then_puts(self):
         opener = FakeOpener()
@@ -108,6 +141,7 @@ class FalGenerate(unittest.TestCase):
         self.assertNotIn('base64,', text)
         for field in ('front_image_url', 'left_image_url', 'right_image_url'):
             self.assertTrue(prov['parameters'][field].startswith('<data-uri '))
+        self.assertEqual(prov['submittedVia'], 'fal-storage')
 
     def test_http_error_body_is_surfaced_without_headers(self):
         class RaisingOpener:

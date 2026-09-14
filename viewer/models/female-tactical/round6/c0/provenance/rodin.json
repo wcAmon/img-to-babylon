@@ -45,5 +45,6 @@
   "resultSeed": 913,
   "startedAt": "2026-09-14T06:58:42.978568+00:00",
   "finishedAt": "2026-09-14T07:01:02.017287+00:00",
-  "paid": true
+  "paid": true,
+  "submittedVia": "data-uri"
 }

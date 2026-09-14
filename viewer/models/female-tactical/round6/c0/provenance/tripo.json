@@ -49,5 +49,6 @@
   "resultSeed": null,
   "startedAt": "2026-09-14T07:04:21.054813+00:00",
   "finishedAt": "2026-09-14T07:07:24.065466+00:00",
-  "paid": true
+  "paid": true,
+  "submittedVia": "fal-storage"
 }
