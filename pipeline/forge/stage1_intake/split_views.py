@@ -15,7 +15,7 @@ from _shared.png import read_rgba, write_rgb, composite_on_white, scale_nearest,
 MARGIN = 24
 
 
-def foreground_mask(w: int, h: int, rgba: bytes, alpha_threshold: int = 8, color_threshold: int = 22, edge: int = 16, row_fraction: float = 1.0) -> list[bytearray]:
+def foreground_mask(w: int, h: int, rgba: bytes, alpha_threshold: int = 8, color_threshold: int = 22, edge: int = 16) -> list[bytearray]:
     """Per-row foreground mask. Alpha-driven when any pixel is translucent; else a per-row
     left/right-edge median background with a per-channel color-distance threshold, so an
     opaque grey-gradient backdrop (no alpha channel) still separates figures from background."""
