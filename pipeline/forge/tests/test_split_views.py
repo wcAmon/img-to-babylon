@@ -48,6 +48,34 @@ class SplitViews(unittest.TestCase):
             self.assertEqual((w, h), (256, 512))
             self.assertEqual(bytes(rgba[((511 * 256) + 128) * 4:((511 * 256) + 128) * 4 + 3]), b'\xff\xff\xff')
 
+    def test_find_columns_drops_fragments_of_width_20_but_keeps_21(self):
+        w, h = 100, 50
+        rgba = bytearray(w * h * 4)  # transparent
+        # run 1: x=10..29 -> width 20 (must be dropped)
+        # run 2: x=33..53 -> width 21 (must be kept), separated by 3 transparent columns (30,31,32)
+        for x0, x1 in ((10, 29), (33, 53)):
+            for y in range(10, 40):
+                for x in range(x0, x1 + 1):
+                    i = (y * w + x) * 4; rgba[i:i + 4] = bytes([200, 30, 30, 255])
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'ref.png'; write_rgba(p, w, h, bytes(rgba))
+            w2, h2, rgba2 = read_rgba(p)
+        self.assertEqual(find_view_columns(w2, h2, rgba2), [(33, 53)])
+
+    def test_pad_downscales_wide_bust(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / 'ref.png'; synthetic_three_view(p)
+            out = Path(d) / 'views'; split_views(p, out)
+            info = pad_for_full_body(out / 'front.png', out / 'padded' / 'front.png', canvas=(100, 300), top_margin=4)
+            x, y, bw, bh = info['bustBox']
+            self.assertEqual((y, bw), (4, 36))
+            self.assertEqual(bh, 118 * 36 // 129)
+            self.assertEqual(x, (100 - 36) // 2)
+            w, h, rgba = read_rgba(out / 'padded' / 'front.png')
+            self.assertEqual((w, h), (100, 300))
+            px = ((4 + 16) * 100 + 50) * 4
+            self.assertNotEqual(bytes(rgba[px:px + 3]), b'\xff\xff\xff')
+
 
 if __name__ == '__main__':
     unittest.main()

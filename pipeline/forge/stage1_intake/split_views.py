@@ -28,7 +28,7 @@ def find_view_columns(w: int, h: int, rgba: bytes, alpha_threshold: int = 8, min
             else: runs.append([x, x])
             gap = 0
         else: gap += 1
-    return [(a, b) for a, b in runs if b - a > 20]
+    return [(a, b) for a, b in runs if b - a + 1 > 20]
 
 
 def _row_extent(w: int, h: int, rgba: bytes, x0: int, x1: int, alpha_threshold: int = 8) -> tuple[int, int]:
