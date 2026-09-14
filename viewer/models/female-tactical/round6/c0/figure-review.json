@@ -2,6 +2,6 @@
   "sheet": "figure-sheet.png",
   "source": "reference/female_reference.png (user-supplied full-body three-view, 1672x941 RGB, replaced 2026-09-14 14:45)",
   "faceDrift": "not-applicable: no extension step; user-supplied full body",
-  "userVerdict": "pending",
-  "note": ""
+  "userVerdict": "approved",
+  "note": "2026-09-14 14:54 使用者回覆「同意」：三張全身切圖直接送 Tripo 與 Rodin，參數照 spec §3。"
 }
