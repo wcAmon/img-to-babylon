@@ -22,7 +22,7 @@ class DocsTest(unittest.TestCase):
     def test_lessons_sections_and_no_private_paths(self):
         text = (ROOT / 'lessons.md').read_text()
         for n in range(1, 9):
-            self.assertRegex(text, r'^## %d\. ' % n)
+            self.assertTrue(re.search(r'^## %d\. ' % n, text, re.M), 'section %d missing' % n)
         self.assertNotIn('/Users/', text); self.assertNotIn('.ts.net', text)
         for word in ('yui_', 'lisa_', 'marry_', 'guava_'):
             self.assertNotIn(word, text.lower())
