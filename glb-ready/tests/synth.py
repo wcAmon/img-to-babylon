@@ -104,3 +104,38 @@ def jpeg_header(width, height):
 
 def write(path: Path, data: bytes) -> Path:
     path = Path(path); path.write_bytes(data); return path
+
+
+def pack_u8(rows):
+    return b''.join(struct.pack('<%dB' % len(r), *r) for r in rows)
+
+
+IDENTITY = (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+
+
+def rig_doc(joint_names=('mixamorig:Hips', 'mixamorig:Spine', 'mixamorig:Spine1'), weights=(1.0, 0.0, 0.0, 0.0),
+            spine_rotations=((0, 0, 0, 1), (0, 0, 0.258819, 0.9659258), (0, 0, 0.5, 0.8660254)),
+            clip_name='walk', times=(0.0, 0.5, 1.0)):
+    """Cube skinned to a three-joint chain Hips(0,1,0) -> Spine(+0.2) -> Spine1(+0.2) with a rotation clip on Spine.
+    Rotating Spine moves Spine1's head, so the Spine->Spine1 segment shows the FK error."""
+    doc, chunks = cube_doc(normals=True)
+    doc['nodes'] = [{'mesh': 0, 'skin': 0, 'name': 'body'},
+                    {'name': joint_names[0], 'translation': [0, 1, 0], 'children': [2]},
+                    {'name': joint_names[1], 'translation': [0, 0.2, 0], 'children': [3]},
+                    {'name': joint_names[2], 'translation': [0, 0.2, 0]}]
+    doc['scenes'][0]['nodes'] = [0, 1]
+    chunks.append(pack_u8([(0, 1, 0, 0)] * 8)); doc['accessors'].append({'bufferView': len(chunks) - 1, 'componentType': 5121, 'count': 8, 'type': 'VEC4'})
+    doc['meshes'][0]['primitives'][0]['attributes']['JOINTS_0'] = len(doc['accessors']) - 1
+    chunks.append(pack_f32([tuple(weights)] * 8)); doc['accessors'].append({'bufferView': len(chunks) - 1, 'componentType': 5126, 'count': 8, 'type': 'VEC4'})
+    doc['meshes'][0]['primitives'][0]['attributes']['WEIGHTS_0'] = len(doc['accessors']) - 1
+    inverses = []
+    for y in (1.0, 1.2, 1.4):
+        m = list(IDENTITY); m[13] = -y; inverses.append(tuple(m))
+    chunks.append(pack_f32(inverses)); doc['accessors'].append({'bufferView': len(chunks) - 1, 'componentType': 5126, 'count': 3, 'type': 'MAT4'})
+    doc['skins'] = [{'joints': [1, 2, 3], 'inverseBindMatrices': len(doc['accessors']) - 1, 'skeleton': 1}]
+    chunks.append(pack_f32([(t,) for t in times])); doc['accessors'].append({'bufferView': len(chunks) - 1, 'componentType': 5126, 'count': len(times), 'type': 'SCALAR', 'min': [times[0]], 'max': [times[-1]]})
+    t_in = len(doc['accessors']) - 1
+    chunks.append(pack_f32([tuple(q) for q in spine_rotations])); doc['accessors'].append({'bufferView': len(chunks) - 1, 'componentType': 5126, 'count': len(spine_rotations), 'type': 'VEC4'})
+    doc['animations'] = [{'name': clip_name, 'channels': [{'sampler': 0, 'target': {'node': 2, 'path': 'rotation'}}],
+                          'samplers': [{'input': t_in, 'output': len(doc['accessors']) - 1, 'interpolation': 'LINEAR'}]}]
+    return doc, chunks
