@@ -205,5 +205,31 @@ class BakeTest(BlenderCase):
         self.run_tool('bake_atlas.py', self.fx('sphere_vcolor'), self.out / 'x.glb', '--source', 'vertex-color', '--size', '4096', expect=2)
 
 
+class ShrinkTest(BlenderCase):
+    def test_shrinks_1024_to_256(self):
+        out = self.out / 'small.glb'
+        self.run_tool('shrink_textures.py', self.fx('cube_tex1024'), out, '--max', '256')
+        info = glb_audit.inspect(*glb_audit.read_glb(out), out)
+        self.assertEqual((info['textures'][0]['width'], info['textures'][0]['height']), (256, 256))
+        self.assertEqual(self.tris(out), self.tris(self.fx('cube_tex1024')))
+        self.assertEqual(self.report(out)['params']['images'][0]['to'], [256, 256])
+
+    def test_too_many_textures_exit_1(self):
+        run = self.run_tool('shrink_textures.py', self.fx('cube_tex1024'), self.out / 'n.glb', '--max-textures', '0', expect=1)
+        self.assertIn('checker', run.stderr)
+
+    def test_shrink_keeps_skin_and_clips(self):
+        rigged = self.fixtures / 'rig_source.glb'
+        if not rigged.exists():
+            self.skipTest('rig fixture arrives with Task 15')
+        before = glb_audit.inspect(*glb_audit.read_glb(rigged), rigged)
+        out = self.out / 'rig_small.glb'
+        self.run_tool('shrink_textures.py', rigged, out, '--max', '64')
+        after = glb_audit.inspect(*glb_audit.read_glb(out), out)
+        self.assertEqual([a['name'] for a in after['animations']], [a['name'] for a in before['animations']])
+        self.assertEqual(after['skins'], before['skins'])
+        self.assertEqual(after['triangles'], before['triangles'])
+
+
 if __name__ == '__main__':
     unittest.main()
