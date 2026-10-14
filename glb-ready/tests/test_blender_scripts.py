@@ -144,5 +144,30 @@ class ReduceTest(BlenderCase):
         self.assertIn('rigged', run.stderr)
 
 
+class RepairTest(BlenderCase):
+    def test_mode_is_required(self):
+        run = self.run_tool('repair_shell.py', self.fx('sphere_flipped'), self.out / 'x.glb', expect=2)
+        self.assertIn('--orientation-only', run.stderr)
+
+    def test_shell_repair_fixes_flipped_sphere(self):
+        out = self.out / 'fixed.glb'
+        self.run_tool('repair_shell.py', self.fx('sphere_flipped'), out, '--shell-repair', '--voxel-k', '0.01')
+        rep = self.report(out)
+        self.assertTrue(rep['params']['signedVolumeFlipped'])
+        self.assertEqual(rep['params']['nonManifoldEdgesOut'], 0)
+        self.assertEqual(rep['params']['boundaryEdgesOut'], 0)
+        self.assertAlmostEqual(rep['params']['heightOut'], rep['params']['heightIn'], delta=0.05)
+        result = glb_audit.audit(out, glb_audit.load_profile('nomen-land'))
+        self.assertTrue(result['hasNormals'])
+
+    def test_orientation_only_keeps_vertex_colors(self):
+        out = self.out / 'vc.glb'
+        self.run_tool('repair_shell.py', self.fx('sphere_vcolor'), out, '--orientation-only')
+        doc, _ = glb_audit.read_glb(out)
+        self.assertIn('COLOR_0', doc['meshes'][0]['primitives'][0]['attributes'])
+        self.assertTrue(self.report(out)['params']['vertexColorsResampled'])
+        self.assertTrue(any('geometry changed' in w for w in self.report(out)['warnings']))
+
+
 if __name__ == '__main__':
     unittest.main()
