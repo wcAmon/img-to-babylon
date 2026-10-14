@@ -183,9 +183,10 @@ def main():
         if removed:
             warnings.append('removed %d vertices in islands smaller than %d faces' % (removed, opts['min_part_faces']))
     else:
-        for o in objects:
-            if any(a.name == 'custom_normal' for a in o.data.attributes):
-                warnings.append('%s has custom normals; if shading shows dark patches rerun with --rebuild-surface' % o.name)
+        with_custom = [o.name for o in objects if any(a.name == 'custom_normal' for a in o.data.attributes)]
+        if with_custom:
+            shown = ', '.join(with_custom[:5]) + (' and %d more' % (len(with_custom) - 5) if len(with_custom) > 5 else '')
+            warnings.append('%d of %d objects have custom normals (%s); if shading shows dark patches rerun with --rebuild-surface' % (len(with_custom), len(objects), shown))
     # Protect weights live in the mesh datablock (dvert layer), so assign them BEFORE the originals are
     # copied: every per-round restore then carries the weights; the group name stays on the object.
     if opts['box']:

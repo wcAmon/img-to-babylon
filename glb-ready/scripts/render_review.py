@@ -74,7 +74,10 @@ def main():
     bc.reset_scene(); scene = bpy.context.scene
     bc.import_glb(src)
     armatures = reset_pose()
-    meshes = [o for o in bpy.context.scene.objects if o.type == 'MESH' and not o.hide_render]
+    shapes = bc.bone_shape_objects()  # importer bone display shapes: never part of the model
+    for o in shapes:
+        o.hide_render = True
+    meshes = [o for o in bpy.context.scene.objects if o.type == 'MESH' and not o.hide_render and o not in shapes]
     if gray:
         clay = bpy.data.materials.new('glb_ready_clay')
         clay.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.48, 0.48, 0.48, 1)
@@ -84,7 +87,7 @@ def main():
         for mat in {m for o in meshes for m in o.data.materials if m is not None and m.node_tree is not None}:
             make_unlit(mat)
     lo, hi = bc.world_bounds(meshes); center = (lo + hi) / 2; extent = hi - lo
-    ortho = max(extent.z, extent.x, extent.y) * 1.15 or 1.0
+    ortho = extent.length * 1.1 or 1.0  # bounding-box diagonal, so the three-quarter view is not cropped
     scene.render.engine = 'CYCLES'; scene.cycles.device = 'CPU'; scene.cycles.samples = 16; scene.cycles.seed = 0
     scene.render.resolution_x = scene.render.resolution_y = size; scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
