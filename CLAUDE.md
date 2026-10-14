@@ -15,7 +15,9 @@ Host 入口 symlink（單一 checkout，嚴禁複製兩份導致漂移）：
   `file:` 連結本 checkout。契約歸本 repo，控制層歸物理 repo。
 - `reference/` 是外部參考 checkout（img2threejs），唯讀、不納版控。
 - 全套驗證：`python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'`
-  ＋ `cd viewer && npx tsc --noEmit && npx tsx scripts/physics_test.ts <model> --spec models/<model>/spec.json`。
+  ＋ `cd viewer && npx tsc --noEmit && npx tsx scripts/physics_test.ts <model> --spec models/<model>/spec.json`
+  ＋ `python3 -m unittest discover -s glb-ready/tests -t . -p 'test_*.py'` ＋ `cd viewer && npx tsx scripts/export_glb_test.ts`。
+- GLB 交付：`glb-ready/SKILL.md`；Blender 只用背景模式 `-b --factory-startup --python-exit-code 1`。
 - 本機瀏覽器 gate：Chrome 擴充未連線、Firefox headless 無 WebGL，但 **playwright MCP
   的 chromium 可渲染 WebGL**——`browser_navigate` 開 `http://localhost:5173/#model=<name>`
   後用 `browser_evaluate` 呼叫 `window.__IMG2BABYLON_CAPTURE__`（setCamera + screenshot

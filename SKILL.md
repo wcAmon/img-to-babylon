@@ -1,7 +1,7 @@
 ---
 name: img2babylon
 description: 從參考圖經完整量測、角色與物件分解、程序化 Babylon 建模、材質、頭髮、骨架及視覺驗收流程重建模型，並整合真實 Havok 物理。
-version: 1.5.1-babylon
+version: 1.6.0
 ---
 
 # img2babylon — 完整流程入口
@@ -23,6 +23,10 @@ version: 1.5.1-babylon
 7. Babylon PBR 必須實際使用 authored 參數。Three.js Group/BufferGeometry/userData/Skeleton 等依 native port 轉為實際 Babylon 物件。
 8. 物理完成仍需 spec 權威 + 真實 Havok shape/constraint + 靜態/動態/線框 gate。視覺骨架不等於 ragdoll。
 9. 保留模型 ID、穩定零件 ID、優化入口、歷史失敗審查。不得用測試數量代替外觀驗收，未實作或可選依賴缺失要明確報告。
+
+## 交付物是 GLB 時
+
+目標是「遊戲收得進去的 GLB」而不是 Babylon 程序化模組時，入口是 `glb-ready/SKILL.md`（英文，約 250 行，一次讀完）。本 repo 的程序化模型用 `cd viewer && npm run export-glb -- <id> out.glb`；外來網格（Trellis、Tripo、Rodin、別人給的 GLB/FBX）走 `glb-ready/scripts/` 的 Blender 背景腳本；最後一律跑 `python3 glb-ready/scripts/glb_audit.py out.glb`，再跑目標網站自己的檢查器（Nomen Land 是 `nomen-glb check`）。已綁骨的模型不減面。
 
 ## 完整流程常用命令（repo root）
 

@@ -25,8 +25,8 @@
 舊指令不變。全域位置加入 `--model NAME` 可使用獨立狀態，保留舊 `.img2babylon/state.json`：
 
 ```sh
-python3 forge/next_pass.py --model female-tactical status
-python3 forge/model_report.py viewer/models/female-tactical --write
+python3 forge/next_pass.py --model <model> status
+python3 forge/model_report.py viewer/models/<model> --write
 ```
 
 新模型初始化：`python3 forge/next_pass.py --model NAME init --model NAME`。
@@ -38,7 +38,17 @@ python3 forge/model_report.py viewer/models/female-tactical --write
 每輪允許 6 次修正，第 7 次 exit 3；全程與各 pass 累計僅供追蹤。新輪指令：
 
 ```sh
-python3 forge/next_pass.py --model female-tactical iterate --reason "本輪臉部目標"
+python3 forge/next_pass.py --model <model> iterate --reason "本輪臉部目標"
 ```
 
 工具先保存 `rounds/rNNN-roundNNN/model`、共用 runtime 與 state，再開始新輪；保留未完成的 pass、失敗審查與全程計數。不可在額度耗盡時自動換輪規避上限。
+
+## glb-ready（交付 GLB）
+
+| 命令 | 用途 |
+|---|---|
+| `python3 glb-ready/scripts/glb_audit.py out.glb [--profile nomen-land] [--json]` | GLB 稽核（exit 0 ok / 1 不過 / 2 讀不了） |
+| `cd viewer && npm run export-glb -- <id> out.glb [--pose settled]` | 程序化模型匯出 GLB |
+| `blender -b --factory-startup --python-exit-code 1 --python glb-ready/scripts/reduce_mesh.py -- in.glb out.glb --target 20000` | 減面（靜態網格） |
+| 其餘腳本見 `glb-ready/SKILL.md` | repair_shell、bake_atlas、shrink_textures、render_review、retarget_clips、validate_retarget |
+| `python3 -m unittest discover -s glb-ready/tests -t . -p 'test_*.py'` | glb-ready 全測試 |
