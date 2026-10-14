@@ -231,5 +231,31 @@ class ShrinkTest(BlenderCase):
         self.assertEqual(after['triangles'], before['triangles'])
 
 
+class RenderTest(BlenderCase):
+    def test_six_views_and_manifest(self):
+        outdir = self.out / 'review'
+        self.run_tool('render_review.py', self.fx('sphere_lo'), outdir, '--size', '128')
+        names = sorted(p.name for p in outdir.glob('*.png'))
+        self.assertEqual(names, ['back.png', 'front.png', 'left.png', 'right.png', 'three-quarter.png', 'top.png'])
+        manifest = json.loads((outdir / 'manifest.json').read_text())
+        self.assertEqual(manifest['pose'], 'rest'); self.assertEqual(len(manifest['images']), 6)
+        cams = json.loads((outdir / 'cameras.json').read_text())
+        self.assertEqual(len(cams['views']), 6); self.assertGreater(cams['orthoScale'], 1.0)
+        self.run_tool('render_review.py', self.fx('sphere_lo'), outdir, '--size', '128', expect=2)
+
+    def test_gray_and_unlit_subsets(self):
+        self.run_tool('render_review.py', self.fx('sphere_vcolor'), self.out / 'g', '--views', 'front', '--gray', '--size', '64')
+        self.run_tool('render_review.py', self.fx('sphere_vcolor'), self.out / 'u', '--views', 'front,top', '--unlit', '--size', '64')
+        self.assertTrue((self.out / 'g' / 'front.png').exists())
+        self.assertEqual(sorted(p.name for p in (self.out / 'u').glob('*.png')), ['front.png', 'top.png'])
+
+    def test_rest_pose_for_animated_model(self):
+        rigged = self.fixtures / 'rig_source.glb'
+        if not rigged.exists():
+            self.skipTest('rig fixture arrives with Task 15')
+        self.run_tool('render_review.py', rigged, self.out / 'r', '--views', 'front', '--size', '64')
+        self.assertTrue(json.loads((self.out / 'r' / 'manifest.json').read_text())['armaturesReset'] >= 1)
+
+
 if __name__ == '__main__':
     unittest.main()
