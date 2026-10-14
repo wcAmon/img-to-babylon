@@ -49,7 +49,8 @@ def main():
     bc.reset_scene()
     before = set(bpy.data.objects)
     bc.import_glb(src)
-    imported = [o for o in bpy.data.objects if o not in before]
+    shapes = bc.bone_shape_objects()
+    imported = [o for o in bpy.data.objects if o not in before and o not in shapes]
     report_images = []
     for image, materials in images_in_use().items():
         w, h = image.size[0], image.size[1]

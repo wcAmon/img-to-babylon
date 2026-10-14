@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -12,7 +13,7 @@ import blender_env  # noqa: E402
 import glb_audit  # noqa: E402
 
 SCRIPTS = HERE.parent / 'scripts'
-FIXTURE_NAMES = ['sphere_lo', 'sphere_hi', 'sphere_flipped', 'sphere_vcolor', 'cube_tex1024', 'cube_two_materials']
+FIXTURE_NAMES = ['sphere_lo', 'sphere_hi', 'sphere_flipped', 'sphere_vcolor', 'cube_tex1024', 'cube_two_materials', 'rig_base', 'rig_source']
 
 
 class BlenderCase(unittest.TestCase):
@@ -255,6 +256,41 @@ class RenderTest(BlenderCase):
             self.skipTest('rig fixture arrives with Task 15')
         self.run_tool('render_review.py', rigged, self.out / 'r', '--views', 'front', '--size', '64')
         self.assertTrue(json.loads((self.out / 'r' / 'manifest.json').read_text())['armaturesReset'] >= 1)
+
+
+class RetargetTest(BlenderCase):
+    def test_retarget_then_validate(self):
+        outdir = self.out / 'rt'
+        self.run_tool('retarget_clips.py', self.fx('rig_base'), self.fx('rig_source'), outdir, '--ground-clearance', '0.0')
+        for name in ('bind.glb', 'clips.glb', 'source.glb', 'report.json'):
+            self.assertTrue((outdir / name).exists(), name)
+        rep = json.loads((outdir / 'report.json').read_text())
+        self.assertEqual([c['name'] for c in rep['clips']], ['wave-and-step'])
+        self.assertLessEqual(rep['clips'][0]['maxFkDegrees'], 0.1)
+        self.assertEqual(rep['skinSignatureBefore'], rep['skinSignatureAfter'])
+        self.assertAlmostEqual(rep['legScale'], 1 / 1.1, delta=0.01)
+        run = subprocess.run([sys.executable, str(SCRIPTS / 'validate_retarget.py'), str(outdir / 'bind.glb'), str(outdir / 'clips.glb'),
+                              '--source', str(outdir / 'source.glb')], capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        info = glb_audit.inspect(*glb_audit.read_glb(outdir / 'clips.glb'), outdir / 'clips.glb')
+        self.assertEqual([a['name'] for a in info['animations']], ['wave-and-step'])
+        self.assertAlmostEqual(info['animations'][0]['duration'], 1.0, delta=0.05)
+
+    def test_in_place_locks_horizontal_root(self):
+        outdir = self.out / 'ip'
+        self.run_tool('retarget_clips.py', self.fx('rig_base'), self.fx('rig_source'), outdir, '--in-place')
+        rig = glb_audit.read_glb(outdir / 'clips.glb')
+        doc, binary = rig
+        hips = next(i for i, n in enumerate(doc['nodes']) if n.get('name', '').endswith('Hips'))
+        anim = doc['animations'][0]
+        channel = next(c for c in anim['channels'] if c['target']['node'] == hips and c['target']['path'] == 'translation')
+        values = glb_audit.accessor_values(doc, binary, anim['samplers'][channel['sampler']]['output'])
+        xs = [v[0] for v in values]; zs = [v[2] for v in values]
+        self.assertLess(max(xs) - min(xs), 1e-4); self.assertLess(max(zs) - min(zs), 1e-4)
+
+    def test_non_mixamo_base_is_usage_error(self):
+        run = self.run_tool('retarget_clips.py', self.fx('sphere_lo'), self.fx('rig_source'), self.out / 'x', expect=2)
+        self.assertIn('armature', run.stderr.lower())
 
 
 if __name__ == '__main__':

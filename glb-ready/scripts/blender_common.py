@@ -74,6 +74,15 @@ def mesh_objects():
     return [o for o in bpy.context.scene.objects if o.type == 'MESH']
 
 
+def bone_shape_objects():
+    """Objects the glTF importer creates as pose-bone display shapes (collection glTF_not_exported); never geometry."""
+    shapes = set()
+    for o in bpy.data.objects:
+        if o.type == 'ARMATURE':
+            shapes.update(pb.custom_shape for pb in o.pose.bones if pb.custom_shape)
+    return shapes
+
+
 def import_glb(path):
     before = set(bpy.data.objects)
     suffix = Path(path).suffix.lower()
@@ -85,7 +94,8 @@ def import_glb(path):
         bpy.ops.wm.obj_import(filepath=str(path))
     else:
         fail(2, 'unsupported input %s (glb, gltf, fbx, obj)' % path)
-    new = [o for o in bpy.data.objects if o not in before]
+    shapes = bone_shape_objects()
+    new = [o for o in bpy.data.objects if o not in before and o not in shapes]
     meshes = [o for o in new if o.type == 'MESH']
     if not meshes:
         raise ValueError('no mesh objects in %s' % path)
