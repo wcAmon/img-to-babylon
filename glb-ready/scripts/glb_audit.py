@@ -151,3 +151,118 @@ def scene_triangles(doc):
         if 'mesh' in node:
             total += sum(primitive_triangles(doc, p) for p in doc['meshes'][node['mesh']]['primitives'])
     return total
+
+
+def image_dimensions(data):
+    """(mime, width, height) from PNG/JPEG/WebP headers without decoding pixels."""
+    if data[:8] == b'\x89PNG\r\n\x1a\n' and len(data) >= 24:
+        w, h = struct.unpack_from('>II', data, 16)
+        return 'image/png', w, h
+    if data[:2] == b'\xff\xd8':
+        i = 2
+        while i + 9 < len(data):
+            if data[i] != 0xFF:
+                i += 1; continue
+            marker = data[i + 1]
+            if marker in (0xD8, 0x01) or 0xD0 <= marker <= 0xD7:
+                i += 2; continue
+            length = struct.unpack_from('>H', data, i + 2)[0]
+            if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+                h, w = struct.unpack_from('>HH', data, i + 5)
+                return 'image/jpeg', w, h
+            i += 2 + length
+        return None
+    if data[:4] == b'RIFF' and data[8:12] == b'WEBP' and len(data) >= 30:
+        tag = data[12:16]
+        if tag == b'VP8 ':
+            w, h = struct.unpack_from('<HH', data, 26)
+            return 'image/webp', w & 0x3FFF, h & 0x3FFF
+        if tag == b'VP8L':
+            b = data[21:25]
+            w = 1 + (((b[1] & 0x3F) << 8) | b[0]); h = 1 + (((b[3] & 0xF) << 10) | (b[2] << 2) | ((b[1] & 0xC0) >> 6))
+            return 'image/webp', w, h
+        if tag == b'VP8X':
+            w = 1 + int.from_bytes(data[24:27], 'little'); h = 1 + int.from_bytes(data[27:30], 'little')
+            return 'image/webp', w, h
+    return None
+
+
+def _texture_indices(value):
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key.endswith('Texture') and isinstance(child, dict) and 'index' in child:
+                yield child['index']
+            else:
+                for v in _texture_indices(child):
+                    yield v
+    elif isinstance(value, list):
+        for child in value:
+            for v in _texture_indices(child):
+                yield v
+
+
+def inspect(doc, binary, path):
+    path = Path(path)
+    world = node_world_matrices(doc)
+    info = {'file': str(path), 'bytes': path.stat().st_size, 'sha256': sha256(path),
+            'triangles': 0, 'vertices': 0, 'meshes': 0, 'primitives': 0, 'nodes': len(world),
+            'materials': 0, 'textures': [], 'imagesEmbedded': True,
+            'extensionsUsed': list(doc.get('extensionsUsed', [])),
+            'extensionsRequired': list(doc.get('extensionsRequired', [])),
+            'skins': [], 'animations': [], 'morphTargets': 0,
+            'hasNormals': True, 'hasTexcoord0': True, 'warnings': []}
+    meshes_seen, materials, texture_ids, prims = set(), set(), set(), []
+    for index in world:
+        node = doc['nodes'][index]
+        if 'mesh' not in node:
+            continue
+        mesh = doc['meshes'][node['mesh']]
+        meshes_seen.add(node['mesh'])
+        for prim in mesh['primitives']:
+            prims.append(prim)
+            info['triangles'] += primitive_triangles(doc, prim)
+            info['vertices'] += doc['accessors'][prim['attributes']['POSITION']]['count']
+            info['primitives'] += 1
+            info['morphTargets'] += len(prim.get('targets', []))
+            if 'material' in prim:
+                materials.add(prim['material'])
+    info['meshes'] = len(meshes_seen)
+    info['materials'] = len(materials)
+    info['hasNormals'] = all('NORMAL' in p['attributes'] for p in prims)
+    for m in materials:
+        texture_ids.update(_texture_indices(doc['materials'][m]))
+    info['hasTexcoord0'] = (not texture_ids) or all('TEXCOORD_0' in p['attributes'] for p in prims if 'material' in p and p['material'] in materials)
+    for t in sorted(texture_ids):
+        tex = doc.get('textures', [])[t]
+        if 'source' not in tex:
+            info['textures'].append({'image': None, 'mime': None, 'width': 0, 'height': 0, 'embedded': False,
+                                     'note': 'texture %d has no core image source (extension-only texture)' % t})
+            info['imagesEmbedded'] = False
+            continue
+        image = doc['images'][tex['source']]
+        entry = {'image': tex['source'], 'mime': image.get('mimeType'), 'width': 0, 'height': 0, 'embedded': 'bufferView' in image}
+        if entry['embedded']:
+            raw, _ = _view_bytes(doc, binary, image['bufferView'])
+            dims = image_dimensions(raw[:64])
+            if dims:
+                entry['mime'], entry['width'], entry['height'] = dims
+            else:
+                entry['note'] = 'unknown image header'
+        else:
+            info['imagesEmbedded'] = False
+        if entry not in info['textures']:
+            info['textures'].append(entry)
+    for skin in doc.get('skins', []):
+        info['skins'].append({'joints': len(skin.get('joints', [])), 'hasInverseBindMatrices': 'inverseBindMatrices' in skin})
+    for i, anim in enumerate(doc.get('animations', [])):
+        duration = 0.0
+        for sampler in anim.get('samplers', []):
+            acc = doc['accessors'][sampler['input']]
+            if 'max' in acc and acc['max']:
+                duration = max(duration, float(acc['max'][0]))
+            else:
+                times = accessor_values(doc, binary, sampler['input'])
+                if times:
+                    duration = max(duration, max(t[0] for t in times))
+        info['animations'].append({'name': anim.get('name', 'animation-%d' % i), 'channels': len(anim.get('channels', [])), 'duration': round(duration, 6)})
+    return info
