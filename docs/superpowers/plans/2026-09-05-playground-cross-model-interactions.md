@@ -337,4 +337,4 @@ Bash `run_in_background: true`：`cd <playground> && npm run dev -- --port 5175 
 git add ROADMAP.md tasks/0026-playground-cross-model-interactions.md docs/next-steps.md docs/superpowers/specs/2026-09-05-playground-cross-model-interactions-design.md docs/superpowers/plans/2026-09-05-playground-cross-model-interactions.md && git commit -m "M14 結案：ROADMAP M14、tasks 0026、next-steps、spec 実測補記；計畫全勾"
 ```
 
-- [x] **Step 5: memory＋handoff**：`~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m14-lessons.md`＋MEMORY.md 一行；`.remember/remember.md` 更新。
+- [x] **Step 5: memory＋handoff**：`~/.claude/projects/<project-slug>/memory/img2babylon-m14-lessons.md`＋MEMORY.md 一行；`.remember/remember.md` 更新。

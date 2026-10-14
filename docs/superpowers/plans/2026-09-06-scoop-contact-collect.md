@@ -989,5 +989,5 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 
 - [x] **Step 5: 記憶與 handoff**
 
-寫 `~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m17-lessons.md`（type project）：探針結論（單顆永不進、互擠、靜力估計、< 2 mm collider 失效）、接觸收納契約要點（排除自身 clump、held 材質自有）、gate 陷阱；`MEMORY.md` 加一行。
+寫 `~/.claude/projects/<project-slug>/memory/img2babylon-m17-lessons.md`（type project）：探針結論（單顆永不進、互擠、靜力估計、< 2 mm collider 失效）、接觸收納契約要點（排除自身 clump、held 材質自有）、gate 陷阱；`MEMORY.md` 加一行。
 `.remember/remember.md`：State M17 結案 commit、Next 等使用者選（next-steps 候選）、Context 新陷阱。

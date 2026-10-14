@@ -150,6 +150,17 @@ class AuditTest(GlbCase):
         doc['materials'] = [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}}}]
         self.assertEqual(self.audit('uri.glb', doc, chunks)['verdict'], 'fix')
 
+    def test_untextured_primitive_without_uv_next_to_textured_one_is_ok(self):
+        # gltf-transform prune and many exporters drop TEXCOORD_0 from flat-colour parts; only textured parts need UVs.
+        doc, chunks = synth.cube_doc(texcoords=True, material=0, images=[{'bufferView': 0, 'mimeType': 'image/png'}], textures=[{'source': 0}])
+        doc['materials'] = [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}}}, {'pbrMetallicRoughness': {'baseColorFactor': [1, 0, 0, 1]}}]
+        chunks.append(synth.png_header(64, 64)); doc['images'][0]['bufferView'] = len(chunks) - 1
+        flat = {'attributes': {'POSITION': 0, 'NORMAL': 1}, 'indices': doc['meshes'][0]['primitives'][0]['indices'], 'mode': 4, 'material': 1}
+        doc['meshes'][0]['primitives'].append(flat)
+        result = self.audit('mixed.glb', doc, chunks)
+        self.assertEqual(result['problems'], [], result['problems'])
+        self.assertEqual(result['verdict'], 'ok')
+
     def test_texture_without_core_source_is_fix(self):
         doc, chunks = synth.cube_doc(texcoords=True, material=0, images=[], textures=[{'extensions': {'KHR_texture_basisu': {'source': 0}}}], extensions_used=['KHR_texture_basisu'])
         doc['materials'] = [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}}}]

@@ -136,7 +136,7 @@ playground/
   src/hud.ts            左上：FPS、物件數、總質量
   scripts/scene_test.ts headless gate
   scripts/serve.sh      build ＋ tailscale serve
-  launchd/com.wake.playground.plist  常駐 vite preview
+  launchd/com.example.playground.plist  常駐 vite preview
 ```
 
 ### 5.2 場景與互動

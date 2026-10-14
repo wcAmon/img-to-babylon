@@ -2212,7 +2212,7 @@ git commit -m "playground：化療潑灑處理套件展示環境（三模型、�
 
 **Files:**
 - Create: `../playground/scripts/serve.sh`
-- Runtime: `~/Library/LaunchAgents/com.wake.playground.plist`（由 serve.sh 產生）
+- Runtime: `~/Library/LaunchAgents/com.example.playground.plist`（由 serve.sh 產生）
 
 - [ ] **Step 1: `scripts/serve.sh`**
 
@@ -2224,7 +2224,7 @@ cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
 NODE="$(readlink -f "$(command -v node)")"          # fnm multishell 路徑會消失，寫真實路徑
 VITE="$ROOT/node_modules/vite/bin/vite.js"
-PLIST="$HOME/Library/LaunchAgents/com.wake.playground.plist"
+PLIST="$HOME/Library/LaunchAgents/com.example.playground.plist"
 LOG="$HOME/Library/Logs/playground.log"
 TS=/Applications/Tailscale.app/Contents/MacOS/Tailscale
 
@@ -2234,7 +2234,7 @@ cat > "$PLIST" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>Label</key><string>com.wake.playground</string>
+  <key>Label</key><string>com.example.playground</string>
   <key>ProgramArguments</key><array>
     <string>$NODE</string><string>$VITE</string><string>preview</string>
     <string>--host</string><string>127.0.0.1</string><string>--port</string><string>4173</string><string>--strictPort</string>
@@ -2284,7 +2284,7 @@ Expected: `preview 4173 OK`、serve status 顯示 `/ proxy http://127.0.0.1:4173
 - gate：`npx tsc --noEmit && npm run scene-test`
 - 對外：`npm run serve`（build → launchd 常駐 `vite preview` 4173 → `tailscale serve` 根路徑）
   → https://<internal-host>/
-- 停用：`launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.wake.playground.plist`；
+- 停用：`launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.example.playground.plist`；
   `tailscale serve reset`
 ```
 

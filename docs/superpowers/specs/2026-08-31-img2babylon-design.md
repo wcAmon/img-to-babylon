@@ -44,7 +44,7 @@ GLB 軌、BM25 spec 檢索、材質參考管線。只做 `object` 類主體。
         自我修正迴圈（每 pass ≤3 次、全程 ≤6 次）──► 完成
 ```
 
-## 3. 目錄結構（專案根 = `/home/wake/projects/img2three`）
+## 3. 目錄結構（專案根 = `<home-path>/img2three`）
 
 ```
 SKILL.md                  # agent-agnostic 路由器；唯一總是載入的文件
@@ -177,8 +177,8 @@ export function createPillBottleModel(scene: Scene, opts?: { physics?: boolean }
   不指名 host 專屬工具；Claude Code 用 claude-in-chrome，Codex 用其瀏覽器工具或
   使用者提供的截圖。
 - 單一 checkout、雙 symlink（沿用 reference 的 CLAUDE.md 規則，嚴禁複製兩份）：
-  `~/.claude/skills/img2babylon → /home/wake/projects/img2three`
-  `~/.codex/skills/img2babylon  → /home/wake/projects/img2three`
+  `~/.claude/skills/img2babylon → <home-path>/img2three`
+  `~/.codex/skills/img2babylon  → <home-path>/img2three`
 - `AGENTS.md` 供 Codex 讀取，內容與 CLAUDE.md 同樣極薄：指向 SKILL.md。
 - 驗收：`codex exec` 跑端到端冒煙任務（見 §9 驗收二），證明 Codex 能駕駛整條 pipeline。
 

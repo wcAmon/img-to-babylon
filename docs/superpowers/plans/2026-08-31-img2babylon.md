@@ -2368,12 +2368,12 @@ git commit -m "docs: SKILL.md 路由器與 grimoire 契約六件套"
 
 ```bash
 mkdir -p ~/.claude/skills ~/.codex/skills
-ln -sfn /home/wake/projects/img2three ~/.claude/skills/img2babylon
-ln -sfn /home/wake/projects/img2three ~/.codex/skills/img2babylon
+ln -sfn <home-path>/img2three ~/.claude/skills/img2babylon
+ln -sfn <home-path>/img2three ~/.codex/skills/img2babylon
 ls -la ~/.claude/skills/img2babylon ~/.codex/skills/img2babylon
 ```
 
-Expected: 兩個 symlink 都指向 `/home/wake/projects/img2three`，且
+Expected: 兩個 symlink 都指向 `<home-path>/img2three`，且
 `~/.claude/skills/img2babylon/SKILL.md` 可讀。
 
 - [ ] **Step 2: 寫 README.md**
@@ -2458,7 +2458,7 @@ git commit -m "feat(models): pill-bottle 揀蓋藥罐（驗收一通過）"
 - [ ] **Step 1: 跑 codex exec**
 
 ```bash
-cd /home/wake/projects/img2three
+cd <home-path>/img2three
 codex exec "你是 img2babylon skill 的執行者。先完整閱讀 SKILL.md，然後照它的順序建立一個名為 codex-crate 的簡單木箱模型（wooden crate）：用 forge/tomato.py 生參考圖、寫 spec、過 validate gate、寫 factory、跑 runtime_export + check_colliders + physics_test 三個 gate。你沒有瀏覽器工具，跳過 SKILL.md 第 5d 步的截圖，其餘 gate 一律不可跳過。全部 gate 綠後停止並總結。"
 ```
 

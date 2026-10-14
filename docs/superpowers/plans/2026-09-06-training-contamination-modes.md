@@ -669,7 +669,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - Modify: `ROADMAP.md`（M18 段插在 M17 之後、Parked 之前）、`docs/next-steps.md`
 - Create: `tasks/0030-training-contamination-modes.md`
 - Modify: `docs/superpowers/plans/2026-09-06-training-contamination-modes.md`（勾選）、`.remember/remember.md`
-- Memory: `~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m18-lessons.md`＋`MEMORY.md` 一行
+- Memory: `~/.claude/projects/<project-slug>/memory/img2babylon-m18-lessons.md`＋`MEMORY.md` 一行
 
 - [x] **Step 1: 部署**
 

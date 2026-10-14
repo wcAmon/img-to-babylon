@@ -24,7 +24,7 @@
   ```
 - Bash 的 cwd 每次呼叫重設回 img-to-babylon；playground 命令一律 `cd ../playground && …`。dev server 用 `run_in_background`。
 - 部署：**已改由 `../player-garden/scripts/serve.sh` 統包**（playground 以 `--base=/playground/` build 到 `dist-sub/`），
-  網址 https://<internal-host>/playground/ ；playground 自己的 `scripts/serve.sh` 與 `com.wake.playground` 已退役，**不要再跑 `npm run serve`**。
+  網址 https://<internal-host>/playground/ ；playground 自己的 `scripts/serve.sh` 與 `com.example.playground` 已退役，**不要再跑 `npm run serve`**。
 
 ---
 
@@ -1514,7 +1514,7 @@ EOF
 - Modify: `../playground/README.md`
 - Modify（img-to-babylon）：`ROADMAP.md`、`docs/next-steps.md`、`docs/superpowers/specs/2026-09-06-playground-training-scene-design.md`（実測補記）
 - Create（img-to-babylon）：`tasks/0028-playground-training-scene.md`
-- Memory：`~/.claude/projects/-Users-wake-Desktop-local-three-img-to-babylon/memory/img2babylon-m16-lessons.md`＋`MEMORY.md` 一行；更新 `playground-tailnet-deploy.md`（部署改 player-garden）；`.remember/remember.md`。
+- Memory：`~/.claude/projects/<project-slug>/memory/img2babylon-m16-lessons.md`＋`MEMORY.md` 一行；更新 `playground-tailnet-deploy.md`（部署改 player-garden）；`.remember/remember.md`。
 
 - [x] **Step 1: playwright 真實輸入層演完整七步**
 
@@ -1581,7 +1581,7 @@ EOF
 - [x] **Step 6: memory 與 handoff**
 
 - 新 `img2babylon-m16-lessons.md`（type project）：實作時真正踩到的坑（不要預寫；例如 hinge 綁定時機、膠囊推物、DynamicTexture headless、跟隨鏡頭與抓取 detach 互動）＋ How to apply；MEMORY.md 加一行。
-- 更新 `playground-tailnet-deploy.md`：部署改 `../player-garden/scripts/serve.sh`，playground 在 `/playground/` 子路徑，`com.wake.playground` 已退役。
+- 更新 `playground-tailnet-deploy.md`：部署改 `../player-garden/scripts/serve.sh`，playground 在 `/playground/` 子路徑，`com.example.playground` 已退役。
 - `.remember/remember.md`：State（M16 結案、commit hash）、Next（等使用者選 next-steps）、Context（三條最重要陷阱）。
 
 ---

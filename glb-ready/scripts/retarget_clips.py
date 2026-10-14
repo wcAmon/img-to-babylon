@@ -109,7 +109,7 @@ def main():
         pb.matrix_basis.identity(); pb.rotation_mode = 'QUATERNION'
     scene.frame_set(0); bpy.context.view_layer.update()
     outdir.mkdir(parents=True)
-    bc.export_glb(outdir / 'bind.glb', [arm] + meshes, export_animations=False, export_skins=True, export_apply=False)
+    bc.export_glb(outdir / 'bind.glb', [arm] + meshes, export_animations=False, export_skins=True, export_all_influences=True, export_apply=False)
     src_arm, src_bones, src_meshes = import_rig(source_path, 'source')
     for o in src_meshes:
         o.hide_render = True

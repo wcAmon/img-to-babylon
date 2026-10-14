@@ -123,6 +123,13 @@ def build_rig(prefix='mixamorig:', scale=1.0, texture=True):
         bpy.ops.object.parent_set(type='ARMATURE_AUTO')
     except RuntimeError:
         bpy.ops.object.parent_set(type='ARMATURE_ENVELOPE')
+    # One vertex with five influences: the serialized skin then needs JOINTS_1/WEIGHTS_1, which only
+    # export_all_influences=True keeps. Every glb-ready export of a rig must agree on this.
+    five = list(body.vertex_groups)[:5]
+    for g in five:
+        g.add([0], 0.2, 'REPLACE')
+    for g in list(body.vertex_groups)[5:]:
+        g.remove([0])
     if scale != 1.0:
         for o in (arm, body):
             o.scale = (scale, scale, scale)
@@ -133,7 +140,7 @@ def build_rig(prefix='mixamorig:', scale=1.0, texture=True):
 
 def fixture_rig_base():
     reset(); arm, body = build_rig()
-    export([arm, body], 'rig_base', export_animations=False, export_skins=True)
+    export([arm, body], 'rig_base', export_animations=False, export_skins=True, export_all_influences=True)
 
 
 def fixture_rig_source():
@@ -153,7 +160,7 @@ def fixture_rig_source():
         for pb in (spine, arm_l):
             pb.keyframe_insert('rotation_quaternion', frame=frame)
         hips.keyframe_insert('location', frame=frame)
-    export([arm, body], 'rig_source', export_animations=True, export_skins=True, export_animation_mode='ACTIONS', export_force_sampling=True)
+    export([arm, body], 'rig_source', export_animations=True, export_skins=True, export_animation_mode='ACTIONS', export_force_sampling=True, export_all_influences=True)
 
 
 FIXTURES = {k[len('fixture_'):]: v for k, v in dict(globals()).items() if k.startswith('fixture_')}

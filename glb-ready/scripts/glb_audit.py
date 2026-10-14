@@ -231,7 +231,8 @@ def inspect(doc, binary, path):
     info['hasNormals'] = all('NORMAL' in p['attributes'] for p in prims)
     for m in materials:
         texture_ids.update(_texture_indices(doc['materials'][m]))
-    info['hasTexcoord0'] = (not texture_ids) or all('TEXCOORD_0' in p['attributes'] for p in prims if 'material' in p and p['material'] in materials)
+    textured_materials = {m for m in materials if any(True for _ in _texture_indices(doc['materials'][m]))}
+    info['hasTexcoord0'] = all('TEXCOORD_0' in p['attributes'] for p in prims if 'material' in p and p['material'] in textured_materials)
     for t in sorted(texture_ids):
         tex = doc.get('textures', [])[t]
         if 'source' not in tex:

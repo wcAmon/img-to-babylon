@@ -1,4 +1,5 @@
 import re
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -33,3 +34,8 @@ class RootDocsTest(unittest.TestCase):
         text = (ROOT / '.env.example').read_text()
         self.assertIn('FAL_API_KEY=\n', text); self.assertIn('IMG2BABYLON_TOMATO_BASE=\n', text)
         self.assertFalse(re.search(r'=(\S+)', text.replace('# ', '')), 'no values in .env.example')
+
+    def test_tracked_docs_carry_no_author_home_paths(self):
+        # The repo is public: historical plans and specs must not name the author's home directories or machine labels.
+        hits = subprocess.run(['git', 'grep', '-nIwE', 'wake', '--', '*.md', '*.json', ':!pipeline/**'], cwd=ROOT, capture_output=True, text=True).stdout
+        self.assertEqual(hits, '', hits[:2000])
