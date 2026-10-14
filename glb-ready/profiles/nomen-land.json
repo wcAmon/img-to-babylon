@@ -1,0 +1,15 @@
+{
+  "name": "nomen-land",
+  "maxTriangles": 20000,
+  "maxBytes": 20971520,
+  "maxTextures": 8,
+  "maxTextureSize": 2048,
+  "maxNodes": 500,
+  "maxJoints": 64,
+  "requireGrounded": true,
+  "forbidExtensions": [
+    "KHR_draco_mesh_compression",
+    "EXT_meshopt_compression",
+    "KHR_texture_basisu"
+  ]
+}

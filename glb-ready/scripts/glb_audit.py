@@ -243,7 +243,7 @@ def inspect(doc, binary, path):
         entry = {'image': tex['source'], 'mime': image.get('mimeType'), 'width': 0, 'height': 0, 'embedded': 'bufferView' in image}
         if entry['embedded']:
             raw, _ = _view_bytes(doc, binary, image['bufferView'])
-            dims = image_dimensions(raw[:64])
+            dims = image_dimensions(raw)
             if dims:
                 entry['mime'], entry['width'], entry['height'] = dims
             else:
@@ -266,3 +266,170 @@ def inspect(doc, binary, path):
                     duration = max(duration, max(t[0] for t in times))
         info['animations'].append({'name': anim.get('name', 'animation-%d' % i), 'channels': len(anim.get('channels', [])), 'duration': round(duration, 6)})
     return info
+
+
+def load_profile(name_or_path):
+    candidate = Path(name_or_path)
+    if not candidate.suffix:
+        candidate = PROFILES_DIR / (name_or_path + '.json')
+    if not candidate.is_file():
+        raise GlbError('profile not found: %s (built-ins: %s)' % (name_or_path, ', '.join(sorted(p.stem for p in PROFILES_DIR.glob('*.json')))))
+    profile = json.loads(candidate.read_text())
+    for key in ('maxTriangles', 'maxBytes', 'maxTextures', 'maxTextureSize', 'maxNodes', 'maxJoints', 'requireGrounded', 'forbidExtensions'):
+        if key not in profile:
+            raise GlbError('profile %s lacks %s' % (candidate.name, key))
+    profile.setdefault('name', candidate.stem)
+    return profile
+
+
+def _transform(m, p):
+    x, y, z = p
+    return (m[0] * x + m[4] * y + m[8] * z + m[12], m[1] * x + m[5] * y + m[9] * z + m[13], m[2] * x + m[6] * y + m[10] * z + m[14])
+
+
+def geometry_checks(doc, binary, world, sample_limit=50000):
+    lo = [math.inf] * 3; hi = [-math.inf] * 3
+    nan_count, zero_area, sampled, normal_err = 0, 0, 0, 0.0
+    for index, matrix in world.items():
+        node = doc['nodes'][index]
+        if 'mesh' not in node:
+            continue
+        for prim in doc['meshes'][node['mesh']]['primitives']:
+            acc = doc['accessors'][prim['attributes']['POSITION']]
+            positions = accessor_values(doc, binary, prim['attributes']['POSITION'])
+            corners = [(a, b, c) for a in (acc.get('min', [0, 0, 0])[0], acc.get('max', [0, 0, 0])[0])
+                       for b in (acc.get('min', [0, 0, 0])[1], acc.get('max', [0, 0, 0])[1])
+                       for c in (acc.get('min', [0, 0, 0])[2], acc.get('max', [0, 0, 0])[2])] if 'min' in acc and 'max' in acc else positions
+            for p in corners:
+                w = _transform(matrix, p)
+                for i in range(3):
+                    lo[i] = min(lo[i], w[i]); hi[i] = max(hi[i], w[i])
+            for p in positions:
+                if any(math.isnan(v) or math.isinf(v) for v in p):
+                    nan_count += 1
+            if 'NORMAL' in prim['attributes']:
+                for n in accessor_values(doc, binary, prim['attributes']['NORMAL'])[:10000]:
+                    if any(math.isnan(v) or math.isinf(v) for v in n):
+                        nan_count += 1; continue
+                    normal_err = max(normal_err, abs(math.sqrt(n[0] ** 2 + n[1] ** 2 + n[2] ** 2) - 1.0))
+            if prim.get('mode', 4) == 4 and sampled < sample_limit:
+                indices = [i[0] for i in accessor_values(doc, binary, prim['indices'])] if 'indices' in prim else list(range(len(positions)))
+                for t in range(0, min(len(indices) - 2, (sample_limit - sampled) * 3), 3):
+                    a, b, c = positions[int(indices[t])], positions[int(indices[t + 1])], positions[int(indices[t + 2])]
+                    ux, uy, uz = b[0] - a[0], b[1] - a[1], b[2] - a[2]
+                    vx, vy, vz = c[0] - a[0], c[1] - a[1], c[2] - a[2]
+                    cx, cy, cz = uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx
+                    if cx * cx + cy * cy + cz * cz < 1e-24:
+                        zero_area += 1
+                    sampled += 1
+    if lo[0] == math.inf:
+        lo = hi = [0.0, 0.0, 0.0]
+    size = [hi[i] - lo[i] for i in range(3)]
+    return {'bounds': {'min': lo, 'max': hi, 'size': size}, 'minY': lo[1],
+            'centerXZ': [(lo[0] + hi[0]) / 2, (lo[2] + hi[2]) / 2],
+            'normalMaxLengthError': normal_err, 'nanCount': nan_count,
+            'zeroAreaTriangles': zero_area, 'sampledTriangles': sampled}
+
+
+def audit(path, profile):
+    doc, binary = read_glb(path)
+    info = inspect(doc, binary, path)
+    world = node_world_matrices(doc)
+    geo = geometry_checks(doc, binary, world)
+    info['geometry'] = geo
+    info['bounds'] = geo['bounds']
+    info['profile'] = profile
+    problems, warnings = [], list(info['warnings'])
+    if info['triangles'] > profile['maxTriangles']:
+        problems.append('triangles %d exceed %d' % (info['triangles'], profile['maxTriangles']))
+    if info['bytes'] > profile['maxBytes']:
+        problems.append('file is %d bytes, limit %d' % (info['bytes'], profile['maxBytes']))
+    if info['nodes'] > profile['maxNodes']:
+        problems.append('%d nodes exceed %d' % (info['nodes'], profile['maxNodes']))
+    if len(info['textures']) > profile['maxTextures']:
+        problems.append('%d textures exceed %d' % (len(info['textures']), profile['maxTextures']))
+    for tex in info['textures']:
+        if not tex['embedded']:
+            problems.append('texture image %s is not embedded (%s)' % (tex['image'], tex.get('note', 'external uri')))
+        elif max(tex['width'], tex['height']) > profile['maxTextureSize']:
+            problems.append('texture image %d is %dx%d, limit %d' % (tex['image'], tex['width'], tex['height'], profile['maxTextureSize']))
+        elif tex['width'] == 0:
+            warnings.append('texture image %s has an unreadable header' % tex['image'])
+    for ext in set(info['extensionsUsed']) | set(info['extensionsRequired']):
+        if ext in profile['forbidExtensions']:
+            problems.append('extension %s is forbidden (no Draco, Meshopt or KTX2)' % ext)
+        elif ext in info['extensionsRequired'] and not ext.startswith('KHR_materials_'):
+            problems.append('extensionsRequired contains %s; the target engine may not support it' % ext)
+    if not info['hasNormals']:
+        problems.append('a primitive has no NORMAL attribute')
+    if not info['hasTexcoord0']:
+        problems.append('a textured primitive has no TEXCOORD_0')
+    if geo['nanCount']:
+        problems.append('%d NaN/Inf values in positions or normals' % geo['nanCount'])
+    if geo['normalMaxLengthError'] > 1e-5:
+        problems.append('normals are not unit length (max error %.2e)' % geo['normalMaxLengthError'])
+    if geo['zeroAreaTriangles']:
+        warnings.append('%d zero-area triangles in a sample of %d' % (geo['zeroAreaTriangles'], geo['sampledTriangles']))
+    for skin in info['skins']:
+        if skin['joints'] > profile['maxJoints']:
+            problems.append('skin has %d joints, limit %d' % (skin['joints'], profile['maxJoints']))
+        if not skin['hasInverseBindMatrices']:
+            warnings.append('skin has no inverseBindMatrices (identity assumed)')
+    if profile.get('requireGrounded'):
+        w, d = geo['bounds']['size'][0], geo['bounds']['size'][2]
+        tol = max(0.02, 0.05 * max(w, d))
+        if abs(geo['minY']) > 0.01:
+            problems.append('not grounded: min y is %.4f m, expected 0' % geo['minY'])
+        if abs(geo['centerXZ'][0]) > tol or abs(geo['centerXZ'][1]) > tol:
+            problems.append('not centred: XZ centre is (%.3f, %.3f), tolerance %.3f m' % (geo['centerXZ'][0], geo['centerXZ'][1], tol))
+    height = geo['bounds']['size'][1]
+    if height > 50 or (0 < height < 0.05):
+        warnings.append('suspicious scale: height %.3f m (units should be metres)' % height)
+    if info['triangles'] > profile['maxTriangles']:
+        verdict = 'reduce'
+    elif problems:
+        verdict = 'fix'
+    else:
+        verdict = 'ok'
+    info['problems'], info['warnings'], info['verdict'] = problems, warnings, verdict
+    return info
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('glb')
+    parser.add_argument('--profile', default='nomen-land', help='built-in name or path to a profile JSON')
+    parser.add_argument('--json', action='store_true', help='print the full report as JSON')
+    args = parser.parse_args(argv)
+    try:
+        profile = load_profile(args.profile)
+        if not Path(args.glb).is_file():
+            raise GlbError('cannot read %s' % args.glb)
+        result = audit(args.glb, profile)
+    except (GlbError, KeyError, IndexError, struct.error, OSError) as exc:
+        print('glb_audit: %s: %s' % (args.glb, exc), file=sys.stderr)
+        return 2
+    if args.json:
+        print(json.dumps(result, indent=2))
+    else:
+        g = result['geometry']['bounds']['size']
+        print('%s: %s  triangles %d  textures %d  nodes %d  %.2f x %.2f x %.2f m  %d bytes  profile %s' % (
+            Path(args.glb).name, result['verdict'].upper(), result['triangles'], len(result['textures']), result['nodes'],
+            g[0], g[1], g[2], result['bytes'], profile['name']))
+        for a in result['animations']:
+            print('  clip %r  %d channels  %.2fs' % (a['name'], a['channels'], a['duration']))
+        for s in result['skins']:
+            print('  skin  %d joints' % s['joints'])
+        for p in result['problems']:
+            print('  PROBLEM  ' + p)
+        for w in result['warnings']:
+            print('  warning  ' + w)
+        if result['verdict'] == 'reduce':
+            print('  next: glb-ready/scripts/reduce_mesh.py (static) or go back to the unrigged mesh (rigged)')
+        elif result['verdict'] == 'fix':
+            print('  next: see glb-ready/SKILL.md "Which path"')
+    return 0 if result['verdict'] == 'ok' else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

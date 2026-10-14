@@ -1,4 +1,6 @@
 from __future__ import annotations
+import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -71,6 +73,17 @@ class InspectTest(GlbCase):
         self.assertTrue(info['imagesEmbedded'])
         self.assertTrue(info['hasTexcoord0'])
 
+    def test_jpeg_with_long_app_segment_is_measured(self):
+        # Real JPEGs carry JFIF/EXIF/ICC segments before SOF0; the size must still be read.
+        app1 = b'\xff\xe1' + __import__('struct').pack('>H', 2 + 300) + b'\0' * 300
+        data = synth.jpeg_header(512, 512)
+        data = data[:2] + app1 + data[2:]
+        doc, chunks = synth.cube_doc(texcoords=True, material=0, images=[{'bufferView': 0, 'mimeType': 'image/jpeg'}], textures=[{'source': 0}])
+        doc['materials'] = [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}}}]
+        chunks.append(data); doc['images'][0]['bufferView'] = len(chunks) - 1
+        info = glb_audit.inspect(*glb_audit.read_glb(self.glb('jpg.glb', doc, chunks)), self.dir / 'jpg.glb')
+        self.assertEqual((info['textures'][0]['width'], info['textures'][0]['height']), (512, 512))
+
     def test_external_uri_image_is_not_embedded(self):
         doc, chunks = synth.cube_doc(texcoords=True, material=0, images=[{'uri': 'skin.png'}], textures=[{'source': 0}])
         doc['materials'] = [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}}}]
@@ -103,6 +116,78 @@ class InspectTest(GlbCase):
         self.assertEqual(info['skins'], [{'joints': 2, 'hasInverseBindMatrices': False}])
         self.assertEqual(info['animations'], [{'name': 'Kimodo slow walk', 'channels': 1, 'duration': 1.0}])
         self.assertEqual(info['extensionsRequired'], [])
+
+
+class AuditTest(GlbCase):
+    def audit(self, name, doc, chunks, profile='nomen-land'):
+        path = self.glb(name, doc, chunks)
+        return glb_audit.audit(path, glb_audit.load_profile(profile))
+
+    def test_grounded_cube_is_ok(self):
+        result = self.audit('ok.glb', *synth.cube_doc())
+        self.assertEqual(result['problems'], [])
+        self.assertEqual(result['verdict'], 'ok')
+        self.assertAlmostEqual(result['geometry']['minY'], 0.0)
+
+    def test_floating_cube_is_fix(self):
+        result = self.audit('float.glb', *synth.cube_doc(y_offset=0.3))
+        self.assertEqual(result['verdict'], 'fix')
+        self.assertTrue(any('not grounded' in p for p in result['problems']))
+
+    def test_over_budget_is_reduce(self):
+        doc, chunks = synth.cube_doc(extra_nodes=[{'mesh': 0, 'translation': [i * 1.5, 0, 0]} for i in range(1, 1667)])
+        result = self.audit('many.glb', doc, chunks)
+        self.assertEqual(result['triangles'], 12 * 1667)
+        self.assertEqual(result['verdict'], 'reduce')
+
+    def test_external_image_and_huge_texture_are_fix(self):
+        doc, chunks = synth.cube_doc(texcoords=True, material=0, images=[{'bufferView': 0, 'mimeType': 'image/png'}], textures=[{'source': 0}])
+        doc['materials'] = [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}}}]
+        chunks.append(synth.png_header(3000, 3000)); doc['images'][0]['bufferView'] = len(chunks) - 1
+        result = self.audit('big.glb', doc, chunks)
+        self.assertTrue(any('3000' in p for p in result['problems']))
+        doc, chunks = synth.cube_doc(texcoords=True, material=0, images=[{'uri': 'x.png'}], textures=[{'source': 0}])
+        doc['materials'] = [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}}}]
+        self.assertEqual(self.audit('uri.glb', doc, chunks)['verdict'], 'fix')
+
+    def test_texture_without_core_source_is_fix(self):
+        doc, chunks = synth.cube_doc(texcoords=True, material=0, images=[], textures=[{'extensions': {'KHR_texture_basisu': {'source': 0}}}], extensions_used=['KHR_texture_basisu'])
+        doc['materials'] = [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0}}}]
+        result = self.audit('basisu.glb', doc, chunks)
+        self.assertEqual(result['verdict'], 'fix')
+        self.assertTrue(any('KHR_texture_basisu' in p for p in result['problems']))
+
+    def test_draco_required_is_fix(self):
+        result = self.audit('draco.glb', *synth.cube_doc(extensions_required=['KHR_draco_mesh_compression'], extensions_used=['KHR_draco_mesh_compression']))
+        self.assertEqual(result['verdict'], 'fix')
+
+    def test_nan_normal_and_missing_normal_are_fix(self):
+        doc, chunks = synth.cube_doc()
+        chunks[1] = synth.pack_f32([(float('nan'), 1.0, 0.0)] + [(0.0, 1.0, 0.0)] * 7)
+        result = self.audit('nan.glb', doc, chunks)
+        self.assertGreaterEqual(result['geometry']['nanCount'], 1)
+        self.assertEqual(result['verdict'], 'fix')
+        self.assertEqual(self.audit('nonormal.glb', *synth.cube_doc(normals=False))['verdict'], 'fix')
+
+    def test_skin_over_joint_budget_is_fix(self):
+        doc, chunks = synth.cube_doc(extra_nodes=[{'name': 'j%d' % i} for i in range(70)])
+        doc['skins'] = [{'joints': list(range(1, 71))}]
+        result = self.audit('joints.glb', doc, chunks)
+        self.assertTrue(any('joints' in p for p in result['problems']))
+
+    def test_cli_json_and_exit_codes(self):
+        ok = self.glb('cli-ok.glb', *synth.cube_doc())
+        bad = self.glb('cli-bad.glb', *synth.cube_doc(y_offset=0.5))
+        script = str(HERE.parent / 'scripts' / 'glb_audit.py')
+        run = subprocess.run([sys.executable, script, str(ok), '--json'], capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        payload = json.loads(run.stdout)
+        for key in ('triangles', 'textures', 'bounds', 'problems', 'warnings', 'verdict', 'profile', 'animations', 'skins'):
+            self.assertIn(key, payload)
+        self.assertEqual(subprocess.run([sys.executable, script, str(bad)], capture_output=True).returncode, 1)
+        missing = subprocess.run([sys.executable, script, str(self.dir / 'nope.glb')], capture_output=True, text=True)
+        self.assertEqual(missing.returncode, 2)
+        self.assertIn('nope.glb', missing.stderr)
 
 
 if __name__ == '__main__':

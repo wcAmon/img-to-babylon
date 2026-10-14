@@ -1,0 +1,15 @@
+{
+  "name": "hero-bust",
+  "maxTriangles": 25000,
+  "maxBytes": 16777216,
+  "maxTextures": 10,
+  "maxTextureSize": 2048,
+  "maxNodes": 200,
+  "maxJoints": 64,
+  "requireGrounded": false,
+  "forbidExtensions": [
+    "KHR_draco_mesh_compression",
+    "EXT_meshopt_compression",
+    "KHR_texture_basisu"
+  ]
+}

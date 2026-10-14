@@ -1,0 +1,15 @@
+{
+  "name": "crowd",
+  "maxTriangles": 5000,
+  "maxBytes": 4194304,
+  "maxTextures": 2,
+  "maxTextureSize": 1024,
+  "maxNodes": 100,
+  "maxJoints": 64,
+  "requireGrounded": false,
+  "forbidExtensions": [
+    "KHR_draco_mesh_compression",
+    "EXT_meshopt_compression",
+    "KHR_texture_basisu"
+  ]
+}
