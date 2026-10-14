@@ -20,3 +20,10 @@ playwright-report/
 
 # yui R6 generative candidates are served to the dev server through a symlink; never committed
 viewer/public/generative
+# Character-specific Blender experiments live in character-studio; never tracked here
+pipeline/scripts/yui_*.py
+pipeline/scripts/materialize.py
+pipeline/scripts/render_repair.py
+pipeline/scripts/repair_yui_skin.py
+# Local symlink into character-studio (private); the viewer no longer registers it
+viewer/models/female-tactical
