@@ -316,11 +316,12 @@ B 會用到：
 ## 13. 實作紀錄（2026-10-14）
 
 - 計畫：`docs/superpowers/plans/2026-10-14-glb-ready.md`。
-- 測試：forge 140、glb-ready 53（含 25 個 Blender 測試）、viewer `tsc` 與 `export_glb_test.ts` 全綠。
+- 測試：forge 140、glb-ready 53（含 25 個 Blender 測試；審查修正後 141／54）、viewer `tsc` 與 `export_glb_test.ts` 全綠。
 - 驗收 2：`sample-crate` 匯出 12 面、0.3 m 立方、`glb_audit.py` OK。
 - 驗收 3：triage-standing-animated 稽核列出 clip「Kimodo slow walk」（27 channels、2.97 s）與 30 關節骨架；`render_review.py` 以 rest pose 渲染（站姿，非行走中，目視確認）。
 - 驗收 1 乾跑：timber-lodge 22,494 → 19,477 面（keep-uv，1 輪，保留 86.6%），稽核 OK；三視角渲染無黑斑、材質完整。全新 session 的驗收由使用者執行。
 - 偏離 spec 的決定：§5.8 的 SOMA 來源不在 v1（只支援 Mixamo 命名的 FBX/GLB 來源）；§4.7 的 Python 下限實際為 3.9（系統 python3）；§5.6 的影像格式以 `export_image_format='AUTO'` 保留原容器而非依 alpha 分流（Blender 5.1 匯出器沒有 PNG 選項）；§7.2 的 R7 是六次嘗試（C1–C6），139,875 是「二面共享邊方向不一致」而非反向邊；§7.6 的 sparse morph 是三個獨立案例（154.68 MiB、12.97→5.20 MiB、66 MiB→52.7 MB）。
 - 實作中發現並寫進 `glb-ready/lessons.md` 的事實：glTF 匯入是逐面分離的 polygon soup（先焊接再算拓撲）；protect 權重存在 mesh datablock 且需向外擴一圈；Cycles 5.1.2 烘焙 BYTE_COLOR 頂點色會 segfault（先轉 FLOAT_COLOR）；JPEG 尺寸要讀整張；匯入器會加骨骼顯示用的 Icosphere；匯出器 ACTIONS 模式會把檔案裡所有相容的 action 都匯出；Babylon serializer 會丟掉 |t| ≤ 0.001 的節點位移。
 - 密鑰掃描：全歷史 regex 掃描 5 筆命中皆為識別字（測試名與狀態字串），無 .env 曾被加入；tailnet 主機名仍在歷史中（未改寫歷史）。
-- 發佈：待使用者確認後填入 push 時間、公開時間與 HEAD sha（Task 20）。
+- 審查：最終整支審查 0 Critical、3 Important（混合材質的 TEXCOORD_0 誤判、bind.glb 未帶 export_all_influences、歷史文件殘留作者路徑）皆以先失敗後通過的測試修正；8 個 Minor 延後。修正後 forge 141、glb-ready 54。
+- 發佈：2026-10-14 07:06:20Z push `main`（dffc640..c9f8aca）；07:06:27Z `gh repo edit --visibility public`；匿名 `git ls-remote` 回 `c9f8aca0a5900052249ef3c27fc5013400c3b35a HEAD`。Plan B 釘選用：`https://raw.githubusercontent.com/wcAmon/img-to-babylon/c9f8aca0a5900052249ef3c27fc5013400c3b35a/glb-ready/SKILL.md`。
