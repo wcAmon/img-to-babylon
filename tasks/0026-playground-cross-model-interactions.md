@@ -4,7 +4,7 @@ model: （無新模型；../playground src/interactions.ts、src/ui.ts、index.h
      設計文件 docs/superpowers/specs/2026-09-05-playground-cross-model-interactions-design.md；計畫 docs/superpowers/plans/2026-09-05-playground-cross-model-interactions.md。
 分工: Claude 全做。
 驗收: playground `npm run typecheck` 綠；`npm run scene-test` 31/31（既有 28＋interact:absorb／absorb-droplet／disinfect）；
-     tailnet https://monkeyday.tail8e3f79.ts.net/ 200、`.card .status` 樣式上線；playwright 實測：摔落→破裂→抓粉罐開蓋傾倒 40 顆全凝固、水漬 35%；
+     tailnet https://<internal-host>/ 200、`.card .status` 樣式上線；playwright 實測：摔落→破裂→抓粉罐開蓋傾倒 40 顆全凝固、水漬 35%；
      抓噴瓶下壓噴灑 60 滴全吸收、消毒 100%、水漬色 (0.72, 0.82, 0.86)。證據 .img2babylon/shots/playground5-{absorb,disinfect}.png。
 notes:
   - 判定用原始足跡（radius0 × maxScale），可見縮放另算；`boundingBox.extendSize` 是未縮放局部半徑，`extendSizeWorld` 會跟著縮不能用。

@@ -1,7 +1,7 @@
 # 下一步（2026-09-06 M18 結案後）
 
 狀態：M10–M12（十件物件＋pour／collect 契約）、M13（抓取抬高＋傾斜）、M14／M15（跨模型互動）、M16（訓練場景：玩家走站＋七步流程檢核評分）、M17（鏟刮板接觸收納：第六步真人走通）、M18（手部污染／教學測驗模式／桶口足跡判定／情境提示）皆結案。
-上線 https://monkeyday.tail8e3f79.ts.net/playground/ （player-garden 統包，首頁預設訓練場景；`?scene=chemo` 沙盒、`?scene=parkour` 跑酷）。
+上線 https://<internal-host>/playground/ （player-garden 統包，首頁預設訓練場景；`?scene=chemo` 沙盒、`?scene=parkour` 跑酷）。
 ROADMAP M18、tasks/0030、設計文件 `superpowers/specs/2026-09-06-training-contamination-modes-design.md`。
 
 ## 候選（等使用者選，依價值排序）

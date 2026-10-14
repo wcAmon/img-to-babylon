@@ -673,7 +673,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 
 - [x] **Step 1: 部署**
 
-Run: `cd ../player-garden && bash scripts/serve.sh && curl -s -o /dev/null -w '%{http_code}\n' https://monkeyday.tail8e3f79.ts.net/playground/`
+Run: `cd ../player-garden && bash scripts/serve.sh && curl -s -o /dev/null -w '%{http_code}\n' https://<internal-host>/playground/`
 Expected: 200；`grep -l "cross-contamination" ~/.local/share/player-garden/www/playground/assets/*.js` 有命中。
 
 - [x] **Step 2: ROADMAP.md M18 段**

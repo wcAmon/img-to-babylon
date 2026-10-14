@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.png import read_rgba  # noqa: E402
 
-DEFAULT_BASE = os.environ.get("IMG2BABYLON_TOMATO_BASE", "https://tomato.tail8e3f79.ts.net")
+DEFAULT_BASE = os.environ.get("IMG2BABYLON_TOMATO_BASE", "")
 EXTEND_PROMPT = (
     "Extend the blank white area below to show the same woman standing at full height: "
     "black tactical cargo trousers, black combat boots, arms slightly away from the body in a relaxed A-pose, "
@@ -27,6 +27,8 @@ def _open(opener, req, timeout):
 
 
 def tomato_edit(image_png: Path, prompt: str, seed: int, opener=None, base: str = DEFAULT_BASE) -> tuple[bytes, dict]:
+    if not base:
+        raise SystemExit("tomato: IMG2BABYLON_TOMATO_BASE is not set; tomato is optional, provide the image yourself")
     opener = opener or urllib.request.build_opener()
     payload = {"prompt": prompt, "image": base64.b64encode(Path(image_png).read_bytes()).decode(), "seed": seed}
     body = json.dumps(payload).encode()

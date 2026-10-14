@@ -265,7 +265,7 @@ image-to-physics 目標改向：遙控雙足機器人（鴨子型態、腳很長
 設計文件 `docs/superpowers/specs/2026-09-04-chemo-spill-set-design.md`、計畫 `docs/superpowers/plans/2026-09-04-chemo-spill-set.md`。
 三個題材物件走六步五 pass；契約只擴 `rupture`（質量轉移：袋子排空、水漬、液滴；偵測用單步動量變化
 m·|Δv|，不用碰撞回呼）。展示環境是獨立專案 `../playground`（別名吃本 checkout，自己的 git），
-`tailscale serve` 掛根路徑 `https://monkeyday.tail8e3f79.ts.net/`。
+`tailscale serve` 掛根路徑 `https://<internal-host>/`。
 
 - [x] 0022 rupture 契約（validate_spec TDD、Actuator kind `rupture`、harness 按鈕、`src/hinge.ts` 共用 hinge／servo
       助手、actuation_test 覆蓋、`rupture_test.ts` gate）＋三模型＋playground＋tailnet。結果：
@@ -372,7 +372,7 @@ harness 背景色改與地板同色（Divine Eye 天際帶陷阱）。四新模�
       `training/{world,player,flow,snapshot,ui,main}.ts`：五站佈局＋點滴架＋PPE 桌＋掛袋（STATIC 往返）、玩家不跳＋PPE 換色、純邏輯流程狀態機
       （七步完成條件、六種記錯、手套最後、入桶事件、分數 100−10×錯）、快照（hinge 角以 BuiltModel 快取、桶口取 bin 子樹 AABB）、面板（附近 1.5 m 物件按鈕跟物件走）。
       `training-test` 13 項綠（黃金路徑七步 100 分：消毒 1.00、封 10、袋 dispose）；scene-test 34、parkour-test 不變。
-      tailnet https://monkeyday.tail8e3f79.ts.net/playground/ 走真實輸入層演完七步：0 錯、100 分（`.img2babylon/shots/playground6-{room,ppe,absorb,wipe,done}.png`）。
+      tailnet https://<internal-host>/playground/ 走真實輸入層演完七步：0 錯、100 分（`.img2babylon/shots/playground6-{room,ppe,absorb,wipe,done}.png`）。
       實測發現：ArcRotateCamera `target=` setter 會從目前位置重算 alpha／beta／radius → 跟隨鏡頭要就地 `LerpToRef`；抓粉罐要抓瓶身（pick 到瓶蓋會傾斜蓋子）；
       鏟刮板**鏟不起**地面凝固顆粒（鏟底碰撞盒離地約 4 mm、前唇無斜角，顆粒被推著走），顆粒 `isPickable=false`——演示入袋改用抓取控制器 API，模型側修正列入 next-steps。
 

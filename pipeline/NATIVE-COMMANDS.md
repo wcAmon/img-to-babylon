@@ -10,7 +10,7 @@ requires its own review. See [acceptance](../docs/migration/acceptance.json) and
 
 ## Paths and interpreter
 
-Start in `/Users/wake/Desktop/local_three/img-to-babylon`. Set the example
+Start in `$REPO`. Set the example
 variables to the actual task's existing inputs before using an input-dependent
 command. None of these examples selects or edits female-tactical.
 

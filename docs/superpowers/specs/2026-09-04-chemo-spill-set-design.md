@@ -161,7 +161,7 @@ playground/
 - `npm run build` → `dist/`；`vite preview --host 127.0.0.1 --port 4173 --strictPort` 常駐（launchd
   `KeepAlive`、`RunAtLoad`，log 至 `~/Library/Logs/playground.log`）。
 - `tailscale serve --bg http://127.0.0.1:4173` 掛根路徑，取代目前指向無人聽的 8788 之殘留設定
-  （使用者 2026-09-04 決定改掛根）。網址 `https://monkeyday.tail8e3f79.ts.net/`。
+  （使用者 2026-09-04 決定改掛根）。網址 `https://<internal-host>/`。
 - `scripts/serve.sh`：build → 重載 launchd → 設 tailscale serve → curl 驗證 200。
 
 ### 5.4 驗證
@@ -171,7 +171,7 @@ playground/
   全部落地靜止（body y 在地板上、速度 < 0.02）、無 NaN；命令 `servo:lid.x` 1.6 後 180 步蓋角 ≥ 1.2；
   廢棄物桶踏板 −0.3、蓋 1.5 後到位；點滴袋抬 1.5 m 放手 → 破裂、液滴數正確；歸位重建後 body 數還原。
 - playwright 截圖（`.img2babylon/shots/playground-*.png`）目視：三物件、側欄、打開狀態各一。
-- tailnet：`curl -s -o /dev/null -w '%{http_code}' https://monkeyday.tail8e3f79.ts.net/` = 200，
+- tailnet：`curl -s -o /dev/null -w '%{http_code}' https://<internal-host>/` = 200，
   且 `index.html` 內容含 playground 標題。
 
 ## 6. 執行順序與 commit 粒度

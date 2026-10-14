@@ -4,7 +4,7 @@ model: （無新模型；../playground src/interactions.ts、src/grab.ts、src/u
      設計文件 docs/superpowers/specs/2026-09-06-playground-interactions-2-design.md；計畫 docs/superpowers/plans/2026-09-06-playground-interactions-2.md。
 分工: Claude 全做。
 驗收: playground `npm run typecheck` 綠；`npm run scene-test` 34/34（既有 31＋grab:aim-nozzle／interact:seal-count／interact:wipe）；
-     tailnet https://monkeyday.tail8e3f79.ts.net/ 200、bundle 含新提示；playwright 以合成 pointer 事件走真實輸入層：抓噴瓶噴口 −0.344、滾輪抬高、拖曳、噴灑 60/60、消毒 100%；
+     tailnet https://<internal-host>/ 200、bundle 含新提示；playwright 以合成 pointer 事件走真實輸入層：抓噴瓶噴口 −0.344、滾輪抬高、拖曳、噴灑 60/60、消毒 100%；
      吸附墊攤開拖到水漬上→「水漬已擦拭」、puddle disabled；10 顆凝固顆粒封袋→「已封入凝固顆粒 10」、質量 0.20→0.23。證據 .img2babylon/shots/playground5-{wipe,sealed}.png。
 notes:
   - 擦拭判定＝半片平放＋水漬中心在半片局部 AABB 內；alpha 遞減蓋過消毒內插；wiped 後足跡半徑 0（不再吸附／消毒）。

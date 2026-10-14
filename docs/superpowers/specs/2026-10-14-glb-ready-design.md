@@ -32,7 +32,7 @@
 
 - GitHub `wcAmon/img-to-babylon` 私有，origin/main 停在 2026-09-03（`dffc640`）。本機 checkout（`~/Desktop/local_three/object-studio/infrastructure/img2babylon`）領先 94 個 commit，工作區 487 個變更：462 個是 `viewer/models/female-tactical/` 的刪除，其餘是 13 支 `pipeline/scripts/yui_*.py`、`grimoire/blender_refinement.md` 未追蹤，和幾份 yui 文件的刪除。
 - 版控裡沒有 `.env`；`.gitignore` 已排除 `.env*`。密鑰樣式掃描（當前樹）為零。`configs/*.env` 只有路徑欄位。
-- 內網字樣：`tail8e3f79.ts.net` 主機名在 19 個檔案（README、ROADMAP、歷史 plan/spec、`forge/tomato.py` 的預設 BASE）；`/Users/wake/...` 絕對路徑在 8 個檔案（含 `pipeline/NATIVE-COMMANDS.md`）。
+- 內網字樣：`<internal-host>` 主機名在 19 個檔案（README、ROADMAP、歷史 plan/spec、`forge/tomato.py` 的預設 BASE）；`<home-path>` 絕對路徑在 8 個檔案（含 `pipeline/NATIVE-COMMANDS.md`）。
 - 測試基準線：`python3 -m unittest discover -s forge/tests -t . -p 'test_*.py'` 134 個測試、3 個 error（`test_model_report.ReportTest` 讀不到 female-tactical 的 spec.json）；`viewer` 的 `tsc --noEmit` 失敗（`scripts/female_native_inspection_test.ts` 引用已刪的模型）。
 - viewer：`@babylonjs/core` 8.56.2、`loaders` 8.56.2、`havok` 1.3.14；沒有 `@babylonjs/serializers`，沒有 GLB 匯出。`src/headless.ts` 的 `createHeadlessScene()` 以 NullEngine 加 Havok 建場景，`registry.ts` 以 id 註冊 `ModelFactory`，`BuiltModel` 有 `root`、`meshes`、`physicsScale`、`factoryPose`。
 - 授權：只有 `pipeline/LICENSE`（Apache-2.0）。根目錄無授權檔。
@@ -282,7 +282,7 @@ version: 1.0.0
 
 1. **基準線修復**：`forge/tests/test_model_report.py` 改讀 `viewer/models/sample-crate/spec.json`（或 `action-figure`）；刪除 `viewer/scripts/female_native_inspection_test.ts`。`python3 -m unittest` 134 全綠、`tsc --noEmit` 綠。
 2. **提交工作區**：female-tactical 刪除、yui 文件刪除、`registry.ts` 與 `inspector.ts` 的修改（使用者決定留或捨）、`AGENTS.md`、`README.md`。`pipeline/scripts/yui_*.py` 與 `blender_refinement.md` 不加入；加進 `.gitignore`（`pipeline/scripts/yui_*.py`、`pipeline/scripts/materialize.py`、`pipeline/scripts/render_repair.py`、`pipeline/scripts/repair_yui_skin.py`）。
-3. **內網與路徑**：所有追蹤檔案中的 `*.tail8e3f79.ts.net` 主機名替換為 `<internal-host>`（19 個檔案）；`forge/tomato.py` 的 `BASE` 預設改為空字串，未設定 `IMG2BABYLON_TOMATO_BASE` 時以明確錯誤退出，`grimoire/intake.md` 說明 tomato 是選配的內部生圖服務，任何生圖工具或使用者提供的圖都可以；`/Users/wake/...` 在 `pipeline/NATIVE-COMMANDS.md` 改為 `$REPO`，歷史 plan 與 migration 文件中的改為 `<repo>`（8 個檔案）。
+3. **內網與路徑**：所有追蹤檔案中的 `*<internal-host>` 主機名替換為 `<internal-host>`（19 個檔案）；`forge/tomato.py` 的 `BASE` 預設改為空字串，未設定 `IMG2BABYLON_TOMATO_BASE` 時以明確錯誤退出，`grimoire/intake.md` 說明 tomato 是選配的內部生圖服務，任何生圖工具或使用者提供的圖都可以；`<home-path>` 在 `pipeline/NATIVE-COMMANDS.md` 改為 `$REPO`，歷史 plan 與 migration 文件中的改為 `<repo>`（8 個檔案）。
 4. **授權**：根目錄 `LICENSE` Apache-2.0（與 `pipeline/` 一致）、`NOTICE` 註明 `pipeline/` 源自 img2threejs（Apache-2.0）並列出 `pipeline/LICENSE`。
 5. **全歷史密鑰掃描**：`git log -p --all | grep -E` 常見樣式（`sk-`、`fal_`、`ghp_`、`AKIA`、32 位元十六進位對、`BEGIN PRIVATE KEY`）；有 `gitleaks` 時一併跑 `gitleaks git`。任何命中都先停下來給使用者看，不自行改寫歷史。
 6. **glb-ready 與 export-glb 實作**（§3 到 §7），測試全綠。

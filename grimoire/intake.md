@@ -1,6 +1,8 @@
 # Intake：取得並分析參考圖
 
-## tomato-image 生圖（主要路徑）
+## 參考圖來源
+
+tomato-image 是選配的內部生圖服務（`IMG2BABYLON_TOMATO_BASE` 未設定時 `forge/tomato.py` 直接以結束碼 2 退出）。任何生圖工具的輸出，或使用者直接提供的參考圖，都可以放到 `.img2babylon/<name>/hero.png` 走同一條流程。下面的 tomato 指令只在你有該服務時使用。
 
 - 生成：`python3 forge/tomato.py gen --prompt "<英文 prompt>" --seed <N> --out .img2babylon/<name>/hero.png`
 - Prompt 準則：英文；單一物件置中；中性素背景；柔和均勻光；避免強透視。

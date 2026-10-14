@@ -15,7 +15,15 @@ import time
 import urllib.error
 import urllib.request
 
-BASE = os.environ.get("IMG2BABYLON_TOMATO_BASE", "https://tomato.tail8e3f79.ts.net")
+def base_url():
+    """tomato is an optional internal image service. Without the env var, fail
+    loudly so the agent falls back to user-provided images (grimoire/intake.md)."""
+    base = os.environ.get("IMG2BABYLON_TOMATO_BASE", "").strip().rstrip("/")
+    if not base:
+        print("tomato: set IMG2BABYLON_TOMATO_BASE to your tomato-image server, "
+              "or provide reference images directly (see grimoire/intake.md)", file=sys.stderr)
+        raise SystemExit(2)
+    return base
 MAX_RETRIES = 3
 
 VIEW_PROMPTS = {
@@ -48,7 +56,7 @@ def _post_json(url, payload, opener=None, retries=MAX_RETRIES):
 
 def _fetch_asset(job_id, out_path, opener=None):
     opener = opener or urllib.request.build_opener()
-    with opener.open(f"{BASE}/assets/{job_id}", timeout=120) as resp:
+    with opener.open(f"{base_url()}/assets/{job_id}", timeout=120) as resp:
         data = resp.read()
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     with open(out_path, "wb") as f:
@@ -60,7 +68,7 @@ def cmd_gen(args, opener=None):
     payload = {"prompt": args.prompt, "aspect": args.aspect}
     if args.seed is not None:
         payload["seed"] = args.seed
-    job = _post_json(f"{BASE}/image", payload, opener)
+    job = _post_json(f"{base_url()}/image", payload, opener)
     n = _fetch_asset(job["job_id"], args.out, opener)
     print(json.dumps({"out": args.out, "bytes": n, "job_id": job["job_id"],
                       "mode": job.get("mode")}, ensure_ascii=False))
@@ -73,7 +81,7 @@ def cmd_edit(args, opener=None):
     payload = {"prompt": args.prompt, "image": b64}
     if args.seed is not None:
         payload["seed"] = args.seed
-    job = _post_json(f"{BASE}/image", payload, opener)
+    job = _post_json(f"{base_url()}/image", payload, opener)
     n = _fetch_asset(job["job_id"], args.out, opener)
     print(json.dumps({"out": args.out, "bytes": n, "job_id": job["job_id"],
                       "mode": job.get("mode")}, ensure_ascii=False))

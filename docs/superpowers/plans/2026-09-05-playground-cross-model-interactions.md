@@ -20,7 +20,7 @@
   水漬色 (0.90, 0.82, 0.40)/alpha 0.55 → (0.72, 0.82, 0.86)/alpha 0.25；凝固色 (0.80, 0.74, 0.50)。
 - 判定用**足跡**（`radius0 × maxScale`），不用縮小後的半徑。
 - 既有 scene_test 28 項不得變動；`respawn:all` 仍期望 21。
-- Bash cwd 每次呼叫重設回 img-to-babylon：playground 命令一律 `cd /Users/wake/Desktop/local_three/playground && …`。
+- Bash cwd 每次呼叫重設回 img-to-babylon：playground 命令一律 `cd <playground> && …`。
 - 每個 task 結尾 `npm run typecheck && npm run scene-test` 綠再 commit；commit 訊息尾註 Co-Authored-By／Claude-Session。
 
 ---
@@ -96,7 +96,7 @@ import { installInteractions } from "../src/interactions";
 
 - [x] **Step 2: 跑測試確認失敗**
 
-Run: `cd /Users/wake/Desktop/local_three/playground && npm run typecheck`
+Run: `cd <playground> && npm run typecheck`
 Expected: FAIL `Cannot find module '../src/interactions'`。
 
 - [x] **Step 3: 寫 `src/interactions.ts`**
@@ -202,14 +202,14 @@ export function installInteractions(scene: Scene, placed: () => Placed[]): Inter
 
 - [x] **Step 4: 跑 typecheck 與 scene_test**
 
-Run: `cd /Users/wake/Desktop/local_three/playground && npm run typecheck && npm run scene-test 2>&1 | tail -60`
+Run: `cd <playground> && npm run typecheck && npm run scene-test 2>&1 | tail -60`
 Expected: 31 項全 `ok: true`；`interact:absorb` 吸附 ≥ 30、縮放 ≤ 0.36；`interact:absorb-droplet` ≥ 3；`interact:disinfect` ≥ 20、消毒度 1。
 若 `interact:absorb` 不足：先印每顆最終 y 與到中心距離，分辨是「彈出足跡」還是「堆疊 y > 0.012」，再調環距，不放寬門檻。
 
 - [x] **Step 5: Commit（只加兩檔）**
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground && git status --short && git add src/interactions.ts scripts/scene_test.ts && git commit -m "playground M14：跨模型互動 interactions.ts（顆粒×水漬縮小＋凝固、顆粒×液滴、噴霧×水漬變色；足跡判定）；scene_test +3 → 31 項"
+cd <playground> && git status --short && git add src/interactions.ts scripts/scene_test.ts && git commit -m "playground M14：跨模型互動 interactions.ts（顆粒×水漬縮小＋凝固、顆粒×液滴、噴霧×水漬變色；足跡判定）；scene_test +3 → 31 項"
 ```
 
 ---
@@ -272,11 +272,11 @@ import { installInteractions } from "./interactions";
 
 - [x] **Step 4: 驗證並 commit**
 
-Run: `cd /Users/wake/Desktop/local_three/playground && npm run typecheck && npm run scene-test 2>&1 | grep -c '"ok": true'`
+Run: `cd <playground> && npm run typecheck && npm run scene-test 2>&1 | grep -c '"ok": true'`
 Expected: 31。
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground && git add src/ui.ts index.html && git commit -m "playground M14：installUi 掛載互動、點滴袋卡片顯示水漬／消毒狀態、提示補撒粉／噴霧"
+cd <playground> && git add src/ui.ts index.html && git commit -m "playground M14：installUi 掛載互動、點滴袋卡片顯示水漬／消毒狀態、提示補撒粉／噴霧"
 ```
 
 ---
@@ -289,7 +289,7 @@ cd /Users/wake/Desktop/local_three/playground && git add src/ui.ts index.html &&
 
 - [x] **Step 1: 起 dev server（背景）**
 
-Bash `run_in_background: true`：`cd /Users/wake/Desktop/local_three/playground && npm run dev -- --port 5175 --strictPort`。
+Bash `run_in_background: true`：`cd <playground> && npm run dev -- --port 5175 --strictPort`。
 
 - [x] **Step 2: playwright 演流程**
 
@@ -306,7 +306,7 @@ Bash `run_in_background: true`：`cd /Users/wake/Desktop/local_three/playground 
    按「噴灑」（或 `act("servo:trigger.x").set(0.45)` 1 s）；等 3 s；讀 `.status` 消毒 %、`puddle.material.diffuseColor`；截 `playground5-disinfect.png`。
 5. 結果如實記錄（幾顆凝固、消毒 %）；噴不到就改變高度／角度再試一次，兩次不成就記錄「需手動瞄準」不硬湊。
 
-`filename` 結果落在 img-to-babylon 根目錄：`find /Users/wake/Desktop/local_three/img-to-babylon -maxdepth 1 -name 'phase*.json'`，解碼後 `.img2babylon/shots/`，刪 json。
+`filename` 結果落在 img-to-babylon 根目錄：`find <repo> -maxdepth 1 -name 'phase*.json'`，解碼後 `.img2babylon/shots/`，刪 json。
 
 - [x] **Step 3: README 一句（不提交）**
 
@@ -314,8 +314,8 @@ Bash `run_in_background: true`：`cd /Users/wake/Desktop/local_three/playground 
 
 - [x] **Step 4: 停 dev server、重部署**
 
-`pkill -f "vite.*5175"`（背景任務 exit 143 屬預期），然後 `cd /Users/wake/Desktop/local_three/playground && npm run serve`；
-`curl -s -o /dev/null -w '%{http_code}' https://monkeyday.tail8e3f79.ts.net/` → 200；`curl -s https://monkeyday.tail8e3f79.ts.net/ | grep -c 'card .status'` → 1。
+`pkill -f "vite.*5175"`（背景任務 exit 143 屬預期），然後 `cd <playground> && npm run serve`；
+`curl -s -o /dev/null -w '%{http_code}' https://<internal-host>/` → 200；`curl -s https://<internal-host>/ | grep -c 'card .status'` → 1。
 
 ---
 

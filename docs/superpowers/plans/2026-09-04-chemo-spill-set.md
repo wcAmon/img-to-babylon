@@ -22,7 +22,7 @@
 - commit 訊息尾端固定加：
   `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>` 與
   `Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6`。
-- playground 對外網址 `https://monkeyday.tail8e3f79.ts.net/`（根路徑，取代殘留的 8788 設定）。
+- playground 對外網址 `https://<internal-host>/`（根路徑，取代殘留的 8788 設定）。
 
 ---
 
@@ -103,7 +103,7 @@
 
 - [ ] **Step 2: 跑測試確認失敗**
 
-Run: `cd /Users/wake/Desktop/local_three/img-to-babylon && python3 -m unittest forge.tests.test_validate_spec -v 2>&1 | tail -15`
+Run: `cd <repo> && python3 -m unittest forge.tests.test_validate_spec -v 2>&1 | tail -15`
 Expected: 4 個 rupture 測試 FAIL（`test_rupture_valid_passes` 會過，因為未知欄位目前被忽略）。
 
 - [ ] **Step 3: 實作驗證**
@@ -567,7 +567,7 @@ git commit -m "M10 0022 rupture 契約：Actuator kind rupture、harness 按鈕�
 - [ ] **Step 1: 初始化與參考圖**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon
+cd <repo>
 python3 forge/next_pass.py init --model chemo-spill-kit --force
 mkdir -p .img2babylon/chemo-spill-kit .img2babylon/shots
 python3 forge/tomato.py gen --seed 1022 --out .img2babylon/chemo-spill-kit/hero.png --prompt "a purple hard-shell plastic chemotherapy spill kit case with a yellow warning stripe, lid hinged open about 100 degrees showing white absorbent pads, a blue glove box, a purple waste bag roll and safety goggles inside, a gray carry handle on the lid, a printed label reading CYTOTOXIC SPILL KIT, three-quarter view from the front, centered, plain light gray background, soft studio lighting, product photo"
@@ -1601,8 +1601,8 @@ git commit -m "M10 0022 cytotoxic-waste-bin：腳踏廢棄物桶（lathe 殼＋�
 - [ ] **Step 1: 專案骨架**
 
 ```bash
-mkdir -p /Users/wake/Desktop/local_three/playground/{src,scripts,launchd}
-cd /Users/wake/Desktop/local_three/playground && git init -q
+mkdir -p <playground>/{src,scripts,launchd}
+cd <playground> && git init -q
 ```
 
 `package.json`：
@@ -1724,7 +1724,7 @@ dist/
 </html>
 ```
 
-Run: `cd /Users/wake/Desktop/local_three/playground && npm install 2>&1 | tail -2`
+Run: `cd <playground> && npm install 2>&1 | tail -2`
 Expected: 安裝完成，無 error。
 
 - [ ] **Step 2: `src/scene.ts`（擺放清單＋生成）**
@@ -2185,7 +2185,7 @@ main().then((c) => process.exit(c)).catch((e) => { console.error(e); process.exi
 - [ ] **Step 8: 跑 typecheck 與 gate**
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground && npx tsc --noEmit && node --import tsx scripts/scene_test.ts | tail -20
+cd <playground> && npx tsc --noEmit && node --import tsx scripts/scene_test.ts | tail -20
 ```
 
 Expected: tsc 無錯、`"pass": true`。`createHeadlessScene` 走 `img2babylon-viewer` 根入口（tsx 依 tsconfig paths 解析）。
@@ -2193,7 +2193,7 @@ Expected: tsc 無錯、`"pass": true`。`createHeadlessScene` 走 `img2babylon-v
 - [ ] **Step 9: 瀏覽器目視**
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground && (npm run dev > /dev/null 2>&1 &) && sleep 3 && curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5175/
+cd <playground> && (npm run dev > /dev/null 2>&1 &) && sleep 3 && curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5175/
 ```
 
 playwright：`browser_navigate` → `http://localhost:5175/`，等 `window.__PLAYGROUND_READY__`；`browser_take_screenshot` 存 `.img2babylon/shots/playground-overview.png`（img-to-babylon 的 `.img2babylon/shots/`）；按「打開」「踩踏板」「摔落」各等 2 秒再截 `playground-open.png`、`playground-rupture.png`；agent vision 讀回確認三物件、側欄、水漬。
@@ -2201,7 +2201,7 @@ playwright：`browser_navigate` → `http://localhost:5175/`，等 `window.__PLA
 - [ ] **Step 10: Commit（playground repo）**
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground
+cd <playground>
 git add -A
 git commit -m "playground：化療潑灑處理套件展示環境（三模型、側欄互動、抓取拖曳、HUD、headless scene_test）"
 ```
@@ -2255,19 +2255,19 @@ curl -sf -o /dev/null http://127.0.0.1:4173/ && echo "preview 4173 OK"
 "$TS" serve --bg http://127.0.0.1:4173
 sleep 2
 "$TS" serve status
-code="$(curl -s -o /dev/null -w '%{http_code}' https://monkeyday.tail8e3f79.ts.net/)"
-echo "tailnet https://monkeyday.tail8e3f79.ts.net/ -> $code"
+code="$(curl -s -o /dev/null -w '%{http_code}' https://<internal-host>/)"
+echo "tailnet https://<internal-host>/ -> $code"
 [ "$code" = "200" ]
-curl -s https://monkeyday.tail8e3f79.ts.net/ | grep -q "化療潑灑處理 Playground" && echo "index 內容 OK"
+curl -s https://<internal-host>/ | grep -q "化療潑灑處理 Playground" && echo "index 內容 OK"
 ```
 
 `chmod +x scripts/serve.sh`。
 
 - [ ] **Step 2: 執行並驗證**
 
-Run: `cd /Users/wake/Desktop/local_three/playground && npm run serve 2>&1 | tail -12`
+Run: `cd <playground> && npm run serve 2>&1 | tail -12`
 Expected: `preview 4173 OK`、serve status 顯示 `/ proxy http://127.0.0.1:4173`、`-> 200`、`index 內容 OK`。
-再從 tailnet 網址用 playwright 開一次 `https://monkeyday.tail8e3f79.ts.net/`，確認 Havok wasm 載入（無 error banner）、三物件出現，截 `playground-tailnet.png`。
+再從 tailnet 網址用 playwright 開一次 `https://<internal-host>/`，確認 Havok wasm 載入（無 error banner）、三物件出現，截 `playground-tailnet.png`。
 
 若 `tailscale serve` 拒絕（HTTPS 未啟用）→ 回報使用者到 Tailscale 管理台開 HTTPS；不改用 http。
 
@@ -2283,7 +2283,7 @@ Expected: `preview 4173 OK`、serve status 顯示 `/ proxy http://127.0.0.1:4173
 - 開發：`npm run dev` → http://localhost:5175/
 - gate：`npx tsc --noEmit && npm run scene-test`
 - 對外：`npm run serve`（build → launchd 常駐 `vite preview` 4173 → `tailscale serve` 根路徑）
-  → https://monkeyday.tail8e3f79.ts.net/
+  → https://<internal-host>/
 - 停用：`launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.wake.playground.plist`；
   `tailscale serve reset`
 ```
@@ -2308,7 +2308,7 @@ git add -A && git commit -m "playground：serve.sh（build＋launchd 常駐 prev
 設計文件 `docs/superpowers/specs/2026-09-04-chemo-spill-set-design.md`。三個題材物件走六步五 pass，
 契約只擴 `rupture`（質量轉移：袋子排空、水漬、液滴；偵測用單步動量變化，不用碰撞回呼）。
 展示環境是獨立專案 `../playground`（別名吃本 checkout），`tailscale serve` 掛根路徑
-`https://monkeyday.tail8e3f79.ts.net/`。
+`https://<internal-host>/`。
 
 - [ ] 0022 rupture 契約＋三模型（`chemo-spill-kit`／`chemo-iv-bag`／`cytotoxic-waste-bin`）＋playground＋tailnet。
 ```

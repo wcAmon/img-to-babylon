@@ -6,7 +6,7 @@ model: （無新模型；../playground src/training/*、src/actions.ts、src/hin
 分工: Claude 全做。
 驗收: playground `npm run typecheck` 綠；`npm run training-test` 13/13（reach、wear、gloves-first、no-ppe-contact、stepped-in-spill、wipe-before-disinfect、unsealed-dispose、doff-gate、
      layout、bag-drop、s17-figure、player、golden）；`scene-test` 34/34、`parkour-test` PASS 不變。
-     部署改 `../player-garden/scripts/serve.sh` 統包 → https://monkeyday.tail8e3f79.ts.net/playground/ 200、bundle 含「化療潑灑處理訓練」。
+     部署改 `../player-garden/scripts/serve.sh` 統包 → https://<internal-host>/playground/ 200、bundle 含「化療潑灑處理訓練」。
      瀏覽器（playwright 合成鍵盤／pointer／wheel 走真實輸入層）演完七步：立牌搬到 (−1.11, 0)、PPE 三件依序穿上、開處理包、粉罐 40 顆 32 顆進足跡（水漬 0.35）、
      噴 31 滴 30 滴吸收（消毒 100%）、墊蓋上擦掉、封袋 2 顆、袋投桶 dispose、脫除 → 7/7、0 錯、100 分（.img2babylon/shots/playground6-{room,ppe,absorb,wipe,done}.png）。
 notes:

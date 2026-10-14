@@ -24,7 +24,7 @@
   ```
 - Bash 的 cwd 每次呼叫重設回 img-to-babylon；playground 命令一律 `cd ../playground && …`。dev server 用 `run_in_background`。
 - 部署：**已改由 `../player-garden/scripts/serve.sh` 統包**（playground 以 `--base=/playground/` build 到 `dist-sub/`），
-  網址 https://monkeyday.tail8e3f79.ts.net/playground/ ；playground 自己的 `scripts/serve.sh` 與 `com.wake.playground` 已退役，**不要再跑 `npm run serve`**。
+  網址 https://<internal-host>/playground/ ；playground 自己的 `scripts/serve.sh` 與 `com.wake.playground` 已退役，**不要再跑 `npm run serve`**。
 
 ---
 
@@ -1544,7 +1544,7 @@ EOF
 - [x] **Step 3: 部署（player-garden 統包）**
 
 Run: `cd ../player-garden && bash scripts/serve.sh 2>&1 | tail -5`
-Expected: 無錯；`curl -s https://monkeyday.tail8e3f79.ts.net/playground/ | grep -c '<canvas id="app">'` → `1`；
+Expected: 無錯；`curl -s https://<internal-host>/playground/ | grep -c '<canvas id="app">'` → `1`；
 `ls ~/.local/share/player-garden/www/playground/assets/*.js | head -1 | xargs grep -c '化療潑灑處理訓練'` → `1`。
 若 player-garden 工作區有別人未提交的改動，不動它，只跑腳本。
 

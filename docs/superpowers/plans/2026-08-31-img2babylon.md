@@ -1796,7 +1796,7 @@ git commit -m "feat(forge): compare 並排對照表（stdlib PNG 編解碼）"
   - `python3 forge/tomato.py gen --prompt "..." [--aspect 16:9|9:16] [--seed N] --out hero.png`
   - `python3 forge/tomato.py edit --image src.png --prompt "..." [--seed N] --out out.png`
   - `python3 forge/tomato.py views --image hero.png --out-dir dir`（產 side.png、rear.png）
-- 端點：`$IMG2BABYLON_TOMATO_BASE`（預設 `https://tomato.tail8e3f79.ts.net`）的 `POST /image` 與 `GET /assets/{job_id}`；503 依 Retry-After 退避 ≤3 次。
+- 端點：`$IMG2BABYLON_TOMATO_BASE`（預設 `https://<internal-host>`）的 `POST /image` 與 `GET /assets/{job_id}`；503 依 Retry-After 退避 ≤3 次。
 - 程式面：`_post_json(url, payload, opener, retries)`（測試注入 fake opener）。
 
 - [ ] **Step 1: 寫失敗測試**
@@ -1892,7 +1892,7 @@ import time
 import urllib.error
 import urllib.request
 
-BASE = os.environ.get("IMG2BABYLON_TOMATO_BASE", "https://tomato.tail8e3f79.ts.net")
+BASE = os.environ.get("IMG2BABYLON_TOMATO_BASE", "https://<internal-host>")
 MAX_RETRIES = 3
 
 VIEW_PROMPTS = {

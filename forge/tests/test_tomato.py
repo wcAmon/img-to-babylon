@@ -62,7 +62,8 @@ class TomatoTest(unittest.TestCase):
             json.dumps({"job_id": "j3", "mode": "generate"}).encode(),
             b"\x89PNG fake bytes",
         ])
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.dict(os.environ, {'IMG2BABYLON_TOMATO_BASE': 'https://t.test'}):
             out = os.path.join(tmp, "nested", "sub", "hero.png")
             args = mock.Mock(prompt="p", aspect="16:9", seed=None, out=out)
             rc = tomato.cmd_gen(args, opener)
@@ -70,6 +71,15 @@ class TomatoTest(unittest.TestCase):
             self.assertTrue(os.path.isfile(out))
             with open(out, "rb") as f:
                 self.assertEqual(f.read(), b"\x89PNG fake bytes")
+
+    def test_base_url_requires_env(self):
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop('IMG2BABYLON_TOMATO_BASE', None)
+            with self.assertRaises(SystemExit) as ctx:
+                tomato.base_url()
+            self.assertEqual(ctx.exception.code, 2)
+        with mock.patch.dict(os.environ, {'IMG2BABYLON_TOMATO_BASE': 'https://example.test/'}):
+            self.assertEqual(tomato.base_url(), 'https://example.test')
 
 
 if __name__ == "__main__":

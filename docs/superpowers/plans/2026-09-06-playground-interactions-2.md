@@ -16,7 +16,7 @@
 - 只改 `../playground`；契約側不動。只 `git add`：`src/interactions.ts`、`src/grab.ts`、`src/ui.ts`、`scripts/scene_test.ts`。README 改但不提交。
 - 常數：PAD_HALF (0.10, 0.125)、PAD_FLAT_UP 0.9、PAD_FLAT_Y 0.04、WIPE_RATE 1/60、AIM_PITCH −0.35。
 - 消毒 alpha 內插只在未擦拭時寫；擦拭中 alpha 單調下降；wiped 後足跡半徑視為 0（不再吸附／消毒）。
-- 既有 31 項不得變動；`respawn:all` 仍期望 21。playground 命令一律 `cd /Users/wake/Desktop/local_three/playground && …`。
+- 既有 31 項不得變動；`respawn:all` 仍期望 21。playground 命令一律 `cd <playground> && …`。
 - 每個 task 結尾 `npm run typecheck && npm run scene-test` 綠再 commit；commit 訊息尾註 Co-Authored-By／Claude-Session。
 
 ---

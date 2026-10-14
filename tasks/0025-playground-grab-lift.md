@@ -4,7 +4,7 @@ model: （無新模型；../playground src/grabController.ts、src/grab.ts、src
      設計文件 docs/superpowers/specs/2026-09-05-playground-grab-lift-design.md；計畫 docs/superpowers/plans/2026-09-05-playground-grab-lift.md。
 分工: Claude 全做。
 驗收: playground `npm run typecheck` 綠；`npm run scene-test` 28/28（既有 25＋grab:lift／grab:tilt／grab:carry-pour）；
-     tailnet https://monkeyday.tail8e3f79.ts.net/ 200、新提示樣式上線；playwright 以 `__PLAYGROUND_GRAB__` 演完整流程：
+     tailnet https://<internal-host>/ 200、新提示樣式上線；playwright 以 `__PLAYGROUND_GRAB__` 演完整流程：
      粉罐開蓋→抓起搬到鏟斗上方傾倒 40 顆入斗 39 →鏟後仰→抬 0.5 m→搬到袋上→前傾 2.0 rad→38 顆落袋→鏟歸位→封袋質量 0.20→0.314、38 顆 dispose。
      證據 .img2babylon/shots/playground4-{scoop,pour,sealed}.png。
 notes:

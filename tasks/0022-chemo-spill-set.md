@@ -5,7 +5,7 @@ model: chemo-spill-kit / chemo-iv-bag / cytotoxic-waste-bin    status: done（20
 分工: Claude 全做。
 驗收: 每模型 strict spec／check_colliders／physics_test（含 --nudge）／actuation_test／（iv-bag）rupture_test 全綠；
      Divine Eye：kit reject（監工目視通過）、bag pass、bin pass；playground tsc＋scene_test 綠、tailnet curl 200、
-     playwright 在 https://monkeyday.tail8e3f79.ts.net/ 實測三模型＋破裂。
+     playwright 在 https://<internal-host>/ 實測三模型＋破裂。
 notes:
   - rupture 門檻 2.0 N·s：0.55 kg 自 0.3 m（physics_test）與 0.2 m 不破、1.5 m 必破，未調整。Havok 質量存 float32，gate 容差 1e-5。
   - 液滴：理想球在地面永滾（無滾動阻力），線性／角阻尼 2.0 才能 300 步內靜止。

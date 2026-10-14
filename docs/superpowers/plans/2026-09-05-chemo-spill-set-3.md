@@ -27,8 +27,8 @@
 - commit 訊息尾端固定加：
   `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>` 與
   `Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6`。
-- bash 每次呼叫 cwd 可能殘留上次 `cd`：每個命令用絕對路徑或開頭 `cd /Users/wake/Desktop/local_three/img-to-babylon`。zsh 分隔符用 `'---'`。
-- playground 對外網址 `https://monkeyday.tail8e3f79.ts.net/`。
+- bash 每次呼叫 cwd 可能殘留上次 `cd`：每個命令用絕對路徑或開頭 `cd <repo>`。zsh 分隔符用 `'---'`。
+- playground 對外網址 `https://<internal-host>/`。
 
 ---
 
@@ -53,7 +53,7 @@
 
 ## 共用流程片段（各模型任務引用）
 
-**A. 視覺 gate 截圖（playwright MCP）**：viewer dev server 在 5173（`cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && nohup npm run dev -- --port 5173 > /dev/null 2>&1 &`，已在跑就略過）。
+**A. 視覺 gate 截圖（playwright MCP）**：viewer dev server 在 5173（`cd <repo>/viewer && nohup npm run dev -- --port 5173 > /dev/null 2>&1 &`，已在跑就略過）。
 `browser_navigate` 到 `http://localhost:5173/#model=<name>&physics=1`，換模型後必 `browser_evaluate` 執行 `location.reload()` 再等 900 ms。截圖：
 
 ```js
@@ -83,7 +83,7 @@ for pair in sys.argv[2:]:
 
 **B. 對照與預審**：
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && python3 forge/compare.py .img2babylon/<name>/hero.png .img2babylon/shots/<name>-hero.png --out .img2babylon/<name>/sheet.png && python3 forge/divine_eye.py --reference .img2babylon/<name>/hero.png --render .img2babylon/shots/<name>-hero.png --json
+cd <repo> && python3 forge/compare.py .img2babylon/<name>/hero.png .img2babylon/shots/<name>-hero.png --out .img2babylon/<name>/sheet.png && python3 forge/divine_eye.py --reference .img2babylon/<name>/hero.png --render .img2babylon/shots/<name>-hero.png --json
 ```
 Read `sheet.png` 目視評分（likeness／colliderFit 1–10）。REJECT 先分類是否三種系統性原因（天際帶／白主體淺灰地板／多物件構圖）；是 → 目視判定並在 reviewHistory 註明；否 → `next_pass.py correction` 修模型（exit 3 停下問使用者）。
 
@@ -178,7 +178,7 @@ Read `sheet.png` 目視評分（likeness／colliderFit 1–10）。REJECT 先分
 - [x] **Step 2: 跑測試確認失敗**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && python3 -m unittest forge.tests.test_validate_spec -v 2>&1 | tail -25
+cd <repo> && python3 -m unittest forge.tests.test_validate_spec -v 2>&1 | tail -25
 ```
 Expected：`test_pour_without_tilt_requires_gate`（第一段 tilt 缺就報 tiltThreshold 錯而非 gate 錯→FAIL）、`test_pour_direction_unit_vector`、`test_pour_exit_speed_positive`、`test_pour_spray_shape_passes`、五個 `test_collect_*` FAIL；其餘 OK。
 
@@ -273,7 +273,7 @@ bodies 迴圈裡 `_check_pour(...)` 之後加一行 `_check_collect(bid, b, erro
 - [x] **Step 4: 跑測試確認通過**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && python3 -m unittest discover -s forge/tests -t . -p 'test_*.py' 2>&1 | tail -3 && python3 forge/validate_spec.py viewer/models/absorbent-powder-shaker/spec.json --strict
+cd <repo> && python3 -m unittest discover -s forge/tests -t . -p 'test_*.py' 2>&1 | tail -3 && python3 forge/validate_spec.py viewer/models/absorbent-powder-shaker/spec.json --strict
 ```
 Expected：`Ran 121 tests … OK`（112＋9）；粉罐 spec 仍 `OK`。
 
@@ -329,7 +329,7 @@ restOffset 節之後加：
 - [x] **Step 6: Commit**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && git add forge/validate_spec.py forge/tests/test_validate_spec.py grimoire/spec.md grimoire/physics.md && git commit -m "M12 契約 forge 側：pour 加 direction／exitSpeed、tiltThreshold 選填（無則 gate 必填）；新增 collect（interior／maxItemMass）；validate_spec TDD 9 測試、grimoire 兩檔
+cd <repo> && git add forge/validate_spec.py forge/tests/test_validate_spec.py grimoire/spec.md grimoire/physics.md && git commit -m "M12 契約 forge 側：pour 加 direction／exitSpeed、tiltThreshold 選填（無則 gate 必填）；新增 collect（interior／maxItemMass）；validate_spec TDD 9 測試、grimoire 兩檔
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
@@ -553,14 +553,14 @@ main().then((code) => process.exit(code)).catch((err) => { console.error(err); p
 - [x] **Step 6: tsc 與既有 gate 不退化**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit && npx tsx scripts/pour_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json | tail -3 && npx tsx scripts/actuation_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json | tail -3 && npx tsx scripts/collect_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json
+cd <repo>/viewer && npx tsc --noEmit && npx tsx scripts/pour_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json | tail -3 && npx tsx scripts/actuation_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json | tail -3 && npx tsx scripts/collect_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json
 ```
 Expected：tsc 無錯；pour_test 粉罐 `"pass": true`；actuation_test pass；collect_test 印 `spec 無 collect 宣告` pass。
 
 - [x] **Step 7: Commit**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && git add viewer/src/types.ts viewer/src/harness.ts viewer/scripts/actuation_test.ts viewer/scripts/pour_test.ts viewer/scripts/collect_test.ts && git commit -m "M12 契約 viewer 側：Actuator kind collect、harness 按鈕、actuation_test collect 覆蓋；pour_test 依 tiltThreshold 切換直立情境；新 gate collect_test.ts
+cd <repo> && git add viewer/src/types.ts viewer/src/harness.ts viewer/scripts/actuation_test.ts viewer/scripts/pour_test.ts viewer/scripts/collect_test.ts && git commit -m "M12 契約 viewer 側：Actuator kind collect、harness 按鈕、actuation_test collect 覆蓋；pour_test 依 tiltThreshold 切換直立情境；新 gate collect_test.ts
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
@@ -581,7 +581,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - [x] **Step 1: 初始化與參考圖**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && python3 forge/next_pass.py init --model disinfectant-spray --force && mkdir -p .img2babylon/disinfectant-spray && python3 forge/tomato.py gen --seed 1201 --out .img2babylon/disinfectant-spray/hero.png --prompt "a 500 ml pale blue plastic trigger spray bottle of hospital surface disinfectant, white trigger sprayer head on top with the nozzle pointing to the right and a white trigger lever hanging under it, white label with blue print reading DISINFECTANT, standing upright, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
+cd <repo> && python3 forge/next_pass.py init --model disinfectant-spray --force && mkdir -p .img2babylon/disinfectant-spray && python3 forge/tomato.py gen --seed 1201 --out .img2babylon/disinfectant-spray/hero.png --prompt "a 500 ml pale blue plastic trigger spray bottle of hospital surface disinfectant, white trigger sprayer head on top with the nozzle pointing to the right and a white trigger lever hanging under it, white label with blue print reading DISINFECTANT, standing upright, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
 ```
 agent vision 讀圖校對比例（噴頭長度、扳機位置）；記 job_id／prompt。
 
@@ -914,7 +914,7 @@ export default function createDisinfectantSprayModel(scene: Scene, opts: ModelOp
 - [x] **Step 4: headless gate（含 pour 直立情境）**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/runtime_export.ts disinfectant-spray --spec models/disinfectant-spray/spec.json --out ../.img2babylon/disinfectant-spray/runtime.json \
  && python3 ../forge/check_colliders.py ../.img2babylon/disinfectant-spray/runtime.json \
  && npx tsx scripts/physics_test.ts disinfectant-spray --spec models/disinfectant-spray/spec.json | tail -4 \
@@ -933,7 +933,7 @@ material pass 檢查 ribbon 標籤：文字鏡像則在 `makeLabelTexture` 加 `
 - [x] **Step 6: Commit**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && git add viewer/models/disinfectant-spray viewer/src/registry.ts && git commit -m "M12 disinfectant-spray：消毒劑扳機噴瓶（扳機 servo 出廠回位＋pour 無傾角沿噴嘴 +z）；strict spec／check_colliders／physics_test／actuation_test／pour_test 綠
+cd <repo> && git add viewer/models/disinfectant-spray viewer/src/registry.ts && git commit -m "M12 disinfectant-spray：消毒劑扳機噴瓶（扳機 servo 出廠回位＋pour 無傾角沿噴嘴 +z）；strict spec／check_colliders／physics_test／actuation_test／pour_test 綠
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
@@ -954,7 +954,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - [x] **Step 1: 初始化與參考圖**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && python3 forge/next_pass.py init --model cytotoxic-waste-bag --force && mkdir -p .img2babylon/cytotoxic-waste-bag && python3 forge/tomato.py gen --seed 1202 --out .img2babylon/cytotoxic-waste-bag/hero.png --prompt "a bright yellow plastic cytotoxic waste bag standing open and upright with a rectangular box-shaped self-standing bottom, 30 cm wide 36 cm tall 20 cm deep, black biohazard symbol and black text CYTOTOXIC WASTE printed on the front, slightly crinkled rim, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
+cd <repo> && python3 forge/next_pass.py init --model cytotoxic-waste-bag --force && mkdir -p .img2babylon/cytotoxic-waste-bag && python3 forge/tomato.py gen --seed 1202 --out .img2babylon/cytotoxic-waste-bag/hero.png --prompt "a bright yellow plastic cytotoxic waste bag standing open and upright with a rectangular box-shaped self-standing bottom, 30 cm wide 36 cm tall 20 cm deep, black biohazard symbol and black text CYTOTOXIC WASTE printed on the front, slightly crinkled rim, three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
 ```
 agent vision 讀圖校對比例；記 job_id／prompt。
 
@@ -1259,7 +1259,7 @@ export default function createCytotoxicWasteBagModel(scene: Scene, opts: ModelOp
 - [x] **Step 4: headless gate（含 collect gate）**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/runtime_export.ts cytotoxic-waste-bag --spec models/cytotoxic-waste-bag/spec.json --out ../.img2babylon/cytotoxic-waste-bag/runtime.json \
  && python3 ../forge/check_colliders.py ../.img2babylon/cytotoxic-waste-bag/runtime.json \
  && npx tsx scripts/physics_test.ts cytotoxic-waste-bag --spec models/cytotoxic-waste-bag/spec.json | tail -4 \
@@ -1276,7 +1276,7 @@ Expected：check_colliders OK（密度 ≈ 75；五 collider 兩兩重疊 0%）�
 - [x] **Step 6: Commit**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && git add viewer/models/cytotoxic-waste-bag viewer/src/registry.ts && git commit -m "M12 cytotoxic-waste-bag：開口自立廢棄物袋（一 body 五 collider＋collect 封袋質量轉移，membership 8）；strict spec／check_colliders／physics_test／actuation_test／collect_test 綠
+cd <repo> && git add viewer/models/cytotoxic-waste-bag viewer/src/registry.ts && git commit -m "M12 cytotoxic-waste-bag：開口自立廢棄物袋（一 body 五 collider＋collect 封袋質量轉移，membership 8）；strict spec／check_colliders／physics_test／actuation_test／collect_test 綠
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
@@ -1296,7 +1296,7 @@ Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
 - [x] **Step 1: 初始化與參考圖**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && python3 forge/next_pass.py init --model scoop-and-scraper --force && mkdir -p .img2babylon/scoop-and-scraper && python3 forge/tomato.py gen --seed 1203 --out .img2babylon/scoop-and-scraper/hero.png --prompt "a purple hard plastic chemical spill kit scoop shaped like a small dustpan with low side walls and a short rear handle, and a purple flat scraper push board with a low foot and a small grip block, lying side by side on a light gray floor, seen from an above-front three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
+cd <repo> && python3 forge/next_pass.py init --model scoop-and-scraper --force && mkdir -p .img2babylon/scoop-and-scraper && python3 forge/tomato.py gen --seed 1203 --out .img2babylon/scoop-and-scraper/hero.png --prompt "a purple hard plastic chemical spill kit scoop shaped like a small dustpan with low side walls and a short rear handle, and a purple flat scraper push board with a low foot and a small grip block, lying side by side on a light gray floor, seen from an above-front three-quarter view, centered, plain light gray background, soft studio lighting, product photo"
 ```
 agent vision 讀圖校對比例；記 job_id／prompt。
 
@@ -1537,7 +1537,7 @@ export default function createScoopAndScraperModel(scene: Scene, opts: ModelOpti
 - [x] **Step 4: headless gate**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/runtime_export.ts scoop-and-scraper --spec models/scoop-and-scraper/spec.json --out ../.img2babylon/scoop-and-scraper/runtime.json \
  && python3 ../forge/check_colliders.py ../.img2babylon/scoop-and-scraper/runtime.json \
  && npx tsx scripts/physics_test.ts scoop-and-scraper --spec models/scoop-and-scraper/spec.json | tail -4 \
@@ -1553,7 +1553,7 @@ runtime_export 用 spec collider offset＋factory node 世界矩陣算 collider 
 - [x] **Step 6: Commit**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && git add viewer/models/scoop-and-scraper viewer/src/registry.ts && git commit -m "M12 scoop-and-scraper：小鏟（畚斗式、2.5 mm 前緣）＋推板（L 形）兩自由 body，membership 8；strict spec／check_colliders／physics_test 綠
+cd <repo> && git add viewer/models/scoop-and-scraper viewer/src/registry.ts && git commit -m "M12 scoop-and-scraper：小鏟（畚斗式、2.5 mm 前緣）＋推板（L 形）兩自由 body，membership 8；strict spec／check_colliders／physics_test 綠
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
@@ -1675,19 +1675,19 @@ import 行加 `PhysicsShapeSphere`。`respawn:all` 改期望 21：`total === 21`
 - [x] **Step 5: 跑 typecheck、gate、重部署**
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground && npx tsc --noEmit -p . && npm run scene-test 2>&1 | tail -50 && npm run serve 2>&1 | tail -4
+cd <playground> && npx tsc --noEmit -p . && npm run scene-test 2>&1 | tail -50 && npm run serve 2>&1 | tail -4
 ```
 Expected：scene_test `"pass": true`（24 項：18＋settle×3＋spray＋wbag×2＋tools）；serve 印 tailnet 200。
 若 `settle:disinfectant-spray` 紅（扳機出廠回位微動）：閾值仍 0.02 m/s，servo 到位後應靜止；若持續抖動，`SERVO_FORCE` 降 0.03。
 
 - [x] **Step 6: 瀏覽器目視**
 
-playwright 開 `https://monkeyday.tail8e3f79.ts.net/?v=4`，等 `__PLAYGROUND_READY__`，截 overview；按「噴灑」（噴瓶）等 1.5 s 截圖；按「封袋」（廢棄物袋）截圖；檔案 `mv` 到 `.img2babylon/shots/playground3-{overview,spray,seal}.png`，Read 目視：十件都在、噴霧落地成扇形、袋口打結。
+playwright 開 `https://<internal-host>/?v=4`，等 `__PLAYGROUND_READY__`，截 overview；按「噴灑」（噴瓶）等 1.5 s 截圖；按「封袋」（廢棄物袋）截圖；檔案 `mv` 到 `.img2babylon/shots/playground3-{overview,spray,seal}.png`，Read 目視：十件都在、噴霧落地成扇形、袋口打結。
 
 - [x] **Step 7: Commit（playground）**
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground && git add -A && git commit -m "playground：M12 十件（消毒劑噴瓶／鏟刮板／廢棄物袋）、新卡片（噴灑／封袋）、isDisposed 過濾、scene_test 新斷言；重部署
+cd <playground> && git add -A && git commit -m "playground：M12 十件（消毒劑噴瓶／鏟刮板／廢棄物袋）、新卡片（噴灑／封袋）、isDisposed 過濾、scene_test 新斷言；重部署
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"
@@ -1726,7 +1726,7 @@ interior 內的外來小 body；`collect_test.ts` gate）。三新模型＋playg
 `.remember/remember.md`：State M12 結案 commit；Next 等使用者；Context 本批新陷阱。
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon && git add ROADMAP.md tasks/0024-chemo-spill-set-3.md docs/next-steps.md docs/superpowers/plans/2026-09-05-chemo-spill-set-3.md && git commit -m "M12 結案：ROADMAP M12／tasks/0024／next-steps；三新模型＋pour 擴充＋collect 契約＋playground 十件全 gate 綠
+cd <repo> && git add ROADMAP.md tasks/0024-chemo-spill-set-3.md docs/next-steps.md docs/superpowers/plans/2026-09-05-chemo-spill-set-3.md && git commit -m "M12 結案：ROADMAP M12／tasks/0024／next-steps；三新模型＋pour 擴充＋collect 契約＋playground 十件全 gate 綠
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"

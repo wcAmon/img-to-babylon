@@ -26,7 +26,7 @@
   `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>` 與
   `Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6`。
 - bash 每次呼叫 cwd 重設為 repo 根；用絕對路徑或在同一命令內 `cd`。zsh 下 `echo =====` 會被當 `=` 展開，分隔符用 `'---'`。
-- playground 對外網址 `https://monkeyday.tail8e3f79.ts.net/`。
+- playground 對外網址 `https://<internal-host>/`。
 
 ---
 
@@ -522,7 +522,7 @@ main().then((code) => process.exit(code)).catch((err) => { console.error(err); p
 - [x] **Step 6: tsc 與既有 gate 不退化**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/pour_test.ts chemo-iv-bag --spec models/chemo-iv-bag/spec.json \
  && npx tsx scripts/actuation_test.ts chemo-iv-bag --spec models/chemo-iv-bag/spec.json | tail -3 \
  && npx tsx scripts/rupture_test.ts chemo-iv-bag --spec models/chemo-iv-bag/spec.json | tail -3
@@ -878,7 +878,7 @@ export default function createAbsorbentPowderShakerModel(scene: Scene, opts: Mod
 - [x] **Step 4: headless gate（含 pour gate）**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/runtime_export.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json --out ../.img2babylon/absorbent-powder-shaker/runtime.json \
  && python3 ../forge/check_colliders.py ../.img2babylon/absorbent-powder-shaker/runtime.json \
  && npx tsx scripts/physics_test.ts absorbent-powder-shaker --spec models/absorbent-powder-shaker/spec.json | tail -4 \
@@ -1143,7 +1143,7 @@ registry 加 `"spill-warning-sign": () => import("../models/spill-warning-sign/c
 - [x] **Step 4: headless gate**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/runtime_export.ts spill-warning-sign --spec models/spill-warning-sign/spec.json --out ../.img2babylon/spill-warning-sign/runtime.json \
  && python3 ../forge/check_colliders.py ../.img2babylon/spill-warning-sign/runtime.json \
  && npx tsx scripts/physics_test.ts spill-warning-sign --spec models/spill-warning-sign/spec.json | tail -4 \
@@ -1417,7 +1417,7 @@ registry 加 `"absorbent-pad": () => import("../models/absorbent-pad/createAbsor
 - [x] **Step 4: headless gate**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/runtime_export.ts absorbent-pad --spec models/absorbent-pad/spec.json --out ../.img2babylon/absorbent-pad/runtime.json \
  && python3 ../forge/check_colliders.py ../.img2babylon/absorbent-pad/runtime.json \
  && npx tsx scripts/physics_test.ts absorbent-pad --spec models/absorbent-pad/spec.json | tail -4 \
@@ -1712,7 +1712,7 @@ registry 加 `"ppe-set": () => import("../models/ppe-set/createPpeSetModel"),`�
 - [x] **Step 4: headless gate**
 
 ```bash
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/runtime_export.ts ppe-set --spec models/ppe-set/spec.json --out ../.img2babylon/ppe-set/runtime.json \
  && python3 ../forge/check_colliders.py ../.img2babylon/ppe-set/runtime.json \
  && npx tsx scripts/physics_test.ts ppe-set --spec models/ppe-set/spec.json | tail -4 \
@@ -1799,7 +1799,7 @@ Run strict validate → OK。
 
 ```bash
 python3 forge/next_pass.py init --model cytotoxic-waste-bin --force
-cd /Users/wake/Desktop/local_three/img-to-babylon/viewer && npx tsc --noEmit \
+cd <repo>/viewer && npx tsc --noEmit \
  && npx tsx scripts/runtime_export.ts cytotoxic-waste-bin --spec models/cytotoxic-waste-bin/spec.json --out ../.img2babylon/cytotoxic-waste-bin/runtime.json \
  && python3 ../forge/check_colliders.py ../.img2babylon/cytotoxic-waste-bin/runtime.json \
  && npx tsx scripts/physics_test.ts cytotoxic-waste-bin --spec models/cytotoxic-waste-bin/spec.json | tail -3 \
@@ -1951,18 +1951,18 @@ const STEPS = ["隔離現場、示警（警示立牌）", "穿戴防護裝備（
 - [x] **Step 5: 跑 typecheck、gate、重部署**
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground && npx tsc --noEmit -p . && npm run scene-test 2>&1 | tail -40 && npm run serve 2>&1 | tail -4
+cd <playground> && npx tsc --noEmit -p . && npm run scene-test 2>&1 | tail -40 && npm run serve 2>&1 | tail -4
 ```
 Expected：scene_test `"pass": true`；serve 印 tailnet 200 與 wasm MIME。
 
 - [x] **Step 6: 瀏覽器目視**
 
-playwright 開 `https://monkeyday.tail8e3f79.ts.net/?v=3`，等 `__PLAYGROUND_READY__`，截 overview；按「收合」（立牌）、「傾倒」（粉罐）、「攤開」（吸附墊）各等 2 s 截圖；檔案 `mv` 到 `.img2babylon/shots/playground2-{overview,fold,pour,unfold}.png`，Read 目視：七件都在、無穿地、顆粒落地成堆。
+playwright 開 `https://<internal-host>/?v=3`，等 `__PLAYGROUND_READY__`，截 overview；按「收合」（立牌）、「傾倒」（粉罐）、「攤開」（吸附墊）各等 2 s 截圖；檔案 `mv` 到 `.img2babylon/shots/playground2-{overview,fold,pour,unfold}.png`，Read 目視：七件都在、無穿地、顆粒落地成堆。
 
 - [x] **Step 7: Commit（playground）**
 
 ```bash
-cd /Users/wake/Desktop/local_three/playground && git add -A && git commit -m "playground：M11 七件（警示立牌／吸附粉罐／吸附墊／防護裝備組）、地板 6 m、新卡片、scene_test 新斷言；重部署
+cd <playground> && git add -A && git commit -m "playground：M11 七件（警示立牌／吸附粉罐／吸附墊／防護裝備組）、地板 6 m、新卡片、scene_test 新斷言；重部署
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01EgnRwhWUgpgrWcD8oVB9q6"

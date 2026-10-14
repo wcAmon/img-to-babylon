@@ -333,7 +333,7 @@ git add src/grab.ts src/ui.ts index.html && git commit -m "playground M13：抓�
 - [x] **Step 3: 完整流程盡力示範** — 粉罐「傾倒」→ 用 `__PLAYGROUND_GRAB__` 抓推板把顆粒推向鏟斗 → 抓鏟抬高搬到袋上傾斜 → 封袋；
   成功截 `playground4-flow.png`，不成功如實記錄於 tasks/0025。
 - [x] **Step 4: README** — 「滑鼠／觸控可直接抓取拖曳」句後加「；Shift 拖曳上下、滾輪調高度、Q／E 傾斜（桌機）」。不 commit。
-- [x] **Step 5: 重部署** — `npm run serve`；`curl -sI https://monkeyday.tail8e3f79.ts.net/ | head -1` 200。
+- [x] **Step 5: 重部署** — `npm run serve`；`curl -sI https://<internal-host>/ | head -1` 200。
 
 ### Task 5: 結案文件（img-to-babylon）
 

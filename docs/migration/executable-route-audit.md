@@ -6,7 +6,7 @@ female model, generator, runtime, workflow or capture implementation was edited.
 No browser, model rendering, downloads, commits or agents were used.
 
 The pinned original is
-`/Users/wake/Desktop/local_three/reference/img2threejs`, commit
+`<reference>/img2threejs`, commit
 `9fbd0ca5bbcc3b13bebe712745d6784d33db0b85`, matching
 [upstream-inventory.json](upstream-inventory.json). The reference checkout was
 read, not modified. Exact runnable substitutions and flags are in
