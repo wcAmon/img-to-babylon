@@ -169,5 +169,41 @@ class RepairTest(BlenderCase):
         self.assertTrue(any('geometry changed' in w for w in self.report(out)['warnings']))
 
 
+class BakeTest(BlenderCase):
+    def test_vertex_color_bake_grounds_and_scales(self):
+        out = self.out / 'baked.glb'
+        self.run_tool('bake_atlas.py', self.fx('sphere_vcolor'), out, '--source', 'vertex-color', '--size', '512', '--height', '1.0', '--ground')
+        result = glb_audit.audit(out, glb_audit.load_profile('nomen-land'))
+        self.assertEqual(result['problems'], [], result['problems'])
+        self.assertEqual(len(result['textures']), 1)
+        self.assertEqual((result['textures'][0]['width'], result['textures'][0]['height']), (512, 512))
+        self.assertAlmostEqual(result['geometry']['bounds']['size'][1], 1.0, delta=1e-3)
+        self.assertAlmostEqual(result['geometry']['minY'], 0.0, delta=1e-3)
+        doc, _ = glb_audit.read_glb(out)
+        prim = doc['meshes'][0]['primitives'][0]
+        self.assertIn('TEXCOORD_0', prim['attributes']); self.assertNotIn('COLOR_0', prim['attributes'])
+        self.assertEqual(len(doc['materials']), 1)
+
+    def test_material_rebake_keeps_colour_and_two_slots_become_one(self):
+        out = self.out / 'rebaked.glb'
+        self.run_tool('bake_atlas.py', self.fx('cube_two_materials'), out, '--source', 'material', '--size', '256')
+        doc, _ = glb_audit.read_glb(out)
+        self.assertEqual(len(doc['materials']), 1)
+        self.assertEqual(len(doc['meshes'][0]['primitives']), 1)
+        self.assertEqual(self.report(out)['params']['source'], 'material')
+
+    def test_high_to_low_bake(self):
+        low = self.out / 'low.glb'
+        self.run_tool('reduce_mesh.py', self.fx('sphere_hi'), low, '--target', '1500', '--rebuild-surface')
+        out = self.out / 'low_textured.glb'
+        self.run_tool('bake_atlas.py', low, out, '--source', 'high=%s' % self.fx('sphere_lo'), '--size', '256')
+        result = glb_audit.audit(out, glb_audit.load_profile('nomen-land'))
+        self.assertEqual(len(result['textures']), 1)
+        self.assertTrue(result['hasTexcoord0'])
+
+    def test_size_over_2048_is_usage_error(self):
+        self.run_tool('bake_atlas.py', self.fx('sphere_vcolor'), self.out / 'x.glb', '--source', 'vertex-color', '--size', '4096', expect=2)
+
+
 if __name__ == '__main__':
     unittest.main()

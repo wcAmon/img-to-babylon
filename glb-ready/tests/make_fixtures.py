@@ -21,7 +21,7 @@ def uv_sphere(segments, rings, name='sphere'):
     bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=0.015)
     bpy.ops.object.mode_set(mode='OBJECT')
-    mat = bpy.data.materials.new('sphere-mat'); mat.use_nodes = True
+    mat = bpy.data.materials.new('sphere-mat')
     mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.6, 0.3, 0.2, 1)
     obj.data.materials.append(mat)
     return obj
@@ -59,7 +59,7 @@ def fixture_sphere_vcolor():
     color = obj.data.color_attributes.new(name='Col', type='FLOAT_COLOR', domain='POINT')
     for v in obj.data.vertices:
         color.data[v.index].color = (max(v.co.z, 0.0) * 2, 0.2, 1.0 - max(v.co.z, 0.0) * 2, 1.0)
-    mat = bpy.data.materials.new('vc'); mat.use_nodes = True
+    mat = bpy.data.materials.new('vc')
     attr = mat.node_tree.nodes.new('ShaderNodeVertexColor'); attr.layer_name = 'Col'
     mat.node_tree.links.new(attr.outputs['Color'], mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
     obj.data.materials.append(mat)
@@ -72,7 +72,7 @@ def fixture_cube_tex1024():
     bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT'); bpy.ops.uv.smart_project(); bpy.ops.object.mode_set(mode='OBJECT')
     img = bpy.data.images.new('checker', 1024, 1024); img.generated_type = 'COLOR_GRID'
     img.filepath_raw = str(OUT / 'checker.png'); img.file_format = 'PNG'; img.save(); img.pack()
-    mat = bpy.data.materials.new('tex'); mat.use_nodes = True
+    mat = bpy.data.materials.new('tex')
     tex = mat.node_tree.nodes.new('ShaderNodeTexImage'); tex.image = img
     mat.node_tree.links.new(tex.outputs['Color'], mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
     obj.data.materials.append(mat)
@@ -85,7 +85,7 @@ def fixture_cube_two_materials():
     bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT'); bpy.ops.uv.smart_project()
     bpy.ops.mesh.subdivide(number_cuts=20); bpy.ops.object.mode_set(mode='OBJECT')
     for i, colour in enumerate([(1, 0, 0, 1), (0, 0, 1, 1)]):
-        m = bpy.data.materials.new('m%d' % i); m.use_nodes = True
+        m = bpy.data.materials.new('m%d' % i)
         m.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = colour; obj.data.materials.append(m)
     for p in obj.data.polygons:
         p.material_index = 0 if p.center.z < 0.5 else 1

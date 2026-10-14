@@ -139,7 +139,7 @@ def main():
         for v in mesh.vertices:
             _, i, _ = tree.find(v.co); color.data[v.index].color = colors[i]
         mesh.color_attributes.active_color = color
-        mat = bpy.data.materials.new('glb_ready_vertex_color'); mat.use_nodes = True
+        mat = bpy.data.materials.new('glb_ready_vertex_color')
         node = mat.node_tree.nodes.new('ShaderNodeVertexColor'); node.layer_name = 'Col'
         mat.node_tree.links.new(node.outputs['Color'], mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
         mesh.materials.clear(); mesh.materials.append(mat); resampled = True
