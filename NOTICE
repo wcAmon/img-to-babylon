@@ -1,0 +1,9 @@
+img-to-babylon
+Copyright 2026 wcAmon
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+pipeline/ is a port of img2threejs (https://github.com/hoainho/img2threejs),
+Apache License 2.0; its original licence text is kept at pipeline/LICENSE.
+glb-ready/ consolidates Blender workflows first written for sibling projects
+(character-studio, vr_robot, vr_chemo_spill) by the same author.
