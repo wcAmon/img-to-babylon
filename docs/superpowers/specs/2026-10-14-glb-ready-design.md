@@ -161,7 +161,7 @@ version: 1.0.0
 
 - Blender 5.x，背景模式：`blender -b --factory-startup --python-exit-code 1 --python glb-ready/scripts/<script>.py -- <args>`。macOS 的二進位在 `/Applications/Blender.app/Contents/MacOS/Blender`。
 - 腳本只用 Blender 內建的 Python 與 numpy。沒有 scipy、沒有 Pillow。
-- `glb_audit.py` 與 `validate_retarget.py` 用系統 `python3`（3.10+，stdlib）。
+- `glb_audit.py` 與 `validate_retarget.py` 用系統 `python3`（3.9+，stdlib）。
 - `export-glb` 需要 `cd viewer && npm install`（Node 18+）。
 - Blender MCP（ahujasid `mcp-for-blender`）可用但非必要；見 `lessons.md`。
 
@@ -260,11 +260,11 @@ version: 1.0.0
 英文，每條教訓一段：發生在哪個專案與回合、試過什麼、什麼失敗、什麼成功、定下的數字；引用中文原文時保留原文。來源寫專案名與檔名，不寫絕對路徑。分節：
 
 1. 環境與執行方式（CLI 背景模式、`--python-exit-code 1`、Blender 內建 numpy、`.venv` 不假設存在；MCP 的安裝與為什麼產線沒用它）。
-2. 網格清理與減面（Trellis 原始網格的數字：604k 面、9,041 邊界邊、139,875 反向邊；R7 四次嘗試的結果；薄片與全域封殼；Pixal3D 的兩種結果；減面在 UV 之前；decimate 做不出眼皮嘴唇環線）。
+2. 網格清理與減面（Trellis 原始網格的數字：604k 面、9,041 邊界邊、139,875 條二面共享邊方向不一致；R7 六次嘗試（C1–C6）的結果；薄片與全域封殼；Pixal3D 的兩種結果；減面在 UV 之前；decimate 做不出眼皮嘴唇環線）。
 3. 法線與朝向（`custom_normal` 黑斑；`--orientation-only` 仍會平滑；glTF 與 Blender 的軸對應 `(x, y, z) → (x, −z, y)`；fal 系列輸出置中不落地、Tripo 轉 90°、Rodin 轉 180°；Mixamo FBX 的公分與 T-pose 要求）。
 4. UV 與貼圖（頂點色不出貨；邊距 16；投影失敗的三個案例與修法；轉盤三視圖不是相機；Guava/Pixal 的 metallic-roughness 通道配置與 doubleSided；減面後貼圖作廢；sRGB 與線性）。
 5. 骨架、動畫、重定向（雙 A-pose；clavicle 與 shoulder 的命名陷阱；8 個影響；inverseBind 列主序；四元數符號；下顎與眼睛通道；root 落地不是 IK；渲染前重置姿勢；Blender 髮型 GLB 動輒 450k 面不是遊戲資產）。
-6. 匯出與來回（Babylon 匯出會展開 sparse morph 使檔案變大的三個數字；重載鬼影是 runtime 沒釋放；表情混合規則不在 GLB 裡；比對解碼後的陣列不是 accessor 索引；Draco、Meshopt、KTX2 不用；新檔名避免快取）。
+6. 匯出與來回（Babylon 匯出會展開 sparse morph 使檔案變大的三個案例；重載鬼影是 runtime 沒釋放；表情混合規則不在 GLB 裡；比對解碼後的陣列不是 accessor 索引；Draco、Meshopt、KTX2 不用；新檔名避免快取）。
 7. 驗收習慣（素模先看；三張同相機比較；數字檢查清單；Blender 渲染只是診斷；保留每個候選與雜湊）。
 8. 不要再犯清單（與 SKILL.md §4.5 同一份，這裡附出處）。
 
@@ -312,3 +312,15 @@ B 會用到：
 - `glb-ready/SKILL.md` 的內文（嵌入 Nomen Land 的 `assets/img-to-babylon/SKILL.md` 下半段），raw 網址 `https://raw.githubusercontent.com/wcAmon/img-to-babylon/<sha>/glb-ready/SKILL.md`。
 - clone 指令：`git clone --depth 1 https://github.com/wcAmon/img-to-babylon && cd img-to-babylon && git checkout <sha>`。
 - `glb-ready/SKILL.md` §4.1 最後一句（最後一道門是目標網站的檢查器）是 B 的頁面接上 `nomen-glb check` 的位置。
+
+## 13. 實作紀錄（2026-10-14）
+
+- 計畫：`docs/superpowers/plans/2026-10-14-glb-ready.md`。
+- 測試：forge 140、glb-ready 53（含 25 個 Blender 測試）、viewer `tsc` 與 `export_glb_test.ts` 全綠。
+- 驗收 2：`sample-crate` 匯出 12 面、0.3 m 立方、`glb_audit.py` OK。
+- 驗收 3：triage-standing-animated 稽核列出 clip「Kimodo slow walk」（27 channels、2.97 s）與 30 關節骨架；`render_review.py` 以 rest pose 渲染（站姿，非行走中，目視確認）。
+- 驗收 1 乾跑：timber-lodge 22,494 → 19,477 面（keep-uv，1 輪，保留 86.6%），稽核 OK；三視角渲染無黑斑、材質完整。全新 session 的驗收由使用者執行。
+- 偏離 spec 的決定：§5.8 的 SOMA 來源不在 v1（只支援 Mixamo 命名的 FBX/GLB 來源）；§4.7 的 Python 下限實際為 3.9（系統 python3）；§5.6 的影像格式以 `export_image_format='AUTO'` 保留原容器而非依 alpha 分流（Blender 5.1 匯出器沒有 PNG 選項）；§7.2 的 R7 是六次嘗試（C1–C6），139,875 是「二面共享邊方向不一致」而非反向邊；§7.6 的 sparse morph 是三個獨立案例（154.68 MiB、12.97→5.20 MiB、66 MiB→52.7 MB）。
+- 實作中發現並寫進 `glb-ready/lessons.md` 的事實：glTF 匯入是逐面分離的 polygon soup（先焊接再算拓撲）；protect 權重存在 mesh datablock 且需向外擴一圈；Cycles 5.1.2 烘焙 BYTE_COLOR 頂點色會 segfault（先轉 FLOAT_COLOR）；JPEG 尺寸要讀整張；匯入器會加骨骼顯示用的 Icosphere；匯出器 ACTIONS 模式會把檔案裡所有相容的 action 都匯出；Babylon serializer 會丟掉 |t| ≤ 0.001 的節點位移。
+- 密鑰掃描：全歷史 regex 掃描 5 筆命中皆為識別字（測試名與狀態字串），無 .env 曾被加入；tailnet 主機名仍在歷史中（未改寫歷史）。
+- 發佈：待使用者確認後填入 push 時間、公開時間與 HEAD sha（Task 20）。
