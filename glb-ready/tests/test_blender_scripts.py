@@ -86,5 +86,63 @@ class HarnessTest(BlenderCase):
         self.assertIn('--force', again.stderr)
 
 
+class ReduceTest(BlenderCase):
+    def test_keep_uv_reaches_target_and_keeps_uv(self):
+        out = self.out / 'lo.glb'
+        self.run_tool('reduce_mesh.py', self.fx('sphere_hi'), out, '--target', '1000')
+        n = self.tris(out)
+        self.assertTrue(900 <= n <= 1000, n)
+        doc, _ = glb_audit.read_glb(out)
+        self.assertIn('TEXCOORD_0', doc['meshes'][0]['primitives'][0]['attributes'])
+        self.assertEqual(len(doc.get('materials', [])), 1)
+        rep = self.report(out)
+        self.assertEqual(rep['params']['mode'], 'keep-uv'); self.assertFalse(rep['params']['requiresNewUV'])
+        self.assertEqual(rep['output']['triangles'], n)
+        self.assertTrue(any('30%' in w for w in rep['warnings']))  # 14k -> 1k keeps ~7%
+        self.run_tool('reduce_mesh.py', self.fx('sphere_hi'), out, '--target', '1000', expect=2)
+
+    def test_keep_uv_preserves_two_materials(self):
+        out = self.out / 'two.glb'
+        self.run_tool('reduce_mesh.py', self.fx('cube_two_materials'), out, '--target', '800')
+        doc, _ = glb_audit.read_glb(out)
+        self.assertEqual(len(doc['materials']), 2)
+        self.assertEqual(len(doc['meshes'][0]['primitives']), 2)
+        self.assertLessEqual(self.tris(out), 800)
+
+    def test_rebuild_surface_drops_uv_and_flags_report(self):
+        out = self.out / 'gray.glb'
+        self.run_tool('reduce_mesh.py', self.fx('sphere_hi'), out, '--target', '2000', '--rebuild-surface')
+        doc, _ = glb_audit.read_glb(out)
+        self.assertNotIn('TEXCOORD_0', doc['meshes'][0]['primitives'][0]['attributes'])
+        self.assertTrue(self.report(out)['params']['requiresNewUV'])
+        self.assertLessEqual(self.tris(out), 2000)
+
+    def test_already_within_target_passes_through(self):
+        out = self.out / 'same.glb'
+        self.run_tool('reduce_mesh.py', self.fx('sphere_lo'), out, '--target', '5000')
+        self.assertEqual(self.tris(out), self.tris(self.fx('sphere_lo')))
+        self.assertTrue(any('already' in w for w in self.report(out)['warnings']))
+
+    def test_protect_box_on_edge_only_is_usage_error(self):
+        out = self.out / 'p.glb'
+        # sphere spans y 0..1 (glTF); a flat box at y=1.5 touches nothing
+        run = self.run_tool('reduce_mesh.py', self.fx('sphere_hi'), out, '--target', '3000', '--protect', '-1,1.5,-1,1,1.5,1', expect=2)
+        self.assertIn('protect', run.stderr.lower())
+
+    def test_protect_box_keeps_cap_within_error(self):
+        out = self.out / 'cap.glb'
+        self.run_tool('reduce_mesh.py', self.fx('sphere_hi'), out, '--target', '3000', '--protect', '-1,0.9,-1,1,1.1,1', '--max-protected-error', '0.002')
+        rep = self.report(out)
+        self.assertLessEqual(rep['params']['protectedError']['maxDistance'], 0.002)
+        self.assertLessEqual(self.tris(out), 3000)
+
+    def test_rigged_input_is_rejected(self):
+        rigged = self.fixtures / 'rig_base.glb'
+        if not rigged.exists():
+            self.skipTest('rig fixture arrives with Task 15')
+        run = self.run_tool('reduce_mesh.py', rigged, self.out / 'r.glb', '--target', '100', expect=2)
+        self.assertIn('rigged', run.stderr)
+
+
 if __name__ == '__main__':
     unittest.main()
