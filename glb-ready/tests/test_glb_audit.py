@@ -129,6 +129,18 @@ class AuditTest(GlbCase):
         self.assertEqual(result['verdict'], 'ok')
         self.assertAlmostEqual(result['geometry']['minY'], 0.0)
 
+    def test_nothing_drawn_is_fix(self):
+        # a GLB whose default scene draws nothing is not OK just because 0 triangles are under budget
+        doc, chunks = synth.cube_doc()
+        del doc['scenes']
+        doc.pop('scene', None)
+        result = self.audit('noscene.glb', doc, chunks)
+        self.assertEqual(result['verdict'], 'fix')
+        self.assertTrue(any('draws no triangles' in p for p in result['problems']), result['problems'])
+        doc, chunks = synth.cube_doc()
+        doc['scenes'] = [{'nodes': []}]
+        self.assertEqual(self.audit('emptyscene.glb', doc, chunks)['verdict'], 'fix')
+
     def test_floating_cube_is_fix(self):
         result = self.audit('float.glb', *synth.cube_doc(y_offset=0.3))
         self.assertEqual(result['verdict'], 'fix')

@@ -1,7 +1,7 @@
 """bake_atlas.py — new smart-UV atlas and a single baked baseColor texture for a static mesh.
 
 blender -b --factory-startup --python-exit-code 1 --python glb-ready/scripts/bake_atlas.py -- \
-    in.glb out.glb [--size 2048] [--source vertex-color|material|high=<other.glb>] [--margin 16] \
+    in.glb out.glb [--size 2048] [--source vertex-color|material|high=<other.glb>] [--margin 16, 4 for high=] \
     [--angle 66] [--island-margin 0.015] [--height <m>] [--ground] [--force]
 
 Output: one mesh, one UV layer, one Principled material, one embedded PNG. Run after reduce_mesh.py.
@@ -66,13 +66,13 @@ def bake_setup(scene, samples, margin):
 def main():
     args = bc.parse_args()
     if len(args) < 2:
-        bc.fail(2, 'usage: in.glb out.glb [--size 2048] [--source vertex-color|material|high=<glb>] [--margin 16] [--angle 66] [--island-margin 0.015] [--height m] [--ground] [--force]')
+        bc.fail(2, 'usage: in.glb out.glb [--size 2048] [--source vertex-color|material|high=<glb>] [--margin 16, 4 for high=] [--angle 66] [--island-margin 0.015] [--height m] [--ground] [--force]')
     src, dst = Path(args[0]).resolve(), Path(args[1]).resolve()
     size = bc.flag_value(args, '--size', 2048, int)
     if size < 16 or size > MAX_SIZE:
         bc.fail(2, '--size must be between 16 and %d (the nomen-land profile caps textures at 2048)' % MAX_SIZE)
     source = bc.flag_value(args, '--source', 'material')
-    margin = bc.flag_value(args, '--margin', 16, int)
+    margin = bc.flag_value(args, '--margin', None, int)
     angle = bc.flag_value(args, '--angle', 66.0, float)
     island = bc.flag_value(args, '--island-margin', 0.015, float)
     height = bc.flag_value(args, '--height', None, float)
@@ -84,6 +84,8 @@ def main():
             bc.fail(2, 'high-poly source not found: %s' % high_path)
     if source not in ('vertex-color', 'material', 'high'):
         bc.fail(2, '--source must be vertex-color, material or high=<glb>')
+    if margin is None:  # Settled numbers: 16 px for a colour bake, 4 for a high-to-low bake
+        margin = 4 if source == 'high' else 16
     bc.require_new_output(dst, '--force' in args)
     audit = bc.audit_module()
     try:

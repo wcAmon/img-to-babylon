@@ -341,6 +341,8 @@ def audit(path, profile):
     info['bounds'] = geo['bounds']
     info['profile'] = profile
     problems, warnings = [], list(info['warnings'])
+    if info['triangles'] == 0:
+        problems.append('the default scene draws no triangles (no scene, or no mesh under its nodes)')
     if info['triangles'] > profile['maxTriangles']:
         problems.append('triangles %d exceed %d' % (info['triangles'], profile['maxTriangles']))
     if info['bytes'] > profile['maxBytes']:

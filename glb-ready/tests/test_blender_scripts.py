@@ -192,6 +192,7 @@ class BakeTest(BlenderCase):
         self.assertEqual(len(doc['materials']), 1)
         self.assertEqual(len(doc['meshes'][0]['primitives']), 1)
         self.assertEqual(self.report(out)['params']['source'], 'material')
+        self.assertEqual(self.report(out)['params']['margin'], 16)  # Settled numbers: bake margin 16 px
 
     def test_high_to_low_bake(self):
         low = self.out / 'low.glb'
@@ -201,6 +202,7 @@ class BakeTest(BlenderCase):
         result = glb_audit.audit(out, glb_audit.load_profile('nomen-land'))
         self.assertEqual(len(result['textures']), 1)
         self.assertTrue(result['hasTexcoord0'])
+        self.assertEqual(self.report(out)['params']['margin'], 4)  # Settled numbers: high-to-low bake margin 4
 
     def test_size_over_2048_is_usage_error(self):
         self.run_tool('bake_atlas.py', self.fx('sphere_vcolor'), self.out / 'x.glb', '--source', 'vertex-color', '--size', '4096', expect=2)

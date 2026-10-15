@@ -21,7 +21,7 @@ The delivered GLB must satisfy the `nomen-land` profile (`profiles/nomen-land.js
 | File | <= 20 MB |
 | Nodes | <= 500 |
 | Units and axes | metres, glTF Y-up, front toward +Z; base on y = 0, XZ centred on the origin |
-| Geometry | NORMAL present; TEXCOORD_0 present when textured; unit normals; no NaN; no zero-area triangles |
+| Geometry | NORMAL present; TEXCOORD_0 present when textured; unit normals (length within 1e-5); no NaN; zero-area triangles are a warning, not a failure |
 | Compression | no Draco, Meshopt or KTX2 |
 | Animation | clips kept and named; skin joints <= 64; weights sum to 1 (1e-5) |
 | Material | one PBR metallic-roughness; no extensions beyond KHR_materials_* |
@@ -58,7 +58,7 @@ Scripts:
 - `repair_shell.py in out (--orientation-only | --shell-repair) [--voxel-k 0.0025] [--shell-k 0.006] [--smooth 0.25x2]`:
   for raw generated meshes. Welds split vertices, fixes face orientation, keeps the largest connected piece, optionally seals and remeshes.
   Output is still high-poly; `--orientation-only` still smooths a little.
-- `bake_atlas.py in out [--size 2048] [--source vertex-color|material|high=<glb>] [--margin 16] [--height <m>] [--ground]`:
+- `bake_atlas.py in out [--size 2048] [--source vertex-color|material|high=<glb>] [--margin 16, 4 for high=] [--height <m>] [--ground]`:
   new smart-UV atlas and one baked baseColor PNG; `--height`/`--ground` scale to metres and put the base on y = 0.
 - `shrink_textures.py in out [--max 2048] [--jpeg-quality 82] [--max-textures 8]`: downscales and embeds images and
   nothing else. The only texture tool allowed on rigged models.
